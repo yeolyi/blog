@@ -1,24 +1,30 @@
 import { compileMDX } from "next-mdx-remote/rsc";
 import Link from "next/link";
-import { replaceCodeDirectives } from "./codeReplacer";
+import { BASE_URL, replaceCodeDirectives } from "./codeReplacer";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
+import path from "path";
 
 const Post = async ({ params }: { params: { path?: string[] } }) => {
   const { content, frontmatter } = await fetchPost(params.path);
   return (
-    <div className="flex flex-col m-8 prose">
+    <>
       <h2>{frontmatter.title}</h2>
       <hr />
       {content}
-    </div>
+    </>
   );
 };
 
-export const BASE_URL = "http://43.200.204.95:3001/";
+export const generateStaticParams = async () => {
+  const resp = await fetch(BASE_URL + "markdownPaths.json");
+  const x: string[][] = await resp.json();
+  return x.map((path) => ({ path }));
+};
 
-const fetchPost = async (path?: string[]) => {
-  const postPath = (path ? path.join("/") : "") + "/";
+const fetchPost = async (segments?: string[]) => {
+  segments ||= [];
+  const postPath = segments.join("/") + "/";
 
   const resp = await fetch(BASE_URL + postPath + "index.md");
   const raw = await resp.text();
@@ -50,16 +56,7 @@ function absolute(href: string) {
     return href;
   }
 
-  const stack = ["post"];
-  const parts = href.split("/");
-
-  for (let i = 0; i < parts.length; i++) {
-    if (parts[i] === ".") continue;
-    if (parts[i] === "..") stack.pop();
-    else stack.push(parts[i]);
-  }
-
-  return stack.join("/");
+  return path.join("post", href);
 }
 
 export default Post;

@@ -13,7 +13,26 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body className="bg-gray-50">
+        <div className="min-h-screen py-8 overflow-hidden lg:py-12">
+          <div
+            className={`
+            w-full px-6 py-12 
+
+            bg-white shadow-xl shadow-slate-700/10 
+            ring-1 ring-gray-900/5 
+
+            md:max-w-3xl md:mx-auto 
+            lg:max-w-4xl lg:pt-16 lg:pb-28
+
+            `}
+          >
+            <div className="prose prose-slate lg:prose-lg mx-auto">
+              {children}
+            </div>
+          </div>
+        </div>
+      </body>
     </html>
   );
 }

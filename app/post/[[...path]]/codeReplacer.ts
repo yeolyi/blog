@@ -1,5 +1,6 @@
 import * as path from "path";
-import { BASE_URL } from "./page";
+
+export const BASE_URL = "http://43.200.204.95:3001/";
 
 const codeContentRegex = /!@([^@!]+)@!/g;
 
