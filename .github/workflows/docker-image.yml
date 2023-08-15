@@ -19,21 +19,21 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and push Docker images
-        uses: docker/build-push-action@v4.1.1
-        with:
-          push: true
-          tags: yeolyi1310/blog-nextjs
-
       - name: SCP Command to Transfer Files
         uses: appleboy/scp-action@v0.1.4
         with:
           host: ${{secrets.SSH_HOST}}
           username: ${{secrets.SSH_USER}}
           key: ${{secrets.SSH_KEY}}
-          source: "docker-compose.yml"
-          target: "~/blog_nextjs"
+          source: "docker-compose.yml data/nginx/app.config"
+          target: "blog_nextjs"
           overwrite: true
+
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v4.1.1
+        with:
+          push: true
+          tags: yeolyi1310/blog-nextjs
 
       - name: Deploy Docker Image via SSH
         uses: appleboy/ssh-action@master
