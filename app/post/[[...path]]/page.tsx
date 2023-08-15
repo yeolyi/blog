@@ -1,5 +1,6 @@
 import { compileMDX } from "next-mdx-remote/rsc";
 import Link from "next/link";
+import { replaceCodeDirectives } from "./codeReplacer";
 
 const Post = async ({ params }: { params: { path?: string[] } }) => {
   const { content, frontmatter } = await fetchPost(params.path);
@@ -12,18 +13,14 @@ const Post = async ({ params }: { params: { path?: string[] } }) => {
   );
 };
 
-const BASE_URL = "http://43.200.204.95:3001/";
+export const BASE_URL = "http://43.200.204.95:3001/";
 
 const fetchPost = async (path?: string[]) => {
-  let url = BASE_URL;
-  if (path !== undefined) {
-    url += path.join("/");
-    url += "/";
-  }
-  url += "index.md";
+  const postPath = (path ? path.join("/") : "") + "/";
 
-  const resp = await fetch(url);
-  const source = await resp.text();
+  const resp = await fetch(BASE_URL + postPath + "index.md");
+  const raw = await resp.text();
+  const source = await replaceCodeDirectives(raw, postPath);
   return await compileMDX<{ title: string }>({
     source,
     options: { parseFrontmatter: true, mdxOptions: { format: "md" } },
