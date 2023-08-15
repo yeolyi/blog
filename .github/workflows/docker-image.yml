@@ -32,7 +32,7 @@ jobs:
           username: ${{secrets.SSH_USER}}
           key: ${{secrets.SSH_KEY}}
           source: "docker-compose.yml"
-          target: "~/blog-nextjs"
+          target: "~/blog_nextjs"
           overwrite: true
 
       - name: Deploy Docker Image via SSH
