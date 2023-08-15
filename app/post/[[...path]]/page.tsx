@@ -1,6 +1,8 @@
 import { compileMDX } from "next-mdx-remote/rsc";
 import Link from "next/link";
 import { replaceCodeDirectives } from "./codeReplacer";
+import rehypeHighlight from "rehype-highlight";
+import "highlight.js/styles/github-dark.css";
 
 const Post = async ({ params }: { params: { path?: string[] } }) => {
   const { content, frontmatter } = await fetchPost(params.path);
@@ -23,11 +25,18 @@ const fetchPost = async (path?: string[]) => {
   const source = await replaceCodeDirectives(raw, postPath);
   return await compileMDX<{ title: string }>({
     source,
-    options: { parseFrontmatter: true, mdxOptions: { format: "md" } },
+    options: {
+      parseFrontmatter: true,
+      mdxOptions: {
+        format: "md",
+        rehypePlugins: [() => rehypeHighlight({ ignoreMissing: true })],
+      },
+    },
     components: {
       a: (props) => (
         <Link href={absolute(props.href ?? "")}>{props.children}</Link>
       ),
+      code: (props) => <code {...props} className="not-prose" />,
     },
   });
 };

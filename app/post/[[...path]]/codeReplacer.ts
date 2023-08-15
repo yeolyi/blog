@@ -8,14 +8,9 @@ export const replaceCodeDirectives = async (
   postAbsolutePath: string
 ) => {
   const replacer = async (match: string, codeFileRelativePath: string) => {
-    const codeFullPath = path.join(
-      postAbsolutePath,
-      "../",
-      codeFileRelativePath
-    );
+    const codeFullPath = path.join(postAbsolutePath, codeFileRelativePath);
     try {
       const extension = extractFileExtension(codeFileRelativePath);
-      console.log(codeFullPath);
       const resp = await fetch(BASE_URL + codeFullPath);
       const code = await resp.text();
       return formatMarkdownCode(extension, code);
