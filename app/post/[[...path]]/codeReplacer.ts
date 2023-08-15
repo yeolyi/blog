@@ -1,6 +1,6 @@
 import * as path from "path";
 
-export const BASE_URL = "http://43.200.204.95:3001/";
+export const BASE_URL = "https://api.yeolyi.com:3001/";
 
 const codeContentRegex = /!@([^@!]+)@!/g;
 
