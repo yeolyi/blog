@@ -47,7 +47,7 @@ jobs:
           port: ${{ secrets.SSH_PORT }}
 
           script: |
-            cd ~/blog-nextjs
+            cd ~/blog_nextjs
             docker-compose down
             docker-compose pull
             docker-compose up -d

@@ -1,0 +1,7 @@
+www.yeolyi.com {
+    reverse_proxy http://blog-nextjs:3000
+}
+
+yeolyi.com {
+    redir https://www.yeolyi.com{uri}
+}
