@@ -28,7 +28,7 @@ jobs:
           host: ${{secrets.SSH_HOST}}
           username: ${{secrets.SSH_USER}}
           key: ${{secrets.SSH_KEY}}
-          source: "docker-compose.yml,data/nginx/app.config"
+          source: "docker-compose.yml,caddy/Caddyfile"
           target: "blog_nextjs"
           overwrite: true
 
