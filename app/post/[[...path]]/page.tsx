@@ -16,11 +16,11 @@ const Post = async ({ params }: { params: { path?: string[] } }) => {
   );
 };
 
-export const generateStaticParams = async () => {
-  const resp = await fetch(BASE_URL + "markdownPaths.json");
-  const x: string[][] = await resp.json();
-  return x.map((path) => ({ path }));
-};
+// export const generateStaticParams = async () => {
+//   const resp = await fetch(BASE_URL + "markdownPaths.json");
+//   const x: string[][] = await resp.json();
+//   return x.map((path) => ({ path }));
+// };
 
 const fetchPost = async (segments?: string[]) => {
   segments ||= [];
