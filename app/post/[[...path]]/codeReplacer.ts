@@ -1,7 +1,8 @@
 import { readFile } from "fs/promises";
 import * as path from "path";
 
-export const BASE_URL = "/blog_src";
+export const BASE_URL =
+  process.env.NODE_ENV === "development" ? "../blog_src" : "/blog_src";
 
 const codeContentRegex = /!@([^@!]+)@!/g;
 

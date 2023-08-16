@@ -7,7 +7,7 @@ import path from "path";
 import { readFile } from "fs/promises";
 
 const Post = async ({ params }: { params: { path?: string[] } }) => {
-  const { content, frontmatter } = await fetchPost(params.path);
+  const { content, frontmatter } = await fetchPost(params.path ?? []);
   return (
     <>
       <h2>{frontmatter.title}</h2>
@@ -23,8 +23,7 @@ const Post = async ({ params }: { params: { path?: string[] } }) => {
 //   return x.map((path) => ({ path }));
 // };
 
-const fetchPost = async (segments?: string[]) => {
-  segments ||= [];
+const fetchPost = async (segments: string[]) => {
   const postPath = segments.join("/") + "/";
 
   const raw = await readFile(path.join(BASE_URL, postPath, "index.md"), {
@@ -42,14 +41,16 @@ const fetchPost = async (segments?: string[]) => {
     },
     components: {
       a: (props) => (
-        <Link href={absolute(props.href ?? "")}>{props.children}</Link>
+        <Link href={absolute(segments, props.href ?? "")}>
+          {props.children}
+        </Link>
       ),
       code: (props) => <code {...props} className="not-prose" />,
     },
   });
 };
 
-function absolute(href: string) {
+function absolute(segments: string[], href: string) {
   if (
     href.startsWith("http://") ||
     href.startsWith("https://") ||
@@ -58,7 +59,7 @@ function absolute(href: string) {
     return href;
   }
 
-  return path.join("post", href);
+  return path.join("/post", ...segments, href);
 }
 
 export default Post;
