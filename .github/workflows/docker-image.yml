@@ -32,6 +32,9 @@ jobs:
           target: "blog_nextjs"
           overwrite: true
 
+      - name: Create .env file
+        run: echo "NEXT_PUBLIC_SRC_PATH=${{secrets.SRC_PATH}}" > .env.local
+
       - name: Build and push Docker images
         uses: docker/build-push-action@v4.1.1
         with:
