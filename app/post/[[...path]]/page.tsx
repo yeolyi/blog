@@ -27,7 +27,7 @@ const fetchPost = async (segments?: string[]) => {
   segments ||= [];
   const postPath = segments.join("/") + "/";
 
-  const raw = await readFile(BASE_URL + postPath + "index.md", {
+  const raw = await readFile(path.join(BASE_URL, postPath, "index.md"), {
     encoding: "utf-8",
   });
   const source = await replaceCodeDirectives(raw, postPath);

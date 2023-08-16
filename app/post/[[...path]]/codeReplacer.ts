@@ -1,7 +1,7 @@
 import { readFile } from "fs/promises";
 import * as path from "path";
 
-export const BASE_URL = "../blog_src/";
+export const BASE_URL = "../blog_src";
 
 const codeContentRegex = /!@([^@!]+)@!/g;
 
@@ -13,7 +13,6 @@ export const replaceCodeDirectives = async (
     const codeFullPath = path.join(postAbsolutePath, codeFileRelativePath);
     try {
       const extension = extractFileExtension(codeFileRelativePath);
-      console.log(path.join(BASE_URL, codeFullPath));
       const code = await readFile(path.join(BASE_URL, codeFullPath), {
         encoding: "utf-8",
       });
