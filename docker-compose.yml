@@ -19,6 +19,8 @@ services:
       - "3000:3000"
     networks:
       - caddy-net
+    volumes:
+      - ~/blog_src:/blog_src
 
 networks:
   caddy-net:

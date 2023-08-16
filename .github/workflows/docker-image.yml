@@ -32,15 +32,11 @@ jobs:
           target: "blog_nextjs"
           overwrite: true
 
-      - name: Create .env file
-        run: echo "NEXT_PUBLIC_SRC_PATH=${{secrets.SRC_PATH}}" > .env.local
-
       - name: Build and push Docker images
         uses: docker/build-push-action@v4.1.1
         with:
           push: true
           tags: yeolyi1310/blog-nextjs
-          context: "."
 
       - name: Deploy Docker Image via SSH
         uses: appleboy/ssh-action@master
