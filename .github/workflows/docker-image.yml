@@ -40,6 +40,7 @@ jobs:
         with:
           push: true
           tags: yeolyi1310/blog-nextjs
+          context: "."
 
       - name: Deploy Docker Image via SSH
         uses: appleboy/ssh-action@master
