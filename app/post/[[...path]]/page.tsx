@@ -4,6 +4,7 @@ import { BASE_URL, replaceCodeDirectives } from "./codeReplacer";
 import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
 import path from "path";
+import { readFile } from "fs/promises";
 
 const Post = async ({ params }: { params: { path?: string[] } }) => {
   const { content, frontmatter } = await fetchPost(params.path);
@@ -26,8 +27,9 @@ const fetchPost = async (segments?: string[]) => {
   segments ||= [];
   const postPath = segments.join("/") + "/";
 
-  const resp = await fetch(BASE_URL + postPath + "index.md");
-  const raw = await resp.text();
+  const raw = await readFile(BASE_URL + postPath + "index.md", {
+    encoding: "utf-8",
+  });
   const source = await replaceCodeDirectives(raw, postPath);
   return await compileMDX<{ title: string }>({
     source,

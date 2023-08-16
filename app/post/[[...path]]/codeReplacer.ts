@@ -1,6 +1,7 @@
+import { readFile } from "fs/promises";
 import * as path from "path";
 
-export const BASE_URL = "https://api.yeolyi.com:3001/";
+export const BASE_URL = "../blog_src/";
 
 const codeContentRegex = /!@([^@!]+)@!/g;
 
@@ -12,8 +13,10 @@ export const replaceCodeDirectives = async (
     const codeFullPath = path.join(postAbsolutePath, codeFileRelativePath);
     try {
       const extension = extractFileExtension(codeFileRelativePath);
-      const resp = await fetch(BASE_URL + codeFullPath);
-      const code = await resp.text();
+      console.log(path.join(BASE_URL, codeFullPath));
+      const code = await readFile(path.join(BASE_URL, codeFullPath), {
+        encoding: "utf-8",
+      });
       return formatMarkdownCode(extension, code);
     } catch {
       throw new Error(`코드 대체 불가: ${codeFullPath}`);
