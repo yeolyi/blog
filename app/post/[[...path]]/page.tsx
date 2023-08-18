@@ -5,8 +5,24 @@ import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
 import path from "path";
 import { readFile } from "fs/promises";
+import { Metadata } from "next";
 
-const Post = async ({ params }: { params: { path?: string[] } }) => {
+interface PostProps {
+  params: {
+    path?: string[];
+  };
+}
+
+export const generateMetadata = async ({
+  params,
+}: PostProps): Promise<Metadata> => {
+  const { frontmatter } = await fetchPost(params.path ?? []);
+  return {
+    title: frontmatter.title,
+  };
+};
+
+const Post = async ({ params }: PostProps) => {
   const { content, frontmatter } = await fetchPost(params.path ?? []);
   return (
     <>
