@@ -1,7 +1,5 @@
-import BASE_URL from "@/lib/baseURL";
 import { readFile } from "fs/promises";
 import * as path from "path";
-import { cwd } from "process";
 
 const replaceCodeDirectives = async (
   content: string,
@@ -21,9 +19,12 @@ const buildReplacer =
   (postAbsolutePath: string) =>
   async (match: string, codeFileRelativePath: string) => {
     const codeFullPath = path.join(postAbsolutePath, codeFileRelativePath);
-    const code = await readFile(path.join(cwd(), BASE_URL, codeFullPath), {
-      encoding: "utf-8",
-    });
+    const code = await readFile(
+      path.join(process.env.SRC_PATH ?? "", codeFullPath),
+      {
+        encoding: "utf-8",
+      }
+    );
     const fileExtension = extractFileExtension(codeFileRelativePath);
     return formatMarkdownCode(fileExtension, code);
   };

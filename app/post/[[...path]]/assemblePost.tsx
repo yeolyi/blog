@@ -4,8 +4,6 @@ import Link from "next/link";
 import path from "path";
 import rehypeHighlight from "rehype-highlight";
 import replaceCodeDirectives from "../../../lib/replaceCodeDirectives";
-import BASE_URL from "@/lib/baseURL";
-import { cwd } from "process";
 
 const assemblePost = async (segments: string[]) => {
   const md = await getIndexMD(segments);
@@ -14,7 +12,7 @@ const assemblePost = async (segments: string[]) => {
 };
 
 const getIndexMD = (segments: string[]) =>
-  readFile(path.join(cwd(), BASE_URL, ...segments, "index.md"), {
+  readFile(path.join(process.env.SRC_PATH ?? "", ...segments, "index.md"), {
     encoding: "utf-8",
   });
 

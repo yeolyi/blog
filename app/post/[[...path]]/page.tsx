@@ -2,7 +2,6 @@ import "highlight.js/styles/github-dark.css";
 import { Metadata } from "next";
 import assemblePost from "./assemblePost";
 import { buildPathTree, preorderTraversePathTree } from "./pathTree";
-import BASE_URL from "@/lib/baseURL";
 
 interface PostProps {
   params: {
@@ -32,7 +31,7 @@ const PostPage = async ({ params }: PostProps) => {
 };
 
 export const generateStaticParams = async () => {
-  const root = await buildPathTree(BASE_URL);
+  const root = await buildPathTree(process.env.SRC_PATH ?? "");
   const fileTree: string[][] = [];
   await preorderTraversePathTree(root, async (x) => {
     if (
