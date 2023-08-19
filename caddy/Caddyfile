@@ -1,5 +1,5 @@
 www.yeolyi.com {
-    reverse_proxy http://blog-nextjs:3000
+    reverse_proxy http://blog:3000
 }
 
 yeolyi.com {

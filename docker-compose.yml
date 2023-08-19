@@ -13,14 +13,12 @@ services:
       - ./caddy/config/:/config/
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
 
-  blog-nextjs:
-    image: yeolyi1310/blog-nextjs
+  blog:
+    image: yeolyi1310/blog
     ports:
       - "3000:3000"
     networks:
       - caddy-net
-    volumes:
-      - ~/blog_src:/blog_src
 
 networks:
   caddy-net:

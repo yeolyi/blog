@@ -1,6 +1,7 @@
 import BASE_URL from "@/lib/baseURL";
 import { readFile } from "fs/promises";
 import * as path from "path";
+import { cwd } from "process";
 
 const replaceCodeDirectives = async (
   content: string,
@@ -20,7 +21,7 @@ const buildReplacer =
   (postAbsolutePath: string) =>
   async (match: string, codeFileRelativePath: string) => {
     const codeFullPath = path.join(postAbsolutePath, codeFileRelativePath);
-    const code = await readFile(path.join(BASE_URL, codeFullPath), {
+    const code = await readFile(path.join(cwd(), BASE_URL, codeFullPath), {
       encoding: "utf-8",
     });
     const fileExtension = extractFileExtension(codeFileRelativePath);
@@ -30,7 +31,7 @@ const buildReplacer =
 const extractFileExtension = (filePath: string) => {
   const splited = filePath.split(".");
 
-  if (splited.length !== 2)
+  if (splited.length < 2)
     throw new Error(`${filePath}에서 확장자를 찾을 수 없음.`);
 
   return splited[splited.length - 1];
