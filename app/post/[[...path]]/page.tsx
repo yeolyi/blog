@@ -11,10 +11,10 @@ interface PostProps {
 export const generateMetadata = async ({
   params,
 }: PostProps): Promise<Metadata> => {
-  const { frontmatter } = await assemblePost(params.path ?? []);
+  //   const { frontmatter } = await assemblePost(params.path ?? []);
 
   return {
-    title: frontmatter.title,
+    // title: frontmatter.title,
   };
 };
 

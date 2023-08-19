@@ -5,21 +5,14 @@ import path from "path";
 import rehypeHighlight from "rehype-highlight";
 import replaceCodeDirectives from "../../../lib/replaceCodeDirectives";
 import BASE_URL from "@/lib/baseURL";
+import getCodeFilledMD from "@/lib/getCodeFilledMD";
 
 const assemblePost = async (segments: string[]) => {
-  const md = await getIndexMD(segments);
-  const replacedMD = await getCodeDirectivesReplacedMD(segments, md);
-  return convertMDtoComponent(segments, replacedMD);
-};
-
-const getIndexMD = (segments: string[]) =>
-  readFile(path.join(BASE_URL, ...segments, "index.md"), {
-    encoding: "utf-8",
-  });
-
-const getCodeDirectivesReplacedMD = (segments: string[], md: string) => {
-  const postPath = segments.join("/");
-  return replaceCodeDirectives(md, postPath);
+  const md = await getCodeFilledMD(segments);
+//   console.log("LOADING", segments);
+//   await new Promise((resolve) => setTimeout(resolve, 2000));
+//   console.log("end");
+  return convertMDtoComponent(segments, md);
 };
 
 interface FrontmatterType {
