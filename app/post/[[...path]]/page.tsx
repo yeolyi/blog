@@ -1,11 +1,6 @@
-import { compileMDX } from "next-mdx-remote/rsc";
-import Link from "next/link";
-import { BASE_URL, replaceCodeDirectives } from "./codeReplacer";
-import rehypeHighlight from "rehype-highlight";
 import "highlight.js/styles/github-dark.css";
-import path from "path";
-import { readFile } from "fs/promises";
 import { Metadata } from "next";
+import assemblePost from "./assemblePost";
 
 interface PostProps {
   params: {
@@ -16,14 +11,15 @@ interface PostProps {
 export const generateMetadata = async ({
   params,
 }: PostProps): Promise<Metadata> => {
-  const { frontmatter } = await fetchPost(params.path ?? []);
+  const { frontmatter } = await assemblePost(params.path ?? []);
+
   return {
     title: frontmatter.title,
   };
 };
 
-const Post = async ({ params }: PostProps) => {
-  const { content, frontmatter } = await fetchPost(params.path ?? []);
+const PostPage = async ({ params }: PostProps) => {
+  const { content, frontmatter } = await assemblePost(params.path ?? []);
   return (
     <>
       <h2>{frontmatter.title}</h2>
@@ -33,43 +29,4 @@ const Post = async ({ params }: PostProps) => {
   );
 };
 
-const fetchPost = async (segments: string[]) => {
-  const postPath = segments.join("/") + "/";
-
-  const raw = await readFile(path.join(BASE_URL, postPath, "index.md"), {
-    encoding: "utf-8",
-  });
-  const source = await replaceCodeDirectives(raw, postPath);
-  return await compileMDX<{ title: string }>({
-    source,
-    options: {
-      parseFrontmatter: true,
-      mdxOptions: {
-        format: "md",
-        rehypePlugins: [() => rehypeHighlight({ ignoreMissing: true })],
-      },
-    },
-    components: {
-      a: (props) => (
-        <Link href={absolute(segments, props.href ?? "")}>
-          {props.children}
-        </Link>
-      ),
-      code: (props) => <code {...props} className="not-prose" />,
-    },
-  });
-};
-
-function absolute(segments: string[], href: string) {
-  if (
-    href.startsWith("http://") ||
-    href.startsWith("https://") ||
-    href.startsWith("/")
-  ) {
-    return href;
-  }
-
-  return path.join("/post", ...segments, href);
-}
-
-export default Post;
+export default PostPage;

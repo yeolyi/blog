@@ -24,7 +24,6 @@ export default function RootLayout({
 
             md:max-w-3xl md:mx-auto 
             lg:max-w-4xl lg:pt-16 lg:pb-28
-
             `}
           >
             <div className="prose prose-slate lg:prose-lg mx-auto">
