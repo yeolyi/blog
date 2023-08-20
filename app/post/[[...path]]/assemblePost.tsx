@@ -4,30 +4,25 @@ import Link from "next/link";
 import path from "path";
 import rehypeHighlight from "rehype-highlight";
 import replaceCodeDirectives from "../../../lib/replaceCodeDirectives";
-import { cwd } from "process";
+import getSrcPath from "@/lib/getSrcPath";
+
+const cache: { [key: string]: any } = {};
 
 const assemblePost = async (segments: string[]) => {
-  const md = await getIndexMD(segments);
-  const replacedMD = await getCodeDirectivesReplacedMD(segments, md);
-  return convertMDtoComponent(segments, replacedMD);
+  const mdPath = path.join(getSrcPath(), ...segments, "index.md");
+
+  if (mdPath in cache) {
+    console.log("using cache");
+    return cache[mdPath];
+  }
+
+  const md = await readFile(mdPath, { encoding: "utf-8" });
+  const replacedMD = await replaceCodeDirectives(md, mdPath);
+  const comp = convertMDtoComponent(segments, replacedMD);
+
+  cache[mdPath] = comp;
+  return comp;
 };
-
-const getIndexMD = (segments: string[]) =>
-  readFile(
-    path.join(cwd(), process.env.SRC_PATH ?? "", ...segments, "index.md"),
-    {
-      encoding: "utf-8",
-    }
-  );
-
-const getCodeDirectivesReplacedMD = (segments: string[], md: string) => {
-  const postPath = segments.join("/");
-  return replaceCodeDirectives(md, postPath);
-};
-
-interface FrontmatterType {
-  title?: string;
-}
 
 const convertMDtoComponent = (segments: string[], md: string) => {
   const options: MDXRemoteProps["options"] = {
@@ -38,7 +33,7 @@ const convertMDtoComponent = (segments: string[], md: string) => {
     },
   };
 
-  return compileMDX<FrontmatterType>({
+  return compileMDX({
     source: md,
     options,
     components: {

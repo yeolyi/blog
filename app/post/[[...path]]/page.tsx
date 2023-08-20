@@ -1,10 +1,10 @@
 import "highlight.js/styles/github-dark.css";
 import { Metadata } from "next";
 import assemblePost from "./assemblePost";
-import { readdir } from "fs/promises";
-import { isDirectory } from "./util";
+import { lstat, readdir } from "fs/promises";
 import path from "path";
 import { cwd } from "process";
+import getSrcPath from "@/lib/getSrcPath";
 
 interface PostProps {
   params: {
@@ -16,7 +16,6 @@ export const generateMetadata = async ({
   params,
 }: PostProps): Promise<Metadata> => {
   const { frontmatter } = await assemblePost(params.path ?? []);
-
   return {
     title: frontmatter.title,
   };
@@ -34,13 +33,9 @@ const PostPage = async ({ params }: PostProps) => {
 };
 
 export const generateStaticParams = async () => {
-  console.info("generating static params...");
   const params: { path: string[] }[] = [];
-  const srcPath = process.env.SRC_PATH;
-  if (srcPath === undefined) {
-    throw new Error("SRC_PATH 환경변수가 없습니다.");
-  }
-  await iteratePath(path.join(cwd(), srcPath), [], (filePath, segments) => {
+  const srcPath = getSrcPath();
+  await iteratePath(srcPath, [], (filePath, segments) => {
     if (filePath.endsWith("/index.md")) {
       params.push({ path: segments });
     }
@@ -71,5 +66,10 @@ const iteratePath = async (
 
 const isIgnoredPath = (path: string) =>
   path === "node_modules" || path.startsWith(".");
+
+const isDirectory = async (path: string) => {
+  const stat = await lstat(path);
+  return stat.isDirectory();
+};
 
 export default PostPage;
