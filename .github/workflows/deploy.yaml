@@ -25,25 +25,25 @@ jobs:
         with:
           repository: yeolyi/blog_nextjs
 
-      - name: SCP Command to Transfer Files
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{secrets.SSH_HOST}}
-          username: ${{secrets.SSH_USER}}
-          key: ${{secrets.SSH_KEY}}
-          source: "docker-compose.yml"
-          target: "blog"
-          overwrite: true
+    #   - name: SCP Command to Transfer Files
+    #     uses: appleboy/scp-action@v0.1.4
+    #     with:
+    #       host: ${{secrets.SSH_HOST}}
+    #       username: ${{secrets.SSH_USER}}
+    #       key: ${{secrets.SSH_KEY}}
+    #       source: "docker-compose.yml"
+    #       target: "blog"
+    #       overwrite: true
 
-      - name: SCP Command to Transfer Files
-        uses: appleboy/scp-action@v0.1.4
-        with:
-          host: ${{secrets.SSH_HOST}}
-          username: ${{secrets.SSH_USER}}
-          key: ${{secrets.SSH_KEY}}
-          source: "Caddyfile"
-          target: "blog/caddy"
-          overwrite: true
+    #   - name: SCP Command to Transfer Files
+    #     uses: appleboy/scp-action@v0.1.4
+    #     with:
+    #       host: ${{secrets.SSH_HOST}}
+    #       username: ${{secrets.SSH_USER}}
+    #       key: ${{secrets.SSH_KEY}}
+    #       source: "Caddyfile"
+    #       target: "blog/caddy"
+    #       overwrite: true
 
       - name: Build and push Docker images
         uses: docker/build-push-action@v4.1.1
