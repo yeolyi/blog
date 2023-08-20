@@ -1,7 +1,10 @@
 import "highlight.js/styles/github-dark.css";
 import { Metadata } from "next";
 import assemblePost from "./assemblePost";
-import { buildPathTree, preorderTraversePathTree } from "./pathTree";
+import { readdir } from "fs/promises";
+import { isDirectory } from "./util";
+import path from "path";
+import { cwd } from "process";
 
 interface PostProps {
   params: {
@@ -31,16 +34,42 @@ const PostPage = async ({ params }: PostProps) => {
 };
 
 export const generateStaticParams = async () => {
-  const root = await buildPathTree(process.env.SRC_PATH ?? "");
-  const fileTree: string[][] = [];
-  await preorderTraversePathTree(root, async (x) => {
-    if (
-      x.type === "FILE" &&
-      x.segments[x.segments.length - 1].endsWith("index.md")
-    )
-      fileTree.push(x.segments.slice(0, -1));
+  console.info("generating static params...");
+  const params: { path: string[] }[] = [];
+  const srcPath = process.env.SRC_PATH;
+  if (srcPath === undefined) {
+    throw new Error("SRC_PATH 환경변수가 없습니다.");
+  }
+  await iteratePath(path.join(cwd(), srcPath), [], (filePath, segments) => {
+    if (filePath.endsWith("/index.md")) {
+      params.push({ path: segments });
+    }
   });
-  return fileTree.map((path) => ({ path }));
+
+  return params;
 };
+
+const iteratePath = async (
+  curPath: string,
+  segments: string[],
+  f: (filePath: string, segments: string[]) => void
+) => {
+  const names = await readdir(curPath);
+  const promises = names.map(async (name) => {
+    const nextPath = path.join(curPath, name);
+    const nextSegments = [...segments, name];
+
+    if (await isDirectory(nextPath)) {
+      if (isIgnoredPath(name)) return;
+      await iteratePath(nextPath, nextSegments, f);
+    } else {
+      f(nextPath, segments);
+    }
+  });
+  await Promise.all(promises);
+};
+
+const isIgnoredPath = (path: string) =>
+  path === "node_modules" || path.startsWith(".");
 
 export default PostPage;
