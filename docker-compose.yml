@@ -14,7 +14,7 @@ services:
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
 
   blog:
-    image: ghcr.io/yeolyi/blog_nextjs/blog:latest
+    image: ghcr.io/yeolyi/blog:latest
     ports:
       - "3000:3000"
     networks:
