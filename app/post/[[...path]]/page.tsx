@@ -20,7 +20,7 @@ export const generateMetadata = async ({
   const { data, content } = await assemblePost(params.path ?? []);
   return {
     title: data.title,
-    description: content.slice(150),
+    description: content.slice(0, 150),
   };
 };
 
