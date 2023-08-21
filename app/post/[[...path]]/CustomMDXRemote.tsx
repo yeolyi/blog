@@ -44,7 +44,11 @@ const CustomAnchor = (
     ) {
       return <a {...props} />;
     } else {
-      return <Link href={absolute(props.segments, props.href)} />;
+      return (
+        <Link href={absolute(props.segments, props.href)}>
+          {props.children}
+        </Link>
+      );
     }
   } else {
     return <a {...props} />;
