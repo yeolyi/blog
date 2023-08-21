@@ -10,13 +10,6 @@ export default function CustomMDXRemote({
   segments: string[];
   source: string;
 }) {
-  const options: MDXRemoteProps["options"] = {
-    mdxOptions: {
-      format: "md",
-      rehypePlugins: [() => rehypeHighlight({ ignoreMissing: true })],
-    },
-  };
-
   return (
     <MDXRemote
       source={source}
@@ -32,6 +25,13 @@ export default function CustomMDXRemote({
     />
   );
 }
+
+const options: MDXRemoteProps["options"] = {
+  mdxOptions: {
+    format: "md",
+    rehypePlugins: [() => rehypeHighlight({ ignoreMissing: true })],
+  },
+};
 
 const absolute = (segments: string[], href: string) => {
   if (
