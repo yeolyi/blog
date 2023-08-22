@@ -64,5 +64,5 @@ const absolute = (segments: string[], href: string) => {
     return href;
   }
 
-  return path.join("/post", ...segments, href);
+  return path.join("/docs", ...segments, href);
 };

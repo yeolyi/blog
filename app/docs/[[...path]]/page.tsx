@@ -3,10 +3,7 @@ import { Metadata } from "next";
 import getSrcPath from "@/lib/getSrcPath";
 import iteratePath from "@/lib/iteratePath";
 import CustomMDXRemote from "./CustomMDXRemote";
-import replaceCodeDirectives from "@/lib/replaceCodeDirectives";
-import { readFile } from "fs/promises";
-import matter from "gray-matter";
-import path from "path";
+import getFilledPost from "@/lib/getFilledPost";
 
 interface PostProps {
   params: {
@@ -17,15 +14,21 @@ interface PostProps {
 export const generateMetadata = async ({
   params,
 }: PostProps): Promise<Metadata> => {
-  const { data, content } = await assemblePost(params.path ?? []);
+  const { data, content } = await getFilledPost({
+    type: "SEGMENTS",
+    segments: params.path,
+  });
   return {
     title: data.title,
-    description: content.slice(0, 150),
+    description: data.description,
   };
 };
 
 const PostPage = async ({ params }: PostProps) => {
-  const { data, content } = await assemblePost(params.path ?? []);
+  const { data, content } = await getFilledPost({
+    type: "SEGMENTS",
+    segments: params.path,
+  });
   return (
     <>
       <h2>{data?.title}</h2>
@@ -48,28 +51,6 @@ export const generateStaticParams = async () => {
   await iteratePath(srcPath, [], f, skipFolder);
 
   return params;
-};
-
-interface PostCache {
-  data: { title?: string };
-  content: string;
-}
-
-const cache: { [key: string]: PostCache } = {};
-
-const assemblePost = async (segments: string[]) => {
-  const mdPath = path.join(getSrcPath(), ...segments, "index.md");
-
-  if (mdPath in cache) {
-    return cache[mdPath];
-  }
-
-  const md = await readFile(mdPath, { encoding: "utf-8" });
-  const { data, content } = matter(md);
-
-  const replacedMD = await replaceCodeDirectives(content, mdPath);
-
-  return (cache[mdPath] = { data, content: replacedMD });
 };
 
 export default PostPage;

@@ -1,11 +1,7 @@
-import Link from "next/link";
+import getFilledPost from "@/lib/getFilledPost";
+import { MDXRemote } from "next-mdx-remote/rsc";
 
-export default function Home() {
-  return (
-    <main className="prose m-8">
-      <h2>블로그 개발 중!</h2>
-      <h3>여기는 메인</h3>
-      <Link href="/post">글 보러가기</Link>
-    </main>
-  );
+export default async function Home() {
+  const source = await getFilledPost({ type: "PATH", path: "about.md" });
+  return <MDXRemote source={source.content} />;
 }
