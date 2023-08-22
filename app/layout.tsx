@@ -1,11 +1,19 @@
 import Header from "./Header";
 import "./globals.css";
 import type { Metadata } from "next";
+import localFont from "next/font/local";
 
 export const metadata: Metadata = {
   title: "개발자 성열",
   description: "매일의 공부를 기록합니다.",
 };
+
+const pretendard = localFont({
+  src: "./PretendardVariable.woff2",
+  weight: "45 920",
+  style: "normal",
+  display: "swap",
+});
 
 export default function RootLayout({
   children,
@@ -13,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko">
+    <html lang="ko" className={pretendard.className}>
       <body className="bg-slate-900">
         <div className="min-h-screen py-8 overflow-hidden lg:py-12">
           <div
