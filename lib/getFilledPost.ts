@@ -21,7 +21,7 @@ type PostPath =
 export default async function getFilledPost(postPath: PostPath) {
   const mdPath = getmdPath(postPath);
 
-  if (process.env.NODE_ENV === "development" && mdPath in cache) {
+  if (process.env.NODE_ENV !== "development" && mdPath in cache) {
     return cache[mdPath];
   }
 

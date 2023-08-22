@@ -1,3 +1,4 @@
+import Header from "./Header";
 import "./globals.css";
 import type { Metadata } from "next";
 
@@ -18,12 +19,12 @@ export default function RootLayout({
           <div
             className={`
             w-full px-6 py-12 
-
             md:max-w-3xl md:mx-auto 
             lg:max-w-4xl lg:pt-16 lg:pb-28
             `}
           >
             <div className="prose prose-invert lg:prose-lg mx-auto">
+              <Header />
               {children}
             </div>
           </div>

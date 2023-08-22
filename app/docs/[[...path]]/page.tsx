@@ -31,8 +31,7 @@ const PostPage = async ({ params }: PostProps) => {
   });
   return (
     <>
-      <h2>{data?.title}</h2>
-      <hr />
+      <h1>{data?.title}</h1>
       <CustomMDXRemote segments={params.path ?? []} source={content} />
     </>
   );
