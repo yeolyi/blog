@@ -9,14 +9,14 @@ export default function Header() {
   const pathName = usePathname();
 
   return (
-    <header className="not-prose flex gap-6 items-center mb-12 ">
+    <header className="not-prose flex gap-4 items-center mb-12 ">
       <a href="/">
         <Image
           src={Me}
           alt="주인장 사진"
           width={80}
           height={80}
-          className="m-0 object-contain rounded"
+          className="m-0 object-contain rounded-full border-2 border-slate-300"
           priority
         />
       </a>

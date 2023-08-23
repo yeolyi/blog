@@ -8,7 +8,7 @@ export default function TOC({ toc }: { toc: TOC }) {
   const [expanded, toggleExpanded] = useReducer((x) => !x, false);
   return (
     <nav>
-      <button className="" onClick={toggleExpanded}>
+      <button className="underline" onClick={toggleExpanded}>
         목차 {expanded ? "닫기" : "보기"}
       </button>
       {expanded && (
