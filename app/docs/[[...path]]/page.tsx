@@ -4,6 +4,7 @@ import getSrcPath from "@/lib/getSrcPath";
 import iteratePath from "@/lib/iteratePath";
 import CustomMDXRemote from "./CustomMDXRemote";
 import getFilledPost from "@/lib/getFilledPost";
+import Link from "next/link";
 
 interface PostProps {
   params: {
@@ -25,13 +26,25 @@ export const generateMetadata = async ({
 };
 
 const PostPage = async ({ params }: PostProps) => {
-  const { data, content } = await getFilledPost({
+  const { data, content, toc } = await getFilledPost({
     type: "SEGMENTS",
     segments: params.path,
   });
   return (
     <>
       <h1>{data?.title}</h1>
+      <ul>
+        {toc.h2.map(({ name }) => (
+          <li key={name}>
+            <Link
+              href={`#${name.replace(/ /, "-")}`}
+              className="no-underline text-slate-300 text-sm"
+            >
+              {name}
+            </Link>
+          </li>
+        ))}
+      </ul>
       <CustomMDXRemote segments={params.path ?? []} source={content} />
     </>
   );

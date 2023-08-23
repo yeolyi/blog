@@ -2,10 +2,19 @@ import { readFile } from "fs/promises";
 import path from "path";
 import getSrcPath from "./getSrcPath";
 import replaceCodeDirectives from "./replaceCodeDirectives";
+import getFrontMatter from "./getFrontMatter";
+
+interface TOC {
+  h2: {
+    name: string;
+    h3: string[];
+  }[];
+}
 
 interface PostCache {
   data: { title?: string; description?: string };
   content: string;
+  toc: TOC;
 }
 
 const cache: { [key: string]: PostCache } = {};
@@ -27,11 +36,11 @@ export default async function getFilledPost(
   }
 
   const md = await readFile(mdPath, { encoding: "utf-8" });
-  const { data, content } = extractFrontMatter(md);
-
+  const { data, content } = getFrontMatter(md);
+  const toc = extractTOC(content);
   const replacedMD = await replaceCodeDirectives(content, mdPath);
 
-  return (cache[mdPath] = { data, content: replacedMD });
+  return (cache[mdPath] = { data, content: replacedMD, toc });
 }
 
 const getmdPath = (postPath: PostPath) => {
@@ -42,27 +51,16 @@ const getmdPath = (postPath: PostPath) => {
   }
 };
 
-const extractFrontMatter = (content: string) => {
-  const reg = /---\s*((?:.|\n)*?)---((?:.|\n)*)/;
-  const match = content.match(reg);
-  if (match === null) {
-    return { data: {}, content };
-  } else {
-    const data = match[1]
-      .split("\n")
-      .reduce<{ [key: string]: string }>((acc, cur) => {
-        if (!cur.includes(":")) return acc;
-        const [key, value] = cur.split(":");
-        acc[key.trim()] = value.trim();
-        return acc;
-      }, {});
-    return {
-      data,
-      content: match[2],
-    };
-  }
-};
+const extractTOC = (content: string): TOC => {
+  const h2Reg = /^## (.+)/gm;
+  let m: RegExpExecArray | null;
+  const h2 = [];
+  do {
+    m = h2Reg.exec(content);
+    if (m) h2.push(m[1]);
+  } while (m);
 
-const extractTOC = (content: string) => {
-    
-}
+  return {
+    h2: h2.map((x) => ({ name: x, h3: [] })),
+  };
+};

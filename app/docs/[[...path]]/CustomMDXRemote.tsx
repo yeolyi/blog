@@ -1,7 +1,7 @@
 import { MDXRemote, MDXRemoteProps } from "next-mdx-remote/rsc";
 import Link from "next/link";
 import path from "path";
-import { DetailedHTMLProps, AnchorHTMLAttributes } from "react";
+import { DetailedHTMLProps, AnchorHTMLAttributes, HTMLAttributes } from "react";
 import rehypeHighlight from "rehype-highlight";
 
 export default function CustomMDXRemote({
@@ -16,6 +16,7 @@ export default function CustomMDXRemote({
       source={source}
       options={options}
       components={{
+        h2: (props) => <CustomH2 {...props} />,
         a: (props) => <CustomAnchor {...props} segments={segments} />,
         code: (props) => <code {...props} className="not-prose" />,
       }}
@@ -29,6 +30,13 @@ const options: MDXRemoteProps["options"] = {
     rehypePlugins: [() => rehypeHighlight({ ignoreMissing: true })],
   },
 };
+
+const CustomH2 = (
+  props: DetailedHTMLProps<
+    HTMLAttributes<HTMLHeadingElement>,
+    HTMLHeadingElement
+  >
+) => <h2 {...props} id={(props.children + "").replace(/ /, "-")} />;
 
 const CustomAnchor = (
   props: DetailedHTMLProps<
