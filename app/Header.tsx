@@ -19,29 +19,41 @@ export default function Header() {
           priority
         />
       </a>
+
       <div className="flex flex-col gap-2">
         <a href="/" className="no-underline">
           <h2 className="text-2xl font-bold text-white">개발자 성열</h2>
         </a>
         <div className="flex gap-4">
-          <a
-            href="/"
-            className={`text-slate-300 text-base font-medium ${
-              pathName !== "/" && "no-underline hover:underline"
-            }`}
-          >
-            About
-          </a>
-          <a
+          <NavAnchor href="/" current={pathName === "/"} text="About" />
+          <NavAnchor
             href="/docs"
-            className={`text-slate-300 text-base font-medium ${
-              !pathName.startsWith("/docs") && "no-underline hover:underline"
-            }`}
-          >
-            Docs
-          </a>
+            current={pathName.startsWith("/docs")}
+            text="Docs"
+          />
         </div>
       </div>
     </header>
   );
 }
+
+const NavAnchor = ({
+  text,
+  current,
+  href,
+}: {
+  text: string;
+  current: boolean;
+  href: string;
+}) => {
+  return (
+    <a
+      href={href}
+      className={`text-slate-300 text-base font-medium ${
+        current && "underline"
+      }`}
+    >
+      {text}
+    </a>
+  );
+};
