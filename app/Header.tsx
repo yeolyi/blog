@@ -16,6 +16,7 @@ export default function Header() {
           width={80}
           height={80}
           className="m-0 object-contain rounded"
+          priority
         />
       </a>
       <div className="flex flex-col gap-2">
