@@ -4,7 +4,7 @@ import getSrcPath from "@/lib/getSrcPath";
 import iteratePath from "@/lib/iteratePath";
 import CustomMDXRemote from "./CustomMDXRemote";
 import getFilledPost from "@/lib/getFilledPost";
-import Link from "next/link";
+import TOC from "@/app/docs/[[...path]]/TOC";
 
 interface PostProps {
   params: {
@@ -33,18 +33,7 @@ const PostPage = async ({ params }: PostProps) => {
   return (
     <>
       <h1>{data?.title}</h1>
-      <ul>
-        {toc.h2.map(({ name }) => (
-          <li key={name}>
-            <Link
-              href={`#${name.replace(/ /, "-")}`}
-              className="no-underline text-slate-300 text-sm"
-            >
-              {name}
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <TOC toc={toc} />
       <CustomMDXRemote segments={params.path ?? []} source={content} />
     </>
   );

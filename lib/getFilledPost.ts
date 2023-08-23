@@ -4,7 +4,7 @@ import getSrcPath from "./getSrcPath";
 import replaceCodeDirectives from "./replaceCodeDirectives";
 import getFrontMatter from "./getFrontMatter";
 
-interface TOC {
+export interface TOC {
   h2: {
     name: string;
     h3: string[];
