@@ -8,7 +8,7 @@ export default function Header() {
   const pathName = usePathname();
 
   return (
-    <header className="flex gap-6 items-center mb-12 ">
+    <header className="not-prose flex gap-6 items-center mb-12 ">
       <a href="/">
         <Image
           src={Me}
@@ -20,12 +20,12 @@ export default function Header() {
       </a>
       <div className="flex flex-col gap-2">
         <a href="/" className="no-underline">
-          <h2 className="m-0">개발자 성열</h2>
+          <h2 className="text-2xl font-bold text-white">개발자 성열</h2>
         </a>
         <div className="flex gap-4">
           <a
             href="/"
-            className={`text-slate-300 ${
+            className={`text-slate-300 text-base font-medium ${
               pathName !== "/" && "no-underline hover:underline"
             }`}
           >
@@ -33,7 +33,7 @@ export default function Header() {
           </a>
           <a
             href="/docs"
-            className={`text-slate-300 ${
+            className={`text-slate-300 text-base font-medium ${
               !pathName.startsWith("/docs") && "no-underline hover:underline"
             }`}
           >
