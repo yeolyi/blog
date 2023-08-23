@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Me from "@/public/me.jpg";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 export default function Header() {
   const pathName = usePathname();
@@ -47,13 +48,13 @@ const NavAnchor = ({
   href: string;
 }) => {
   return (
-    <a
+    <Link
       href={href}
       className={`text-slate-300 text-base font-medium ${
         current && "underline"
       }`}
     >
       {text}
-    </a>
+    </Link>
   );
 };

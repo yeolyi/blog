@@ -62,3 +62,7 @@ const extractFrontMatter = (content: string) => {
     };
   }
 };
+
+const extractTOC = (content: string) => {
+    
+}
