@@ -5,6 +5,7 @@ import iteratePath from "@/app/lib/iteratePath";
 import CustomMDXRemote from "./CustomMDXRemote";
 import getFilledMD from "@/app/lib/getFilledMD";
 import TOC from "@/app/docs/[[...path]]/TOC";
+import { MarkGithubIcon } from "@primer/octicons-react";
 
 interface PostProps {
   params: {
@@ -26,23 +27,29 @@ export const generateMetadata = async ({
   };
 };
 
-const PostPage = async ({ params }: PostProps) => {
+export default async function PostPage({ params }: PostProps) {
   const { data, content, toc } = await getFilledMD({
     type: "SEGMENTS",
     segments: params.path,
   });
-  const tocShown = params.path && 0 < params.path.length;
 
   return (
     <>
-      <h1>{data?.title}</h1>
-      {<p>{data.description}</p>}
-      {tocShown && <TOC toc={toc} />}
-      <hr />
+      <div className="flex flex-col">
+        <h1>{data?.title}</h1>
+        {data.description && (
+          <span className="mb-[16px]">{data.description}</span>
+        )}
+        {toc.h2.length && <TOC toc={toc} />}
+        <a className="self-end" href={getGithubLink(params.path)}>
+          <MarkGithubIcon size={24} />
+        </a>
+        <hr className="mt-[16px] mb-[32px]" />
+      </div>
       <CustomMDXRemote segments={params.path ?? []} source={content} />
     </>
   );
-};
+}
 
 export const generateStaticParams = async () => {
   const params: { path: string[] }[] = [];
@@ -59,4 +66,11 @@ export const generateStaticParams = async () => {
   return params;
 };
 
-export default PostPage;
+const getGithubLink = (path: string[] | undefined) => {
+  if (path === undefined || path.length === 0) {
+    return `https://github.com/Yeolyi/blog_src/blob/main/index.md`;
+  }
+  return `https://github.com/Yeolyi/blog_src/blob/main/${path.join(
+    "/"
+  )}/index.md`;
+};

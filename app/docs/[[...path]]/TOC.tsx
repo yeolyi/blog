@@ -1,6 +1,7 @@
 "use client";
 
 import { TOC } from "@/app/lib/extractTOC";
+import { ChevronDownIcon, ChevronUpIcon } from "@primer/octicons-react";
 import Link from "next/link";
 import { useReducer } from "react";
 
@@ -8,8 +9,13 @@ export default function TOC({ toc }: { toc: TOC }) {
   const [expanded, toggleExpanded] = useReducer((x) => !x, false);
   return (
     <nav>
-      <button className="underline" onClick={toggleExpanded}>
-        목차 {expanded ? "닫기" : "보기"}
+      <button className="flex items-center" onClick={toggleExpanded}>
+        목차
+        {expanded ? (
+          <ChevronUpIcon verticalAlign="middle" size={24} />
+        ) : (
+          <ChevronDownIcon verticalAlign="middle" size={24} />
+        )}
       </button>
       {expanded && (
         <ul>
