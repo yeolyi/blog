@@ -37,14 +37,12 @@ export default async function PostPage({ params }: PostProps) {
     <>
       <div className="flex flex-col">
         <h1>{data?.title}</h1>
-        {data.description && (
-          <span className="mb-[16px]">{data.description}</span>
-        )}
+        {data.description && <span className="mb-2">{data.description}</span>}
         {toc.h2.length && <TOC toc={toc} />}
         <a className="self-end" href={getGithubLink(params.path)}>
           <MarkGithubIcon size={24} />
         </a>
-        <hr className="mt-[16px] mb-[32px]" />
+        <hr className="m-0 mt-4" />
       </div>
       <CustomMDXRemote segments={params.path ?? []} source={content} />
     </>
