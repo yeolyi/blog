@@ -52,7 +52,7 @@ const CustomAnchor = (
       props.href.startsWith("https://") ||
       props.href.startsWith("/")
     ) {
-      return <a {...props} />;
+      return <a {...props} target="_blank" />;
     } else {
       return (
         <Link href={absolute(props.segments, props.href)}>
