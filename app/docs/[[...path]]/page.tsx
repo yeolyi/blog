@@ -1,9 +1,9 @@
 import "highlight.js/styles/github-dark.css";
 import { Metadata } from "next";
-import getSrcPath from "@/lib/getSrcPath";
-import iteratePath from "@/lib/iteratePath";
+import getSrcPath from "@/app/lib/getSrcPath";
+import iteratePath from "@/app/lib/iteratePath";
 import CustomMDXRemote from "./CustomMDXRemote";
-import getFilledPost from "@/lib/getFilledPost";
+import getFilledPost from "@/app/lib/getFilledPost";
 import TOC from "@/app/docs/[[...path]]/TOC";
 
 interface PostProps {
@@ -15,10 +15,11 @@ interface PostProps {
 export const generateMetadata = async ({
   params,
 }: PostProps): Promise<Metadata> => {
-  const { data, content } = await getFilledPost({
+  const { data } = await getFilledPost({
     type: "SEGMENTS",
     segments: params.path,
   });
+  
   return {
     title: data.title,
     description: data.description,
@@ -30,10 +31,12 @@ const PostPage = async ({ params }: PostProps) => {
     type: "SEGMENTS",
     segments: params.path,
   });
+  const tocShown = params.path && 0 < params.path.length;
+
   return (
     <>
       <h1>{data?.title}</h1>
-      {params.path && 0 < params.path.length && <TOC toc={toc} />}
+      {tocShown && <TOC toc={toc} />}
       <CustomMDXRemote segments={params.path ?? []} source={content} />
     </>
   );

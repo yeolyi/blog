@@ -1,4 +1,4 @@
-import getFilledPost from "@/lib/getFilledPost";
+import getFilledPost from "@/app/lib/getFilledPost";
 import { MDXRemote } from "next-mdx-remote/rsc";
 
 export default async function Home() {

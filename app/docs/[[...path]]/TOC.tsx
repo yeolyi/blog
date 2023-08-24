@@ -1,6 +1,6 @@
 "use client";
 
-import { TOC } from "@/lib/getFilledPost";
+import { TOC } from "@/app/lib/extractTOC";
 import Link from "next/link";
 import { useReducer } from "react";
 
@@ -14,17 +14,21 @@ export default function TOC({ toc }: { toc: TOC }) {
       {expanded && (
         <ul>
           {toc.h2.map(({ name }) => (
-            <li key={name}>
-              <Link
-                href={`#${name.replace(/ /, "-")}`}
-                className="no-underline text-slate-300"
-              >
-                {name}
-              </Link>
-            </li>
+            <TOCRow key={name} name={name} />
           ))}
         </ul>
       )}
     </nav>
   );
 }
+
+const TOCRow = ({ name }: { name: string }) => (
+  <li>
+    <Link
+      href={`#${name.replace(/ /, "-")}`}
+      className="no-underline text-slate-300"
+    >
+      {name}
+    </Link>
+  </li>
+);

@@ -1,4 +1,4 @@
-export default function getFrontMatter(content: string) {
+export default function extractFrontMatter(content: string) {
   const reg = /---\s*((?:.|\n)*?)---((?:.|\n)*)/;
   const match = content.match(reg);
   if (match === null) {
