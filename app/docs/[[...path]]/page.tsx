@@ -3,7 +3,7 @@ import { Metadata } from "next";
 import getSrcPath from "@/app/lib/getSrcPath";
 import iteratePath from "@/app/lib/iteratePath";
 import CustomMDXRemote from "./CustomMDXRemote";
-import getFilledPost from "@/app/lib/getFilledPost";
+import getFilledMD from "@/app/lib/getFilledMD";
 import TOC from "@/app/docs/[[...path]]/TOC";
 
 interface PostProps {
@@ -15,11 +15,11 @@ interface PostProps {
 export const generateMetadata = async ({
   params,
 }: PostProps): Promise<Metadata> => {
-  const { data } = await getFilledPost({
+  const { data } = await getFilledMD({
     type: "SEGMENTS",
     segments: params.path,
   });
-  
+
   return {
     title: data.title,
     description: data.description,
@@ -27,7 +27,7 @@ export const generateMetadata = async ({
 };
 
 const PostPage = async ({ params }: PostProps) => {
-  const { data, content, toc } = await getFilledPost({
+  const { data, content, toc } = await getFilledMD({
     type: "SEGMENTS",
     segments: params.path,
   });
@@ -36,7 +36,9 @@ const PostPage = async ({ params }: PostProps) => {
   return (
     <>
       <h1>{data?.title}</h1>
+      {<p>{data.description}</p>}
       {tocShown && <TOC toc={toc} />}
+      <hr />
       <CustomMDXRemote segments={params.path ?? []} source={content} />
     </>
   );

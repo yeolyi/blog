@@ -13,7 +13,7 @@ type PostPath =
       path: string;
     };
 
-export default async function getFilledPost(
+export default async function getFilledMD(
   postPath: PostPath
 ): Promise<PostCache> {
   const mdPath = getmdPath(postPath);

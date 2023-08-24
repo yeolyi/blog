@@ -3,6 +3,7 @@ import Link from "next/link";
 import path from "path";
 import { DetailedHTMLProps, AnchorHTMLAttributes, HTMLAttributes } from "react";
 import rehypeHighlight from "rehype-highlight";
+import remarkGfm from "remark-gfm";
 
 export default function CustomMDXRemote({
   segments,
@@ -27,6 +28,7 @@ export default function CustomMDXRemote({
 const options: MDXRemoteProps["options"] = {
   mdxOptions: {
     format: "md",
+    remarkPlugins: [remarkGfm],
     rehypePlugins: [() => rehypeHighlight({ ignoreMissing: true })],
   },
 };
