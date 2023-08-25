@@ -38,7 +38,7 @@ export default async function PostPage({ params }: PostProps) {
       <div className="flex flex-col">
         <h1>{data?.title}</h1>
         {data.description && <span className="mb-2">{data.description}</span>}
-        {toc.h2.length && <TOC toc={toc} />}
+        {toc.h2.length !== 0 && <TOC toc={toc} />}
         <a className="self-end" href={getGithubLink(params.path)}>
           <MarkGithubIcon size={24} />
         </a>
