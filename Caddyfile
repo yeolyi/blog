@@ -1,7 +1,7 @@
-www.yeolyi.com {
+yeolyi.com {
     reverse_proxy http://blog:3000
 }
 
-yeolyi.com {
-    redir https://www.yeolyi.com{uri}
+www.yeolyi.com {
+    redir https://yeolyi.com{uri}
 }
