@@ -1,9 +1,9 @@
 import "highlight.js/styles/github-dark.css";
 import { Metadata } from "next";
-import getSrcPath from "@/app/lib/getSrcPath";
-import iteratePath from "@/app/lib/iteratePath";
+import getSrcPath from "@/lib/getSrcPath";
+import iteratePath from "@/lib/iteratePath";
 import CustomMDXRemote from "./CustomMDXRemote";
-import getFilledMD from "@/app/lib/getFilledMD";
+import getFilledMD from "@/lib/getFilledMD";
 import TOC from "@/app/docs/[[...path]]/TOC";
 import { MarkGithubIcon } from "@primer/octicons-react";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { TOC } from "@/app/lib/extractTOC";
+import { TOC } from "@/lib/extractTOC";
 import { ChevronDownIcon, ChevronUpIcon } from "@primer/octicons-react";
 import Link from "next/link";
 import { useReducer } from "react";
