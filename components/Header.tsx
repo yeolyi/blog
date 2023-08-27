@@ -30,8 +30,8 @@ export default function Header() {
         </a>
         <div className="flex gap-4">
           <NavAnchor
-            href="/"
-            current={pathName === '/'}
+            href="/about"
+            current={pathName === '/about'}
             text="About"
           />
           <NavAnchor
