@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Me from "@/public/me.jpg";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
+import Image from 'next/image';
+import Me from '@/public/me.jpg';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Header() {
   const pathName = usePathname();
@@ -22,19 +22,26 @@ export default function Header() {
       </a>
 
       <div className="flex flex-col gap-2">
-        <a href="/" className="no-underline">
+        <a
+          href="/"
+          className="no-underline"
+        >
           <h2 className="text-2xl font-bold text-white">개발자 성열</h2>
         </a>
         <div className="flex gap-4">
-          <NavAnchor href="/" current={pathName === "/"} text="About" />
+          <NavAnchor
+            href="/"
+            current={pathName === '/'}
+            text="About"
+          />
           <NavAnchor
             href="/docs"
-            current={pathName.startsWith("/docs")}
+            current={pathName.startsWith('/docs')}
             text="Docs"
           />
           <NavAnchor
             href="/article"
-            current={pathName.startsWith("/article")}
+            current={pathName.startsWith('/article')}
             text="Article"
           />
         </div>
@@ -43,21 +50,11 @@ export default function Header() {
   );
 }
 
-const NavAnchor = ({
-  text,
-  current,
-  href,
-}: {
-  text: string;
-  current: boolean;
-  href: string;
-}) => {
+const NavAnchor = ({ text, current, href }: { text: string; current: boolean; href: string }) => {
   return (
     <Link
       href={href}
-      className={`text-slate-300 text-base font-medium ${
-        current && "underline"
-      }`}
+      className={`text-slate-300 text-base font-medium ${current && 'underline'}`}
     >
       {text}
     </Link>

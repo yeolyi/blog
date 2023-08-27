@@ -1,11 +1,11 @@
-import "highlight.js/styles/github-dark.css";
-import { Metadata } from "next";
-import getSrcPath from "@/lib/getSrcPath";
-import iteratePath from "@/lib/iteratePath";
-import CustomMDXRemote from "./CustomMDXRemote";
-import getFilledMD from "@/lib/getFilledMD";
-import TOC from "@/app/docs/[[...path]]/TOC";
-import { MarkGithubIcon } from "@primer/octicons-react";
+import 'highlight.js/styles/github-dark.css';
+import { Metadata } from 'next';
+import getSrcPath from '@/lib/getSrcPath';
+import iteratePath from '@/lib/iteratePath';
+import CustomMDXRemote from './CustomMDXRemote';
+import getFilledMD from '@/lib/getFilledMD';
+import TOC from '@/app/docs/[[...path]]/TOC';
+import { MarkGithubIcon } from '@primer/octicons-react';
 
 interface PostProps {
   params: {
@@ -13,11 +13,9 @@ interface PostProps {
   };
 }
 
-export const generateMetadata = async ({
-  params,
-}: PostProps): Promise<Metadata> => {
+export const generateMetadata = async ({ params }: PostProps): Promise<Metadata> => {
   const { data } = await getFilledMD({
-    type: "SEGMENTS",
+    type: 'SEGMENTS',
     segments: params.path,
   });
 
@@ -29,7 +27,7 @@ export const generateMetadata = async ({
 
 export default async function PostPage({ params }: PostProps) {
   const { data, content, toc } = await getFilledMD({
-    type: "SEGMENTS",
+    type: 'SEGMENTS',
     segments: params.path,
   });
 
@@ -39,12 +37,18 @@ export default async function PostPage({ params }: PostProps) {
         <h1>{data?.title}</h1>
         {data.description && <span className="mb-2">{data.description}</span>}
         {toc.h2.length !== 0 && <TOC toc={toc} />}
-        <a className="self-end" href={getGithubLink(params.path)}>
+        <a
+          className="self-end"
+          href={getGithubLink(params.path)}
+        >
           <MarkGithubIcon size={24} />
         </a>
         <hr className="m-0 mt-4" />
       </div>
-      <CustomMDXRemote segments={params.path ?? []} source={content} />
+      <CustomMDXRemote
+        segments={params.path ?? []}
+        source={content}
+      />
     </>
   );
 }
@@ -52,10 +56,9 @@ export default async function PostPage({ params }: PostProps) {
 export const generateStaticParams = async () => {
   const params: { path: string[] }[] = [];
   const srcPath = getSrcPath();
-  const skipFolder = (path: string) =>
-    path === "node_modules" || path.startsWith(".");
+  const skipFolder = (path: string) => path === 'node_modules' || path.startsWith('.');
   const f = (filePath: string, segments: string[]) => {
-    if (filePath.endsWith("/index.md")) {
+    if (filePath.endsWith('/index.md')) {
       params.push({ path: segments });
     }
   };
@@ -68,7 +71,5 @@ const getGithubLink = (path: string[] | undefined) => {
   if (path === undefined || path.length === 0) {
     return `https://github.com/Yeolyi/blog_src/blob/main/index.md`;
   }
-  return `https://github.com/Yeolyi/blog_src/blob/main/${path.join(
-    "/"
-  )}/index.md`;
+  return `https://github.com/Yeolyi/blog_src/blob/main/${path.join('/')}/index.md`;
 };

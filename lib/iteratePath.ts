@@ -1,11 +1,11 @@
-import { lstat, readdir } from "fs/promises";
-import path from "path";
+import { lstat, readdir } from 'fs/promises';
+import path from 'path';
 
 export default async function iteratePath(
   curPath: string,
   segments: string[],
   f: (filePath: string, segments: string[]) => void,
-  skipFolder: (folderName: string) => boolean
+  skipFolder: (folderName: string) => boolean,
 ) {
   const names = await readdir(curPath);
   const promises = names.map(async (name) => {

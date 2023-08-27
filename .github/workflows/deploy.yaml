@@ -31,8 +31,8 @@ jobs:
           host: ${{secrets.SSH_HOST}}
           username: ${{secrets.SSH_USER}}
           key: ${{secrets.SSH_KEY}}
-          source: "docker-compose.yml"
-          target: "blog"
+          source: 'docker-compose.yml'
+          target: 'blog'
           overwrite: true
 
       - name: SCP Command to Transfer Files
@@ -41,8 +41,8 @@ jobs:
           host: ${{secrets.SSH_HOST}}
           username: ${{secrets.SSH_USER}}
           key: ${{secrets.SSH_KEY}}
-          source: "Caddyfile"
-          target: "blog/caddy"
+          source: 'Caddyfile'
+          target: 'blog/caddy'
           overwrite: true
 
       - name: Build and push Docker images

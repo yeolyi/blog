@@ -1,4 +1,4 @@
-import { TOC } from "./extractTOC";
+import { TOC } from './extractTOC';
 
 export interface PostCache {
   data: { title?: string; description?: string };

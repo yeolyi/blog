@@ -1,9 +1,9 @@
-import { MDXRemote, MDXRemoteProps } from "next-mdx-remote/rsc";
-import Link from "next/link";
-import path from "path";
-import { DetailedHTMLProps, AnchorHTMLAttributes, HTMLAttributes } from "react";
-import rehypeHighlight from "rehype-highlight";
-import remarkGfm from "remark-gfm";
+import { MDXRemote, MDXRemoteProps } from 'next-mdx-remote/rsc';
+import Link from 'next/link';
+import path from 'path';
+import { DetailedHTMLProps, AnchorHTMLAttributes, HTMLAttributes } from 'react';
+import rehypeHighlight from 'rehype-highlight';
+import remarkGfm from 'remark-gfm';
 
 export default function CustomMDXRemote({
   segments,
@@ -18,47 +18,59 @@ export default function CustomMDXRemote({
       options={options}
       components={{
         h2: (props) => <CustomH2 {...props} />,
-        a: (props) => <CustomAnchor {...props} segments={segments} />,
-        code: (props) => <code {...props} className="not-prose" />,
+        a: (props) => (
+          <CustomAnchor
+            {...props}
+            segments={segments}
+          />
+        ),
+        code: (props) => (
+          <code
+            {...props}
+            className="not-prose"
+          />
+        ),
       }}
     />
   );
 }
 
-const options: MDXRemoteProps["options"] = {
+const options: MDXRemoteProps['options'] = {
   mdxOptions: {
-    format: "md",
+    format: 'md',
     remarkPlugins: [remarkGfm],
     rehypePlugins: [() => rehypeHighlight({ ignoreMissing: true })],
   },
 };
 
 const CustomH2 = (
-  props: DetailedHTMLProps<
-    HTMLAttributes<HTMLHeadingElement>,
-    HTMLHeadingElement
-  >
-) => <h2 {...props} id={(props.children + "").replace(/ /, "-")} />;
+  props: DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>,
+) => (
+  <h2
+    {...props}
+    id={(props.children + '').replace(/ /, '-')}
+  />
+);
 
 const CustomAnchor = (
-  props: DetailedHTMLProps<
-    AnchorHTMLAttributes<HTMLAnchorElement>,
-    HTMLAnchorElement
-  > & { segments: string[] }
+  props: DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> & {
+    segments: string[];
+  },
 ) => {
   if (props.href) {
     if (
-      props.href.startsWith("http://") ||
-      props.href.startsWith("https://") ||
-      props.href.startsWith("/")
+      props.href.startsWith('http://') ||
+      props.href.startsWith('https://') ||
+      props.href.startsWith('/')
     ) {
-      return <a {...props} target="_blank" />;
-    } else {
       return (
-        <Link href={absolute(props.segments, props.href)}>
-          {props.children}
-        </Link>
+        <a
+          {...props}
+          target="_blank"
+        />
       );
+    } else {
+      return <Link href={absolute(props.segments, props.href)}>{props.children}</Link>;
     }
   } else {
     return <a {...props} />;
@@ -66,13 +78,9 @@ const CustomAnchor = (
 };
 
 const absolute = (segments: string[], href: string) => {
-  if (
-    href.startsWith("http://") ||
-    href.startsWith("https://") ||
-    href.startsWith("/")
-  ) {
+  if (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('/')) {
     return href;
   }
 
-  return path.join("/docs", ...segments, href);
+  return path.join('/docs', ...segments, href);
 };

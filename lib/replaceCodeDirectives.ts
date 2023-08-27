@@ -1,10 +1,7 @@
-import { readFile } from "fs/promises";
-import * as path from "path";
+import { readFile } from 'fs/promises';
+import * as path from 'path';
 
-const replaceCodeDirectives = async (
-  content: string,
-  postAbsolutePath: string
-) => {
+const replaceCodeDirectives = async (content: string, postAbsolutePath: string) => {
   const codeContentRegex = /!@([^@!]+)@!/g;
   const replacer = buildReplacer(postAbsolutePath);
   try {
@@ -16,25 +13,19 @@ const replaceCodeDirectives = async (
 };
 
 const buildReplacer =
-  (postAbsolutePath: string) =>
-  async (match: string, codeFileRelativePath: string) => {
-    const codeFullPath = path.join(
-      postAbsolutePath,
-      "../",
-      codeFileRelativePath
-    );
+  (postAbsolutePath: string) => async (match: string, codeFileRelativePath: string) => {
+    const codeFullPath = path.join(postAbsolutePath, '../', codeFileRelativePath);
     const code = await readFile(codeFullPath, {
-      encoding: "utf-8",
+      encoding: 'utf-8',
     });
     const fileExtension = extractFileExtension(codeFileRelativePath);
     return formatMarkdownCode(fileExtension, code);
   };
 
 const extractFileExtension = (filePath: string) => {
-  const splited = filePath.split(".");
+  const splited = filePath.split('.');
 
-  if (splited.length < 2)
-    throw new Error(`${filePath}에서 확장자를 찾을 수 없음.`);
+  if (splited.length < 2) throw new Error(`${filePath}에서 확장자를 찾을 수 없음.`);
 
   return splited[splited.length - 1];
 };
@@ -45,16 +36,16 @@ const formatMarkdownCode = (fileExtension: string, code: string) =>
 const replaceAsync = async (
   str: string,
   regex: RegExp,
-  asyncFn: (str: string, p1: string) => Promise<string>
+  asyncFn: (str: string, p1: string) => Promise<string>,
 ) => {
   const promises: Promise<string>[] = [];
   str.replace(regex, (match, p1) => {
     const promise = asyncFn(match, p1);
     promises.push(promise);
-    return "";
+    return '';
   });
   const data = await Promise.all(promises);
-  return str.replace(regex, () => data.shift() ?? "");
+  return str.replace(regex, () => data.shift() ?? '');
 };
 
 export default replaceCodeDirectives;

@@ -4,8 +4,8 @@ services:
   caddy:
     image: caddy
     ports:
-      - "80:80"
-      - "443:443"
+      - '80:80'
+      - '443:443'
     networks:
       - caddy-net
     volumes:
@@ -16,7 +16,7 @@ services:
   blog:
     image: ghcr.io/yeolyi/blog:latest
     ports:
-      - "3000:3000"
+      - '3000:3000'
     networks:
       - caddy-net
 
