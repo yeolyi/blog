@@ -1,5 +1,5 @@
 import extractFrontMatter from '@/lib/extractFrontMatter';
-import getSrcPath from '@/lib/getSrcPath';
+import { getArticleSrcPath } from '@/lib/getPath';
 import { isDirectory } from '@/lib/iteratePath';
 import { readFile, readdir } from 'fs/promises';
 import Link from 'next/link';
@@ -43,8 +43,7 @@ interface ArticlePreview {
 }
 
 const getFrontmatters = async () => {
-  const srcPath = getSrcPath();
-  const articlePath = path.join(srcPath, 'article');
+  const articlePath = getArticleSrcPath();
   const folderAndFileNames = await readdir(articlePath);
   const frontmatters: ArticlePreview[] = [];
 

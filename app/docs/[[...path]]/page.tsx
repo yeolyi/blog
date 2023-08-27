@@ -1,11 +1,12 @@
 import 'highlight.js/styles/github-dark.css';
 import { Metadata } from 'next';
-import getSrcPath from '@/lib/getSrcPath';
+import { getPostSrcPath } from '@/lib/getPath';
 import iteratePath from '@/lib/iteratePath';
 import CustomMDXRemote from '../../../components/CustomMDXRemote';
 import getFilledMD from '@/lib/getFilledMD';
 import TOC from '@/components/TOC';
 import { GitHub } from 'react-feather';
+import seg2Path from '@/lib/seg2Path';
 
 interface PostProps {
   params: {
@@ -14,10 +15,7 @@ interface PostProps {
 }
 
 export const generateMetadata = async ({ params }: PostProps): Promise<Metadata> => {
-  const { data } = await getFilledMD({
-    type: 'SEGMENTS',
-    segments: params.path,
-  });
+  const { data } = await getFilledMD(seg2Path('POST', params.path));
 
   return {
     title: data.title,
@@ -26,10 +24,7 @@ export const generateMetadata = async ({ params }: PostProps): Promise<Metadata>
 };
 
 export default async function PostPage({ params }: PostProps) {
-  const { data, content, toc } = await getFilledMD({
-    type: 'SEGMENTS',
-    segments: params.path,
-  });
+  const { data, content, toc } = await getFilledMD(seg2Path('POST', params.path));
 
   return (
     <>
@@ -55,7 +50,7 @@ export default async function PostPage({ params }: PostProps) {
 
 export const generateStaticParams = async () => {
   const params: { path: string[] }[] = [];
-  const srcPath = getSrcPath();
+  const srcPath = getPostSrcPath();
   const skipFolder = (path: string) => path === 'node_modules' || path.startsWith('.');
   const f = (filePath: string, segments: string[]) => {
     if (filePath.endsWith('/index.md')) {

@@ -1,8 +1,10 @@
 import getFilledMD from '@/lib/getFilledMD';
+import { getAboutMDPath } from '@/lib/getPath';
 import { MDXRemote } from 'next-mdx-remote/rsc';
 
 export default async function Home() {
-  const source = await getFilledMD({ type: 'PATH', path: 'about.md' });
+  const aboutMDPath = getAboutMDPath();
+  const source = await getFilledMD(aboutMDPath);
 
   return (
     <>
