@@ -7,6 +7,7 @@ import path from 'path';
 
 export default async function Article() {
   const frontmatters = await getFrontmatters();
+  frontmatters.sort((a, b) => b.date.localeCompare(a.date));
 
   return (
     <>
@@ -38,7 +39,7 @@ const ArticleRow = ({ title, segment, date }: ArticlePreview) => {
 interface ArticlePreview {
   title?: string;
   description?: string;
-  date?: string;
+  date: string;
   segment: string;
 }
 
@@ -51,11 +52,11 @@ const getFrontmatters = async () => {
     const namePath = path.join(articlePath, name);
     if (!(await isDirectory(namePath))) return;
 
-    // TODO: index.md 없는거 처리하기
+    // TODO: index.md 없는거 예외 처리하기
     const mdPath = path.join(namePath, 'index.md');
     const md = await readFile(mdPath, { encoding: 'utf-8' });
     const frontmatter = extractFrontMatter(md);
-    frontmatters.push({ ...frontmatter.data, segment: name });
+    frontmatters.push({ ...frontmatter.data, segment: name, date: frontmatter.data.date ?? '-' });
   });
 
   await Promise.all(promises);
