@@ -1,3 +1,4 @@
+import Script from 'next/script';
 import Footer from './Footer';
 import Header from './Header';
 import './globals.css';
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           <div className="prose prose-invert lg:prose-lg mx-auto break-words selection:bg-pink-400">
             <Header />
+            <i data-feather="circle"></i>
             <div>{children}</div>
             <Footer />
           </div>

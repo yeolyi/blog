@@ -1,5 +1,5 @@
-import { MarkGithubIcon } from '@primer/octicons-react';
 import Link from 'next/link';
+import { GitHub, Instagram } from 'react-feather';
 
 export default function Footer() {
   return (
@@ -18,9 +18,21 @@ export default function Footer() {
         <div className="flex gap-4">
           <a
             className="no-underline"
+            href="https://instagram.com/yeolyii"
+          >
+            <Instagram
+              size={24}
+              stroke="rgb(229, 231, 235)"
+            />
+          </a>
+          <a
+            className="no-underline"
             href="https://github.com/yeolyi"
           >
-            <MarkGithubIcon size={24} />
+            <GitHub
+              size={24}
+              stroke="rgb(229, 231, 235)"
+            />
           </a>
         </div>
       </div>

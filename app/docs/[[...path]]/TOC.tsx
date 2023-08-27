@@ -1,9 +1,9 @@
 'use client';
 
 import { TOC } from '@/lib/extractTOC';
-import { ChevronDownIcon, ChevronUpIcon } from '@primer/octicons-react';
 import Link from 'next/link';
 import { useReducer } from 'react';
+import { ChevronDown, ChevronUp } from 'react-feather';
 
 export default function TOC({ toc }: { toc: TOC }) {
   const [expanded, toggleExpanded] = useReducer((x) => !x, false);
@@ -14,17 +14,7 @@ export default function TOC({ toc }: { toc: TOC }) {
         onClick={toggleExpanded}
       >
         목차
-        {expanded ? (
-          <ChevronUpIcon
-            verticalAlign="middle"
-            size={24}
-          />
-        ) : (
-          <ChevronDownIcon
-            verticalAlign="middle"
-            size={24}
-          />
-        )}
+        {expanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
       </button>
       {expanded && (
         <ul>

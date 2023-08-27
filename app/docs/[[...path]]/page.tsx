@@ -5,7 +5,7 @@ import iteratePath from '@/lib/iteratePath';
 import CustomMDXRemote from './CustomMDXRemote';
 import getFilledMD from '@/lib/getFilledMD';
 import TOC from '@/app/docs/[[...path]]/TOC';
-import { MarkGithubIcon } from '@primer/octicons-react';
+import { GitHub } from 'react-feather';
 
 interface PostProps {
   params: {
@@ -41,7 +41,7 @@ export default async function PostPage({ params }: PostProps) {
           className="self-end"
           href={getGithubLink(params.path)}
         >
-          <MarkGithubIcon size={24} />
+          <GitHub size={24} />
         </a>
         <hr className="m-0 mt-4" />
       </div>
