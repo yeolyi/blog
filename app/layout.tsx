@@ -32,7 +32,7 @@ export default function RootLayout({
             lg:max-w-4xl
         `}
         >
-          <div className="prose prose-invert prose-sm lg:prose-base mx-auto break-words selection:bg-pink-400">
+          <div className="prose prose-invert lg:prose-lg mx-auto break-words selection:bg-pink-400">
             <Header />
             <div>{children}</div>
             <Footer />
