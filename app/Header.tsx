@@ -35,14 +35,14 @@ export default function Header() {
             text="About"
           />
           <NavAnchor
-            href="/docs"
-            current={pathName.startsWith('/docs')}
-            text="Docs"
-          />
-          <NavAnchor
             href="/article"
             current={pathName.startsWith('/article')}
             text="Article"
+          />
+          <NavAnchor
+            href="/docs"
+            current={pathName.startsWith('/docs')}
+            text="Docs"
           />
         </div>
       </div>
