@@ -22,7 +22,7 @@ export default async function iteratePath(
   await Promise.all(promises);
 }
 
-const isDirectory = async (path: string) => {
+export const isDirectory = async (path: string) => {
   const stat = await lstat(path);
   return stat.isDirectory();
 };

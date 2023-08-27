@@ -2,10 +2,11 @@ import 'highlight.js/styles/github-dark.css';
 import { Metadata } from 'next';
 import getSrcPath from '@/lib/getSrcPath';
 import iteratePath from '@/lib/iteratePath';
-import CustomMDXRemote from '../../../components/CustomMDXRemote';
 import getFilledMD from '@/lib/getFilledMD';
 import TOC from '@/components/TOC';
 import { GitHub } from 'react-feather';
+import CustomMDXRemote from '@/components/CustomMDXRemote';
+import path from 'path';
 
 interface PostProps {
   params: {
@@ -16,7 +17,7 @@ interface PostProps {
 export const generateMetadata = async ({ params }: PostProps): Promise<Metadata> => {
   const { data } = await getFilledMD({
     type: 'SEGMENTS',
-    segments: params.path,
+    segments: ['article', ...(params.path ?? [])],
   });
 
   return {
@@ -28,7 +29,7 @@ export const generateMetadata = async ({ params }: PostProps): Promise<Metadata>
 export default async function PostPage({ params }: PostProps) {
   const { data, content, toc } = await getFilledMD({
     type: 'SEGMENTS',
-    segments: params.path,
+    segments: ['article', ...(params.path ?? [])],
   });
 
   return (
@@ -55,14 +56,14 @@ export default async function PostPage({ params }: PostProps) {
 
 export const generateStaticParams = async () => {
   const params: { path: string[] }[] = [];
-  const srcPath = getSrcPath();
+  const articlePath = path.join(getSrcPath(), 'article');
   const skipFolder = (path: string) => path === 'node_modules' || path.startsWith('.');
   const f = (filePath: string, segments: string[]) => {
     if (filePath.endsWith('/index.md')) {
       params.push({ path: segments });
     }
   };
-  await iteratePath(srcPath, [], f, skipFolder);
+  await iteratePath(articlePath, [], f, skipFolder);
 
   return params;
 };
@@ -71,5 +72,5 @@ const getGithubLink = (path: string[] | undefined) => {
   if (path === undefined || path.length === 0) {
     return `https://github.com/Yeolyi/blog_src/blob/main/index.md`;
   }
-  return `https://github.com/Yeolyi/blog_src/blob/main/${path.join('/')}/index.md`;
+  return `https://github.com/Yeolyi/blog_src/blob/main/article/${path.join('/')}/index.md`;
 };
