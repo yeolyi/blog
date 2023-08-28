@@ -1,8 +1,3 @@
-import getFilledMD from '@/lib/getFilledMD';
-import { getAboutMDPath } from '@/lib/getPath';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-import { redirect } from 'next/navigation';
-
 export default async function Home() {
-  redirect('/about');
+  return <h2>메인 공사중 🛠️</h2>;
 }
