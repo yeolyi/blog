@@ -11,17 +11,26 @@ export const metadata: Metadata = {
 };
 
 const pretendard = localFont({
-  src: '../public/PretendardVariable.woff2',
+  src: '../font/PretendardVariable.woff2',
   weight: '45 920',
   style: 'normal',
   display: 'swap',
+  variable: '--font-pretendard',
+});
+
+const firaCode = localFont({
+  src: '../font/FiraCode-VF.woff2',
+  weight: '45 920',
+  style: 'normal',
+  display: 'swap',
+  variable: '--font-firacode',
 });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang="ko"
-      className={pretendard.className}
+      className={`${pretendard.variable} ${firaCode.variable} font-pretendard`}
     >
       <body className="bg-slate-900">
         <div

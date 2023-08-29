@@ -7,7 +7,12 @@ const config: Config = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        firacode: ['var(--font-firacode)'],
+        pretendard: ['var(--font-pretendard)'],
+      },
+    },
   },
   plugins: [require('@tailwindcss/typography')],
 };
