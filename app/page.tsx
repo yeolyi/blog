@@ -4,7 +4,7 @@ import ContributionGraph from './ContrubutionGraph';
 export default function Home() {
   return (
     <div className="not-prose flex flex-col gap-16">
-      <p className="font-firacode text-[4rem] m-0 flex flex-col gap-6 leading-none font-semibold">
+      <p className="font-firacode text-5xl m-0 flex flex-col gap-6 leading-none font-semibold">
         <Anchor
           key="0"
           href="/about"

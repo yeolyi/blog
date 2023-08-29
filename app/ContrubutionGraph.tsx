@@ -24,7 +24,37 @@ interface ContributionWeek {
   }[];
 }
 
+const caption = "JANDI"
+
 export default async function ContributionGraph() {
+  const weeks = await getWeeks();
+
+  return (
+    <div className="flex font-firacode leading-none cursor-none text-lg overflow-x-scroll no-scrollbar">
+      {weeks.map((week, idx) => {
+        return (
+          <div
+            key={idx}
+            className="flex flex-col whitespace-pre"
+          >
+            {week.contributionDays.map((day) => {
+              return (
+                <span
+                  key={day.date}
+                  className="hover:bg-[#E9390B]"
+                >
+                  {countToChar(day.contributionCount)}
+                </span>
+              );
+            })}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+const getWeeks = async () => {
   const resp: GraphQLResponse = await graphqlWithAuth(
     `query($userName:String!) {
     user(login: $userName){
@@ -44,35 +74,8 @@ export default async function ContributionGraph() {
     { userName: 'yeolyi' },
   );
 
-  const weeks = resp.user.contributionsCollection.contributionCalendar.weeks;
-
-  return (
-    <div className="flex font-firacode leading-none cursor-none text-lg">
-      {weeks.map((week, idx) => {
-        return (
-          <div
-            key={idx}
-            className="flex flex-col whitespace-pre"
-          >
-            {week.contributionDays.map((day) => {
-              if (day.contributionCount === 0) {
-                console.log(day.date);
-              }
-              return (
-                <span
-                  key={day.date}
-                  className="hover:bg-[#E9390B]"
-                >
-                  {countToChar(day.contributionCount)}
-                </span>
-              );
-            })}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
+  return resp.user.contributionsCollection.contributionCalendar.weeks;
+};
 
 const countToChar = (count: number) => {
   if (0xf < count) return '+';
