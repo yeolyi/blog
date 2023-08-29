@@ -9,42 +9,44 @@ export default function Header() {
   const pathName = usePathname();
 
   return (
-    <header className="not-prose flex gap-4 items-center mb-12 ">
+    <header className="not-prose flex gap-4 items-center mb-12 font-firacode">
       <a href="/">
         <Image
           src={Me}
           alt="주인장 사진"
           width={80}
           height={80}
-          className="m-0 object-contain rounded-full border-2 border-slate-300"
+          className="m-0 object-contain"
           priority
         />
       </a>
 
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-1">
         <a
           href="/"
           className="no-underline"
         >
-          <h2 className="text-2xl font-bold text-white">개발자 성열</h2>
+          <h2 className="text-3xl font-bold text-white">YeolYi</h2>
         </a>
-        <div className="flex gap-4">
-          <NavAnchor
-            href="/about"
-            current={pathName === '/about'}
-            text="About"
-          />
-          <NavAnchor
-            href="/article"
-            current={pathName.startsWith('/article')}
-            text="Article"
-          />
-          <NavAnchor
-            href="/docs"
-            current={pathName.startsWith('/docs')}
-            text="Docs"
-          />
-        </div>
+        {pathName !== '/' && (
+          <div className="flex gap-4">
+            <NavAnchor
+              href="/about"
+              current={pathName === '/about'}
+              text="About"
+            />
+            <NavAnchor
+              href="/article"
+              current={pathName.startsWith('/article')}
+              text="Article"
+            />
+            <NavAnchor
+              href="/docs"
+              current={pathName.startsWith('/docs')}
+              text="Docs"
+            />
+          </div>
+        )}
       </div>
     </header>
   );

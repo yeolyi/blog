@@ -3,7 +3,7 @@ import { GitHub, Icon, Instagram } from 'react-feather';
 
 export default function Footer() {
   return (
-    <footer className="mt-20">
+    <footer className="font-firacode mt-20">
       <hr className="mt-20 mb-4" />
       <div className="flex items-center justify-between mr-3">
         <div>
@@ -11,7 +11,7 @@ export default function Footer() {
             href="/"
             className="no-underline"
           >
-            개발자 성열
+            YeolYi
           </Link>
           <p className="m-0">© 2023 YeolYi Powered by Next.js & Tailwind</p>
         </div>
