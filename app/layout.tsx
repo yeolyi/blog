@@ -43,8 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           <div className="prose prose-invert lg:prose-lg mx-auto break-words selection:bg-pink-700">
             <Header />
-            <i data-feather="circle"></i>
-            <div>{children}</div>
+            {children}
             <Footer />
           </div>
         </div>

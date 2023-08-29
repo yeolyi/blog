@@ -9,22 +9,22 @@ export default function Home() {
           key="0"
           href="/about"
         >
-          About <span className="group-hover:hidden">{'=='}</span>
-          <span className="hidden group-hover:inline">{'!='}</span>
+          About <span className="group-hover:hidden text-slate-300">{'=='}</span>
+          <span className="hidden group-hover:inline text-slate-300">{'!='}</span>
         </Anchor>
         <Anchor
           key="1"
           href="/article"
         >
-          Article <span className="group-hover:hidden">{'/*'}</span>
-          <span className="hidden group-hover:inline">{'*/'}</span>
+          Article <span className="group-hover:hidden text-slate-300">{'/*'}</span>
+          <span className="hidden group-hover:inline text-slate-300">{'*/'}</span>
         </Anchor>
         <Anchor
           key="2"
           href="/docs"
         >
-          Docs <span className="group-hover:hidden">{'>>-->'}</span>
-          <span className="hidden group-hover:inline">{'<--<<'}</span>
+          Docs <span className="group-hover:hidden text-slate-300">{'>>-->'}</span>
+          <span className="hidden group-hover:inline text-slate-300">{'<--<<'}</span>
         </Anchor>
       </p>
       <ContributionGraph />
@@ -35,7 +35,7 @@ export default function Home() {
 const Anchor = ({ href, children }: { href: string; children: ReactNode }) => (
   <a
     href={href}
-    className="no-underline hover:text-[#E9390B] text-white group"
+    className="no-underline hover:text-[#E9390B] text-white group self-start"
   >
     {children}
   </a>

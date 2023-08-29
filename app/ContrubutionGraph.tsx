@@ -24,13 +24,24 @@ interface ContributionWeek {
   }[];
 }
 
-const caption = "JANDI"
+const caption = 'JANDI';
 
 export default async function ContributionGraph() {
   const weeks = await getWeeks();
 
   return (
-    <div className="flex font-firacode leading-none cursor-none text-lg overflow-x-scroll no-scrollbar">
+    // 왜 y hidden해야하지??
+    <div className="flex font-firacode leading-none cursor-none text-lg overflow-x-scroll overflow-y-hidden no-scrollbar">
+      <div className="flex flex-col whitespace-pre mr-3">
+        {Array.from('SMTWTFS').map((x) => (
+          <span
+            key={x}
+            className="hover:bg-[#E9390B]"
+          >
+            {x}
+          </span>
+        ))}
+      </div>
       {weeks.map((week, idx) => {
         return (
           <div
