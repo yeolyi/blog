@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             lg:max-w-4xl
         `}
         >
-          <div className="prose prose-invert lg:prose-lg mx-auto break-words selection:bg-pink-400">
+          <div className="prose prose-invert lg:prose-lg mx-auto break-words selection:bg-pink-700">
             <Header />
             <i data-feather="circle"></i>
             <div>{children}</div>

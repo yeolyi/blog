@@ -45,6 +45,10 @@ jobs:
           target: 'blog/caddy'
           overwrite: true
 
+      - name: Write .env
+        run: |
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" > .env.local
+
       - name: Build and push Docker images
         uses: docker/build-push-action@v4.1.1
         with:
