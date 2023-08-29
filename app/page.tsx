@@ -16,8 +16,8 @@ export default function Home() {
           key="1"
           href="/article"
         >
-          Article <span className="group-hover:hidden text-slate-300">{'/*'}</span>
-          <span className="hidden group-hover:inline text-slate-300">{'*/'}</span>
+          <span className="group-hover:hidden text-slate-300">{'/*'}</span>
+          <span className="hidden group-hover:inline text-slate-300">{'*/'}</span> Article
         </Anchor>
         <Anchor
           key="2"

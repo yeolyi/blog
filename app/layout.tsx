@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="ko"
       className={`${pretendard.variable} ${firaCode.variable} font-pretendard`}
     >
-      <body className="bg-slate-900">
+      <body className="bg-black">
         <div
           className={`
             min-h-screen py-16 overflow-hidden lg:py-20
