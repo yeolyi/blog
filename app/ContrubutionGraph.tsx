@@ -33,9 +33,9 @@ export default async function ContributionGraph() {
     // 왜 y hidden해야하지??
     <div className="flex font-firacode leading-none cursor-none text-lg overflow-x-scroll overflow-y-hidden no-scrollbar">
       <div className="flex flex-col whitespace-pre mr-3">
-        {Array.from('SMTWTFS').map((x) => (
+        {Array.from('SMTWTFS').map((x, idx) => (
           <span
-            key={x}
+            key={idx}
             className="hover:bg-[#E9390B]"
           >
             {x}
