@@ -10,7 +10,7 @@ export default function Header() {
 
   return (
     <header className="not-prose flex gap-4 items-center mb-12 font-firacode">
-      <a href="/">
+      <Link href="/">
         <Image
           src={Me}
           alt="주인장 사진"
@@ -19,15 +19,15 @@ export default function Header() {
           className="m-0 object-contain"
           priority
         />
-      </a>
+      </Link>
 
       <div className="flex flex-col gap-1">
-        <a
+        <Link
           href="/"
           className="no-underline"
         >
           <h2 className="text-3xl font-bold text-white">YeolYi</h2>
-        </a>
+        </Link>
         {pathName !== '/' && (
           <div className="flex gap-4">
             <NavAnchor

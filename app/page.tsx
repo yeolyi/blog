@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import ContributionGraph from './ContrubutionGraph';
+import Link from 'next/link';
 
 export default function Home() {
   return (
@@ -33,10 +34,10 @@ export default function Home() {
 }
 
 const Anchor = ({ href, children }: { href: string; children: ReactNode }) => (
-  <a
+  <Link
     href={href}
     className="no-underline hover:text-[#E9390B] text-white group self-start"
   >
     {children}
-  </a>
+  </Link>
 );
