@@ -4,7 +4,6 @@ import { GitHub, Icon, Instagram } from 'react-feather';
 export default function Footer() {
   return (
     <footer className="mt-20">
-      <hr className="mt-20 mb-4" />
       <div className="flex items-center justify-between mr-3">
         <div>
           <Link

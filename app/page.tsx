@@ -20,7 +20,7 @@ export default function Home() {
         <h2 className="text-6xl sm:text-8xl text-white font-semibold mt-[-3rem] sm:mt-[-4rem]">
           YeolYi
         </h2>
-        <p className="text-white break-keep">배우고 익히는 재미로 살아가는 개발자 이성열입니다.</p>
+        <p className="text-white break-keep">배우고 익히는 재미로 사는 개발자 이성열입니다.</p>
       </div>
 
       <div className="flex justify-end gap-4">
@@ -38,7 +38,9 @@ export default function Home() {
         />
       </div>
 
-      <p className="text-5xl m-0 p-4 flex flex-col gap-6 leading-none font-semibold bg-orange text-black">
+      <hr />
+
+      <p className="text-5xl m-0 p-4 flex flex-col gap-6 leading-none font-semibold bg-orange text-black items-start">
         <Anchor
           key="0"
           href="/about"
@@ -58,6 +60,8 @@ export default function Home() {
           Docs
         </Anchor>
       </p>
+
+      <hr />
 
       <ContributionGraph />
     </div>

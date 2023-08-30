@@ -12,12 +12,12 @@ export default async function Article() {
   return (
     <>
       <h1 className="text-6xl">Article</h1>
-      <div className="flex flex-col gap-4">
-        {frontmatters.map((prop) => (
-          <ArticleRow
-            key={prop.segment}
-            {...prop}
-          />
+      <div className="flex flex-col items-start gap-4">
+        {frontmatters.map((prop, idx) => (
+          <div key={prop.segment}>
+            <ArticleRow {...prop} />
+            <hr className="mx-0 mt-2 mb-4" />
+          </div>
         ))}
       </div>
     </>
@@ -30,7 +30,7 @@ const ArticleRow = ({ title, segment, date }: ArticlePreview) => {
       className="no-underline"
       href={`/article/${segment}`}
     >
-      <h3 className="m-0">{title}</h3>
+      <h3 className="m-0 ">{title}</h3>
       <time>{date}</time>
     </Link>
   );

@@ -44,7 +44,7 @@ export default async function ContributionGraph() {
                 return (
                   <span
                     key={day.date}
-                    className="hover:bg-[#E9390B] w-2 cursor-none"
+                    className="hover:bg-[#E9390B] text-[1rem] w-[.7rem] cursor-none"
                   >
                     {countToChar(day.contributionCount)}
                   </span>

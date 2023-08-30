@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             lg:max-w-4xl
         `}
         >
-          <div className="prose prose-invert lg:prose-lg mx-auto break-words selection:bg-orange [&_hr]:border-white ">
+          <div className="prose prose-invert lg:prose-lg mx-auto break-words selection:bg-orange [&_hr]:border-white">
             {children}
           </div>
         </div>
