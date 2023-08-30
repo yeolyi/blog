@@ -10,14 +10,14 @@ export default function TOC({ toc }: { toc: TOC }) {
   return (
     <nav>
       <button
-        className="flex items-center"
+        className="flex items-center text-white font-bold mb-2"
         onClick={toggleExpanded}
       >
         목차
         {expanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
       </button>
       {expanded && (
-        <ul>
+        <ul className="leading-8">
           {toc.h2.map(({ name }) => (
             <TOCRow
               key={name}

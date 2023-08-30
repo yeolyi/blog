@@ -6,6 +6,7 @@ import getFilledMD from '@/lib/getFilledMD';
 import TOC from '@/components/TOC';
 import { GitHub } from 'react-feather';
 import seg2Path from '@/lib/seg2Path';
+import PageHeader from '@/components/PageHeader';
 
 interface PostProps {
   params: {
@@ -27,9 +28,8 @@ export default async function PostPage({ params }: PostProps) {
 
   return (
     <>
-      <div className="flex flex-col">
-        <h1 className="text-6xl">{data?.title}</h1>
-        {data.description && <span className="mb-2">{data.description}</span>}
+      <div className="flex flex-col text-white">
+        <PageHeader>{data?.title}</PageHeader>
         {toc.h2.length !== 0 && <TOC toc={toc} />}
         <a
           className="self-end"
@@ -37,7 +37,7 @@ export default async function PostPage({ params }: PostProps) {
         >
           <GitHub size={24} />
         </a>
-        <hr className="m-0 mt-4" />
+        <hr className="mt-4 mb-12" />
       </div>
       <CustomMDXRemote
         segments={params.path ?? []}

@@ -9,45 +9,32 @@ export default function Header() {
   const pathName = usePathname();
 
   return (
-    <header className="not-prose flex gap-4 items-center mb-12">
-      <Link href="/">
-        <Image
-          src={Me}
-          alt="주인장 사진"
-          width={80}
-          height={80}
-          className="m-0 object-contain"
-          priority
-        />
+    <header className="flex flex-col items-start justify-between gap-1 mb-4 sm:flex-row sm:items-end">
+      <Link
+        href="/"
+        className="no-underline"
+      >
+        <h2 className="text-3xl font-bold text-white">YeolYi</h2>
       </Link>
-
-      <div className="flex flex-col gap-1">
-        <Link
-          href="/"
-          className="no-underline"
-        >
-          <h2 className="text-3xl font-bold text-white">YeolYi</h2>
-        </Link>
-        {pathName !== '/' && (
-          <div className="flex gap-4">
-            <NavAnchor
-              href="/about"
-              current={pathName === '/about'}
-              text="About"
-            />
-            <NavAnchor
-              href="/article"
-              current={pathName.startsWith('/article')}
-              text="Article"
-            />
-            <NavAnchor
-              href="/docs"
-              current={pathName.startsWith('/docs')}
-              text="Docs"
-            />
-          </div>
-        )}
-      </div>
+      {pathName !== '/' && (
+        <div className="flex gap-4">
+          <NavAnchor
+            href="/about"
+            current={pathName === '/about'}
+            text="About"
+          />
+          <NavAnchor
+            href="/article"
+            current={pathName.startsWith('/article')}
+            text="Article"
+          />
+          <NavAnchor
+            href="/docs"
+            current={pathName.startsWith('/docs')}
+            text="Docs"
+          />
+        </div>
+      )}
     </header>
   );
 }

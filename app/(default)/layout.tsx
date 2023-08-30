@@ -13,7 +13,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <>
       <Header />
-      {children}
+      <hr className="mb-16" />
+      <div className="max-w-[65ch] m-auto">{children}</div>
+      <hr className="mt-20" />
       <Footer />
     </>
   );

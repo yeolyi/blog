@@ -7,6 +7,7 @@ import { GitHub } from 'react-feather';
 import CustomMDXRemote from '@/components/CustomMDXRemote';
 import path from 'path';
 import seg2Path from '@/lib/seg2Path';
+import PageHeader from '@/components/PageHeader';
 
 interface PostProps {
   params: {
@@ -29,16 +30,19 @@ export default async function PostPage({ params }: PostProps) {
   return (
     <>
       <div className="flex flex-col">
-        <h1>{data?.title}</h1>
+        <PageHeader>{data.title}</PageHeader>
         {data.description && <span className="mb-2">{data.description}</span>}
         {toc.h2.length !== 0 && <TOC toc={toc} />}
         <a
           className="self-end"
           href={getGithubLink(params.path)}
         >
-          <GitHub size={24} />
+          <GitHub
+            size={24}
+            color="white"
+          />
         </a>
-        <hr className="m-0 mt-4" />
+        <hr className="mt-4 mb-12" />
       </div>
       <CustomMDXRemote
         segments={params.path ?? []}

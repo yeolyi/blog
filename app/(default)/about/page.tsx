@@ -1,6 +1,7 @@
+import CustomMDXRemote from '@/components/CustomMDXRemote';
+import PageHeader from '@/components/PageHeader';
 import getFilledMD from '@/lib/getFilledMD';
 import { getAboutMDPath } from '@/lib/getPath';
-import { MDXRemote } from 'next-mdx-remote/rsc';
 
 export default async function Home() {
   const aboutMDPath = getAboutMDPath();
@@ -8,8 +9,8 @@ export default async function Home() {
 
   return (
     <>
-      <h1 className="text-6xl">About</h1>
-      <MDXRemote source={source.content} />
+      <PageHeader bottomMargin>About</PageHeader>
+      <CustomMDXRemote source={source.content} />
     </>
   );
 }

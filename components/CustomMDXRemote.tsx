@@ -10,29 +10,31 @@ export default function CustomMDXRemote({
   segments,
   source,
 }: {
-  segments: string[];
+  segments?: string[];
   source: string;
 }) {
   return (
-    <MDXRemote
-      source={source}
-      options={options}
-      components={{
-        h2: (props) => <CustomH2 {...props} />,
-        a: (props) => (
-          <CustomAnchor
-            {...props}
-            segments={segments}
-          />
-        ),
-        pre: (props) => (
-          <pre
-            {...props}
-            className="rounded-none border border-white shadow-[8px_8px_0px_0px_white] no-scrollbar p-6"
-          />
-        ),
-      }}
-    />
+    <div className="prose prose-invert prose-base mx-auto">
+      <MDXRemote
+        source={source}
+        options={options}
+        components={{
+          h2: (props) => <CustomH2 {...props} />,
+          a: (props) => (
+            <CustomAnchor
+              {...props}
+              segments={segments ?? []}
+            />
+          ),
+          pre: (props) => (
+            <pre
+              {...props}
+              className="rounded-none border border-white shadow-[8px_8px_0px_0px_white] no-scrollbar p-6"
+            />
+          ),
+        }}
+      />
+    </div>
   );
 }
 
