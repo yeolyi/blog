@@ -4,6 +4,7 @@ import path from 'path';
 import { DetailedHTMLProps, AnchorHTMLAttributes, HTMLAttributes } from 'react';
 import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from 'remark-gfm';
+import './github-dark.css';
 
 export default function CustomMDXRemote({
   segments,
@@ -24,10 +25,10 @@ export default function CustomMDXRemote({
             segments={segments}
           />
         ),
-        code: (props) => (
-          <code
+        pre: (props) => (
+          <pre
             {...props}
-            className="not-prose"
+            className="rounded-none border border-white shadow-[8px_8px_0px_0px_white] no-scrollbar p-6"
           />
         ),
       }}

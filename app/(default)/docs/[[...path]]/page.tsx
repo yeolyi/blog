@@ -1,4 +1,3 @@
-import 'highlight.js/styles/github-dark.css';
 import { Metadata } from 'next';
 import { getPostSrcPath } from '@/lib/getPath';
 import iteratePath from '@/lib/iteratePath';
