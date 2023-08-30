@@ -7,8 +7,8 @@ import { GitHub, Icon, Instagram, Shield } from 'react-feather';
 
 export default function Home() {
   return (
-    <div className="not-prose flex flex-col gap-16">
-      <div className="relative">
+    <div className="not-prose flex flex-col gap-12">
+      <div>
         <Image
           src={Me}
           alt="주인장 사진"
@@ -17,12 +17,10 @@ export default function Home() {
           className="m-0 object-contain"
           priority
         />
-        <h2 className="text-8xl text-white font-semibold absolute bottom-[-50px] left-[80px]">
+        <h2 className="text-6xl sm:text-8xl text-white font-semibold mt-[-3rem] sm:mt-[-4rem]">
           YeolYi
         </h2>
-        <p className="absolute bottom-[-100px] text-white">
-          배우고 익히는 재미로 살아가는 개발자 이성열입니다.
-        </p>
+        <p className="text-white break-keep">배우고 익히는 재미로 살아가는 개발자 이성열입니다.</p>
       </div>
 
       <div className="flex justify-end gap-4">
@@ -83,7 +81,7 @@ const IconAnchor = ({ Icon, href }: { Icon: Icon; href: string }) => {
       target="__blank"
     >
       <Icon
-        size={40}
+        size="2rem"
         stroke="white"
         strokeWidth={2}
       />
