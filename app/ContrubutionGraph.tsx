@@ -31,36 +31,29 @@ export default async function ContributionGraph() {
 
   return (
     // 왜 y hidden해야하지??
-    <div className="flex font-firacode leading-none cursor-none text-lg overflow-x-scroll overflow-y-hidden no-scrollbar">
-      <div className="flex flex-col whitespace-pre mr-3">
-        {Array.from('SMTWTFS').map((x, idx) => (
-          <span
-            key={idx}
-            className="hover:bg-[#E9390B]"
-          >
-            {x}
-          </span>
-        ))}
+    <div>
+      <p>GITHUB CONTIBUTION</p>
+      <div className="flex leading-none text-lg overflow-x-scroll overflow-y-hidden no-scrollbar text-white">
+        {weeks.map((week, idx) => {
+          return (
+            <div
+              key={idx}
+              className="flex flex-col whitespace-pre"
+            >
+              {week.contributionDays.map((day) => {
+                return (
+                  <span
+                    key={day.date}
+                    className="hover:bg-[#E9390B] w-2 cursor-none"
+                  >
+                    {countToChar(day.contributionCount)}
+                  </span>
+                );
+              })}
+            </div>
+          );
+        })}
       </div>
-      {weeks.map((week, idx) => {
-        return (
-          <div
-            key={idx}
-            className="flex flex-col whitespace-pre"
-          >
-            {week.contributionDays.map((day) => {
-              return (
-                <span
-                  key={day.date}
-                  className="hover:bg-[#E9390B]"
-                >
-                  {countToChar(day.contributionCount)}
-                </span>
-              );
-            })}
-          </div>
-        );
-      })}
     </div>
   );
 }

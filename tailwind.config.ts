@@ -12,6 +12,9 @@ const config: Config = {
         firacode: ['var(--font-firacode)'],
         pretendard: ['var(--font-pretendard)'],
       },
+      colors: {
+        orange: '#E9390B',
+      },
     },
   },
   plugins: [require('@tailwindcss/typography')],

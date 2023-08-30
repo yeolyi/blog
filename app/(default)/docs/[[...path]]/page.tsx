@@ -2,7 +2,7 @@ import 'highlight.js/styles/github-dark.css';
 import { Metadata } from 'next';
 import { getPostSrcPath } from '@/lib/getPath';
 import iteratePath from '@/lib/iteratePath';
-import CustomMDXRemote from '../../../components/CustomMDXRemote';
+import CustomMDXRemote from '../../../../components/CustomMDXRemote';
 import getFilledMD from '@/lib/getFilledMD';
 import TOC from '@/components/TOC';
 import { GitHub } from 'react-feather';
@@ -29,7 +29,7 @@ export default async function PostPage({ params }: PostProps) {
   return (
     <>
       <div className="flex flex-col">
-        <h1>{data?.title}</h1>
+        <h1 className="text-6xl">{data?.title}</h1>
         {data.description && <span className="mb-2">{data.description}</span>}
         {toc.h2.length !== 0 && <TOC toc={toc} />}
         <a

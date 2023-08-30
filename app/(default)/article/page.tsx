@@ -11,7 +11,7 @@ export default async function Article() {
 
   return (
     <>
-      <h1>Article</h1>
+      <h1 className="text-6xl">Article</h1>
       <div className="flex flex-col gap-4">
         {frontmatters.map((prop) => (
           <ArticleRow

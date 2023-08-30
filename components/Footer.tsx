@@ -3,7 +3,7 @@ import { GitHub, Icon, Instagram } from 'react-feather';
 
 export default function Footer() {
   return (
-    <footer className="font-firacode mt-20">
+    <footer className="mt-20">
       <hr className="mt-20 mb-4" />
       <div className="flex items-center justify-between mr-3">
         <div>
@@ -13,7 +13,7 @@ export default function Footer() {
           >
             YeolYi
           </Link>
-          <p className="m-0">© 2023 YeolYi Powered by Next.js & Tailwind</p>
+          <p className="m-0">Powered by Next.js & Tailwind</p>
         </div>
 
         <div className="flex gap-4">

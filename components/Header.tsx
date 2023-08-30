@@ -9,7 +9,7 @@ export default function Header() {
   const pathName = usePathname();
 
   return (
-    <header className="not-prose flex gap-4 items-center mb-12 font-firacode">
+    <header className="not-prose flex gap-4 items-center mb-12">
       <Link href="/">
         <Image
           src={Me}
