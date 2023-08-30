@@ -29,7 +29,7 @@ export default async function PostPage({ params }: PostProps) {
   return (
     <>
       <div className="flex flex-col text-white">
-        <PageHeader>{data?.title}</PageHeader>
+        <PageHeader smallTitle={params.path !== undefined}>{data?.title}</PageHeader>
         {toc.h2.length !== 0 && <TOC toc={toc} />}
         <a
           className="self-end"

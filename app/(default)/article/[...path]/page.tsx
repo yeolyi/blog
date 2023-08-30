@@ -30,7 +30,7 @@ export default async function PostPage({ params }: PostProps) {
   return (
     <>
       <div className="flex flex-col">
-        <PageHeader>{data.title}</PageHeader>
+        <PageHeader smallTitle>{data.title}</PageHeader>
         {data.description && <span className="mb-2">{data.description}</span>}
         {toc.h2.length !== 0 && <TOC toc={toc} />}
         <a

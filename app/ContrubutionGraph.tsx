@@ -32,7 +32,7 @@ export default async function ContributionGraph() {
   return (
     // 왜 y hidden해야하지??
     <div>
-      <p>GITHUB CONTIBUTION</p>
+      <p className="text-gray-300 font-medium">GITHUB CONTIBUTION</p>
       <div className="flex leading-none text-lg overflow-x-scroll overflow-y-hidden no-scrollbar text-white">
         {weeks.map((week, idx) => {
           return (
