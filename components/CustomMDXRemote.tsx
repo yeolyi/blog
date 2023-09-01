@@ -29,7 +29,7 @@ export default function CustomMDXRemote({
           pre: (props) => (
             <pre
               {...props}
-              className="rounded-none border border-white shadow-[8px_8px_0px_0px_white] no-scrollbar p-6"
+              className="rounded-none border border-white shadow-[8px_8px_0px_-4px_white] no-scrollbar p-6"
             />
           ),
         }}

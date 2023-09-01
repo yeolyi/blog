@@ -3,9 +3,7 @@ import { getArticleSrcPath } from '@/lib/getPath';
 import iteratePath from '@/lib/iteratePath';
 import getFilledMD from '@/lib/getFilledMD';
 import TOC from '@/components/TOC';
-import { GitHub } from 'react-feather';
 import CustomMDXRemote from '@/components/CustomMDXRemote';
-import path from 'path';
 import seg2Path from '@/lib/seg2Path';
 import PageHeader from '@/components/PageHeader';
 
@@ -34,13 +32,10 @@ export default async function PostPage({ params }: PostProps) {
         {data.description && <span className="mb-2">{data.description}</span>}
         {toc.h2.length !== 0 && <TOC toc={toc} />}
         <a
-          className="self-end"
+          className="self-end text-white font-bold underline"
           href={getGithubLink(params.path)}
         >
-          <GitHub
-            size={24}
-            color="white"
-          />
+          GitHub
         </a>
         <hr className="mt-4 mb-12" />
       </div>

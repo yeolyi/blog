@@ -3,7 +3,6 @@ import ContributionGraph from './ContrubutionGraph';
 import Link from 'next/link';
 import Image from 'next/image';
 import Me from '@/public/me.jpg';
-import { GitHub, Icon, Instagram, Shield } from 'react-feather';
 
 export default function Home() {
   return (
@@ -23,42 +22,18 @@ export default function Home() {
         <p className="text-white break-keep">배우고 익히는 재미로 사는 개발자 이성열입니다.</p>
       </div>
 
-      <div className="flex justify-end gap-4">
-        <IconAnchor
-          Icon={GitHub}
-          href="https://github.com/yeolyi"
-        />
-        <IconAnchor
-          Icon={Instagram}
-          href="https://instagram.com/yeolyii"
-        />
-        <IconAnchor
-          Icon={Shield}
-          href="https://solved.ac/profile/yeolyii"
-        />
+      <div className="flex gap-4 text-white underline text-xl font-bold">
+        <Link href="https://github.com/yeolyi">GitHub</Link>
+        <Link href="https://instagram.com/yeolyii">Instagram</Link>
+        <Link href="https://solved.ac/profile/yeolyii">solved.ac</Link>
       </div>
 
       <hr />
 
       <p className="text-5xl m-0 p-4 flex flex-col gap-6 leading-none font-semibold bg-orange text-black items-start">
-        <Anchor
-          key="0"
-          href="/about"
-        >
-          About
-        </Anchor>
-        <Anchor
-          key="1"
-          href="/article"
-        >
-          Article
-        </Anchor>
-        <Anchor
-          key="2"
-          href="/docs"
-        >
-          Docs
-        </Anchor>
+        <Anchor href="/about">About</Anchor>
+        <Anchor href="/article">Article</Anchor>
+        <Anchor href="/docs">Docs</Anchor>
       </p>
 
       <hr />
@@ -76,19 +51,3 @@ const Anchor = ({ href, children }: { href: string; children: ReactNode }) => (
     {children}
   </Link>
 );
-
-const IconAnchor = ({ Icon, href }: { Icon: Icon; href: string }) => {
-  return (
-    <a
-      className="no-underline"
-      href={href}
-      target="__blank"
-    >
-      <Icon
-        size="2rem"
-        stroke="white"
-        strokeWidth={2}
-      />
-    </a>
-  );
-};

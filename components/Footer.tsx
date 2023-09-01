@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import { GitHub, Icon, Instagram } from 'react-feather';
 
 export default function Footer() {
   return (
@@ -16,30 +15,10 @@ export default function Footer() {
         </div>
 
         <div className="flex gap-4 ">
-          <IconAnchor
-            Icon={Instagram}
-            href="https://instagram.com/yeolyii"
-          />
-          <IconAnchor
-            Icon={GitHub}
-            href="https://github.com/yeolyi"
-          />
+          <a href="https://instagram.com/yeolyii">Instagram</a>
+          <a href="https://github.com/yeolyi">GitHub</a>
         </div>
       </div>
     </footer>
   );
 }
-
-const IconAnchor = ({ Icon, href }: { Icon: Icon; href: string }) => {
-  return (
-    <a
-      className="no-underline"
-      href={href}
-    >
-      <Icon
-        size={24}
-        stroke="rgb(229, 231, 235)"
-      />
-    </a>
-  );
-};
