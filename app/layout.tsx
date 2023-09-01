@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             lg:max-w-4xl
         `}
         >
-          <div className="break-words selection:bg-orange [&_hr]:border-white">{children}</div>
+          <div className="break-words selection:bg-pink-400 [&_hr]:border-white">{children}</div>
         </div>
       </body>
     </html>
