@@ -14,7 +14,7 @@ export default function Header() {
         href="/"
         className="no-underline"
       >
-        <h2 className="text-3xl font-bold text-white">YeolYi</h2>
+        <h2 className="text-3xl font-extrabold text-orange">YeolYi</h2>
       </Link>
       {pathName !== '/' && (
         <div className="flex gap-4">
