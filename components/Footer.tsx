@@ -14,7 +14,7 @@ export default function Footer() {
           <p className="m-0 leading-none text-gray-300">Powered by Next.js & Tailwind</p>
         </div>
 
-        <div className="flex gap-4 ">
+        <div className="flex gap-4 text-gray-300 underline">
           <a href="https://instagram.com/yeolyii">Instagram</a>
           <a href="https://github.com/yeolyi">GitHub</a>
         </div>
