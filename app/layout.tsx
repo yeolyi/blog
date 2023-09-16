@@ -30,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="ko"
-      className={`${pretendard.variable} ${firaCode.variable} font-pretendard`}
+      className={`${firaCode.variable}`}
     >
       <body className="bg-black">
         <div
