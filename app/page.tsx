@@ -28,6 +28,15 @@ export default function Home() {
         <Link href="https://solved.ac/profile/yeolyii">solved.ac</Link>
       </div>
 
+      <div className="flex gap-4 text-white underline text-xl font-bold">
+        <a
+          className="underline text-white"
+          href="https://cse-dev-waffle.bacchus.io"
+        >
+          컴공 리뉴얼 사이트 오픈 베타
+        </a>
+      </div>
+
       <hr />
 
       <p className="text-5xl m-0 p-4 flex flex-col gap-6 leading-none font-semibold bg-orange text-black items-start">
