@@ -5,6 +5,7 @@ import { DetailedHTMLProps, AnchorHTMLAttributes, HTMLAttributes } from 'react';
 import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from 'remark-gfm';
 import './github-dark.css';
+import rehypeKatex from 'rehype-katex';
 
 export default function CustomMDXRemote({
   segments,
@@ -15,6 +16,12 @@ export default function CustomMDXRemote({
 }) {
   return (
     <div className="prose prose-invert prose-base mx-auto">
+      <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.css"
+        integrity="sha384-OH8qNTHoMMVNVcKdKewlipV4SErXqccxxlg6HC9Cwjr5oZu2AdBej1TndeCirael"
+        crossOrigin="anonymous"
+      />
       <MDXRemote
         source={source}
         options={options}
@@ -42,7 +49,8 @@ const options: MDXRemoteProps['options'] = {
   mdxOptions: {
     format: 'md',
     remarkPlugins: [remarkGfm],
-    rehypePlugins: [() => rehypeHighlight({ ignoreMissing: true })],
+    // @ts-expect-error
+    rehypePlugins: [() => rehypeHighlight({ ignoreMissing: true }), rehypeKatex],
   },
 };
 
