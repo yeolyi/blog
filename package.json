@@ -25,6 +25,7 @@
     "rehype-highlight": "^6.0.0",
     "rehype-katex": "^7.0.0",
     "remark-gfm": "^3.0.1",
+    "remark-math": "^6.0.0",
     "sharp": "^0.32.5",
     "tailwindcss": "3.3.3",
     "typescript": "5.1.6"

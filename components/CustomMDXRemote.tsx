@@ -6,6 +6,7 @@ import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from 'remark-gfm';
 import './github-dark.css';
 import rehypeKatex from 'rehype-katex';
+import remarkMath from 'remark-math';
 
 export default function CustomMDXRemote({
   segments,
@@ -48,7 +49,7 @@ export default function CustomMDXRemote({
 const options: MDXRemoteProps['options'] = {
   mdxOptions: {
     format: 'md',
-    remarkPlugins: [remarkGfm],
+    remarkPlugins: [remarkGfm, remarkMath],
     // @ts-expect-error
     rehypePlugins: [() => rehypeHighlight({ ignoreMissing: true }), rehypeKatex],
   },
