@@ -19,13 +19,13 @@ const buildReplacer =
       encoding: 'utf-8',
     });
     const fileExtension = extractFileExtension(codeFileRelativePath);
-    return formatMarkdownCode(fileExtension, code);
+    return formatMarkdownCode(fileExtension ?? '', code);
   };
 
 const extractFileExtension = (filePath: string) => {
   const splited = filePath.split('.');
 
-  if (splited.length < 2) throw new Error(`${filePath}에서 확장자를 찾을 수 없음.`);
+  if (splited.length < 2) return null;
 
   return splited[splited.length - 1];
 };
