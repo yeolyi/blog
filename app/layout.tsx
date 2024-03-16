@@ -1,48 +1,24 @@
-import Script from 'next/script';
-import Footer from '../components/Footer';
-import Header from '../components/Header';
-import './globals.css';
 import type { Metadata } from 'next';
-import localFont from 'next/font/local';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: '개발자 성열',
-  description: '매일의 공부를 기록합니다.',
 };
 
-const pretendard = localFont({
-  src: '../font/PretendardVariable.woff2',
-  weight: '45 920',
-  style: 'normal',
-  display: 'swap',
-  variable: '--font-pretendard',
-});
-
-const firaCode = localFont({
-  src: '../font/FiraCode-VF.woff2',
-  weight: '45 920',
-  style: 'normal',
-  display: 'swap',
-  variable: '--font-firacode',
-});
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html
-      lang="ko"
-      className={`${firaCode.variable}`}
-    >
-      <body className="bg-black">
-        <div
-          className={`
-            min-h-screen py-16 overflow-hidden lg:py-20
-            w-full px-6
-            md:max-w-3xl md:mx-auto 
-            lg:max-w-4xl
-        `}
-        >
-          <div className="break-words selection:bg-pink-400 [&_hr]:border-white">{children}</div>
-        </div>
+    <html lang="ko">
+      <body>
+        {/* https://play.tailwindcss.com/uj1vGACRJA?layout=preview 참조 */}
+        <main className="flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-8 lg:py-12">
+          <div className="relative w-full bg-white px-6 py-12 shadow-xl shadow-slate-700/10 ring-1 ring-gray-900/5 md:mx-auto md:max-w-3xl lg:max-w-4xl lg:pb-28 lg:pt-16">
+            <div className="prose prose-slate lg:prose-lg mx-auto mt-8">{children}</div>
+          </div>
+        </main>
       </body>
     </html>
   );

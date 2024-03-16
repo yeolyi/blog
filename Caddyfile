@@ -1,7 +1,0 @@
-yeolyi.com {
-    reverse_proxy http://blog:3000
-}
-
-www.yeolyi.com {
-    redir https://yeolyi.com{uri}
-}
