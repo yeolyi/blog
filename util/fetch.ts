@@ -8,6 +8,7 @@ export const fetchFollowerCnt = async () => {
         Origin: 'https://www.instagram.com',
         Referer: 'https://www.instagram.com',
       },
+      next: { revalidate: 60 },
     },
   );
 
