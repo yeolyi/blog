@@ -1,4 +1,5 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -11,4 +12,8 @@ body {
     'Segoe UI Emoji', 'Segoe UI Symbol', sans-serif;
 
   -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.monospace {
+  font-family: 'Fira Code', monospace;
 }
