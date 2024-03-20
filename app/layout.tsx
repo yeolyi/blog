@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { SandPackCSS } from '@/components/sandpack-styles';
 
 export const metadata: Metadata = {
   title: '개발자 성열',
@@ -12,6 +13,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
+      <head>
+        <SandPackCSS />
+      </head>
       <body>
         {/* https://play.tailwindcss.com/uj1vGACRJA?layout=preview 참조 */}
         <main className="flex min-h-screen flex-col justify-center overflow-hidden bg-gray-50 py-8 lg:py-12">
