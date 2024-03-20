@@ -1,6 +1,5 @@
-import ContentEditor from '/components/ContentEditor';
-
-<div id="content">
+import Sandpack from '@/components/SandpackWrapper';
+import { githubLight } from '@codesandbox/sandpack-themes';
 
 <img
   src="/profile.jpg"
@@ -15,6 +14,13 @@ import ContentEditor from '/components/ContentEditor';
 
 [소개](./about)
 
-</div>
-
-<ContentEditor id="content" />
+<Sandpack
+  files={{
+    'index.js': `const h1 = document.createElement('h1');
+h1.innerText = 'Hello, world!';
+document.body.appendChild(h1);`,
+  }}
+  theme={githubLight}
+  template="vanilla"
+  options={{ initMode: 'immediate' }}
+/>

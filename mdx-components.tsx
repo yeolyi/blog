@@ -1,7 +1,7 @@
 import type { MDXComponents } from 'mdx/types';
 import { Code } from 'bright';
 
-Code.theme = 'one-dark-pro';
+Code.theme = 'github-light';
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
