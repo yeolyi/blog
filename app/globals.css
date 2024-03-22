@@ -13,7 +13,3 @@ body {
 
   -webkit-font-smoothing: subpixel-antialiased;
 }
-
-.monospace {
-  font-family: 'Fira Code', monospace;
-}
