@@ -29,7 +29,7 @@ export default function CustomSandpack({
       files={{ '/index.js': { code: indexJS }, '/index.test.js': { code: test } }}
       options={{ recompileDelay: 800 }}
     >
-      <div className="relative mb-4 border">
+      <div className="not-prose relative mb-4 border">
         <SandpackCodeEditor className="overflow-scroll" showTabs={false} />
         <div
           className="m-2 resize-y overflow-auto border border-dashed"
@@ -85,7 +85,7 @@ export const githubLight: SandpackTheme = {
   font: {
     body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
     mono: '"Fira Code", "DejaVu Sans Mono", Menlo, Consolas, "Liberation Mono", Monaco, "Lucida Console", monospace',
-    size: '0.9rem',
+    size: '1rem',
     lineHeight: '1.75',
   },
 };
