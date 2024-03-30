@@ -5,35 +5,50 @@ import {
   SandpackConsole,
   SandpackPreview,
   SandpackProvider,
+  SandpackTests,
   SandpackTheme,
 } from '@codesandbox/sandpack-react';
+
+const TEST_SPLIT = '// jest';
 
 export default function CustomSandpack({
   type,
   code,
 }: {
-  type: 'preview' | 'console';
+  type: 'preview' | 'console' | 'test';
   code: string;
 }) {
+  const indexJS = type === 'test' ? code.split(TEST_SPLIT)[0].trim() : code;
+
+  const test = code.split(TEST_SPLIT)[1]?.trim();
+
   return (
     <SandpackProvider
       template="vanilla"
       theme={githubLight}
-      files={{ '/index.js': { code } }}
+      files={{ '/index.js': { code: indexJS }, '/index.test.js': { code: test } }}
       options={{ recompileDelay: 800 }}
     >
       <div className="relative mb-4 border">
-        <SandpackCodeEditor className="overflow-scroll" />
-        <div className="m-2 border border-dashed">
+        <SandpackCodeEditor className="overflow-scroll" showTabs={false} />
+        <div
+          className="m-2 resize-y overflow-auto border border-dashed"
+          style={{ height: type === 'test' ? 140 : 100 }}
+        >
           {type === 'preview' && (
             <SandpackPreview showOpenInCodeSandbox={false} showRefreshButton={false} />
           )}
+
           {type === 'console' && (
-            <SandpackConsole
-              showSyntaxError
-              standalone
-              resetOnPreviewRestart
-              style={{ height: 200 }}
+            <SandpackConsole showSyntaxError standalone resetOnPreviewRestart />
+          )}
+
+          {type === 'test' && (
+            <SandpackTests
+              verbose={false}
+              showVerboseButton={false}
+              showWatchButton={false}
+              style={{ width: '100%', height: '100%' }}
             />
           )}
         </div>
@@ -70,7 +85,7 @@ export const githubLight: SandpackTheme = {
   font: {
     body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
     mono: '"Fira Code", "DejaVu Sans Mono", Menlo, Consolas, "Liberation Mono", Monaco, "Lucida Console", monospace',
-    size: '1rem',
+    size: '0.9rem',
     lineHeight: '1.75',
   },
 };

@@ -1,6 +1,7 @@
 import type { MDXComponents } from 'mdx/types';
 import { Code } from 'bright';
 import HTMLSandpack from './components/CustomSandpack';
+import { ReactNode } from 'react';
 
 Code.theme = 'github-light';
 
@@ -9,12 +10,15 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ...components,
     pre: (props) => <pre className={props.className ?? 'not-prose'}>{props.children}</pre>,
     code: (props) => {
-      if (props.className === 'language-js_preview')
-        return <HTMLSandpack code={props.children!.toString().trim()} type="preview" />;
-      else if (props.className === 'language-js_console')
-        return <HTMLSandpack code={props.children!.toString().trim()} type="console" />;
+      const content = props.children?.toString() ?? '';
+      const type = content.split('\n')[0].slice(3);
+      const code = content.split('\n').slice(1).join('\n').trim();
 
-      return <Code>{props.children}</Code>;
+      if (type === 'preview' || type === 'console' || type === 'test')
+        return <HTMLSandpack code={code} type={type} />;
+      else return <FallbackCode {...props} />;
     },
   };
 }
+
+const FallbackCode = ({ children }: { children?: ReactNode }) => <Code>{children}</Code>;
