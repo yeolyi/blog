@@ -3,11 +3,14 @@
 import {
   SandpackCodeEditor,
   SandpackConsole,
+  SandpackLayoutProps,
   SandpackPreview,
   SandpackProvider,
   SandpackTests,
   SandpackTheme,
+  useSandpack,
 } from '@codesandbox/sandpack-react';
+import { forwardRef, useCallback } from 'react';
 
 const TEST_SPLIT = '// jest';
 
@@ -26,36 +29,84 @@ export default function CustomSandpack({
     <SandpackProvider
       template="vanilla"
       theme={githubLight}
-      files={{ '/index.js': { code: indexJS }, '/index.test.js': { code: test } }}
+      files={{
+        '/index.js': { code: indexJS },
+        '/index.test.js': { code: test },
+        '/package.json': {
+          code: JSON.stringify({
+            dependencies: {},
+            main: '/index.js',
+          }),
+        },
+      }}
       options={{ recompileDelay: 800 }}
     >
-      <div className="not-prose relative mb-4 border">
-        <SandpackCodeEditor className="overflow-scroll" showTabs={false} />
-        <div
-          className="m-2 resize-y overflow-auto border border-dashed"
-          style={{ height: type === 'test' ? 140 : 100 }}
-        >
-          {type === 'preview' && (
-            <SandpackPreview showOpenInCodeSandbox={false} showRefreshButton={false} />
-          )}
+      <SandpackLayout>
+        <div className="not-prose relative mb-4 border">
+          <SandpackCodeEditor className="overflow-scroll" showTabs={false} />
+          <div
+            className="m-2 resize-y overflow-auto border border-dashed"
+            style={{ height: type === 'test' ? 140 : 100 }}
+          >
+            {type === 'preview' && (
+              <SandpackPreview showOpenInCodeSandbox={false} showRefreshButton={false} />
+            )}
 
-          {type === 'console' && (
-            <SandpackConsole showSyntaxError standalone resetOnPreviewRestart />
-          )}
+            {type === 'console' && (
+              <SandpackConsole showSyntaxError standalone resetOnPreviewRestart />
+            )}
 
-          {type === 'test' && (
-            <SandpackTests
-              verbose={false}
-              showVerboseButton={false}
-              showWatchButton={false}
-              style={{ width: '100%', height: '100%' }}
-            />
-          )}
+            {type === 'test' && (
+              <SandpackTests
+                verbose={false}
+                showVerboseButton={false}
+                showWatchButton={false}
+                style={{ width: '100%', height: '100%' }}
+              />
+            )}
+          </div>
         </div>
-      </div>
+      </SandpackLayout>
     </SandpackProvider>
   );
 }
+
+// 이유는 모르겠는데 없으면 개발 서버에서 동작 안함
+const SandpackLayout = forwardRef<HTMLDivElement, SandpackLayoutProps>(
+  ({ children, className, ...props }, ref) => {
+    const { sandpack } = useSandpack();
+    const combinedRef = useCombinedRefs(sandpack.lazyAnchorRef, ref);
+
+    return (
+      <div ref={combinedRef} {...props}>
+        {children}
+      </div>
+    );
+  },
+);
+
+SandpackLayout.displayName = 'SandpackLayout';
+
+const useCombinedRefs = <T,>(...refs: Array<React.Ref<T>>): React.Ref<T> =>
+  useCallback(
+    (element: T) =>
+      refs.forEach((ref) => {
+        if (!ref) {
+          return;
+        }
+
+        // Ref can have two types - a function or an object. We treat each case.
+        if (typeof ref === 'function') {
+          return ref(element);
+        }
+
+        // As per https://github.com/facebook/react/issues/13029
+        // it should be fine to set current this way.
+        (ref as any).current = element;
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    refs,
+  );
 
 export const githubLight: SandpackTheme = {
   colors: {
