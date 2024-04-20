@@ -2,20 +2,26 @@
 
 ## 소개
 
-자바스크립트 공부 기록입니다. 교재로는 **Javascript-The-Definitive-Guide**를 사용했습니다. 인터렉티브하게 공부 내용을 기록할 수 있도록 공부에 앞서 몇몇 컴포넌트들을 준비했습니다.
+자바스크립트 공부 기록입니다. 교재로 **Javascript-The-Definitive-Guide**(David
+Flanagan)를 사용했습니다. 공부하면서 몰랐던 것들과 흥미로운 것들을 기록합니다.
 
-우선 출력값 확인을 위해 아래 컴포넌트을 사용합니다. 코드를 수정해보세요.
+공부에 앞서 몇몇 컴포넌트들을 준비했습니다. 우선 출력값 확인을 위해 아래
+컴포넌트을 사용합니다. 코드를 수정해보세요.
 
 ```js
 // console
 console.log('Hello, world!');
 ```
 
-테스트를 제공하는 컴포넌트도 준비했습니다. 아래 컴포넌트에서 add 함수를 완성해보세요.
+테스트를 제공하는 컴포넌트도 준비했습니다. 아래 컴포넌트에서 add 함수를
+완성해보세요.
 
 ```js
 // test
-export const add = (a, b) => 0;
+export const add = (a, b) => {
+  // TODO
+  return 0;
+};
 
 // jest
 import { add } from './index.js';
@@ -35,4 +41,88 @@ describe('add', () => {
 
 ## 1. Introduction to Javascript
 
-자바스크립트는 웹을 위한 프로그래밍 언어이며 Node.js로 브라우저 외부 환경에서도 사용할 수 있게 되었습니다.
+> The core JavaScript does not include any input or output functionality. Input
+> and output (as well as more sophisticated features, such as networking,
+> storage, and graphics) are the responsibility of the “host environment” within
+> which JavaScript is embedded.
+
+### 3. A Tour of JavaScript
+
+> An expression is a phrase of JavaScript that can be evaluated to produce a
+> value. For example, the use of . and [] to refer to the value of an object
+> property or array element is an expression.
+
+> One of the most common ways to form expressions in JavaScript is to use
+> operators:
+
+```js
+// console
+console.log([1, 2] + [3, 4, 5]);
+```
+
+> Roughly, an **expression** is something that computes a value but doesn’t do
+> anything: it doesn’t alter the program state in any way. **Statements**, on
+> the other hand, don’t have a value, but they do alter the state
+
+> When functions are assigned to the properties of an object, we call them
+> "methods."
+
+### 5. Summary
+
+> This book explains JavaScript from the bottom up
+
+## 2. Lexical Structure
+
+> The lexical structure of a programming language is the set of elementary rules
+> that specifies how you write programs in that language.
+
+### 3. Literals
+
+> A literal is a data value that appears directly in a program
+
+### 4. Identifiers and Reserved Words
+
+> An identifier is simply a name. In JavaScript, identifiers are used to name
+> constants, variables, properties, functions, and classes and to provide labels
+> for certain loops in JavaScript code.
+
+> Like any language, JavaScript reserves certain identifiers for use by the
+> language itself. These “reserved words” cannot be used as regular identifiers.
+
+몇몇 키워드는 사용할 수 있는 조건이 까다롭다. 그냥 애매한 것들은 쓰지 말자.
+
+```js
+// console
+// 브라우저 콘솔에 복붙하면 된다. 여기서는 샌드박스 때문인지 안됨.
+
+// var let = 'hello, world!';
+// console.log(let);
+```
+
+### 5. Unicode
+
+```js
+// console
+const π = 3.14;
+console.log(π, '\u{1F600}'); // 숫자 바꿔보세요
+
+// const 🥲 = 'cry';
+// swift는 되던데,,,
+```
+
+모양이 같은 문자더라도 다른 유니코드 값일 수 있다. 유니코드 표준에 normalization
+방법이 정의되어있는데 JS가 이걸 해주지는 않으므로 식별자 모양은 같은데 다른 값인
+상황을 만들지 않으려면 에디터 등에서 잘 해주는지 확인하자.
+
+### 6. Optional Semicolons
+
+```js
+// console
+// 없으면 안되는 경우
+
+// prettier-ignore
+let y = 1 + 2
+(3 + 4).toString()
+```
+
+## 3. Types, Values, and Variables

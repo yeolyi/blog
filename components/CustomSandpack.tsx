@@ -32,12 +32,6 @@ export default function CustomSandpack({
       files={{
         '/index.js': { code: indexJS },
         '/index.test.js': { code: test },
-        '/package.json': {
-          code: JSON.stringify({
-            dependencies: {},
-            main: '/index.js',
-          }),
-        },
       }}
       options={{ recompileDelay: 800 }}
     >
@@ -49,11 +43,18 @@ export default function CustomSandpack({
             style={{ height: type === 'test' ? 140 : 100 }}
           >
             {type === 'preview' && (
-              <SandpackPreview showOpenInCodeSandbox={false} showRefreshButton={false} />
+              <SandpackPreview
+                showOpenInCodeSandbox={false}
+                showRefreshButton={false}
+              />
             )}
 
             {type === 'console' && (
-              <SandpackConsole showSyntaxError standalone resetOnPreviewRestart />
+              <SandpackConsole
+                showSyntaxError
+                standalone
+                resetOnPreviewRestart
+              />
             )}
 
             {type === 'test' && (
@@ -136,7 +137,7 @@ export const githubLight: SandpackTheme = {
   font: {
     body: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"',
     mono: '"Fira Code", "DejaVu Sans Mono", Menlo, Consolas, "Liberation Mono", Monaco, "Lucida Console", monospace',
-    size: '1rem',
+    size: '0.9em',
     lineHeight: '1.75',
   },
 };
