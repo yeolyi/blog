@@ -1,13 +1,15 @@
+[메인으로](./)
+
 # 자바스크립트
 
-## 소개
+자바스크립트 공부 기록입니다. 몰랐던 것들과 흥미로운 것들을 이곳에 기록해요.
+아래 책으로 공부했습니다.
 
-자바스크립트 공부 기록입니다. 교재로 **Javascript-The-Definitive-Guide**(David
-Flanagan)를 사용했습니다. 공부하면서 몰랐던 것들과 흥미로운 것들을 인용하고
-기록합니다.
+<img src="/jsbook.jpeg" className="w-[30%] shadow-md" />
 
-공부에 앞서 몇몇 컴포넌트들을 준비했습니다. 우선 출력값 확인을 위해 아래
-컴포넌트을 사용합니다. 코드를 수정해보세요.
+## 시작하기 전
+
+출력값 확인을 위해 아래 컴포넌트을 사용합니다. 코드를 수정해보세요.
 
 ```js
 // console
@@ -42,10 +44,10 @@ describe('add', () => {
 
 ## 1. Introduction to Javascript
 
-> The core JavaScript does not include any input or output functionality. Input
-> and output (as well as more sophisticated features, such as networking,
-> storage, and graphics) are the responsibility of the “host environment” within
-> which JavaScript is embedded.
+The core JavaScript does not include any input or output functionality. Input
+and output (as well as more sophisticated features, such as networking, storage,
+and graphics) are the responsibility of the “host environment” within which
+JavaScript is embedded.
 
 ### 3. A Tour of JavaScript
 
@@ -54,18 +56,18 @@ describe('add', () => {
 console.log([1, 2] + [3, 4, 5]);
 ```
 
-> Roughly, an **expression** is something that computes a value but doesn’t do
-> anything: it doesn’t alter the program state in any way. **Statements**, on
-> the other hand, don’t have a value, but they do alter the state
+Roughly, an **expression** is something that computes a value but doesn’t do
+anything: it doesn’t alter the program state in any way. **Statements**, on the
+other hand, don’t have a value, but they do alter the state
 
 ## 2. Lexical Structure
 
-> The lexical structure of a programming language is the set of elementary rules
-> that specifies how you write programs in that language.
+The lexical structure of a programming language is the set of elementary rules
+that specifies how you write programs in that language.
 
 ### 4. Identifiers and Reserved Words
 
-let도 변수명으로 경우에 따라 쓸 수는 있습니다. 애매한 것들은 그냥 쓰지 맙시다 ㅎ
+쓸 일은 없지만, let도 변수명으로 경우에 따라 쓸 수는 있습니다.
 
 ```js
 // console
@@ -104,16 +106,16 @@ let y = 1 + 2
 
 ## 3. Types, Values, and Variables
 
-> JavaScript differs from more static languages in that functions and classes
-> are **not just part of the language syntax**: they are themselves values that
-> can be manipulated by JavaScript programs
+JavaScript differs from more static languages in that functions and classes are
+**not just part of the language syntax**: they are themselves values that can be
+manipulated by JavaScript programs
 
 ### 1. Overview and Definitions
 
-> Strings can be thought of as arrays of characters, and you might expect them
-> to be mutable. In JavaScript, however, **strings are immutable**: you can
-> access the text at any index of a string, but JavaScript provides no way to
-> alter the text of an existing string.
+Strings can be thought of as arrays of characters, and you might expect them to
+be mutable. In JavaScript, however, **strings are immutable**: you can access
+the text at any index of a string, but JavaScript provides no way to alter the
+text of an existing string.
 
 ```js
 // console
@@ -178,20 +180,17 @@ let y = 0.2 - 0.1;
 console.log(x === 0.1, y === 0.1);
 ```
 
-> If these floating-point approximations are problematic for your programs,
-> consider using scaled integers. For example, you might manipulate monetary
-> values as integer cents rather than fractional dollars.
-
-이더리움에서 wei라는 최소 단위(=10^(-18)ether)를 쓰는데 이게 위에서 말한 scaled
-integer과 비슷한 것 같습니다.
+If these floating-point approximations are problematic for your programs,
+consider using scaled integers. For example, you might manipulate monetary
+values as integer cents rather than fractional dollars. 이더리움에서는 wei라는
+최소 단위(=10^(-18)ether)를 쓰는데 이게 여기서 말하는 scaled integer과 비슷한 것
+같습니다.
 
 BigInt와 Number간의 연산은 두 자료형이 포함관계가 아니므로 불가능합니다. 비교
 연산은 가능합니다.
 
-> Note, however, that BigInt implementations are not suitable for cryptography
-> because they do not attempt to prevent timing attacks.
-
-Timing attack에 대해서는 https://timing.attacks.cr.yp.to/programming.html 를
-참고하세요.
+BigInt implementations are not suitable for cryptography because they do not
+attempt to prevent timing attacks. Timing attack에 대해서는
+https://timing.attacks.cr.yp.to/programming.html 를 참고하세요.
 
 ### 3. Text
