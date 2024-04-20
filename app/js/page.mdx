@@ -3,7 +3,8 @@
 ## 소개
 
 자바스크립트 공부 기록입니다. 교재로 **Javascript-The-Definitive-Guide**(David
-Flanagan)를 사용했습니다. 공부하면서 몰랐던 것들과 흥미로운 것들을 기록합니다.
+Flanagan)를 사용했습니다. 공부하면서 몰랐던 것들과 흥미로운 것들을 인용하고
+기록합니다.
 
 공부에 앞서 몇몇 컴포넌트들을 준비했습니다. 우선 출력값 확인을 위해 아래
 컴포넌트을 사용합니다. 코드를 수정해보세요.
@@ -48,13 +49,6 @@ describe('add', () => {
 
 ### 3. A Tour of JavaScript
 
-> An expression is a phrase of JavaScript that can be evaluated to produce a
-> value. For example, the use of . and [] to refer to the value of an object
-> property or array element is an expression.
-
-> One of the most common ways to form expressions in JavaScript is to use
-> operators:
-
 ```js
 // console
 console.log([1, 2] + [3, 4, 5]);
@@ -64,36 +58,18 @@ console.log([1, 2] + [3, 4, 5]);
 > anything: it doesn’t alter the program state in any way. **Statements**, on
 > the other hand, don’t have a value, but they do alter the state
 
-> When functions are assigned to the properties of an object, we call them
-> "methods."
-
-### 5. Summary
-
-> This book explains JavaScript from the bottom up
-
 ## 2. Lexical Structure
 
 > The lexical structure of a programming language is the set of elementary rules
 > that specifies how you write programs in that language.
 
-### 3. Literals
-
-> A literal is a data value that appears directly in a program
-
 ### 4. Identifiers and Reserved Words
 
-> An identifier is simply a name. In JavaScript, identifiers are used to name
-> constants, variables, properties, functions, and classes and to provide labels
-> for certain loops in JavaScript code.
-
-> Like any language, JavaScript reserves certain identifiers for use by the
-> language itself. These “reserved words” cannot be used as regular identifiers.
-
-몇몇 키워드는 사용할 수 있는 조건이 까다롭다. 그냥 애매한 것들은 쓰지 말자.
+let도 변수명으로 경우에 따라 쓸 수는 있습니다. 애매한 것들은 그냥 쓰지 맙시다 ㅎ
 
 ```js
 // console
-// 브라우저 콘솔에 복붙하면 된다. 여기서는 샌드박스 때문인지 안됨.
+// 브라우저 콘솔에 복붙하면 되는데 여기서는 샌드박스 때문인지 에러 뜸 :(
 
 // var let = 'hello, world!';
 // console.log(let);
@@ -104,21 +80,22 @@ console.log([1, 2] + [3, 4, 5]);
 ```js
 // console
 const π = 3.14;
-console.log(π, '\u{1F600}'); // 숫자 바꿔보세요
+console.log(π, '\u{1F600}'); // 숫자 직접 바꿔보세요!
 
 // const 🥲 = 'cry';
 // swift는 되던데,,,
 ```
 
-모양이 같은 문자더라도 다른 유니코드 값일 수 있다. 유니코드 표준에 normalization
-방법이 정의되어있는데 JS가 이걸 해주지는 않으므로 식별자 모양은 같은데 다른 값인
-상황을 만들지 않으려면 에디터 등에서 잘 해주는지 확인하자.
+모양이 같은 문자더라도 다른 유니코드 값일 수 있습니다. 유니코드 표준에
+normalization 방법이 정의되어있는데 JS가 이걸 해주지는 않으므로 식별자 모양은
+같은데 다른 값인 상황을 만들지 않으려면 에디터 등에서 잘 해주는지 확인합시다.
 
 ### 6. Optional Semicolons
 
+세미콜론이 없으면 안되는 경우가 있습니다.
+
 ```js
 // console
-// 없으면 안되는 경우
 
 // prettier-ignore
 let y = 1 + 2
@@ -126,3 +103,95 @@ let y = 1 + 2
 ```
 
 ## 3. Types, Values, and Variables
+
+> JavaScript differs from more static languages in that functions and classes
+> are **not just part of the language syntax**: they are themselves values that
+> can be manipulated by JavaScript programs
+
+### 1. Overview and Definitions
+
+> Strings can be thought of as arrays of characters, and you might expect them
+> to be mutable. In JavaScript, however, **strings are immutable**: you can
+> access the text at any index of a string, but JavaScript provides no way to
+> alter the text of an existing string.
+
+```js
+// console
+const str = 'davascript';
+str[0] = 'j';
+```
+
+### 2. Numbers
+
+64비트 부동소수점을 사용합니다. 오버플로우가 발생해도 에러를 던지지는 않습니다.
+
+```js
+// console
+let val = Number.MAX_VALUE;
+// (val + 1은 왜 Infinity가 아니지?)
+console.log(val, val + 1, val ** 2);
+console.log(val === val + 1);
+```
+
+하지만 배열 인덱싱이나 비트 연산등은 32비트 정수 연산을 합니다.
+
+```js
+// console
+console.log(1 << 30, 1 << 31, 1 << 32);
+```
+
+16진수도 아래처럼 바로 입력할 수 있습니다. CSS 색상값 넣을 때 종종 씁니다(저는
+문자열이 익숙해서 볼때마다 흠칫하지만).
+
+```js
+// console
+console.log(0x333);
+```
+
+이외에도 특이한 경우가 많습니다.
+
+```js
+// console
+console.log(1 / 0, 0 / 0, Infinity / 0, Infinity / Infinity);
+
+let zero = 0;
+let negZero = -0;
+console.log(zero === negZero);
+console.log(1 / zero === 1 / negZero);
+```
+
+NaN은 모든 값과 비교 결과가 false입니다. Number.isNaN 이나 isNaN을 씁시다.
+https://stackoverflow.com/questions/33164725/confusion-between-isnan-and-number-isnan-in-javascript
+
+```js
+// console
+const val = NaN;
+console.log(val === NaN, Number.isNaN(val));
+```
+
+아래와 같은 경우를 이해하려면 부동소수점 표준인 IEEE-754를 공부해봅시다.
+
+```js
+// console
+let x = 0.3 - 0.2;
+let y = 0.2 - 0.1;
+console.log(x === 0.1, y === 0.1);
+```
+
+> If these floating-point approximations are problematic for your programs,
+> consider using scaled integers. For example, you might manipulate monetary
+> values as integer cents rather than fractional dollars.
+
+이더리움에서 wei라는 최소 단위(=10^(-18)ether)를 쓰는데 이게 위에서 말한 scaled
+integer과 비슷한 것 같습니다.
+
+BigInt와 Number간의 연산은 두 자료형이 포함관계가 아니므로 불가능합니다. 비교
+연산은 가능합니다.
+
+> Note, however, that BigInt implementations are not suitable for cryptography
+> because they do not attempt to prevent timing attacks.
+
+Timing attack에 대해서는 https://timing.attacks.cr.yp.to/programming.html 를
+참고하세요.
+
+### 3. Text
