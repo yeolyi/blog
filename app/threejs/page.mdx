@@ -1,9 +1,128 @@
-import Threejs from './threejs';
+import ThreeJSHelper from './helper';
+import { oneThree } from './scripts';
 
-https://threejs.org/
+[메인으로](./)
 
-https://threejs-journey.com/
+# three.js
 
-https://www.reddit.com/r/threejs/comments/1bcr3q4/threejs_journey_is_it_worth_it/
+[threejs-journey](https://threejs-journey.com/) 강좌를 보며 공부했습니다.
 
-<Threejs />
+## 1. Basics
+
+### 1. Introduction
+
+https://bruno-simon.com
+
+### 2. What is WebGL and why use Three.js
+
+WebGL is a JavaScript API that renders triangles in a canvas at a remarkable
+speed. It's compatible with most modern browsers, and it's fast because it uses
+the Graphic Processing Unit (GPU) of the visitor.
+
+The instructions to place the points and draw the pixels are written in what we
+call **shaders**.
+
+We also need to provide data to these shaders. For example: how to place the
+points according to the model transformations and the camera's properties. These
+are called **matrices**. (?)
+
+WebGL은 어렵다.
+
+Three.js is a JavaScript library under MIT license that works right above WebGL.
+The library's goal is to drastically simplify the process of handling all of
+what we just stated.
+
+https://github.com/mrdoob/three.js/releases
+
+### 3. First Three.js Project
+
+The **scene** is like a container. You place your objects, models, particles,
+lights, etc. in it, and at some point, you ask Three.js to render that scene.
+
+**Objects** can be many things. You can have primitive geometries, imported
+models, particles, lights, and so on.
+
+Mesh = geometry(shape) + material
+
+The field of view (or fov) is expressed in degrees and corresponds to the
+**vertical** vision angle.
+
+We will simply ask the renderer to render our scene from the camera's point of
+view, and the result will be drawn into a canvas.
+
+Three.js considers the forward/backward axis to be z.
+
+<ThreeJSHelper script={oneThree} />
+
+### 4. Transform objects
+
+- position
+- scale
+- rotation
+- quaternion
+
+**Object3D** 클래스를 상속받으면 위의 것들을 가진다.
+
+Those properties will be compiled in what we call **matrices**. Matrices are
+used internally by Three.js, by the WebGL, and by the GPU **to transform
+things**.
+
+x는 오른쪽(red), y는 위(green), z는 뒤(blue). rgb 순서.
+
+Scale - While you can use negative values, it might generate bugs later on
+because axes won't be oriented in the logical direction.
+
+Rotation을 통한 회전은 x, y, z축 순서로 이루어지는데 gimbal lock에 걸릴 수 있다.
+https://en.wikipedia.org/wiki/Gimbal_lock
+
+Rotation을 바꾸면 quaternion도 바뀐다.
+
+Object들을 Group으로 묶어 transform을 한 번에 적용시킬 수 있다.
+
+### 5. Animations
+
+The primary purpose of requestAnimationFrame is not to run code on each frame.
+requestAnimationFrame will execute the function you provide on the next frame.
+
+주사율 상관없는 같은 속도의 애니메이션을 위해 Clock을 사용한다.
+
+Another available method is getDelta(...), but you should not use it unless you
+know exactly what's going on in the Clock class code.
+
+https://greensock.com/gsap/
+
+### 6. Cameras
+
+I usually use a field of view between 45 and 75.
+
+Aspect ratio = width / height
+
+near이랑 far에 욕심부리면 https://en.wikipedia.org/wiki/Z-fighting 이 생길 수
+있다. 0.1이랑 100 쓰자.
+
+https://developer.mozilla.org/en-US/docs/Web/API/Pointer_Lock_API
+
+The OrbitControls class is part of those classes that are not available by
+default in the THREE variable. That decision helps to reduce the weight of the
+library.
+
+The **damping** will smooth the animation by adding some kind of acceleration
+and friction formulas.
+
+픽셀이 자글자글하게 보이는 것은 **pixel ratio**가 1 이상인 화면에서 렌더링하기
+때문.
+
+fullscreenElement, requestFullScreen에 대해서도 찾아보자.
+
+### 8. Geometries
+
+In Three.js, geometries are composed of vertices (point coordinates in 3D
+spaces) and faces (triangles that join those vertices to create a surface).
+
+BufferGeometry 클래스를 상속받는다. BoxGeometry, PlaneGeometry 등등.
+
+Sometimes, we need to create our own geometries. If the geometry is very complex
+or with a precise shape, it's better to create it in a 3D software, but if the
+geometry isn't too complex, we can build it ourself by using **BufferGeometry**.
+
+## 2. Classic techniques

@@ -183,14 +183,102 @@ console.log(x === 0.1, y === 0.1);
 If these floating-point approximations are problematic for your programs,
 consider using scaled integers. For example, you might manipulate monetary
 values as integer cents rather than fractional dollars. 이더리움에서는 wei라는
-최소 단위(=10^(-18)ether)를 쓰는데 이게 여기서 말하는 scaled integer과 비슷한 것
+최소 단위(=10^(-18)ether)를 쓰던데 이게 여기서 말하는 scaled integer과 비슷한 것
 같습니다.
 
 BigInt와 Number간의 연산은 두 자료형이 포함관계가 아니므로 불가능합니다. 비교
 연산은 가능합니다.
 
-BigInt implementations are not suitable for cryptography because they do not
-attempt to prevent timing attacks. Timing attack에 대해서는
-https://timing.attacks.cr.yp.to/programming.html 를 참고하세요.
+BigInt는 암호학에 쓰기는 부적합한데
+[timing attack](https://timing.attacks.cr.yp.to/programming.html)에 대응하지
+않기 때문입니다.
 
 ### 3. Text
+
+UTF-16 인코딩을 사용합니다. Unicode characters whose codepoints do not fit in 16
+bits are encoded using the rules of UTF-16 as a sequence (known as a **surrogate
+pair**) of two 16-bit values. 대부분의 문자열 관련 메서드는 16비트 단위로
+동작하고 surrogate pair를 특별 취급하지 않습니다. 다만 이터러블
+관련(for/of...)은 실제 문자열처럼 되게 처리해줍니다.
+
+```js
+// console
+const euro = '€';
+const love = '💙';
+console.log(euro.length);
+console.log(love.length);
+console.log(love === '\ud83d\udc99');
+console.log(love[0]);
+for (const c of love) console.log(c);
+```
+
+문자열 표기법 별로 미묘하게 다른 newline 차이입니다.
+
+```js
+// console
+console.log(
+  'one\
+long\
+line',
+);
+
+console.log(`two 
+line`);
+```
+
+이런저런 문자열 관련 메서드들입니다:
+
+```js
+// console
+// d83d + dc99
+const love = '💙';
+
+console.log(love.charAt(0));
+
+// returns an integer between 0 and 65535
+// representing the UTF-16 code unit at the given index.
+// may return lone surrogates
+console.log(0xd83d === love.charCodeAt(0));
+// 왜 0x1f499인지는..모르겠음..
+console.log(love.codePointAt(0).toString(16));
+```
+
+[String.prototype.normalize](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/String/normalize)도
+있는데 자세히는 보지 않았습니다.
+
+Tagged tempalte literals는 styled-component에서 활용하는걸로 알고 있습니다:
+
+```js
+// console
+const str = String.raw`\n`;
+console.log(str);
+```
+
+### 4. Boolean Values
+
+```js
+// console
+console.log(!!undefined);
+console.log(!!null);
+console.log(!!0);
+console.log(!!-0);
+console.log(!!NaN);
+console.log(!!'');
+```
+
+### 5. null and undefined
+
+**undefined** is a predefined global constant (not a language keyword like null,
+though this is not an important distinction in practice) that is initialized to
+the undefined value.
+
+I consider undefined to represent a system-level, unexpected, or error-like
+absence of value and null to represent a program-level, normal, or expected
+absence of value. I avoid using null and undefined when I can, but if I need to
+assign one of these values to a variable or property or pass or return one of
+these values to or from a function, I usually use null.
+
+Some programmers strive to avoid null entirely and use undefined in its place
+wherever they can.
+
+### 6. Symbols
