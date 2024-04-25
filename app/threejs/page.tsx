@@ -102,8 +102,8 @@ const script = () => {
     const aspectRatio = width / height;
     camera.left = -10 * aspectRatio;
     camera.right = 10 * aspectRatio;
-    camera.top = 10;
-    camera.bottom = -10;
+    camera.top = 11;
+    camera.bottom = -9;
     camera.updateProjectionMatrix();
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
