@@ -272,13 +272,13 @@ console.log(!!'');
 though this is not an important distinction in practice) that is initialized to
 the undefined value.
 
-I consider undefined to represent a system-level, unexpected, or error-like
-absence of value and null to represent a program-level, normal, or expected
-absence of value. I avoid using null and undefined when I can, but if I need to
-assign one of these values to a variable or property or pass or return one of
-these values to or from a function, I usually use null.
-
-Some programmers strive to avoid null entirely and use undefined in its place
-wherever they can.
-
 ### 6. Symbols
+
+Symbols were introduced in ES6 to serve as **non-string property names**.
+
+```js
+// console
+let sym = Symbol('propname');
+let o = { [sym]: 1 };
+console.log(o[sym]);
+```

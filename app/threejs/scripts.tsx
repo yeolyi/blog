@@ -3,25 +3,52 @@
 import { OrbitControls } from 'three/examples/jsm/Addons.js';
 import { ThreeJSScript } from './helper';
 import * as THREE from 'three';
+import GUI from 'lil-gui';
+
+const debugObject = {
+  subdivision: 1,
+};
 
 export const oneThree: ThreeJSScript = (canvas) => {
+  const gui = new GUI({ width: 300 });
+
   // Scene
   const scene = new THREE.Scene();
 
   // Object
   const geometry = new THREE.BoxGeometry(1, 1, 1, 2, 2, 2);
-  const material = new THREE.MeshBasicMaterial({
-    color: 0xff0000,
-    wireframe: true,
-  });
+  const material = new THREE.MeshBasicMaterial({ color: 'royalblue' });
   const mesh = new THREE.Mesh(geometry, material);
 
   scene.add(mesh);
+  gui.add(mesh.position, 'y').min(-3).max(3).step(0.01).name('elevation');
+  gui.add(material, 'wireframe');
+
+  // 색은 여러 타입이 가능하기에 addColor라는 별도의 메서드로 추가
+  gui.addColor(material, 'color');
+
+  gui
+    .add(debugObject, 'subdivision')
+    .min(1)
+    .max(20)
+    .step(1)
+    .onFinishChange(() => {
+      // Prevent memory leak
+      mesh.geometry.dispose();
+      mesh.geometry = new THREE.BoxGeometry(
+        1,
+        1,
+        1,
+        debugObject.subdivision,
+        debugObject.subdivision,
+        debugObject.subdivision,
+      );
+    });
 
   // Camera
   const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 100);
 
-  camera.position.set(0, 1, 3);
+  camera.position.set(0, 10, 3);
 
   console.log(camera.position.length());
   console.log(mesh.position.distanceTo(camera.position));
@@ -65,9 +92,9 @@ export const oneThree: ThreeJSScript = (canvas) => {
   const clock = new THREE.Clock();
   const tick = () => {
     // How many seconds passed since clock was created.
-    const elapsedTime = clock.getElapsedTime();
+    // const elapsedTime = clock.getElapsedTime();
     // 회전의 단위는 라디안
-    mesh.rotation.y = (Math.PI / 2) * elapsedTime;
+    // mesh.rotation.y = (Math.PI / 2) * elapsedTime;
 
     controls.update();
 
