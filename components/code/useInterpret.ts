@@ -7,7 +7,10 @@ export const useInterpret = (_code: string) => {
   const [logList, setLogList] = useState<Log[]>([]);
 
   useEffect(() => {
+    if (iframe === null) return;
+
     setLogList([]);
+    iframe.contentWindow?.postMessage('location.reload()', '*');
 
     const id = setTimeout(() => {
       iframe?.contentWindow?.postMessage(code, '*');

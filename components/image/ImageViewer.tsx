@@ -13,10 +13,10 @@ export default function ImageViewer({
 }) {
   return (
     <div
-      className="relative mx-auto h-[200px] shadow-md"
+      className="not-prose relative mx-auto h-[200px]"
       style={{ aspectRatio: width / height }}
     >
-      <Image src={src} fill alt={alt} className="m-0" />
+      <Image src={src} fill alt={alt} className="shadow-md" />
     </div>
   );
 }
