@@ -114,11 +114,13 @@ const script = () => {
 
   let dragging = false;
   let x: number | null = null;
-  window.addEventListener('mousedown', () => {
+
+  const handleStart = () => {
     dragging = true;
     x = null;
-  });
-  window.addEventListener('mouseup', () => {
+  };
+
+  const handleEnd = () => {
     dragging = false;
 
     const y = group1.rotation.y;
@@ -134,9 +136,9 @@ const script = () => {
       group1.rotation.y = 0;
       group2.rotation.y = 0;
     }
-  });
+  };
 
-  window.addEventListener('mousemove', ({ offsetX }) => {
+  const handleDrag = (offsetX: number) => {
     if (debugObj.orbitControl) return;
     if (dragging === false) return;
     if (x === null) {
@@ -160,10 +162,19 @@ const script = () => {
     plane3.visible = Math.PI / 4 <= tmp && tmp <= Math.PI / 4 + Math.PI;
     plane4.visible =
       Math.PI - Math.PI / 4 <= tmp && tmp <= 2 * Math.PI - Math.PI / 4;
-  });
+  };
+
+  window.addEventListener('mousedown', handleStart);
+  window.addEventListener('mouseup', handleEnd);
+  window.addEventListener('mousemove', (e) => handleDrag(e.offsetX));
+
+  window.addEventListener('touchstart', handleStart);
+  window.addEventListener('touchend', handleEnd);
+  window.addEventListener('touchmove', (e) => handleDrag(e.touches[0].clientX));
 
   // Debug
   const gui = new GUI();
+  gui.close();
 
   const grid = new THREE.GridHelper(20, 20);
   grid.visible = false;
@@ -193,6 +204,9 @@ const script = () => {
   gui.add(axesHelper, 'visible').name('axesHelper');
   gui.add(grid, 'visible').name('gridHelper');
   gui.add(debugObj, 'resetCamera');
+
+  gui.add(camera.position, 'x');
+  gui.add(camera.position, 'y');
 
   // start render
   const render = () => {
