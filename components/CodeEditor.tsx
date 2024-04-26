@@ -19,27 +19,31 @@ export default function CodeEditor({
     highlightedCode += ' ';
 
   return (
-    <div className="relative bg-slate-50 p-4 shadow">
-      <code
-        dangerouslySetInnerHTML={{ __html: highlightedCode }}
-        style={{ fontFamily: 'Fira Code' }}
-      />
-      <textarea
-        value={code}
-        onKeyDown={(e) => {
-          if (e.key === 'Tab') {
-            e.preventDefault();
-            setCode(code + '  ');
-          }
-        }}
-        onChange={(e) => {
-          setCode(e.target.value);
-        }}
-        autoCapitalize="off"
-        autoComplete="off"
-        spellCheck="false"
-        className="absolute bottom-4 left-4 right-4 top-4 resize-none bg-transparent text-transparent caret-sky-600 outline-none"
-      />
+    <div className="overflow-x-scroll bg-slate-50 shadow">
+      <div className="relative h-fit min-h-full w-fit min-w-full p-4">
+        <code
+          dangerouslySetInnerHTML={{ __html: highlightedCode }}
+          style={{ fontFamily: 'Fira Code' }}
+          className="text-nowrap"
+        />
+        <textarea
+          value={code}
+          style={{ fontFamily: 'Fira Code' }}
+          onKeyDown={(e) => {
+            if (e.key === 'Tab') {
+              e.preventDefault();
+              setCode(code + '  ');
+            }
+          }}
+          onChange={(e) => {
+            setCode(e.target.value);
+          }}
+          autoCapitalize="off"
+          autoComplete="off"
+          spellCheck="false"
+          className="absolute bottom-4 left-4 right-4 top-4 resize-none bg-transparent text-transparent caret-sky-500 outline-none"
+        />
+      </div>
     </div>
   );
 }
