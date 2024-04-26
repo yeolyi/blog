@@ -8,7 +8,7 @@ export default function JSInterpreter({ code: _code }: { code: string }) {
   const { ref, code, setCode, logList } = useInterpret(_code);
 
   return (
-    <div className="flex flex-col gap-2 text-sm">
+    <div className="flex flex-col gap-2">
       <CodeEditor code={code} setCode={setCode} />
       <Console logList={logList} />
       <iframe

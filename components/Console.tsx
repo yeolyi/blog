@@ -2,7 +2,7 @@ import { Log } from './log';
 
 export default function Console({ logList }: { logList: Log[] }) {
   return (
-    <div className={`flex flex-col bg-slate-50 p-4`}>
+    <div className={`flex flex-col bg-slate-50 p-4 text-sm`}>
       {logList.map((log, idx) => (
         <Row key={idx} log={log} />
       ))}
