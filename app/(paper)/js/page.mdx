@@ -7,41 +7,6 @@
 
 <img src="/jsbook.jpeg" className="w-[30%] shadow-md" />
 
-## 시작하기 전
-
-출력값 확인을 위해 아래 컴포넌트을 사용합니다. 코드를 수정해보세요.
-
-```js
-// console
-console.log('Hello, world!');
-```
-
-테스트를 제공하는 컴포넌트도 준비했습니다. 아래 컴포넌트에서 add 함수를
-완성해보세요.
-
-```js
-// test
-export const add = (a, b) => {
-  // TODO
-  return 0;
-};
-
-// jest
-import { add } from './index.js';
-
-describe('add', () => {
-  test('Commutative Law of Addition', () => {
-    expect(add(1, 2)).toBe(add(2, 1));
-  });
-
-  test('Random value', () => {
-    const a = Math.random();
-    const b = Math.random();
-    expect(add(a, b)).toBe(a + b);
-  });
-});
-```
-
 ## 1. Introduction to Javascript
 
 The core JavaScript does not include any input or output functionality. Input
@@ -71,10 +36,8 @@ that specifies how you write programs in that language.
 
 ```js
 // console
-// 브라우저 콘솔에 복붙하면 되는데 여기서는 샌드박스 때문인지 에러 뜸 :(
-
-// var let = 'hello, world!';
-// console.log(let);
+var let = 'hello, world!';
+console.log(let);
 ```
 
 ### 5. Unicode
@@ -121,6 +84,7 @@ text of an existing string.
 // console
 const str = 'davascript';
 str[0] = 'j';
+console.log(str);
 ```
 
 ### 2. Numbers
@@ -274,11 +238,61 @@ the undefined value.
 
 ### 6. Symbols
 
-Symbols were introduced in ES6 to serve as **non-string property names**.
+If you use symbolic property names and do not share those symbols, you can be
+confident that other modules of code in your program will not accidentally
+overwrite your properties.
 
 ```js
 // console
-let sym = Symbol('propname');
-let o = { [sym]: 1 };
-console.log(o[sym]);
+const sym = Symbol();
+let obj = {
+  a: 1,
+  [sym]: 2,
+};
+
+console.log(obj, Object.values(obj));
+console.log(obj[sym]);
 ```
+
+ES6에서 이터러블을 정의할 때 이터레이터 메서드를 특정 문자열 이름으로 표준화하면
+기존 코드가 망가질 염려가 있었기에 symbolic name을 도입했습니다. Symbol.for
+메서드는 비슷한 맥락에서 global Symbol registry로 기능합니다:
+
+```js
+// console
+let s = Symbol.for('shared');
+let t = Symbol.for('shared');
+console.log(s === t, s.toString(), Symbol.keyFor(t));
+```
+
+### 7. The Global Object
+
+The properties of this object are the globally defined identifiers that are
+available to a JavaScript program. undefined, isNaN(), String(), Math 등등...
+
+브라우저에서 window 객체는 스스로를 참조하는 window 프로퍼티가 있어서 이
+프로퍼티를 사용해 전역 객체에 접근할 수 있습니다. Web worker 스레드에서는 좀
+다르다는데 이후 챕터해서 공부해봅시다.
+
+원래는 노드에서는 global, 브라우저에서는 window로 전역 객체에 접근했지만
+ES2020부터는 globalThis로 표준화되었습니다.
+
+```js
+// console
+console.log(window === globalThis);
+```
+
+### 8. Immutable Primitive Values and Mutable Object References
+
+객체는 참조하는 대상이 같아야 같습니다:
+
+```js
+// console
+let a = [1, 2, 3];
+let b = [1, 2, 3];
+console.log(a === b);
+```
+
+### 9. Type Conversions
+
+이딴게.. 언어...?

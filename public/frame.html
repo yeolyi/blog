@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <script>
+      window.addEventListener('message', (e) => {
+        const mainWindow = e.source;
+        console.log = (...data) =>
+          mainWindow.postMessage(
+            {
+              type: 'log',
+              data: data.map((x) =>
+                typeof x === 'object' ? JSON.stringify(x) : String(x),
+              ),
+            },
+            '*',
+          );
+        try {
+          eval(e.data);
+        } catch (e) {
+          mainWindow.postMessage({ type: 'exception', data: e }, '*');
+        }
+      });
+    </script>
+  </head>
+</html>

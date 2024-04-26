@@ -1,6 +1,6 @@
 import type { MDXComponents } from 'mdx/types';
 import { Code } from 'bright';
-import CustomSandpack from './components/CustomSandpack';
+import JSInterpreter from './components/JSInterpreter';
 import { ReactNode } from 'react';
 
 Code.theme = 'github-light';
@@ -16,8 +16,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       const type = content.split('\n')[0].slice(3);
       const code = content.split('\n').slice(1).join('\n').trim();
 
-      if (type === 'preview' || type === 'console' || type === 'test')
-        return <CustomSandpack code={code} type={type} />;
+      if (type === 'console') return <JSInterpreter code={code} />;
       else return <FallbackCode {...props} />;
     },
   };
