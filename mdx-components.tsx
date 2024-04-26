@@ -13,10 +13,10 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     ),
     code: (props) => {
       const content = props.children?.toString() ?? '';
-      const type = content.split('\n')[0].slice(3);
-      const code = content.split('\n').slice(1).join('\n').trim();
+      const code = content.trim();
 
-      if (type === 'console') return <JSInterpreter code={code} />;
+      if (props.className === 'language-js')
+        return <JSInterpreter code={code} />;
       else return <FallbackCode {...props} />;
     },
   };

@@ -32,7 +32,6 @@ export default function CodeEditor({
           onKeyDown={(e) => {
             if (e.key === 'Tab') {
               e.preventDefault();
-              setCode(code + '  ');
             }
           }}
           onChange={(e) => {

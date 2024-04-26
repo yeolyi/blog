@@ -19,7 +19,6 @@ JavaScript is embedded.
 ### 3. A Tour of JavaScript
 
 ```js
-// console
 console.log([1, 2] + [3, 4, 5]);
 ```
 
@@ -37,7 +36,6 @@ that specifies how you write programs in that language.
 쓸 일은 없지만, let도 변수명으로 경우에 따라 쓸 수는 있습니다.
 
 ```js
-// console
 var let = 'hello, world!';
 console.log(let);
 ```
@@ -45,7 +43,6 @@ console.log(let);
 ### 5. Unicode
 
 ```js
-// console
 const π = 3.14;
 console.log(π, '\u{1F600}'); // 숫자 직접 바꿔보세요!
 
@@ -62,8 +59,6 @@ normalization 방법이 정의되어있는데 JS가 이걸 해주지는 않으�
 세미콜론이 없으면 안되는 경우가 있습니다.
 
 ```js
-// console
-
 // prettier-ignore
 let y = 1 + 2
 (3 + 4).toString()
@@ -83,7 +78,6 @@ the text at any index of a string, but JavaScript provides no way to alter the
 text of an existing string.
 
 ```js
-// console
 const str = 'davascript';
 str[0] = 'j';
 console.log(str);
@@ -94,7 +88,6 @@ console.log(str);
 64비트 부동소수점을 사용합니다. 오버플로우가 발생해도 에러를 던지지는 않습니다.
 
 ```js
-// console
 let val = Number.MAX_VALUE;
 // (val + 1은 왜 Infinity가 아니지?)
 console.log(val, val + 1, val ** 2);
@@ -104,7 +97,6 @@ console.log(val === val + 1);
 하지만 배열 인덱싱이나 비트 연산등은 32비트 정수 연산을 합니다.
 
 ```js
-// console
 console.log(1 << 30, 1 << 31, 1 << 32);
 ```
 
@@ -112,14 +104,12 @@ console.log(1 << 30, 1 << 31, 1 << 32);
 문자열이 익숙해서 볼때마다 흠칫하지만).
 
 ```js
-// console
 console.log(0x333);
 ```
 
 이외에도 특이한 경우가 많습니다.
 
 ```js
-// console
 console.log(1 / 0, 0 / 0, Infinity / 0, Infinity / Infinity);
 
 let zero = 0;
@@ -132,7 +122,6 @@ NaN은 모든 값과 비교 결과가 false입니다. Number.isNaN 이나 isNaN�
 https://stackoverflow.com/questions/33164725/confusion-between-isnan-and-number-isnan-in-javascript
 
 ```js
-// console
 const val = NaN;
 console.log(val === NaN, Number.isNaN(val));
 ```
@@ -140,7 +129,6 @@ console.log(val === NaN, Number.isNaN(val));
 아래와 같은 경우를 이해하려면 부동소수점 표준인 IEEE-754를 공부해봅시다.
 
 ```js
-// console
 let x = 0.3 - 0.2;
 let y = 0.2 - 0.1;
 console.log(x === 0.1, y === 0.1);
@@ -168,7 +156,6 @@ pair**) of two 16-bit values. 대부분의 문자열 관련 메서드는 16비�
 관련(for/of...)은 실제 문자열처럼 되게 처리해줍니다.
 
 ```js
-// console
 const euro = '€';
 const love = '💙';
 console.log(euro.length);
@@ -181,7 +168,6 @@ for (const c of love) console.log(c);
 문자열 표기법 별로 미묘하게 다른 newline 차이입니다.
 
 ```js
-// console
 console.log(
   'one\
 long\
@@ -195,7 +181,6 @@ line`);
 이런저런 문자열 관련 메서드들입니다:
 
 ```js
-// console
 // d83d + dc99
 const love = '💙';
 
@@ -215,7 +200,6 @@ console.log(love.codePointAt(0).toString(16));
 Tagged tempalte literals는 styled-component에서 활용하는걸로 알고 있습니다:
 
 ```js
-// console
 const str = String.raw`\n`;
 console.log(str);
 ```
@@ -223,7 +207,6 @@ console.log(str);
 ### 4. Boolean Values
 
 ```js
-// console
 console.log(!!undefined);
 console.log(!!null);
 console.log(!!0);
@@ -245,7 +228,6 @@ confident that other modules of code in your program will not accidentally
 overwrite your properties.
 
 ```js
-// console
 const sym = Symbol();
 let obj = {
   a: 1,
@@ -261,7 +243,6 @@ ES6에서 이터러블을 정의할 때 이터레이터 메서드를 특정 문�
 메서드는 비슷한 맥락에서 global Symbol registry로 기능합니다:
 
 ```js
-// console
 let s = Symbol.for('shared');
 let t = Symbol.for('shared');
 console.log(s === t, s.toString(), Symbol.keyFor(t));
@@ -280,7 +261,6 @@ available to a JavaScript program. undefined, isNaN(), String(), Math 등등...
 ES2020부터는 globalThis로 표준화되었습니다.
 
 ```js
-// console
 console.log(window === globalThis);
 ```
 
@@ -289,7 +269,6 @@ console.log(window === globalThis);
 객체는 참조하는 대상이 같아야 같습니다:
 
 ```js
-// console
 let a = [1, 2, 3];
 let b = [1, 2, 3];
 console.log(a === b);
@@ -297,4 +276,128 @@ console.log(a === b);
 
 ### 9. Type Conversions
 
-이딴게.. 언어...?
+~이딴게.. 언어...?~
+
+원시값->원시값 변환 표입니다:
+
+| Value     | to String   | to Number | to Boolean |
+| --------- | ----------- | --------- | ---------- |
+| undefined | 'undefined' | NaN       | false      |
+| null      | 'null'      | 0         | false      |
+| true      | 'true'      | 1         |            |
+| false     | 'false'     | 0         |            |
+| ""        |             | 0         | false      |
+| " 1.2"    |             | 1.2       | true       |
+| "one"     |             | NaN       | true       |
+| 0         | '0'         |           | false      |
+| -0        | '0'         |           | false      |
+| 1         | '1'         |           | true       |
+| Infinity  | 'Infinity'  |           | true       |
+| -Infinity | '-Infinity' |           | true       |
+| NaN       | 'NaN'       |           | false      |
+
+객체->원시값 변환은 뒤에서 살펴볼게요.
+
+#### Conversions and Equality
+
+어떤 값이 다른 값으로 바뀐다고 두 값이 같음(==)을 의미하지는 않습니다. 아래
+예제를 볼게요.
+
+```js
+console.log(undefined ? 'true' : 'false'); // false로 변환됐습니다.
+console.log(undefined == false); // 그렇다고 false와 == 하지는 않습니다.
+```
+
+타입 변환 알고리즘과 연산자에서 사용하는 알고리즘이 상이하기 때문입니다. 뒤에서
+살펴보겠지만 == 연산자는 피연산자를 불 값으로 변환하지 않습니다.
+
+#### Explicit Conversions
+
+wrapper 객체를 사용한 형변환 방식은 하위호환을 위해 있으니 사용하지 맙시다:
+
+```js
+const val = new Boolean('true');
+console.log(typeof val);
+```
+
+숫자 관련 메서드들입니다:
+
+```js
+let n = 17;
+console.log(`0b${n.toString(2)}`);
+console.log(`0o${n.toString(8)}`);
+console.log(`0x${n.toString(16)}`);
+console.log();
+
+n = 123456.789;
+console.log(n.toFixed(2));
+console.log(n.toFixed(5));
+console.log(n.toExponential(1));
+console.log(n.toExponential(3));
+console.log(n.toPrecision(4)); // precesion값이 정수 부분을 표현하지 못할 정도면 지수 표기법을 사용합니다.
+console.log(n.toPrecision(10));
+console.log();
+
+console.log(Number('3 eggs'));
+console.log(parseInt('  3 eggs'));
+console.log(parseInt('3.14'));
+console.log(parseInt('0xF'));
+console.log(parseFloat('.1'));
+console.log(parseInt('.1'));
+console.log(parseInt('ff'));
+console.log(parseInt('ff', 16));
+```
+
+#### Object to Primitive Conversions
+
+객체를 원시값으로 변환하는 알고리즘은 prefer-string, prefer-number,
+no-preference로 나뉩니다. no-preference는 클래스마다 알아서 정의하는데 빌트인
+타입 중에서는 prefer-string인 Date 빼고는 모두 prefer-number입니다. 각각의
+알고리즘에 대해서는 곧 설명할게요.
+
+모든 객체는 불 값으로 변환시 true가 됩니다:
+
+```js
+console.log(Boolean(new Boolean(false)));
+```
+
+객체를 문자열로 변환해야하면 prefer-string 알고리즘으로 우선 변환하고 결과값을
+필요시 위 표에 따라 문자열로 변환합니다.
+
+숫자도 마찬가지로 prefer-number를 돌리고 숫자로 변환합니다.
+
+숫자를 받는 연산자도 이 방식을 사용하는데 예외가 있습니다. '+' 연산자는 둘 중
+하나가 문자열이면 나머지를 문자열로 수정하고, 그렇지 않다면 숫자로 둘 다
+수정합니다. '==' 와 '!='는 하나가 원시값이고 하나가 객체면 객체를 no-preference
+알고리즘을 사용해 원시값으로 수정 후 비교합니다. 부등호 연산자는 둘 다 객체면
+prefer-number 알고리즘으로 변환 후 비교합니다. 다만 이때는 이후 숫자로 수정되지
+않습니다. 덕분에 Date의 비교가 가능해집니다.
+
+#### The toString() and valueOf() methods
+
+모든 객체가 이 두 메서드를 상속받습니다.
+
+각 클래스는 각자의 toString을 구현합니다.
+
+valueOf는 (만약 있다면) 객체를 표현하는 원시값을 반환합니다. 대부분은 이런
+원시값이 없기에 객체 자신을 반환합니다.
+
+```js
+console.log(new Boolean(true).valueOf());
+console.log({ a: 1 }.valueOf());
+console.log(new Date().valueOf());
+```
+
+#### object-to-primitive conversion algorithms
+
+- prefer-string: toString이 원시값 반환하면 이를 사용, 아니면 valueOf가 원시값
+  반환하면 이를 사용, 아니면 TypeError.
+- prefer-number: prefer-string에서 valueOf 이후 toString 시도.
+- no-preference: Date면 prefer-string, 아니면 prefer-number
+
+```js
+console.log(Number([])); // valueOf 실패, toString에서 "", 0으로 변환
+console.log(Number([9])); // valueOf 실패, toString에서 "9", 9로 변환
+```
+
+### 10. Variable Declaration and Assignment

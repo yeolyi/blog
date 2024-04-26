@@ -2,7 +2,9 @@ import { Log } from './log';
 
 export default function Console({ logList }: { logList: Log[] }) {
   return (
-    <div className={`flex flex-col bg-slate-50 p-4 text-sm`}>
+    <div
+      className={`flex max-h-[500px] flex-col overflow-y-scroll bg-slate-50 p-4 text-sm`}
+    >
       {logList.map((log, idx) => (
         <Row key={idx} log={log} />
       ))}
