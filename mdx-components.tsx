@@ -1,6 +1,6 @@
 import type { MDXComponents } from 'mdx/types';
 import { Code } from 'bright';
-import JSInterpreter from './components/JSInterpreter';
+import JSInterpreter from './components/code/JSInterpreter';
 import { ReactNode } from 'react';
 
 Code.theme = 'github-light';
