@@ -10,6 +10,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@babel/standalone": "^7.24.4",
     "@mdx-js/loader": "^3.0.1",
     "@mdx-js/react": "^3.0.1",
     "@next/mdx": "^14.2.2",

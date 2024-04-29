@@ -1,4 +1,4 @@
 export type Log = {
   type: 'log' | 'exception';
-  data: any;
+  data: string;
 };
