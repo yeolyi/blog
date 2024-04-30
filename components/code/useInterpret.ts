@@ -1,4 +1,11 @@
-import { useState, useEffect } from 'react';
+import {
+  useState,
+  useEffect,
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useRef,
+} from 'react';
 import { Log } from './log';
 // @ts-expect-error TODO
 import * as _Babel from '@babel/standalone';
@@ -7,27 +14,58 @@ export const useInterpret = (_code: string) => {
   const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null);
   const [code, setCode] = useState(_code);
   const [logList, setLogList] = useState<Log[]>([]);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (iframe === null) return;
-    setLogList([]);
 
-    const id = setTimeout(() => {
+    const loadHandler = () => setLoaded(true);
+    iframe.addEventListener('load', loadHandler);
+    return () => iframe.removeEventListener('load', loadHandler);
+  }, [iframe]);
+
+  useMessageListener(iframe, setLogList);
+  useExecDebounce(iframe, code, setLogList, loaded);
+
+  return { code, setCode, setIframe, logList };
+};
+
+const useExecDebounce = (
+  iframe: HTMLIFrameElement | null,
+  code: string,
+  setLogList: Dispatch<SetStateAction<Log[]>>,
+  loaded: boolean,
+) => {
+  const ref = useRef(true);
+
+  const postMessage = useCallback(() => {
+    if (iframe === null || loaded === false) return;
+    ref.current = false;
+
+    try {
+      const newCode = parseCode(code);
       iframe.contentWindow?.postMessage('location.reload()', '*');
-      try {
-        const newCode = parseCode(code);
-        iframe?.contentWindow?.postMessage(newCode, '*');
-      } catch {
-        iframe?.contentWindow?.postMessage(code, '*');
-      }
-    }, 800);
-
-    return () => clearTimeout(id);
-  }, [code, iframe]);
+      iframe?.contentWindow?.postMessage(newCode, '*');
+    } catch {
+      iframe?.contentWindow?.postMessage(code, '*');
+    }
+  }, [code, iframe, loaded]);
 
   useEffect(() => {
+    const id = setTimeout(postMessage, ref.current ? 0 : 800);
+    setLogList([]);
+    return () => clearTimeout(id);
+  }, [postMessage, setLogList]);
+};
+
+const useMessageListener = (
+  iframe: HTMLIFrameElement | null,
+  setLogList: Dispatch<SetStateAction<Log[]>>,
+) => {
+  useEffect(() => {
+    if (iframe === null) return;
+
     const handleMessage = (e: MessageEvent) => {
-      if (iframe === null) return;
       if (e.origin === 'null' && e.source === iframe.contentWindow) {
         setLogList((list) => [...list, e.data]);
       }
@@ -35,9 +73,7 @@ export const useInterpret = (_code: string) => {
 
     addEventListener('message', handleMessage);
     return () => removeEventListener('message', handleMessage);
-  }, [iframe]);
-
-  return { code, setCode, setIframe, logList };
+  }, [iframe, setLogList]);
 };
 
 // https://dev.to/jser_zanp/how-to-detect-infinite-loop-in-javascript-28ih
