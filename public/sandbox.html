@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+  <head>
+    <script type="module">
+      import stringifyObject from 'https://cdn.jsdelivr.net/npm/stringify-object@5.0.0/+esm';
+
+      const INDENT = '  ';
+      const SECRET = '[secret 😜]';
+
+      const exec = (code, logger) => {
+        console.log = logger;
+        // js 예제 코드 중 전역에서 동작해야하는 것이 있어
+        // Function을 사용할 수 없다.
+        (0, eval)(code);
+      };
+
+      const messageHandler = (e) => {
+        const postMessage = (data) => e.source.postMessage(data, '*');
+
+        const logger = (...data) => {
+          const toString = (x) => {
+            if (x === logger) return SECRET;
+            // 두 번 stringify하는 것 방지(슬래시가 두 번 나오는 문제)
+            if (typeof x === 'string') return `'${x}'`;
+
+            if (x instanceof Number) return `[Number: ${x}]`;
+            if (x instanceof Boolean) return `[Boolean: ${x}]`;
+
+            return stringifyObject(x, {
+              INDENT,
+              inlineCharacterLimit: 80,
+              transform: (obj, property, originalResult) => {
+                if (obj[property] === logger) return SECRET;
+                return originalResult;
+              },
+            });
+          };
+
+          logger.toString = () => SECRET;
+          logger.valueOf = () => SECRET;
+
+          postMessage({ type: 'log', data: data.map(toString).join(', ') });
+        };
+
+        try {
+          exec(e.data, logger);
+        } catch (e) {
+          postMessage({ type: 'exception', data: e.message });
+        }
+      };
+
+      window.addEventListener('message', messageHandler);
+    </script>
+  </head>
+</html>

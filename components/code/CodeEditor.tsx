@@ -1,6 +1,7 @@
 import hljs from 'highlight.js/lib/core';
 import js from 'highlight.js/lib/languages/javascript';
 import 'highlight.js/styles/github.css';
+import { KeyboardEventHandler } from 'react';
 
 hljs.registerLanguage('javascript', js);
 
@@ -11,12 +12,7 @@ export default function CodeEditor({
   code: string;
   setCode: (code: string) => void;
 }) {
-  let highlightedCode = hljs.highlight(code, { language: 'javascript' }).value;
-
-  if (highlightedCode === '') highlightedCode = ' ';
-  // TODO: 해결책 찾기
-  if (highlightedCode[highlightedCode.length - 1] === '\n')
-    highlightedCode += ' ';
+  const { highlightedCode, handleKeyDown } = useEditor(code, setCode);
 
   return (
     <div className="overflow-x-scroll bg-slate-50 shadow">
@@ -27,13 +23,9 @@ export default function CodeEditor({
           className="h-full w-full text-nowrap"
         />
         <textarea
-          value={code}
+          defaultValue={code}
           style={{ fontFamily: 'Fira Code' }}
-          onKeyDown={(e) => {
-            if (e.key === 'Tab') {
-              e.preventDefault();
-            }
-          }}
+          onKeyDown={handleKeyDown}
           onChange={(e) => {
             setCode(e.target.value);
           }}
@@ -46,3 +38,47 @@ export default function CodeEditor({
     </div>
   );
 }
+
+const useEditor = (code: string, _setCode: (val: string) => void) => {
+  let highlightedCode = hljs.highlight(code, {
+    language: 'javascript',
+  }).value;
+
+  if (highlightedCode === '') highlightedCode = ' ';
+  // TODO: 해결책 찾기
+  if (highlightedCode[highlightedCode.length - 1] === '\n')
+    highlightedCode += ' ';
+
+  const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
+    const textarea = e.target as HTMLTextAreaElement;
+    const code = textarea.value;
+    const isCtrlZ = (e.metaKey || e.ctrlKey) && e.key === 'z';
+
+    const setCode = (code: string) => {
+      textarea.value = code;
+      _setCode(code);
+    };
+
+    if (e.key === 'Tab') {
+      e.preventDefault();
+
+      const { selectionStart, selectionEnd } = textarea;
+
+      const indent = '  ';
+      const newValue = insertAt(code, indent, selectionStart);
+
+      setCode(newValue);
+
+      textarea.selectionStart = selectionStart + indent.length;
+      textarea.selectionEnd = selectionEnd + indent.length;
+    } else if (isCtrlZ) {
+      // TODO
+      e.stopPropagation();
+    }
+  };
+
+  return { handleKeyDown, highlightedCode };
+};
+
+const insertAt = (str1: string, str2: string, idx: number) =>
+  `${str1.slice(0, idx)}${str2}${str1.slice(idx)}`;

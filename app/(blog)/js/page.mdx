@@ -5,16 +5,15 @@ import ImageViewer from '@/components/image/ImageViewer';
 # 자바스크립트
 
 자바스크립트 공부 기록입니다. 몰랐던 것들과 흥미로운 것들을 이곳에 기록해요.
+
 아래 책으로 공부했습니다.
 
 <ImageViewer src="/jsbook.jpeg" alt="책 표지" width={458} height={601} />
 
 ## 1. Introduction to Javascript
 
-The core JavaScript does not include any input or output functionality. Input
-and output (as well as more sophisticated features, such as networking, storage,
-and graphics) are the responsibility of the “host environment” within which
-JavaScript is embedded.
+코어 js에는 입출력 기능이 포함되어있지 않습니다. 입출력, 네트워크, 그래픽 등의
+기능은 js가 임베딩된 호스트 환경의 책임입니다.
 
 ### 3. A Tour of JavaScript
 
@@ -22,41 +21,41 @@ JavaScript is embedded.
 console.log([1, 2] + [3, 4, 5]);
 ```
 
-Roughly, an **expression** is something that computes a value but doesn’t do
-anything: it doesn’t alter the program state in any way. **Statements**, on the
-other hand, don’t have a value, but they do alter the state
+간략하게, **표현식**은 어떤 값으로 계산되지만 프로그램의 상태를 바꾸지는 않고,
+**문**은 값은 없지만 상태를 바꿉니다.
 
 ## 2. Lexical Structure
 
-The lexical structure of a programming language is the set of elementary rules
-that specifies how you write programs in that language.
+프로그래밍 언어의 lexical structure는 해당 언어로 프로그램을 어떻게 작성할지
+알려주는 기본적인 규칙들입니다.
 
 ### 4. Identifiers and Reserved Words
 
-쓸 일은 없지만, let도 변수명으로 경우에 따라 쓸 수는 있습니다.
+쓸 일은 없지만, let도 변수명으로 경우에 따라 쓸 수는 있습니다. 주석을
+해제해보세요:
 
 ```js
+// 'use strict'
 var let = 'hello, world!';
 console.log(let);
 ```
 
 ### 5. Unicode
 
+유니코드 값을 바꿔보세요:
+
 ```js
 const π = 3.14;
-console.log(π, '\u{1F600}'); // 숫자 직접 바꿔보세요!
-
-// const 🥲 = 'cry';
-// swift는 되던데,,,
+console.log(π, '\u{1F600}');
 ```
 
-모양이 같은 문자더라도 다른 유니코드 값일 수 있습니다. 유니코드 표준에
-normalization 방법이 정의되어있는데 JS가 이걸 해주지는 않으므로 식별자 모양은
-같은데 다른 값인 상황을 만들지 않으려면 에디터 등에서 잘 해주는지 확인합시다.
+문자의 모양이 같더라도 다른 유니코드 값일 수 있습니다. 유니코드 표준에
+normalization 알고리즘이 있지만 JS가 이를 처리해주지는 않으므로 에디터에서 잘
+해주는지 확인합시다.
 
 ### 6. Optional Semicolons
 
-세미콜론이 없으면 안되는 경우가 있습니다.
+세미콜론이 없으면 동작이 직관과 다른 경우가 있습니다.
 
 ```js
 // prettier-ignore
@@ -66,16 +65,12 @@ let y = 1 + 2
 
 ## 3. Types, Values, and Variables
 
-JavaScript differs from more static languages in that functions and classes are
-**not just part of the language syntax**: they are themselves values that can be
-manipulated by JavaScript programs
+JS는 함수와 클래스가 단순 언어 구문(syntax)의 일부가 아니라 코드에 의해 조작될
+수 있는 값 점에서 다른 정적 언어들과 다릅니다.
 
 ### 1. Overview and Definitions
 
-Strings can be thought of as arrays of characters, and you might expect them to
-be mutable. In JavaScript, however, **strings are immutable**: you can access
-the text at any index of a string, but JavaScript provides no way to alter the
-text of an existing string.
+JS에서 문자열은 불변입니다. 이미 선언된 문자열의 일부를 수정할 수 없습니다.
 
 ```js
 const str = 'davascript';
@@ -100,8 +95,8 @@ console.log(val === val + 1);
 console.log(1 << 30, 1 << 31, 1 << 32);
 ```
 
-16진수도 아래처럼 바로 입력할 수 있습니다. CSS 색상값 넣을 때 종종 씁니다(저는
-문자열이 익숙해서 볼때마다 흠칫하지만).
+16진수도 아래처럼 바로 입력할 수 있습니다. CSS 색상값 넣을 때 종종 썼던 것
+같아요.
 
 ```js
 console.log(0x333);
@@ -118,15 +113,15 @@ console.log(zero === negZero);
 console.log(1 / zero === 1 / negZero);
 ```
 
-NaN은 모든 값과 비교 결과가 false입니다. Number.isNaN 이나 isNaN을 씁시다.
-https://stackoverflow.com/questions/33164725/confusion-between-isnan-and-number-isnan-in-javascript
+NaN은 모든 값과 비교 결과가 false입니다. Number.isNaN 이나 isNaN을 씁시다. 두
+함수의 차이점: https://stackoverflow.com/questions/33164725
 
 ```js
 const val = NaN;
 console.log(val === NaN, Number.isNaN(val));
 ```
 
-아래와 같은 경우를 이해하려면 부동소수점 표준인 IEEE-754를 공부해봅시다.
+아래와 같은 경우를 이해하려면 부동소수점 표준인 IEEE-754를 공부해봅시다:
 
 ```js
 let x = 0.3 - 0.2;
@@ -134,11 +129,9 @@ let y = 0.2 - 0.1;
 console.log(x === 0.1, y === 0.1);
 ```
 
-If these floating-point approximations are problematic for your programs,
-consider using scaled integers. For example, you might manipulate monetary
-values as integer cents rather than fractional dollars. 이더리움에서는 wei라는
-최소 단위(=10^(-18)ether)를 쓰던데 이게 여기서 말하는 scaled integer과 비슷한 것
-같습니다.
+부동소수점이 근사값을 사용하는게 문제라면 scaled integer를 사용해볼 수 있습니다.
+이더리움에서는 wei라는 최소 단위(=10^(-18)ether)를 쓰는데 책에서 말하는 scaled
+integer과 비슷한 것 같습니다.
 
 BigInt와 Number간의 연산은 두 자료형이 포함관계가 아니므로 불가능합니다. 비교
 연산은 가능합니다.
@@ -149,11 +142,12 @@ BigInt는 암호학에 쓰기는 부적합한데
 
 ### 3. Text
 
-UTF-16 인코딩을 사용합니다. Unicode characters whose codepoints do not fit in 16
-bits are encoded using the rules of UTF-16 as a sequence (known as a **surrogate
-pair**) of two 16-bit values. 대부분의 문자열 관련 메서드는 16비트 단위로
-동작하고 surrogate pair를 특별 취급하지 않습니다. 다만 이터러블
-관련(for/of...)은 실제 문자열처럼 되게 처리해줍니다.
+UTF-16 인코딩을 사용합니다. Codepoint가 16비트에 들어가지 않는 유니코드 문자는
+**surrogate pair**로 알려진 UTF-16의 시퀀스를 사용합니다.
+
+대부분의 문자열 관련 메서드는 16비트 단위로 동작하고 surrogate pair를 특별
+취급하지 않습니다. 다만 이터러블 관련(for/of...)은 실제 문자열처럼 되게
+처리해줍니다.
 
 ```js
 const euro = '€';
@@ -217,15 +211,23 @@ console.log(!!'');
 
 ### 5. null and undefined
 
-**undefined** is a predefined global constant (not a language keyword like null,
-though this is not an important distinction in practice) that is initialized to
-the undefined value.
+(중요하지는 않지만) **undefined**는 언어 차원의 키워드인 null과는 다르게 미리
+정의된 전역 상수값으로 undefined로 초기화되어있습니다.
+
+> undefined is a property of the global object. That is, it is a variable in
+> global scope.
+>
+> https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined
+
+```js
+console.log('undefined' in globalThis);
+console.log('null' in globalThis);
+```
 
 ### 6. Symbols
 
-If you use symbolic property names and do not share those symbols, you can be
-confident that other modules of code in your program will not accidentally
-overwrite your properties.
+프로퍼티명을 심볼로 정하고 이를 공유하지 않으면 다른 모듈의 코드가 실수로 해당
+프로퍼티를 건들지 않음을 보장받을 수 있습니다.
 
 ```js
 const sym = Symbol();
@@ -238,7 +240,7 @@ console.log(obj, Object.values(obj));
 console.log(obj[sym]);
 ```
 
-ES6에서 이터러블을 정의할 때 이터레이터 메서드를 특정 문자열 이름으로 표준화하면
+ES6에서 이터러블을 정의할 때 이터레이터 메서드를 문자열 이름으로 정해 표준화하면
 기존 코드가 망가질 염려가 있었기에 symbolic name을 도입했습니다. Symbol.for
 메서드는 비슷한 맥락에서 global Symbol registry로 기능합니다:
 
@@ -250,12 +252,12 @@ console.log(s === t, s.toString(), Symbol.keyFor(t));
 
 ### 7. The Global Object
 
-The properties of this object are the globally defined identifiers that are
-available to a JavaScript program. undefined, isNaN(), String(), Math 등등...
+전역 객체의 프로퍼티들은 JS 프로그램에서 사용할 수 있는 전역적으로 정의된
+식별자들입니다. undefined, isNaN(), String(), Math 등등...
 
 브라우저에서 window 객체는 스스로를 참조하는 window 프로퍼티가 있어서 이
-프로퍼티를 사용해 전역 객체에 접근할 수 있습니다. Web worker 스레드에서는 좀
-다르다는데 이후 챕터해서 공부해봅시다.
+프로퍼티를 사용해 전역 객체에 접근할 수 있습니다. (뭔가 메타적이고 신기한듯,,,)
+Web worker 스레드에서는 좀 다르다는데 이후 챕터해서 공부해봅시다.
 
 원래는 노드에서는 global, 브라우저에서는 window로 전역 객체에 접근했지만
 ES2020부터는 globalThis로 표준화되었습니다.
@@ -304,7 +306,7 @@ console.log(a === b);
 예제를 볼게요.
 
 ```js
-console.log(undefined ? 'true' : 'false'); // false로 변환됐습니다.
+console.log(Boolean(undefined)); // false로 변환됐습니다.
 console.log(undefined == false); // 그렇다고 false와 == 하지는 않습니다.
 ```
 
@@ -313,7 +315,7 @@ console.log(undefined == false); // 그렇다고 false와 == 하지는 않습니
 
 #### Explicit Conversions
 
-wrapper 객체를 사용한 형변환 방식은 하위호환을 위해 있으니 사용하지 맙시다:
+wrapper '객체'를 사용한 형변환 방식은 하위호환을 위해 있으니 사용하지 맙시다:
 
 ```js
 const val = new Boolean('true');
@@ -334,7 +336,8 @@ console.log(n.toFixed(2));
 console.log(n.toFixed(5));
 console.log(n.toExponential(1));
 console.log(n.toExponential(3));
-console.log(n.toPrecision(4)); // precesion값이 정수 부분을 표현하지 못할 정도면 지수 표기법을 사용합니다.
+// precesion값이 정수 부분을 표현하지 못할 정도면 지수 표기법을 사용합니다.
+console.log(n.toPrecision(4));
 console.log(n.toPrecision(10));
 console.log();
 
@@ -362,20 +365,31 @@ console.log(Boolean(new Boolean(false)));
 ```
 
 객체를 문자열로 변환해야하면 prefer-string 알고리즘으로 우선 변환하고 결과값을
-필요시 위 표에 따라 문자열로 변환합니다.
+필요시 위 표에 따라 문자열로 변환합니다. 숫자도 마찬가지로 prefer-number를
+돌리고 숫자로 변환합니다.
 
-숫자도 마찬가지로 prefer-number를 돌리고 숫자로 변환합니다.
+숫자를 받는 연산자도 피연산자에 객체가 있을 때 이 방식을 사용하는데 예외가
+있습니다:
 
-숫자를 받는 연산자도 이 방식을 사용하는데 예외가 있습니다. '+' 연산자는 둘 중
-하나가 문자열이면 나머지를 문자열로 수정하고, 그렇지 않다면 숫자로 둘 다
-수정합니다. '==' 와 '!='는 하나가 원시값이고 하나가 객체면 객체를 no-preference
-알고리즘을 사용해 원시값으로 수정 후 비교합니다. 부등호 연산자는 둘 다 객체면
-prefer-number 알고리즘으로 변환 후 비교합니다. 다만 이때는 이후 숫자로 수정되지
-않습니다. 덕분에 Date의 비교가 가능해집니다.
+- '+' 연산자는 객체를 no-preference 알고리즘을 돌리고, 피연산자중 하나라도
+  문자열이면 문자열 concat을, 그렇지 않다면 숫자로 둘 다 수정합니다.
+- '==' 와 '!='는 피연산자 하나만 객체면 해당 객체를 no-preference 알고리즘을
+  사용해 원시값으로 수정 후 비교합니다.
+- 부등호 연산자는 둘 다 객체면 prefer-number 알고리즘으로 변환 후 비교합니다.
+  다만 이때는 이후 숫자로 수정되지 않습니다. 덕분에 Date의 비교가 가능해집니다.
+
+```js
+const a = { val: 1 };
+a.valueOf = () => 'valueOf';
+// a.valueOf = () => 123;
+
+console.log(a + '', a + 1);
+```
 
 #### The toString() and valueOf() methods
 
-모든 객체가 이 두 메서드를 상속받습니다.
+prefer 어쩌구 알고리즘을 이해하려면 두 메서드를 알아야합니다. 모든 객체가 이
+메서드들을 상속받습니다.
 
 각 클래스는 각자의 toString을 구현합니다.
 
@@ -390,9 +404,9 @@ console.log(new Date().valueOf());
 
 #### object-to-primitive conversion algorithms
 
-- prefer-string: toString이 원시값 반환하면 이를 사용, 아니면 valueOf가 원시값
-  반환하면 이를 사용, 아니면 TypeError.
-- prefer-number: prefer-string에서 valueOf 이후 toString 시도.
+- prefer-string: toString이 **원시값을 반환한다면** 이를 사용, 아니면 valueOf가
+  원시값 반환하면 이를 사용, 아니면 TypeError.
+- prefer-number: prefer-string에서 valueOf와 toString 순서만 교체.
 - no-preference: Date면 prefer-string, 아니면 prefer-number
 
 ```js
@@ -401,3 +415,81 @@ console.log(Number([9])); // valueOf 실패, toString에서 "9", 9로 변환
 ```
 
 ### 10. Variable Declaration and Assignment
+
+확실히 안바뀌는 값에만 const를 쓰는 사람들이 있고, 일단 const로 선언하고 나중에
+바뀌어야한다면 let으로 수정하는 사람들이 있습니다.
+https://overreacted.io/on-let-vs-const/ 참고할만한 아티클입니다.
+
+for문에서도 const를 쓸 수 있습니다:
+
+```js
+for (const datum of [1, 2, 3]) console.log(datum);
+for (const i = 0; i < 5; i++) console.log(i);
+```
+
+let과 const는 block scope입니다.
+
+Top level에서 선언되면 **전역 변수/상수**라고 합니다. 노드와 client-side js
+module에서 전역 값의 스코프는 파일입니다. Traditional client-side js에서는 html
+document입니다. 한 스크립트에서 선언한 전역 값을 다른 스크립트에서 사용할 수
+있습니다.
+
+var는 포함하는 함수 body 내부에 스코핑?됩니다:
+
+```js
+for (var i = 0; i < 10; i++);
+console.log(i);
+```
+
+함수 바깥에 선언하면 전역 변수가 되는데, globalThis에 포함된다는 점이
+let/const와의 차이점입니다:
+
+```js
+var a = 1;
+let b = 1;
+console.log(globalThis.a, globalThis.b);
+```
+
+var는 중복 선언을 제한하지 않습니다. 또한 hoisting이 이루어집니다. 즉 변수의
+선언이 변수를 포함하는 스코프 최상단으로 이동합니다:
+
+```js
+var a = 10;
+var a = 20;
+console.log(a);
+
+console.log(b);
+var b = 10;
+
+console.log(c);
+let c;
+```
+
+strict mode의 유무에 따라 선언되지 않는 변수에 대한 처리가 달라집니다. strict
+mode가 아니면 새로운 전역 변수가 생성됩니다. 이러한 변수는 var로 선언된 변수와
+특성이 '유사'합니다.
+
+```js
+(() => {
+  a = 10;
+})();
+
+console.log(a);
+
+(() => {
+  'use strict';
+  b = 10;
+})();
+```
+
+Destructuring assignment에서 이런 것도 가능합니다:
+
+```js
+let [, x, , y] = [1, 2, 3, 4];
+console.log(x, y);
+
+let [first, ...rest] = 'Hello';
+console.log(first, rest);
+```
+
+## 4. Expressions and Operators

@@ -5,7 +5,7 @@ import CodeEditor from './CodeEditor';
 import Console from './Console';
 import { useInterpret } from './useInterpret';
 
-export default function JSInterpreter({ code: _code }: { code: string }) {
+export default function Sandbox({ code: _code }: { code: string }) {
   const { setIframe, code, setCode, logList } = useInterpret(_code);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -15,7 +15,7 @@ export default function JSInterpreter({ code: _code }: { code: string }) {
       <Console logList={logList} />
       <iframe
         sandbox="allow-scripts"
-        src="frame.html"
+        src="sandbox.html"
         ref={(ref) => setIframe(ref)}
         className="h-0 w-0"
       />

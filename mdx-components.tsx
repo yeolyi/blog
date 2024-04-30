@@ -1,6 +1,6 @@
 import type { MDXComponents } from 'mdx/types';
 import { Code } from 'bright';
-import JSInterpreter from './components/code/JSInterpreter';
+import Sandbox from './components/code/Sandbox';
 import { ReactNode } from 'react';
 
 Code.theme = 'github-light';
@@ -15,8 +15,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       const content = props.children?.toString() ?? '';
       const code = content.trim();
 
-      if (props.className === 'language-js')
-        return <JSInterpreter code={code} />;
+      if (props.className === 'language-js') return <Sandbox code={code} />;
       else return <FallbackCode {...props} />;
     },
   };
