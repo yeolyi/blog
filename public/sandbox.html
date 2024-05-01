@@ -14,32 +14,35 @@
         (0, eval)(code);
       };
 
+      const toString = (x, excluded) => {
+        if (excluded.includes(x)) return SECRET;
+        // 두 번 stringify하는 것 방지(슬래시가 두 번 나오는 문제)
+        if (typeof x === 'string') return `'${x}'`;
+
+        if (x instanceof Number) return `[Number: ${x}]`;
+        if (x instanceof Boolean) return `[Boolean: ${x}]`;
+
+        return stringifyObject(x, {
+          INDENT,
+          inlineCharacterLimit: 80,
+          transform: (obj, property, originalResult) => {
+            if (excluded.includes(obj[property])) return SECRET;
+            return originalResult;
+          },
+        });
+      };
+
       const messageHandler = (e) => {
         const postMessage = (data) => e.source.postMessage(data, '*');
 
         const logger = (...data) => {
-          const toString = (x) => {
-            if (x === logger) return SECRET;
-            // 두 번 stringify하는 것 방지(슬래시가 두 번 나오는 문제)
-            if (typeof x === 'string') return `'${x}'`;
-
-            if (x instanceof Number) return `[Number: ${x}]`;
-            if (x instanceof Boolean) return `[Boolean: ${x}]`;
-
-            return stringifyObject(x, {
-              INDENT,
-              inlineCharacterLimit: 80,
-              transform: (obj, property, originalResult) => {
-                if (obj[property] === logger) return SECRET;
-                return originalResult;
-              },
-            });
-          };
-
           logger.toString = () => SECRET;
           logger.valueOf = () => SECRET;
 
-          postMessage({ type: 'log', data: data.map(toString).join(', ') });
+          postMessage({
+            type: 'log',
+            data: data.map((datum) => toString(datum, [logger])).join(', '),
+          });
         };
 
         try {

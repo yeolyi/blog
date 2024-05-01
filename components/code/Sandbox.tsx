@@ -4,7 +4,7 @@ import { useState } from 'react';
 import CodeEditor from './CodeEditor';
 import Console from './Console';
 import { useInterpret } from './useInterpret';
-import { useAppeared } from './useAppeared';
+import { useAppeared } from '@/util/hook';
 
 export default function Sandbox({ code: _code }: { code: string }) {
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);

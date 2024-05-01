@@ -4,7 +4,8 @@ import ImageViewer from '@/components/image/ImageViewer';
 
 # 자바스크립트
 
-자바스크립트 공부 기록입니다. 몰랐던 것들과 흥미로운 것들을 이곳에 기록해요.
+자바스크립트 공부 기록입니다. 공부하며 재밌던 ~~얼척없던~~ 것들을 이곳에
+기록해요.
 
 아래 책으로 공부했습니다.
 
@@ -351,12 +352,41 @@ console.log(parseInt('ff'));
 console.log(parseInt('ff', 16));
 ```
 
+#### The toString() and valueOf() methods
+
+객체 -> 원시값 변환 알고리즘을 이해하려면 두 메서드를 알아야합니다. 모든 객체가
+이 메서드들을 상속받습니다.
+
+각 클래스는 각자의 toString을 구현합니다. 객체의 문자열 표현을 반환합니다.
+
+valueOf는 (만약 있다면) 객체를 표현하는 원시값을 반환합니다. 대부분은 이런
+원시값이 없기에 객체 자신을 반환합니다.
+
+```js
+console.log(new Boolean(true).valueOf());
+console.log({ a: 1 }.valueOf());
+console.log(new Date().valueOf());
+```
+
+#### object-to-primitive conversion algorithms
+
+- prefer-string: toString이 **원시값을 반환한다면**(문자열이 아니더라도) 이를
+  사용, 아니면 valueOf가 원시값 반환하면 이를 사용, 아니면 TypeError.
+- prefer-number: prefer-string에서 valueOf와 toString 순서만 교체.
+- no-preference: Date면 prefer-string, 아니면 prefer-number
+
+```js
+console.log(Number([])); // valueOf 실패, toString에서 "", 0으로 변환
+console.log(Number([9])); // valueOf 실패, toString에서 "9", 9로 변환
+```
+
 #### Object to Primitive Conversions
 
 객체를 원시값으로 변환하는 알고리즘은 prefer-string, prefer-number,
-no-preference로 나뉩니다. no-preference는 클래스마다 알아서 정의하는데 빌트인
-타입 중에서는 prefer-string인 Date 빼고는 모두 prefer-number입니다. 각각의
-알고리즘에 대해서는 곧 설명할게요.
+no-preference로 나뉩니다.
+
+no-preference는 클래스마다 알아서 정의하는데 빌트인 타입 중에서는
+prefer-string인 Date 빼고는 모두 prefer-number입니다.
 
 모든 객체는 불 값으로 변환시 true가 됩니다:
 
@@ -364,8 +394,8 @@ no-preference로 나뉩니다. no-preference는 클래스마다 알아서 정의
 console.log(Boolean(new Boolean(false)));
 ```
 
-객체를 문자열로 변환해야하면 prefer-string 알고리즘으로 우선 변환하고 결과값을
-필요시 위 표에 따라 문자열로 변환합니다. 숫자도 마찬가지로 prefer-number를
+객체를 문자열로 변환해야하면 prefer-string 알고리즘으로 우선 변환하고 필요시
+결과값을 위 표에 따라 문자열로 변환합니다. 숫자도 마찬가지로 prefer-number를
 돌리고 숫자로 변환합니다.
 
 숫자를 받는 연산자도 피연산자에 객체가 있을 때 이 방식을 사용하는데 예외가
@@ -384,34 +414,6 @@ a.valueOf = () => 'valueOf';
 // a.valueOf = () => 123;
 
 console.log(a + '', a + 1);
-```
-
-#### The toString() and valueOf() methods
-
-prefer 어쩌구 알고리즘을 이해하려면 두 메서드를 알아야합니다. 모든 객체가 이
-메서드들을 상속받습니다.
-
-각 클래스는 각자의 toString을 구현합니다.
-
-valueOf는 (만약 있다면) 객체를 표현하는 원시값을 반환합니다. 대부분은 이런
-원시값이 없기에 객체 자신을 반환합니다.
-
-```js
-console.log(new Boolean(true).valueOf());
-console.log({ a: 1 }.valueOf());
-console.log(new Date().valueOf());
-```
-
-#### object-to-primitive conversion algorithms
-
-- prefer-string: toString이 **원시값을 반환한다면** 이를 사용, 아니면 valueOf가
-  원시값 반환하면 이를 사용, 아니면 TypeError.
-- prefer-number: prefer-string에서 valueOf와 toString 순서만 교체.
-- no-preference: Date면 prefer-string, 아니면 prefer-number
-
-```js
-console.log(Number([])); // valueOf 실패, toString에서 "", 0으로 변환
-console.log(Number([9])); // valueOf 실패, toString에서 "9", 9로 변환
 ```
 
 ### 10. Variable Declaration and Assignment
