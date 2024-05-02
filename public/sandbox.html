@@ -76,6 +76,7 @@
             typeof input === 'boolean' ||
             typeof input === 'function' ||
             typeof input === 'symbol' ||
+            typeof input === 'bigint' ||
             isRegex(input)
           ) {
             return String(input);

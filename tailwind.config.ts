@@ -13,6 +13,8 @@ const config: Config = {
           css: {
             blockquote: {
               fontWeight: null,
+              'p:first-of-type::before': { content: 'none' },
+              'p:first-of-type::after': { content: 'none' },
             },
           },
         },
