@@ -50,6 +50,15 @@ const π = 3.14;
 console.log(π, '\u{1F600}');
 ```
 
+```js
+const str = [...Array(9).keys()]
+  .map((x) => 0x1f311 + x)
+  .map((x) => String.fromCodePoint(x))
+  .join(' ');
+
+console.log(str);
+```
+
 문자의 모양이 같더라도 다른 유니코드 값일 수 있습니다. 유니코드 표준에
 normalization 알고리즘이 있지만 JS가 이를 처리해주지는 않으므로 에디터에서 잘
 해주는지 확인합시다.
