@@ -22,6 +22,7 @@ export default function CodeEditor({
           className="h-full w-full text-nowrap font-firacode"
         />
         <textarea
+          name="code"
           aria-label="editor"
           defaultValue={code}
           onKeyDown={handleKeyDown}
