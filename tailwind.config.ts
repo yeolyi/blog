@@ -21,10 +21,10 @@ const config: Config = {
               'p:first-of-type::after': { content: 'none' },
             },
             h2: {
-              'scroll-margin': '50px',
+              'scroll-margin': '100px',
             },
             h3: {
-              'scroll-margin': '50px',
+              'scroll-margin': '100px',
             },
           },
         },

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, MutableRefObject } from 'react';
 
 export const useAppeared = (
   element: HTMLElement | null,
@@ -37,4 +37,20 @@ export const useLoaded = (element: HTMLElement | null) => {
   }, [element]);
 
   return loaded;
+};
+
+export const useClickOutside = (
+  ref: MutableRefObject<HTMLElement | undefined>,
+  callback: () => void,
+) => {
+  useEffect(() => {
+    const handleClickOutside = (event: Event) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        callback();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [callback, ref]);
 };
