@@ -1,10 +1,6 @@
 import type { MDXComponents } from 'mdx/types';
-import { Code } from 'bright';
 import Sandbox from './components/code/Sandbox';
-import { ReactNode } from 'react';
 import PreviewAnchor from './components/anchor/PreviewAnchor';
-
-Code.theme = 'github-light';
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
@@ -17,12 +13,8 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       const code = content.trim();
 
       if (props.className === 'language-js') return <Sandbox code={code} />;
-      else return <FallbackCode {...props} />;
+      else return <code {...props} />;
     },
     a: PreviewAnchor,
   };
 }
-
-const FallbackCode = ({ children }: { children?: ReactNode }) => (
-  <Code>{children}</Code>
-);

@@ -134,12 +134,12 @@ const TocRow = ({
 };
 
 const getCurHeading = (headingList: HTMLHeadingElement[]) => {
-  const middleOffset = window.scrollY + window.innerHeight / 2;
+  const boundaryOffset = window.scrollY + window.innerHeight / 2;
   const offsetList = headingList
     .map(
       (heading) =>
         [
-          middleOffset -
+          boundaryOffset -
             (heading.getBoundingClientRect().top + window.scrollY) +
             100,
           heading,

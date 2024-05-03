@@ -15,7 +15,6 @@
     "@mdx-js/react": "^3.0.1",
     "@next/mdx": "^14.2.2",
     "@vercel/analytics": "^1.2.2",
-    "bright": "^0.8.5",
     "highlight.js": "^11.9.0",
     "jsdom": "^24.0.0",
     "lil-gui": "^0.19.2",
