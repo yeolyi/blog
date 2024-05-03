@@ -25,7 +25,7 @@ const Content = async (props: Props) => {
 
   return (
     <a
-      className="not-prose flex flex-col gap-1 border border-neutral-200 p-3 hover:bg-neutral-50"
+      className="not-prose flex flex-col gap-1 border border-neutral-200 p-3 not-italic hover:bg-neutral-50"
       href={props.href}
     >
       <span className="text-sm text-neutral-600 underline">{hostname}</span>

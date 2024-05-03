@@ -39,9 +39,9 @@ const useExecDebounce = (
       const newCode = parseCode(code);
       // globalThis에 있는 변수등을 초기화하기 위함
       iframe.contentWindow?.postMessage('location.reload()', '*');
-      iframe?.contentWindow?.postMessage(newCode, '*');
+      iframe.contentWindow?.postMessage(newCode, '*');
     } catch {
-      iframe?.contentWindow?.postMessage(code, '*');
+      iframe.contentWindow?.postMessage(code, '*');
     }
   }, [code, iframe, loaded]);
 

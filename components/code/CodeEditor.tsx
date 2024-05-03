@@ -16,7 +16,7 @@ export default function CodeEditor({
 
   return (
     <div className="overflow-x-scroll bg-slate-50 shadow">
-      <div className="relative h-fit min-h-full w-fit min-w-full p-4 text-sm leading-6">
+      <div className="relative h-fit min-h-full w-fit min-w-full p-4 text-base leading-6">
         <pre
           dangerouslySetInnerHTML={{ __html: highlightedCode }}
           style={{ fontFamily: 'Fira Code' }}
