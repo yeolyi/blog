@@ -1,22 +1,21 @@
-import Image from 'next/image';
+import Image, { StaticImageData } from 'next/image';
 
 export default function ImageViewer({
   src,
   alt,
-  width,
-  height,
+  priority,
 }: {
-  src: string;
+  src: StaticImageData;
   alt: string;
-  width: number;
-  height: number;
+  priority?: boolean;
 }) {
   return (
-    <div
-      className="not-prose relative mx-auto h-[200px]"
-      style={{ aspectRatio: width / height }}
-    >
-      <Image src={src} fill alt={alt} className="shadow-md" />
-    </div>
+    <Image
+      src={src}
+      alt={alt}
+      sizes="100vw"
+      style={{ width: '50%', height: 'auto' }}
+      priority={priority}
+    />
   );
 }

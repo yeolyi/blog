@@ -2,7 +2,7 @@
 import * as _Babel from '@babel/standalone';
 
 // https://dev.to/jser_zanp/how-to-detect-infinite-loop-in-javascript-28ih
-export const parseCode = (code: string) => {
+const parseCode = (code: string) => {
   const Babel: any = _Babel;
   const parser = Babel.packages.parser;
   const traverse = Babel.packages.traverse.default;
@@ -27,3 +27,5 @@ var __detectInfiniteLoop = () => {
 
   return prefix + generate(ast).code;
 };
+
+export default parseCode;

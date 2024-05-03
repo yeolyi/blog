@@ -19,12 +19,11 @@ export default function CodeEditor({
       <div className="relative h-fit min-h-full w-fit min-w-full p-4 text-base leading-6">
         <pre
           dangerouslySetInnerHTML={{ __html: highlightedCode }}
-          style={{ fontFamily: 'Fira Code' }}
-          className="h-full w-full text-nowrap"
+          className="h-full w-full text-nowrap font-firacode"
         />
         <textarea
+          aria-label="editor"
           defaultValue={code}
-          style={{ fontFamily: 'Fira Code' }}
           onKeyDown={handleKeyDown}
           onChange={(e) => {
             setCode(e.target.value);
@@ -32,7 +31,7 @@ export default function CodeEditor({
           autoCapitalize="off"
           autoComplete="off"
           spellCheck="false"
-          className="absolute bottom-4 left-4 right-4 top-4 resize-none bg-transparent text-transparent caret-sky-500 outline-none"
+          className="absolute bottom-4 left-4 right-4 top-4 resize-none bg-transparent font-firacode text-transparent caret-sky-500 outline-none"
         />
       </div>
     </div>

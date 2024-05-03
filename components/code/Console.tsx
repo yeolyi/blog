@@ -9,9 +9,10 @@ export default function Console({ logList }: { logList: Log[] }) {
 
   return (
     <button
-      className={`relative flex flex-col overflow-hidden bg-slate-50 p-4 text-base
+      className={`relative flex flex-col overflow-y-hidden overflow-x-scroll bg-slate-50 p-4 text-base
       ${expandable ? 'cursor-pointer' : 'cursor-default'}`}
       onClick={() => setExpanded((x) => !x)}
+      aria-label={expanded ? '콘솔 결과 접기' : '콘솔 결과 펼치기'}
     >
       {logList.slice(0, expanded ? logList.length : 1).map((log, idx) => (
         <Row key={idx} log={log} />
@@ -29,9 +30,8 @@ export default function Console({ logList }: { logList: Log[] }) {
 const Row = ({ log }: { log: Log }) => {
   return (
     <p
-      className="text-wrap break-words text-left"
+      className="break-words text-left font-firacode"
       style={{
-        fontFamily: 'Fira Code',
         color: log.type === 'log' ? '#6a737d' : '#ff4040',
       }}
     >

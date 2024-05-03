@@ -1,19 +1,6 @@
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css');
-@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300..700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* https://github.com/orioncactus/pretendard  */
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
-    'Pretendard Variable', Pretendard, Roboto, 'Noto Sans KR', 'Segoe UI',
-    'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
-    sans-serif;
-
-  -webkit-font-smoothing: subpixel-antialiased;
-}
 
 /*
     https://github.com/tailwindlabs/tailwindcss/discussions/2394

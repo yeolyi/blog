@@ -8,6 +8,10 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        pretendard: ['var(--font-pretendard)'],
+        firacode: ['var(--font-firacode)'],
+      },
       typography: {
         DEFAULT: {
           css: {
