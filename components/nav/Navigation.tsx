@@ -124,7 +124,7 @@ const TocRow = ({
       className={`max-w-[90%] truncate text-left text-sm  hover:underline ${isH2 ? 'font-bold' : 'ml-2 font-normal text-neutral-500'} ${cur && 'underline'}`}
       onClick={() => {
         close();
-        heading.scrollIntoView({ behavior: 'instant', block: 'center' });
+        heading.scrollIntoView({ behavior: 'instant', block: 'start' });
         setCur(heading);
       }}
     >

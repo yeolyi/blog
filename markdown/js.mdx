@@ -769,14 +769,6 @@ console.log(32 >> Infinity);
 console.log(32 >> -Infinity);
 ```
 
-```js
-console.log(-1 >> 1);
-console.log(-1 >>> 1);
-
-console.log(-1n >> 1n);
-console.log(-1n >>> 1n);
-```
-
 Unsigned right shift는 bigint를 쓸 수 없는 유일한 비트 연산자입니다.
 
 > This is because it fills the leftmost bits with zeroes, but conceptually,
@@ -784,5 +776,13 @@ Unsigned right shift는 bigint를 쓸 수 없는 유일한 비트 연산자입�
 > bit" to fill with zeroes.
 >
 > https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Unsigned_right_shift
+
+```js
+console.log(-1 >> 1);
+console.log(-1 >>> 1);
+
+console.log(-1n >> 1n);
+console.log(-1n >>> 1n);
+```
 
 ### 9. Relational Expressions

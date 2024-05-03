@@ -16,6 +16,12 @@ const config: Config = {
               'p:first-of-type::before': { content: 'none' },
               'p:first-of-type::after': { content: 'none' },
             },
+            h2: {
+              'scroll-margin': '50px',
+            },
+            h3: {
+              'scroll-margin': '50px',
+            },
           },
         },
       },

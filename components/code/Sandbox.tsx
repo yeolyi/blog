@@ -12,9 +12,11 @@ export default function Sandbox({ code: _code }: { code: string }) {
   const { setIframe, code, setCode, logList } = useInterpret(_code);
 
   return (
-    <div className="flex flex-col gap-2" ref={setContainerRef}>
-      <CodeEditor code={code} setCode={setCode} />
-      <Console logList={logList} />
+    <>
+      <div className="flex flex-col gap-2" ref={setContainerRef}>
+        <CodeEditor code={code} setCode={setCode} />
+        <Console logList={logList} />
+      </div>
       {appeared && (
         <iframe
           sandbox="allow-scripts"
@@ -23,6 +25,6 @@ export default function Sandbox({ code: _code }: { code: string }) {
           className="h-0 w-0"
         />
       )}
-    </div>
+    </>
   );
 }
