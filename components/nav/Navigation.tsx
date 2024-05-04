@@ -39,7 +39,7 @@ const CurrentHeading = ({
 }) => {
   return (
     <div
-      className={`self-center truncate whitespace-nowrap px-5 py-2 text-center text-base font-bold`}
+      className={`max-w-[80vw] self-center truncate whitespace-nowrap px-5 py-2 text-center text-base font-bold`}
     >
       {heading?.textContent ?? '-'}
     </div>

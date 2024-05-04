@@ -14,7 +14,7 @@ export const metadata = {
 
 ## 소개
 
-자바스크립트 공부 기록입니다. 공부하며 재밌던 ~~얼척없던~~ 것들을 이곳에
+자바스크립트 공부 기록입니다. 공부하며 기억할만한 ~~얼척없던~~ 것들을 이곳에
 기록해요.
 
 공부한 코드 바로 실행해보려고 컴포넌트도 따로 만들었어요:
@@ -804,3 +804,273 @@ console.log(-1n >>> 1n);
 ### 9. Relational Expressions
 
 ==는 레거시 취급합시다.
+
+NaN은 그 어떤 값과도 같지 않습니다:
+
+```js
+console.log(NaN === NaN, NaN == NaN);
+
+// NaN 판별하기
+let f = (x) => x !== x;
+console.log(f(NaN));
+```
+
+두 문자열이 같아 보여도 다른 유니코드 시퀀스로 인코딩되어있으면 다릅니다.
+
+== 연산자는 다음 규칙을 사용합니다.
+
+- null과 undefiend는 같습니다.
+- 숫자와 문자열 비교는 문자열을 숫자로 바꿉니다.
+- 하나가 불 값이면 이를 숫자로 바꿉니다.
+- 하나가 객체고 나머지가 숫자/문자열이면 객체를 원시값으로 변환하고 비교합니다.
+- 나머지 조합은 모두 false입니다.
+
+```js
+console.log(null == undefined);
+
+console.log(123 == ' 123');
+
+console.log('1' == true);
+// -> '1' == 1
+// -> 1 == 1
+// -> true
+
+let a = { valueOf: () => 1 };
+console.log(a == 1);
+
+let b = { toString: () => '!@#' };
+console.log(b == '!@#');
+```
+
+비교 연산자에서는 다음 규칙을 사용합니다.
+
+- 하나라도 객체면 숫자로 변환합니다(valueOf 실패시 toString)
+- 둘 다 문자열이면 문자열 비교를 합니다.
+- 하나라도 문자열이 아니면 숫자로 변환 후 비교합니다.
+- 하나라도 NaN이면 false입니다.
+
+```js
+let a = { toString: () => '5' };
+console.log(4 < a, a < 6);
+```
+
+문자열 비교는 사실상 16비트 정수 배열의 비교와 같아서 통념과 결과값이 다를 수
+있습니다:
+
+```js
+console.log('Z' < 'a');
+console.log('Z'.localeCompare('a'));
+```
+
+비교 연산자와 다르게 + 연산자는 둘 중 하나라도 문자열이면 나머지를 문자열로
+바꿉니다:
+
+```js
+console.log('1' + 2);
+console.log('11' < 3);
+
+// 그래서 이런 식으로 문자열 형변환을 하는 경우도 있어요.
+console.log(123 + '');
+```
+
+`<=`나 `>=`는 같은지는 체크하지 않고 >와 < 의 부정으로 정의됩니다.
+
+in 연산자는 첫번째 피연산자를 필요시 문자열로 변환합니다:
+
+```js
+let a = { toString: () => '0' };
+console.log(a in [0]);
+console.log(a in []);
+```
+
+### 10. Logical Expressions
+
+방금 살펴본 relational operator들은 &&, || 보다 우선순위가 높습니다.
+
+Side effect가 있는 표현식을 &&나 || 오른쪽에 쓸 때는 실행이 될 수도 안될 수도
+있으니 주의합시다.
+
+### 11. Assigment Expressions
+
+```js
+let a;
+let b = 1;
+console.log((a = b) === 1, a);
+```
+
+a op= b와 a = a op b가 다른 경우가 있습니다:
+
+```js
+let data = [0, 1, 2];
+let i = 0;
+let log = () => console.log(data[0], data[1], data[2]);
+
+data[i++] *= 2;
+log();
+
+data = [0, 1, 2];
+i = 0;
+
+data[i++] = data[i++] * 2;
+log();
+```
+
+### 12. Evaluation Expressions
+
+```js
+let a = 1;
+console.log(eval('a'));
+```
+
+지역 변수 접근으로 인한 최적화의 어려움때문에 인터프리터는 eval을 호출한 함수를
+덜 최적화합니다. 그렇다고 alias된 이름으로 eval을 호출하는 경우까지 알 수는
+없으므로 이 경우 eval은 전역 스코프에서 동작합니다. 이를 eval의 **indirect
+call**이라 합니다. 이는 코드를 독립된 top-level 스크립트로 실행시킬 때도
+유용합니다.
+
+```js
+let a = 1;
+console.log((0, eval)('a'));
+```
+
+strict mode에서는 eval이 reserved word가 되는 등 함수보다 키워드에 가까워집니다.
+
+### 13. Miscellaneous Operators
+
+First-defined (??) 연산자는 첫 피연산자가 null이나 undefined면 두번째
+피연산자를, 아니면 첫번째 피연산자를 반환합니다. Truthy함이 기준인 ||와 다르게
+정의만 되어있으면 됩니다:
+
+```js
+console.log(0 || 1);
+console.log(0 ?? 1);
+```
+
+https://stackoverflow.com/a/18808270
+
+delete 연산자는 프로퍼티가 삭제되었으면 true를, 없었으면 false를 반환합니다.
+
+void 연산자는 피연산자를 평가하고 undefined를 반환합니다:
+
+```js
+let a = 0;
+let inc = () => void a++;
+console.log(inc(), a);
+```
+
+Comma operator는 왼쪽 표현식들의 결과를 버리기 때문에 side effect가 있는
+표현식들을 쓸 때만 의미있습니다. 써본 적 없는 것 같아도 for문에서 종종 사용돼요:
+
+```js
+for (let i = 1, j = 4; j; i++, j--) {
+  console.log('*'.repeat(i) + ' '.repeat(j));
+}
+```
+
+## 5. Statements
+
+표현식은 평가되어 값이 되지만 문(statements) 실행되어 어떤 일을 일으킵니다.
+자바스크립트 프로그램은 세미콜론으로 구분된 문들의 나열이에요.
+
+### 2 Compound and Empty Statements
+
+Statement block은 여러 문들을 하나의 compound statements로 묶습니다.
+세미콜론으로 끝나지 않음이 특징입니다.
+
+```js
+{
+  let a = 10;
+  let b = 20;
+}
+```
+
+여러 종류의 JS 문들이 하나의 자식 문을 가질 수 있는데, compound statement를
+사용해 자식 문에 원하는 만큼의 문을 집어넣을 수 있습니다.
+
+반대되는 역할의 문으로 empty statement가 있습니다:
+
+```js
+let sum = 0;
+for (let x = 1; x <= 10; sum += x++ /* empty */);
+console.log(sum);
+```
+
+### 3. Conditionals
+
+JS에 else if 라는 별도의 문법?이 있는건 아니고 그냥 else문이랑 if문이랑
+붙은거라고 하네요:
+
+https://stackoverflow.com/a/4005623
+
+switch문에서는 같음을 === 연산자를 사용해 판단합니다.
+
+default문 위치에 제한이 없긴 합니다:
+
+```js
+let a = 3;
+switch (a) {
+  case 2:
+    console.log('two');
+    break;
+  default:
+    console.log('?');
+    break;
+  case 1:
+    console.log('one');
+    break;
+}
+```
+
+### 4. Loops
+
+흔하진 않지만 for문에서 initialize문이 없는 경우도 있습니다:
+
+```js
+let list = { val: 1, next: { val: 2, next: { val: 3 } } };
+let print = (l) => {
+  for (; l; l = l.next) console.log(l.val);
+};
+print(list);
+```
+
+for of에서 배열 순회중에 배열이 수정되면 순회 과정에 영향을 줍니다.
+
+```js
+let arr = [1];
+for (let element of arr) {
+  arr.push(element * 2);
+  if (100 < element) break;
+}
+console.log(arr);
+```
+
+Map을 for of로 순회하면 키와 값이 모두 나옵니다:
+
+```js
+let m = new Map([[1, 'one']]);
+for (let [k, v] of m) console.log(k, v);
+```
+
+뒤에서 배울 for/await 미리보기:
+
+```js
+async function printStream(stream) {
+  for await (let chunk of stream) {
+    console.log(chunk);
+  }
+}
+```
+
+for/in은 객체면 다 됩니다. 프로퍼티 이름이 심볼이면 안되고 문자열이면
+enumerable한 것만 순회합니다.
+
+for/in은 상속받은 프로퍼티도 순회해서 for/in대신 for/of과 Object.keys()를 쓰는
+경우가 많습니다.
+
+### 5. Jumps
+
+<br />
+
+## 메모
+
+https://stackoverflow.com/questions/43709005/let-const-and-var-on-global-functions-in-javascript
