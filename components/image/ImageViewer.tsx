@@ -14,8 +14,9 @@ export default function ImageViewer({
       src={src}
       alt={alt}
       sizes="100vw"
-      style={{ width: '50%', height: 'auto' }}
+      style={{ width: '33%', height: 'auto' }}
       priority={priority}
+      className="shadow-lg"
     />
   );
 }
