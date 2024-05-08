@@ -1,11 +1,6 @@
 import ImageViewer from '@/components/image/ImageViewer';
 import jsbook from '@/public/jsbook.jpeg';
 
-export const metadata = {
-  title: '자바스크립트',
-  description: '공부하며 재밌고 얼척없던 것들을 기록해요',
-};
-
 [메인으로](./)
 
 # 자바스크립트
@@ -23,6 +18,8 @@ export const metadata = {
 console.log('탭해서 펼치기');
 console.log('🌸 🌼 🌸 🌼');
 ```
+
+궁금한 부분이 있다면 맨 아래 댓글로 자유롭게 물어봐주세요.
 
 ## 1. Introduction to Javascript
 
@@ -239,8 +236,8 @@ console.log(!!'');
 
 ### 5. null and undefined
 
-(중요하지는 않지만) **undefined**는 언어 차원의 키워드인 null과는 다르게 미리
-정의된 전역 상수값으로 undefined로 초기화되어있습니다.
+**undefined**는 언어 키워드인 null과는 다르게 미리 정의된 전역 상수값으로
+undefined로 초기화되어있습니다.
 
 > undefined is a property of the global object. That is, it is a variable in
 > global scope.
@@ -331,16 +328,14 @@ console.log(a === b);
 
 #### Conversions and Equality
 
-어떤 값이 다른 값으로 바뀐다고 두 값이 같음(==)을 의미하지는 않습니다. 아래
-예제를 볼게요.
+어떤 값이 다른 값으로 바뀐다고 두 값이 같음을 의미하지는 않습니다. 타입 변환
+알고리즘과 연산자에서 사용하는 알고리즘이 상이하기 때문입니다. 아래 예제를
+볼게요.
 
 ```js
 console.log(Boolean(undefined)); // false로 변환됐습니다.
 console.log(undefined == false); // 그렇다고 false와 == 하지는 않습니다.
 ```
-
-타입 변환 알고리즘과 연산자에서 사용하는 알고리즘이 상이하기 때문입니다. 뒤에서
-살펴보겠지만 == 연산자는 피연산자를 불 값으로 변환하지 않습니다.
 
 #### Explicit Conversions
 
@@ -383,13 +378,12 @@ console.log(parseInt('ff', 16));
 
 #### The toString() and valueOf() methods
 
-객체 -> 원시값 변환 알고리즘을 이해하려면 두 메서드를 알아야합니다. 모든 객체가
-이 메서드들을 상속받습니다.
+객체 -> 원시값 변환 알고리즘을 이해하려면 두 메서드를 알아야해요. 모든 객체가 이
+메서드들을 상속받습니다.
 
-각 클래스는 각자의 toString을 구현합니다. 객체의 문자열 표현을 반환합니다.
-
-valueOf는 (만약 있다면) 객체를 표현하는 원시값을 반환합니다. 대부분은 이런
-원시값이 없기에 객체 자신을 반환합니다.
+- 각 클래스는 각자의 toString을 구현합니다. 객체의 문자열 표현을 반환합니다.
+- valueOf는 (만약 있다면) 객체를 표현하는 원시값을 반환합니다. 대부분은 이런
+  원시값이 없기에 객체 자신을 반환합니다.
 
 ```js
 console.log(new Boolean(true).valueOf());
@@ -399,10 +393,12 @@ console.log(new Date().valueOf());
 
 #### object-to-primitive conversion algorithms
 
+세 종류로 나뉘어 상황에 맞게 사용됩니다.
+
 - prefer-string: toString이 **원시값을 반환한다면**(문자열이 아니더라도) 이를
   사용, 아니면 valueOf가 원시값 반환하면 이를 사용, 아니면 TypeError.
 - prefer-number: prefer-string에서 valueOf와 toString 순서만 교체.
-- no-preference: Date면 prefer-string, 아니면 prefer-number
+- no-preference: Date면 prefer-string, 다른 모든 빌트인 객체는 prefer-number
 
 ```js
 console.log(Number([])); // valueOf 실패, toString에서 "", 0으로 변환
@@ -411,12 +407,6 @@ console.log(Number([9])); // valueOf 실패, toString에서 "9", 9로 변환
 
 #### Object to Primitive Conversions
 
-객체를 원시값으로 변환하는 알고리즘은 prefer-string, prefer-number,
-no-preference로 나뉩니다.
-
-no-preference는 클래스마다 알아서 정의하는데 빌트인 타입 중에서는
-prefer-string인 Date 빼고는 모두 prefer-number입니다.
-
 모든 객체는 불 값으로 변환시 true가 됩니다:
 
 ```js
@@ -424,23 +414,23 @@ console.log(Boolean(new Boolean(false)));
 ```
 
 객체를 문자열로 변환해야하면 prefer-string 알고리즘으로 우선 변환하고 필요시
-결과값을 위 표에 따라 문자열로 변환합니다. 숫자도 마찬가지로 prefer-number를
-돌리고 숫자로 변환합니다.
+결과값을 위 표에 따라 문자열로 변환합니다.
 
-숫자를 받는 연산자도 피연산자에 객체가 있을 때 이 방식을 사용하는데 예외가
-있습니다:
+숫자도 마찬가지로 prefer-number를 돌리고 숫자로 변환합니다. 다만 몇몇 연산자는
+예외가 있습니다:
 
-- '+' 연산자는 객체를 no-preference 알고리즘을 돌리고, 피연산자중 하나라도
+- '+' 연산자는 객체에 no-preference 알고리즘을 돌리고, 이후 피연산자중 하나라도
   문자열이면 문자열 concat을, 그렇지 않다면 숫자로 둘 다 수정합니다.
 - '==' 와 '!='는 피연산자 하나만 객체면 해당 객체를 no-preference 알고리즘을
   사용해 원시값으로 수정 후 비교합니다.
 - 부등호 연산자는 둘 다 객체면 prefer-number 알고리즘으로 변환 후 비교합니다.
-  다만 이때는 이후 숫자로 수정되지 않습니다. 덕분에 Date의 비교가 가능해집니다.
+  다만 prefer-number에서 반환된 원시값을 숫자로 형변환하지 않습니다.
 
 ```js
-const a = { val: 1 };
-a.valueOf = () => 'valueOf';
-// a.valueOf = () => 123;
+const a = {
+  valueOf: () => 'not a number',
+  //  valueOf: () => 123,
+};
 
 console.log(a + '', a + 1);
 ```
@@ -474,8 +464,8 @@ for (var i = 0; i < 10; i++);
 console.log(i);
 ```
 
-함수 바깥에 선언하면 전역 변수가 되는데, globalThis에 포함된다는 점이
-let/const와의 차이점입니다:
+함수 바깥에서 선언하면 전역 변수가 되는데, globalThis에 포함된다는 점이 var와
+let/const의 차이입니다:
 
 ```js
 var a = 1;
@@ -537,7 +527,8 @@ console.log(first, rest);
 
 ### 1. Primary Expressions
 
-최소 단위의 표현식을 **primary expression**이라 합니다.
+최소 단위의 표현식을 **primary expression**이라 합니다. 아래와 같은 것들이
+있어요:
 
 ```js
 // literal
@@ -551,15 +542,15 @@ let val = 10;
 console.log(val, undefined);
 ```
 
-(undefined는 전역 객체의 프로퍼티의 값이므로 varaible reference입니다.)
+undefined는 전역 객체의 프로퍼티 값이라서 리터럴이나 키워드가 아닌 varaible
+reference입니다:
 
 ```js
-console.log('undefined' in window, window.undefined === undefined);
+console.log('undefined' in window);
+console.log(window.undefined === undefined);
 ```
 
 ### 2. Object and Array Initializers
-
-객체와 배열으로 평가되는 표현식입니다.
 
 Array initializer 내부의 표현식은 매번 평가됩니다:
 
@@ -569,20 +560,24 @@ console.log(f());
 console.log(f());
 ```
 
-쉼표 사이를 비워 undefined 요소를 배열 사이에 넣을 수 있습니다.
+쉼표 사이를 비워 undefined를 배열 사이에 넣을 수 있어요.
+
+```js
+// 실행 컴포넌트의 한계(...)로 지금은 undefined가 안뜹니다
+// 브라우저 콘솔에 넣어보세요!
+console.log([1, , , 4, 5]);
+```
 
 ### 3. Function Definition Expressions
 
 객체를 만드는 객체 리터럴처럼 function definition expression은 함수 리터럴로 볼
-수 있습니다.
+수 있습니다. ES6에서 추가된 화살표 함수와 함께 챕터 8에서 자세하게 살펴볼게요.
 
 ```js
 let square = function (x) {
   return x * x;
 };
 ```
-
-ES6에서 추가된 화살표 함수와 함께 챕터 8에서 자세하게 살펴볼게요.
 
 ### 4. Property Access Expressions
 
@@ -598,19 +593,17 @@ console.log(val.toString());
 ```js
 let name = {};
 name.toString = () => 'str';
-name.valueOf = () => 1;
-console.log(String(name), Number(name));
+console.log(String(name));
 
-let obj = { str: 'str', 1: 1 };
-console.log(obj[name]);
+let obj = { [name]: 'name' };
+console.log(obj);
 ```
 
 대괄호를 사용한 방법은 프로퍼티 이름에 공백이나 문장부호가 있을 때, 프로퍼티
-이름이 숫자일 때(배열), 프로퍼티 이름이 동적으로 정해질 때 사용됩니다.
+이름이 숫자일 때(배열), 프로퍼티 이름이 동적으로 정해질 때 사용돼요.
 
-ES2020에서는 optional chaining을 사용한 프로퍼티 접근이 추가되었습니다. Short
-circuting 덕분에 ? 왼쪽 값이 null/undefined면 최종 평가 결과가 undefined가
-됩니다.
+ES2020에서는 optional chaining을 사용한 프로퍼티 접근이 추가되었습니다. **? 왼쪽
+값이 null/undefined면** 최종 평가 결과가 undefined가 됩니다.
 
 ```js
 let a = null;
@@ -619,26 +612,24 @@ console.log(a?.val, b?.val);
 console.log(a?.b.c.d.e.f.g);
 
 let c = { d: {} };
-console.log(c.d?.e?.f);
 
 try {
-  console.log(c.d?.e.f);
+  c.d?.e.f;
 } catch {
   console.log('c.d가 객체여서 short-circuit되지 않습니다');
 }
+```
 
+<br />
+
+```js
 let arr;
 let index = 0;
 arr?.[index++];
-console.log(index); // 마찬가지로 대괄호 내부 표현식은 평가되지 않았습니다.
+console.log(index); // 대괄호 내부 표현식이 평가되지 않았습니다.
 ```
 
 ### 5. Invocation Expressions
-
-함수 표현식이 프로퍼티 접근 표현식인 invocation을 **method invocation**이라 하며
-함수 본문의 this는 프로퍼티 접근의 대상인 객체나 배열이 됩니다. 이를 통해 함수가
-자신이 속한 객체를 대상으로 동작하는 OOP적 구성이 가능해집니다. 챕터 9에서 더
-자세히 살펴볼게요.
 
 Conditional invocation의 예시입니다:
 
@@ -658,10 +649,9 @@ let f = null,
   x = 0;
 
 try {
-  f(x++); // 인자로 전달된 표현식이 평가됩니다.
-} catch {
-  console.log(x);
-}
+  f(x++);
+} catch {}
+console.log(x); // 인자로 전달된 표현식이 평가되었습니다.
 
 f?.(x++); // 평가되지 않습니다.
 console.log(x);
@@ -669,19 +659,18 @@ console.log(x);
 
 ### 6. Object Creation Expressions
 
-생성자에 전달되는 인자가 없으면 아래와 같은 문법도 가능합니다:
+(굳이 싶지만 ㅎ,,) 생성자에 전달되는 인자가 없으면 아래와 같은 문법도
+가능합니다:
 
 ```js
 // prettier-ignore
 console.log(new Date);
 ```
 
-생성자에 대한 자세한 내용은 챕터9에서 살펴볼게요.
-
 ### 7. Operator Overview
 
 모든 자바스크립트 값들은 truthy 혹은 falsy합니다. 따라서 피연산자로 불 값을 받는
-연산자는 무슨 값에 대해서든 잘 동작합니다(자동 형변환되기 때문).
+연산자는 자동 형변환 덕분에 무슨 값에 대해서든 잘 동작합니다.
 
 변수, 객체 프로퍼티, 배열의 요소는 모두 lvalue입니다.
 
@@ -696,13 +685,13 @@ Side effect가 있는 연산자들:
 및 함수 실행 연산자(f())는 우선순위가 아주 높습니다.
 
 최근에 추가된 몇몇 연산자들은 우선순위가 명확히 정의되어 있지 않고 애매한 경우
-에러가 발생합니다:
+아래와 같이 에러가 발생합니다:
 
 ```js
 -2 ** 10
 ```
 
-연산자의 결합 방향(associativity):
+연산자의 결합 방향(associativity)의 예제 코드입니다:
 
 ```js
 let a = 2,
@@ -713,7 +702,8 @@ let a = 2,
 console.log(a - b - c);
 
 // right-to-left
-console.log(a ** (b ** c));
+// prettier-ignore
+console.log(a ** b ** c);
 console.log((a = b = c), a);
 
 console.log(a ? b : c ? a : b);
@@ -738,7 +728,10 @@ console.log(f() * g() + h());
 
 0/0은 NaN입니다.
 
-https://stackoverflow.com/questions/18838301
+> Because that's how floating-point is defined (more generally than just
+> Javascript)
+>
+> https://stackoverflow.com/questions/18838301
 
 나머지(%) 연산자 결과의 부호는 첫번째 피연산자의 부호와 같습니다.
 
@@ -756,14 +749,24 @@ console.log(5 % 2, -5 % 2);
 1. 아니면 숫자로 바꾸고 숫자 덧셈을 수행합니다.
 
 ```js
-let helper = (n) => ({ valueOf: () => n });
-let a = helper(1);
-let b = helper(2);
-let c = helper('3');
+let a = { valueOf: () => 1 };
+let b = { valueOf: () => 2 };
+let c = { valueOf: () => '3' };
+let d = { toString: () => 1 };
 
 console.log(a + b);
 console.log(b + c);
+console.log(d + 1);
 ```
+
+참고할만한 링크에요:
+
+> Actually, no. Because in step 5 and 6, both operands are resolved into their
+> primitives first, and this resolution is done without "hint". When there is no
+> hint passed to ToPrimitive, Objects return their default values, which is the
+> return of the valueOf() method.
+>
+> https://stackoverflow.com/questions/38937118/
 
 갑자기 생각난 재미있는 상황:
 
@@ -810,51 +813,54 @@ NaN은 그 어떤 값과도 같지 않습니다:
 ```js
 console.log(NaN === NaN, NaN == NaN);
 
-// NaN 판별하기
-let f = (x) => x !== x;
-console.log(f(NaN));
+let 난인가요 = (x) => x !== x;
+console.log(난인가요(NaN));
 ```
 
 두 문자열이 같아 보여도 다른 유니코드 시퀀스로 인코딩되어있으면 다릅니다.
 
-== 연산자는 다음 규칙을 사용합니다.
-
-- null과 undefiend는 같습니다.
-- 숫자와 문자열 비교는 문자열을 숫자로 바꿉니다.
-- 하나가 불 값이면 이를 숫자로 바꿉니다.
-- 하나가 객체고 나머지가 숫자/문자열이면 객체를 원시값으로 변환하고 비교합니다.
-- 나머지 조합은 모두 false입니다.
+== 연산자는 다음 규칙을 사용합니다:
 
 ```js
+// null과 undefiend는 같습니다
 console.log(null == undefined);
 
+// 숫자와 문자열 비교는 문자열을 숫자로 바꿉니다.
 console.log(123 == ' 123');
 
+// 하나가 불 값이면 이를 숫자로 바꿉니다.
 console.log('1' == true);
 // -> '1' == 1
 // -> 1 == 1
 // -> true
 
+// 하나가 객체고 나머지가 숫자/문자열이면 객체를 원시값으로 변환하고 비교합니다.
 let a = { valueOf: () => 1 };
 console.log(a == 1);
 
 let b = { toString: () => '!@#' };
 console.log(b == '!@#');
+
+// 나머지 조합은 모두 false입니다.
 ```
 
-비교 연산자에서는 다음 규칙을 사용합니다.
-
-- 하나라도 객체면 숫자로 변환합니다(valueOf 실패시 toString)
-- 둘 다 문자열이면 문자열 비교를 합니다.
-- 하나라도 문자열이 아니면 숫자로 변환 후 비교합니다.
-- 하나라도 NaN이면 false입니다.
+비교 연산자에서는 다음 규칙을 사용합니다:
 
 ```js
-let a = { toString: () => '5' };
-console.log(4 < a, a < 6);
+// 둘 다 문자열이면 문자열 비교를 합니다.
+
+// 하나라도 객체면 숫자로 변환합니다(valueOf 실패시 toString)
+let a = { valueOf: () => 1 };
+console.log(a < 2);
+
+// 하나라도 문자열이 아니면 숫자로 변환 후 비교합니다.
+let b = { toString: () => '  5' };
+console.log(4 < b, b < 6);
+
+// 하나라도 NaN이면 false입니다.
 ```
 
-문자열 비교는 사실상 16비트 정수 배열의 비교와 같아서 통념과 결과값이 다를 수
+문자열 비교는 결과적으로 16비트 정수 배열의 비교라서 결과값이 예상과 다를 수
 있습니다:
 
 ```js
@@ -879,7 +885,7 @@ in 연산자는 첫번째 피연산자를 필요시 문자열로 변환합니다
 
 ```js
 let a = { toString: () => '0' };
-console.log(a in [0]);
+console.log(a in [123]);
 console.log(a in []);
 ```
 
@@ -898,19 +904,21 @@ let b = 1;
 console.log((a = b) === 1, a);
 ```
 
-a op= b와 a = a op b가 다른 경우가 있습니다:
+`a op= b`와 `a = a op b`가 다른 경우가 있습니다:
 
 ```js
 let data = [0, 1, 2];
 let i = 0;
 let log = () => console.log(data[0], data[1], data[2]);
 
+// a op= b
 data[i++] *= 2;
 log();
 
 data = [0, 1, 2];
 i = 0;
 
+// a = a op b
 data[i++] = data[i++] * 2;
 log();
 ```
@@ -923,10 +931,10 @@ console.log(eval('a'));
 ```
 
 지역 변수 접근으로 인한 최적화의 어려움때문에 인터프리터는 eval을 호출한 함수를
-덜 최적화합니다. 그렇다고 alias된 이름으로 eval을 호출하는 경우까지 알 수는
-없으므로 이 경우 eval은 전역 스코프에서 동작합니다. 이를 eval의 **indirect
-call**이라 합니다. 이는 코드를 독립된 top-level 스크립트로 실행시킬 때도
-유용합니다.
+덜 최적화합니다. 그렇다고 alias된 이름으로 eval을 호출하는 경우까지 컴파일러가
+알 수는 없으므로 이렇게 실행된 경우 eval은 전역 스코프에서 동작합니다. 이를
+eval의 **indirect call**이라 하며 코드를 독립된 top-level 스크립트로 실행시킬 때
+유용하게 활용됩니다.
 
 ```js
 let a = 1;
@@ -946,9 +954,9 @@ console.log(0 || 1);
 console.log(0 ?? 1);
 ```
 
-https://stackoverflow.com/a/18808270
+이상하지만 `typeof null === 'object'`입니다:
 
-delete 연산자는 프로퍼티가 삭제되었으면 true를, 없었으면 false를 반환합니다.
+https://stackoverflow.com/a/18808270
 
 void 연산자는 피연산자를 평가하고 undefined를 반환합니다:
 
@@ -991,35 +999,19 @@ Statement block은 여러 문들을 하나의 compound statements로 묶습니�
 
 ```js
 let sum = 0;
-for (let x = 1; x <= 10; sum += x++ /* empty */);
+// prettier-ignore
+for (let x = 1; x <= 10; sum += x++) /* empty */;
 console.log(sum);
 ```
 
 ### 3. Conditionals
 
 JS에 else if 라는 별도의 문법?이 있는건 아니고 그냥 else문이랑 if문이랑
-붙은거라고 하네요:
+붙은거라고 해요:
 
 https://stackoverflow.com/a/4005623
 
 switch문에서는 같음을 === 연산자를 사용해 판단합니다.
-
-default문 위치에 제한이 없긴 합니다:
-
-```js
-let a = 3;
-switch (a) {
-  case 2:
-    console.log('two');
-    break;
-  default:
-    console.log('?');
-    break;
-  case 1:
-    console.log('one');
-    break;
-}
-```
 
 ### 4. Loops
 
@@ -1027,9 +1019,11 @@ switch (a) {
 
 ```js
 let list = { val: 1, next: { val: 2, next: { val: 3 } } };
+
 let print = (l) => {
   for (; l; l = l.next) console.log(l.val);
 };
+
 print(list);
 ```
 
@@ -1051,7 +1045,7 @@ let m = new Map([[1, 'one']]);
 for (let [k, v] of m) console.log(k, v);
 ```
 
-뒤에서 배울 for/await 미리보기:
+뒤에서 배울 for/await 예제 미리보기:
 
 ```js
 async function printStream(stream) {
@@ -1061,16 +1055,358 @@ async function printStream(stream) {
 }
 ```
 
-for/in은 객체면 다 됩니다. 프로퍼티 이름이 심볼이면 안되고 문자열이면
-enumerable한 것만 순회합니다.
-
-for/in은 상속받은 프로퍼티도 순회해서 for/in대신 for/of과 Object.keys()를 쓰는
-경우가 많습니다.
+for/in은 객체면 다 됩니다. Enumerable한 스스로의 문자열 키들을 순회합니다. 다만
+상속받은 프로퍼티도 순회하기에 for/in대신 for/of와 Object.keys()를 쓰는 경우가
+많습니다.
 
 ### 5. Jumps
 
-<br />
+break, continue의 기능을 포함한다면 while문으로 for문을 완벽하게 재현하는 것은
+불가능합니다.
+
+JS가 에러를 던질 때 Error 클래스와 그 서브클래스를 사용합니다. name 프로퍼티는
+에러의 종류를 나타내고 message는 생성자 함수에 전달된 문자열입니다.
+
+finally 블록은 try절 실행 이후 cleanup을 위해 주로 사용됩니다. try+finally
+조합도 가능합니다. finally 블록이 return/continue/break/throw등으로 점프를
+한다면 기존에 예약?된 점프는 무시됩니다:
+
+```js
+let f = () => {
+  try {
+    throw new Error('Error!!');
+  } finally {
+    // 아래 주석을 해제해보세요.
+    // return;
+  }
+};
+
+f();
+console.log('실행 완료');
+```
+
+아래처럼 while로 for문을 재현할 수 있어요. 다만 break문에 대해서는 실행 결과가
+조금 다릅니다. finally문을 이렇게 쓰는게 신기해서 가져왔습니다:
+
+```js
+let i = 0;
+while (i < 10) {
+  try {
+    if (i % 2 == 0) continue;
+    console.log(i);
+  } finally {
+    i++;
+  }
+}
+```
+
+### 6. Miscallaneous Statements
+
+with문은 객체의 프로퍼티를 변수가 선언된 것처럼 쓸 수 있게 합니다. 쓰지 마세요.
+
+debugger문은 브라우저등에서 breakpoint로 기능합니다.
+
+'use strict'는 코드를 strict mode로 동작하게합니다. ES6 module, class 내부에
+있는 코드에는 자동적용됩니다. strict mode에서는 대표적으로 다음과 같은 차이점이
+있어요:
+
+- with 사용 불가
+- 선언되지 않은 변수 사용 불가
+- (메서드가 아닌) 함수로 호출된 함수의 this값이 undefined
+
+책에서는 strict mode에서 duplicated property name이 안된다고 했는데 ES2015부터
+다시 허용하나봅니다:
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#Duplicate_property_names
+
+### 7. Declarations
+
+선언문(declarations)은 값에 이름을 부여해서 다른 구문들의 의미를 정의합니다.
+
+모던 JS에서 var를 쓸 이유는 없습니다.
+
+함수 선언은 호이스팅되어 다른 코드보다 먼저 처리됩니다. 클래스 선언은
+호이스팅되지 않아요:
+
+```js
+f(5);
+
+// (함수 내부 변수가 존재하는지는 함수 실행 전까지는 확인 안하는건가?)
+function f(n) {
+  console.log('f');
+  n && g(n - 1);
+}
+
+function g(n) {
+  console.log('g');
+  n && f(n - 1);
+}
+
+let a = new A();
+class A {}
+```
+
+## 6. Objects
+
+### 1. Introduction to Objects
+
+다른 기능들도 있지만 기본적으로 객체는 문자열을 값으로 매핑합니다. JS 객체는
+다른 객체(프로토타입)로부터 프로퍼티를 상속받고 이를 **prototypal
+inheritance**라 합니다.
+
+신기하게도 프로퍼티 이름으로 빈 문자열도 가능합니다:
+
+```js
+let a = { '': 1 };
+console.log(a['']);
+```
+
+상속받지 않은 객체의 프로퍼티를 **own property**라 합니다.
+
+각 프로퍼티는 아래 세 attribute들을 가집니다:
+
+- writable: 프로퍼티 값을 설정할 수 있는지
+- enumerable: for/in 루프로 순회할 수 있는지
+- configurable: 프로퍼티를 삭제하거나 attribute를 수정할 수 있는지
+
+### 2. Creating Objects
+
+중요한 문장이라고 생각해서 그대로 긁어왔어요:
+
+> Remember: almost all objects have a **prototype**, but only a relatively small
+> number of objects have `prototype` property. It is these objects with
+> `prototype` properties that define the **prototypes** for all the other
+> objects.
+
+Object.create의 인자는 생성된 객체의 프로토타입이 됩니다:
+
+```js
+let obj1 = {};
+console.log(String(obj1));
+
+let obj2 = Object.create(null);
+console.log(String(obj2));
+```
+
+### 3. Querying and Setting Properties
+
+일반 객체가 연관 배열(딕셔너리)로 자주 활용되기는 하지만 Map 클래스가 더 나은
+경우가 있습니다.
+
+같은 이름의 프로퍼티가 프로토타입 체인의 다른 곳에 위치할 수 있습니다:
+
+```js
+let a = { x: 1 };
+let b = Object.create(a);
+console.log(a, b);
+
+b.x = 2;
+console.log(a, b);
+```
+
+위 코드와 같은 특징 덕분에 상속받은 프로퍼티를 선택적으로 override할 수
+있도록합니다. 다만 setter 메서드 관련해서 예외가 있습니다:
+
+```js
+let parent = {
+  set val(x) {
+    this.y = 1;
+  },
+};
+
+let child = Object.create(parent);
+
+child.val = 2; // child에 프로퍼티가 추가되지 않고 parent의 setter가 호출됩니다.
+console.log(parent, child); // setter에서 추가한 프로퍼티는 child에 추가됩니다.
+```
+
+### 4. Deleting Properties
+
+delete 연산자는 객체 자신의 프로퍼티만 삭제합니다.
+
+암묵적으로/명시적으로 선언된 변수들의 차이가 delete 연산자에 관련하여 있습니다:
+
+```js
+// 원래는 var로 선언한 경우 삭제가 안되어야하는데
+// 콘솔 컴포넌트를 eval로 구현해서 차이가 생기는 것 같아요 (확인 필요)
+// 브라우저 콘솔에서 실행해보세요 :(
+var a = 10;
+console.log(globalThis.a);
+delete globalThis.a;
+console.log(globalThis.a);
+
+b = 20;
+console.log(globalThis.b);
+delete globalThis.b;
+console.log(globalThis.b);
+```
+
+### 5. Testing Properties
+
+```js
+let a = Object.create({ x: 1 });
+a.y = 2;
+
+console.log('x' in a);
+console.log(a.hasOwnProperty('x'));
+
+// 스스로의 enumerable한 프로퍼티인지
+console.log(a.propertyIsEnumerable('x'));
+console.log(a.propertyIsEnumerable('y'));
+```
+
+프로퍼티 유무 확인에서 in 연산자와 !== undefined의 차이:
+
+```js
+let a = { x: undefined };
+console.log('x' in a, a.x !== undefined);
+console.log('y' in a, a.y !== undefined);
+```
+
+### 6. Enumerating Properties
+
+```js
+let a = { x: 1 };
+let b = Object.create(a);
+b.y = 2;
+b[Symbol()] = 3;
+
+// own&inherited enumerable string
+for (i in b) console.log(i);
+// own enumerable string
+console.log(Object.keys(b));
+// own (non)enumerable string
+console.log(Object.getOwnPropertyNames(b));
+// own (non)enumerable symbols
+console.log(Object.getOwnPropertySymbols(b));
+// own (non)enumeratble string&symbols
+console.log(Reflect.ownKeys(b));
+```
+
+각종 메서드들의 프로퍼티 순회 순서입니다:
+
+1. 0이상의 자연수를 순서대로
+1. 문자열은 추가한 순서대로(리터럴에 있는 순서대로)
+1. 심볼도 추가한 순서대로
+
+for-in의 순서는 표준에 자세히 명시되어있진 않다는데,,, 최근에 수정된 것
+같습니다:
+
+https://stackoverflow.com/questions/30076219/does-es6-introduce-a-well-defined-order-of-enumeration-for-object-properties
+
+### 7. Extending Objects
+
+객체의 복사가 자주 있어서 ES6에서 `Object.assign()`을 추가했습니다. 두번째 이후
+인자들의 enumerable/own/string+symbol 프로퍼티들을 첫번째 인자 객체로
+복사합니다.
+
+### 8. Serializing Objects
+
+```js
+console.log(JSON.stringify([NaN, Infinity, -Infinity]));
+console.log(JSON.parse(JSON.stringify(new Date()))); // parse 후에도 문자열입니다.
+```
+
+stringify는 own enumerable property만 처리합니다.
+
+### 9. Object Methods
+
+Object.prototype에서 상속되는 메서드들:
+
+```js
+let point = {
+  x: 3,
+  y: 4,
+
+  toString() {
+    return `(${this.x}, ${this.y})`;
+  },
+
+  toLocaleString() {
+    return `(${this.x.toLocaleString()}, ${this.y.toLocaleString()})`;
+  },
+
+  valueOf() {
+    return Math.hypot(this.x, this.y);
+  },
+
+  // Object.prototype에는 없지만 JSON.stringify가 봅니다
+  toJSON() {
+    return this.toString();
+  },
+};
+
+console.log(String(point), Number(point), JSON.stringify(point));
+```
+
+### 10. Extended Object Literal Syntax
+
+심볼은 opaque value입니다:
+
+> In computer science, an opaque data type is a data type whose concrete data
+> structure is not defined in an interface.
+>
+> https://en.wikipedia.org/wiki/Opaque_data_type
+
+Symbol은 객체가 아닌 원시값이고 `Symbol()`은 생성자 함수가 아닌 팩토리
+함수입니다.
+
+Symbol이 값을 완전히 숨길 수는 없는데 `Object.getOwnPropertySymbols()`로 심볼을
+얻어내고 프로퍼티를 수정 혹은 삭제할 수 있기 때문입니다. 프로퍼티가 덮어씌워지는
+사고 방지(?)의 목적으로 생각하면 될 것 같아요.
+
+스프레드 연산자는 enumerable own 프로퍼티를 복사합니다. Mdn 문서에 스프레드
+연산자와 `Object.assign`과의 차이에 대한 재밌는 예제 코드가 있어서 가져왔어요.
+전자는 setter를 호출하지만 후자는 그렇지 않습니다.
+
+> ```js
+> const objectAssign = Object.assign(
+>   {
+>     set foo(val) {
+>       console.log(val);
+>     },
+>   },
+>   { foo: 1 },
+> );
+> // Logs "1"; objectAssign.foo is still the original setter
+>
+> const spread = {
+>   set foo(val) {
+>     console.log(val);
+>   },
+>   ...{ foo: 1 },
+> };
+> // Nothing is logged; spread.foo is 1
+> ```
+>
+> https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax
+
+아래 두 코드는 동일합니다. 후자가 더 간략해요:
+
+```js
+let square = {
+  area: function () {
+    return this.side ** 2;
+  },
+  side: 10,
+};
+
+square = {
+  area() {
+    return this.side ** 2;
+  },
+  size: 10,
+};
+```
+
+getter가 정의되는 위치와 enumerable함에 대한 참고 링크:
+
+https://stackoverflow.com/questions/34517538
+
+## 7. Arrays
 
 ## 메모
 
 https://stackoverflow.com/questions/43709005/let-const-and-var-on-global-functions-in-javascript
+
+<br />

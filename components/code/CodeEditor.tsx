@@ -19,7 +19,7 @@ export default function CodeEditor({
       <div className="relative h-fit min-h-full w-fit min-w-full p-4 text-base leading-6">
         <pre
           dangerouslySetInnerHTML={{ __html: highlightedCode }}
-          className="h-full w-full text-nowrap font-firacode"
+          className="h-full w-full text-nowrap font-firacode not-italic"
         />
         <textarea
           name="code"

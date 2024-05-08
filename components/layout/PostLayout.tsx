@@ -1,10 +1,13 @@
-import Navigation from '@/components/nav/Navigation';
-import Script from 'next/script';
 import { ReactNode } from 'react';
+import Navigation from '../nav/Navigation';
+import Script from 'next/script';
 
-export default function Layout({ children }: { children: ReactNode }) {
+export default function PostLayout({ children }: { children: ReactNode }) {
   return (
     <>
+      <Navigation />
+      {children}
+      <div className="my-16 h-[1px] w-full bg-neutral-300" />
       <Script
         src="https://giscus.app/client.js"
         data-repo="yeolyi/blog"
@@ -21,9 +24,6 @@ export default function Layout({ children }: { children: ReactNode }) {
         crossOrigin="anonymous"
         async
       />
-      <Navigation />
-      {children}
-      <div className="my-16 h-[1px] w-full bg-neutral-300" />
       <div className="giscus" />
     </>
   );
