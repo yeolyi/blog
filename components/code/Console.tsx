@@ -9,7 +9,7 @@ export default function Console({ logList }: { logList: Log[] }) {
 
   return (
     <button
-      className={`relative flex flex-col overflow-y-hidden overflow-x-scroll bg-slate-50 p-4 text-base 
+      className={`relative flex flex-col overflow-y-hidden overflow-x-scroll bg-slate-50 p-4 text-base
       ${expandable ? 'cursor-pointer' : 'cursor-default'}`}
       onClick={() => setExpanded((x) => !x)}
       aria-label={expanded ? '콘솔 결과 접기' : '콘솔 결과 펼치기'}

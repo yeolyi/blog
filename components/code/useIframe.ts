@@ -10,7 +10,7 @@ import { Log } from './log';
 import { useLoaded } from '@/util/hook';
 import parseCode from '@/util/sandbox';
 
-export const useInterpret = (_code: string) => {
+export const useIframe = (_code: string) => {
   const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null);
   const loaded = useLoaded(iframe);
 

@@ -3,13 +3,13 @@
 import { useState } from 'react';
 import CodeEditor from './CodeEditor';
 import Console from './Console';
-import { useInterpret } from './useInterpret';
+import { useIframe } from './useIframe';
 import { useAppeared } from '@/util/hook';
 
 export default function Sandbox({ code: _code }: { code: string }) {
   const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
   const appeared = useAppeared(containerRef);
-  const { setIframe, code, setCode, logList } = useInterpret(_code);
+  const { setIframe, code, setCode, logList } = useIframe(_code);
 
   return (
     <>
