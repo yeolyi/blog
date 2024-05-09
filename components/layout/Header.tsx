@@ -4,14 +4,14 @@ import Link from 'next/link';
 import { ReactNode } from 'react';
 import { IconContext } from 'react-icons';
 import { FaGithubAlt, FaInstagram } from 'react-icons/fa';
-import { GoRelFilePath } from 'react-icons/go';
+import { RiPentagonLine } from 'react-icons/ri';
 
 export default function Header() {
   return (
     <IconContext.Provider value={{ className: 'w-6 h-6' }}>
-      <div className="absolute -top-10 left-0 flex justify-center gap-2">
+      <div className="absolute -top-10 left-4 flex justify-center gap-2">
         <StyledLink href="/">
-          <GoRelFilePath />
+          <RiPentagonLine />
         </StyledLink>
         <StyledLink href="https://github.com/yeolyi">
           <FaGithubAlt />
