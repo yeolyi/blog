@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   description: '유익하고 바보같고 화가나는 개발자 일상',
 };
 
+// https://github.com/orioncactus/pretendard?tab=readme-ov-file
 const pretendard = localFont({
   src: '../fonts/PretendardVariable.woff2',
   display: 'swap',

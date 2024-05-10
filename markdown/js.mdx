@@ -7,8 +7,8 @@ import jsbook from '@/public/jsbook.jpeg';
 
 ## 소개
 
-자바스크립트 공부 기록입니다. 공부하며 기억할만한 ~~얼척없던~~ 것들을 이곳에
-기록해요.
+지극히 주관적인 자바스크립트 공부 기록입니다. 공부하며 기억할만한 ~~얼척없던~~
+것들을 이곳에 기록해요.
 
 공부한 코드 바로 실행해보려고 컴포넌트도 따로 만들었어요:
 
@@ -1403,8 +1403,326 @@ https://stackoverflow.com/questions/34517538
 
 ## 7. Arrays
 
+### 1. Creating Arrays
+
+Spread operator를 통한 배열 생성은 모든 이터러블 객체에서 가능해요:
+
+```js
+console.log([...'0123456789ABCDEF']);
+
+// 중복 원소 없애기
+console.log([...new Set([...'hello world'])]);
+```
+
+Array 생성자에 하나의 숫자를 전달하면 length 속성이 해당 숫자로 설정된
+preallocated array(?)가 반환됩니다:
+
+```js
+let a = new Array(10);
+console.log(a.length, a[0], 0 in a);
+
+// 이럴 때 말고 언제 쓰는지는 저는 잘 모르겠네요 ㅎ,,,
+console.log([...Array(10).keys()].join(' '));
+```
+
+`Array.of`는 전달된 인자들을 가지는 배열을 반환하는 팩토리 매서드에요.
+
+`Array.form`은 이터러블이나 유사 배열을 배열로 반환하는 팩토리 메서드로 스프레드
+연산자와 유사하게 동작해요. **Web API에서 종종 유사배열을 반환하기에 이 때
+유용하게 사용돼요**. 두번쨰 인자로 함수를 건네줄 수 있는데 상황에 따라 배열의
+생성과 매핑을 한번에 할 수 있어 map보다 효율적입니다.
+
+```js
+let arraylike = { 0: 1, 1: 2, 2: 3, length: 3 };
+console.log(Array.from(arraylike, (x) => 2 * x));
+```
+
+### 2. Reading and Writing Array Elements
+
+> It is helpful to clearly distinguish an **array index** from an **object
+> property name**. All indexes are property names, but only property names that
+> are integers between 0 and 2^32-2 are indexes
+
+### 3. Sparse Arrays
+
+배열 표현식에서 쉼표 사이가 비어있으면 희소 배열이 됩니다. undefined인 요소가
+있는 것과 희소 배열인 것은 달라요:
+
+```js
+let a = [undefined, , undefined];
+console.log(0 in a, 1 in a);
+console.log(a[0], a[1]);
+```
+
+희소 배열의 length 프로퍼티 값은 배열 요소의 개수보다 큽니다:
+
+```js
+let a = new Array(5); // 희소 배열입니다.
+console.log(a.length);
+
+a = [];
+console.log(a.length);
+
+a[1000] = 0;
+console.log(a.length);
+```
+
+희소 배열이 희소(sparse)할수록 더 느리고 메모리 효율적인 방식으로 처리됩니다.
+
+사실 실전에서 대부분의 배열은 희소하지 않을겁니다 ㅎㅎ;
+
+### 4. Array Length
+
+배열 요소의 인덱스는 항상 length값 미만입니다:
+
+```js
+a = [1, 2, 3, 4, 5];
+a.length = 3;
+console.log(a);
+```
+
+### 5. Adding and Deleting Array Elements
+
+배열에 값을 push하는 것과 a[a.length]에 값을 할당하는 것은 동일합니다.
+
+요소를 delete한다고 길이가 달라지지는 않습니다:
+
+```js
+let a = [1, 2, 3];
+delete a[2];
+console.log(2 in a, a[2], a.length);
+```
+
+### 6. Iterating Arrays
+
+맨날 `Object.entries(arr)`로 썼는데 배열이면 아래처럼 바로 쓸 수도 있네요:
+
+```js
+for (const [k, v] of [...'abcdef'].entries()) console.log(k, v);
+```
+
+### 7. Multidimensional Arrays
+
+> 희소 배열의 빈 슬롯은 배열 메서드 간에 일관성 없이 동작합니다. 일반적으로
+> 오래된 메서드(forEach 등)는 빈 슬롯을 건너뛰는 반면, 최신 메서드(for/of 등)는
+> 빈 슬롯을 undefined로 처리합니다.
+>
+> https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array
+>
+> ```js
+> let a = [1, , 3];
+> a.forEach((i) => console.log(i));
+> for (const i of a) console.log(i);
+> ```
+
+#### Array Iterator Methods
+
+```js
+let a = [1, , 3];
+a.forEach(
+  // forEach 외에 다른 대부분의 메서드들도 val, idx, arr을 함수에 건네줍니다.
+  function (val, idx, arr) {
+    console.log(val, idx, arr, this);
+  },
+  // 다른 대부분의 메서드들도 여기 값이 함수 내부의 this가 됩니다.
+  { val: 'hello' },
+);
+```
+
+forEach와 for문은 유사하지만 for문의 break에 대응되는 문법은 없습니다.
+
+filter 함수는 predicate인 함수를 받아요:
+
+https://stackoverflow.com/questions/3230944/what-does-predicate-mean-in-the-context-of-computer-science
+
+희소 배열의 간격 없애기:
+
+```js
+console.log([1, , 2, , , 3, 4, , 5, , , 6, , ,].filter(() => true));
+```
+
+수학적 관습?으로 인해 빈 배열에 대해서 every와 some의 결과는 다음과 같습니다:
+
+```js
+console.log([].every((x) => true));
+console.log([].some((x) => true));
+```
+
+reduce 함수는 앞에서 본 세 인자들 전에 지금까지의 누적된 결과를 인자로
+전달합니다. 함수에 initial value를 전달해주지 않으면 첫번째 값을 사용합니다:
+
+```js
+let ret = [1, , , 2, , , 3].reduce((acc, val, idx, arr) => {
+  console.log(acc, val, idx, arr);
+  return acc + val;
+}, 0); // 인자 0을 지워보세요
+
+console.log(ret);
+```
+
+reduceRight는 인덱스 내림차순으로 처리합니다. (왜 써본 적이 없지,,,)
+
+reduce/reduceRight는 this를 설정하는 인자가 없습니다. 설정해야된다면 bind를 쓰면
+돼요.
+
+#### Flattening arrays with flat() and flatMap()
+
+```js
+console.log([1, [2, [3, [4]]]].flat());
+console.log([1, [2, [3, [4]]]].flat(1));
+console.log([1, [2, [3, [4]]]].flat(2));
+console.log([1, [2, [3, [4]]]].flat(3));
+```
+
+`a.flatMap(f)`는 `a.map(f).flat()`과 같지만 더 효율적입니다. `flatMap`을 입력
+배열의 각 요소에 여러 개(혹은 0개)의 요소를 대응시킬 수 있도록 일반화된
+`map`으로 생각할 수 있어요:
+
+```js
+let phrases = ['hello world!', 'hello visitors!'];
+console.log(phrases.flatMap((x) => x.split(' ')));
+
+let numbers = [-2, -1, 0, 1, 2];
+console.log(numbers.flatMap((x) => (x < 0 ? [] : Math.sqrt(x))));
+```
+
+#### Adding arrays with concat()
+
+기존 배열을 바꾸지 않아요. `a = a.concat(x)` 보다는 push나 splice 메서드를
+쓰는게 낫습니다.
+
+```js
+console.log([1, 2].concat([3, [4]], 5));
+```
+
+#### Stacks and Queues with push(), pop(), shift(), and unshift()
+
+저는 shift랑 unshift를 자꾸 까먹어요:
+
+```js
+let a = [1, 2, 3];
+console.log(a.shift());
+a.unshift(4, 5);
+console.log(a);
+```
+
+#### Subarrays with slice(), splice(), fill(), and copyWithin()
+
+```js
+let a = [1, 2, 3, 4, 5];
+console.log(a.slice(1, 3));
+console.log(a.slice(1));
+console.log(a.slice(-3, -1));
+```
+
+splice는 start index, length, 삽입할 요소들을 인자로 받습니다:
+
+```js
+let a = [1, 2, 3, 4, 5];
+console.log(a.splice(1, 2), a);
+console.log(a.splice(0, 2, [1, 2], 3), a);
+```
+
+<br />
+
+```js
+let a = new Array(5);
+console.log(a.fill(0));
+console.log(a.fill(9, 1));
+console.log(a.fill(8, 2, -1));
+```
+
+copyWithin은 배열 일부분을 배열의 다른 곳으로 옯겨요. 고성능 메서드로 설계되었고
+나중에 배울 typed array에 유용합니다. C의 memmove()를 본땄다고 하네요. 목적지
+인덱스, 시작 인덱스(없으면 0), 개수 인덱스(없으면 배열 길이) 순으로 인자를
+받아요:
+
+```js
+let a = [1, 2, 3, 4, 5];
+console.log(a.copyWithin(1));
+console.log(a.copyWithin(2, 3));
+console.log(a.copyWithin(0, -2));
+```
+
+#### Array Searching and Sorting Methods
+
+```js
+let a = [1, 2, 3, 2, 1];
+console.log(a.indexOf(2));
+console.log(a.lastIndexOf(2));
+console.log(a.indexOf(4));
+```
+
+indexOf의 두번째 인자는 탐색을 시작할 인덱스를 의미합니다:
+
+```js
+let findAll = (a, x) => {
+  let results = [];
+  let pos = 0;
+  while (pos < a.length) {
+    pos = a.indexOf(x, pos);
+    if (pos === -1) break;
+    results.push(pos++);
+  }
+  return results;
+};
+
+console.log(findAll([1, 2, 3, 2, 1], 2));
+```
+
+includes 메서드는 NaN 처리를 합니다:
+
+```js
+let a = [1, NaN, 3];
+console.log(a.indexOf(NaN));
+console.log(a.includes(NaN));
+```
+
+https://stackoverflow.com/questions/66743472/why-does-nan-includesnan-return-true-in-javascript
+
+`sort`는 요소를 문자열로 바꿔서 사전순으로 정렬합니다. 대신 undefined는
+마지막으로 간대요:
+
+```js
+console.log([undefined, 9, 10, '200'].sort());
+console.log([33, 4, 1111, 222].sort((a, b) => a - b));
+```
+
+#### Array to String Conversions
+
+Array 객체의 toString은 인자 없는 join처럼 동작합니다:
+
+```js
+console.log([1, 2, 3].toString());
+console.log([, , ,].toString());
+
+let a = { toLocaleString: () => 'aaa' };
+let b = { toLocaleString: () => 'bbb' };
+console.log([a, b].toString());
+console.log([a, b].toLocaleString());
+```
+
+#### Static Array Functions
+
+> Array.isArray()는 프로토타입 체인에 Array.prototype이 있지만 실제 배열이 아닌
+> 객체를 거부합니다. instanceof Array는 이를 허용합니다.
+>
+> https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray
+
+> Determining with absolute accuracy whether or not a JavaScript object is an
+> array
+>
+> https://web.mit.edu/jwalden/www/isArray.html
+
+### 9. Array-Like Objects
+
+<br />
+
 ## 메모
 
 https://stackoverflow.com/questions/43709005/let-const-and-var-on-global-functions-in-javascript
 
-<br />
+> 배열에 실제로 존재하는 키만 포함하는 Object.keys()와 달리, keys() 반복자는
+> 누락된 속성을 나타내는 빈 공간을 무시하지 않습니다.
+>
+> https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/keys
