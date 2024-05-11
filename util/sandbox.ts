@@ -12,7 +12,7 @@ const parseCode = (code: string) => {
   const prefix = `
 var __count = 0
 var __detectInfiniteLoop = () => {
-  if (__count > 1000) {
+  if (__count > 10000000) {
     throw new Error('Infinite Loop detected.')
   }
   __count += 1

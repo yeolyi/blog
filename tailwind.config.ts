@@ -26,6 +26,8 @@ const config: Config = {
             h3: {
               'scroll-margin': '100px',
             },
+            'code::before': { content: 'none' },
+            'code::after': { content: 'none' },
           },
         },
       },
