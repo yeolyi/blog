@@ -62,7 +62,7 @@ const particlesMaterials = [...Array(4).keys()].map((idx) => {
 });
 
 // Geometry
-const count = 120000;
+const count = 12000;
 
 let particleSpeed = [...Array(count * 4).keys()].map(
   () => Math.random() / 10 + 0.08,

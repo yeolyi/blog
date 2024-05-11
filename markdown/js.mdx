@@ -1529,6 +1529,11 @@ console.log(2 in a, a[2], a.length);
 for (const [k, v] of [...'abcdef'].entries()) console.log(k, v);
 ```
 
+> 배열에 실제로 존재하는 키만 포함하는 Object.keys()와 달리, keys() 반복자는
+> 누락된 속성을 나타내는 빈 공간을 무시하지 않습니다.
+>
+> https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/keys
+
 ### 7. Multidimensional Arrays
 
 > 희소 배열의 빈 슬롯은 배열 메서드 간에 일관성 없이 동작합니다. 일반적으로
@@ -1780,8 +1785,3 @@ console.log(Array.prototype.push.call(a, '!'));
 ## 메모
 
 https://stackoverflow.com/questions/43709005/let-const-and-var-on-global-functions-in-javascript
-
-> 배열에 실제로 존재하는 키만 포함하는 Object.keys()와 달리, keys() 반복자는
-> 누락된 속성을 나타내는 빈 공간을 무시하지 않습니다.
->
-> https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/keys
