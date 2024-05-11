@@ -1716,6 +1716,28 @@ console.log([a, b].toLocaleString());
 
 ### 9. Array-Like Objects
 
+배열 관련된 많은 알고리즘들이 객체가 length 프로퍼티와 0 이상 정수 프로퍼티들을
+가지기만해도 잘 동작합니다:
+
+```js
+let a = { 0: 'a', 1: 'b', 2: 'c', length: 3 };
+console.log(Array.prototype.join.call(a, '+'));
+```
+
+Client-side JS에서 많은 HTML document 메서드들이 유사 배열 객체를 반환합니다.
+
+### 10. Strings as Arrays
+
+```js
+let a = 'Javascript';
+console.log(Array.prototype.join.call(a, ' '));
+
+// string은 immutable합니다
+console.log(Array.prototype.push.call(a, '!'));
+```
+
+## 8. Functions
+
 <br />
 
 ## 메모
