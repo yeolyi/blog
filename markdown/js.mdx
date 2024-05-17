@@ -1415,7 +1415,7 @@ console.log([...new Set([...'hello world'])]);
 ```
 
 Array 생성자에 하나의 숫자를 전달하면 length 속성이 해당 숫자로 설정된
-preallocated array(?)가 반환됩니다:
+array(?)가 반환됩니다:
 
 ```js
 let a = new Array(10);
@@ -1778,10 +1778,213 @@ console.log(Array.prototype.push.call(a, '!'));
 
 ## 8. Functions
 
+> In addition to the arguments, each invocation has another value—the invocation
+> context—that is the value of the this keyword.
+
+> When a function is invoked on or through an object, that object is the
+> invocation context or this value for the function.
+
 ### 1. Defining Functions
+
+함수 선언문은 호이스팅됩니다:
+
+```js
+console.log(f(5));
+
+function f(x) {
+  return x <= 1 ? 1 : x * f(x - 1);
+}
+```
+
+함수 표현식은 호이스팅되지 않습니다.
+
+화살표함수는 정의된 환경의 this 값을 그대로 사용합니다. 화살표함수는 `prototype`
+프로퍼티를 가지지 않아 클래스 생성자로서 사용될 수 없습니다.
+
+### 2. Invoking Functions
+
+함수는 다음 방법으로 호출될 수 있어요:
+
+- As functions
+- As methods
+- As constructors
+- Indirectly through their call() and apply() methods
+- Implicitly, via JavaScript language features that do not appear like normal
+  function invocations
+
+strict mode면 this가 undefined, 아니면 전역 객체가 됩니다:
+
+```js
+// 'use strict'
+const isStrict = (function () {
+  return !this;
+})();
+
+console.log(isStrict);
+```
+
+메서드는 객체의 프로퍼티에 할당된 함수입니다. 객체는 **invocation context**가
+되고 함수 본문에서 **this** 키워드로 접근할 수 있습니다. 이 this값을 암묵적인
+함수 인자로 볼 수도 있어요.
+
+함수가 this를 반환하도록하면 **method chaining** 스타일의 API를 만들 수 있어요:
+
+```
+new Square().x(100).y(100).size(50).outline('red').draw();
+```
+
+중첩 함수의 this는 외부 스코프의 this값과 다를 수 있어요. JS의 결함으로
+여겨진다고 합니다:
+
+```js
+let o = {
+  m: function () {
+    let self = this;
+    console.log(this === o);
+
+    f();
+
+    function f() {
+      console.log(this === o);
+      console.log(self === o);
+    }
+  },
+};
+
+o.m();
+```
+
+위 코드처럼 self와 같은 별도의 변수를 사용하거나, bind 메서드를 사용하거나,
+화살표 함수를 사용하면 해결할 수 있습니다.
+
+new 키워드를 붙이면 타겟 함수는 **생성자(constructor)**로 기능하고 일반 함수
+호출과는 다르게 처리됩니다. 생성자의 `prototype` 프로퍼티를 상속받는 객체가
+생성되고 함수 본문의 `this`가 이 객체를 가르킵니다. 함수 본문의 return에서
+객체를 반환한다면 그 객체가 반환되고, 나머지 경우는 무시됩니다.
+
+get/set, toString, valueOf, 순회 관련 함수들, tagged template literal,
+Proxy등에서 implicit하게 함수가 호출될 수 있습니다.
+
+### 3. Function Arguments and Parameters
+
+```js
+function getPropertyNames(o, a = []) {
+  for (let property in o) a.push(property);
+  return a;
+}
+
+console.log(getPropertyNames({ a: 1 }));
+console.log(getPropertyNames(document));
+```
+
+위 코드에서 인자의 기본값은 호출마다 초기화되고 이는 파이썬과의 차이점입니다:
+
+https://twitter.com/holdenmatt/status/1774866242282672365
+
+기본값이 상수일 필요는 없고 다른 인자값에 의존적인 것도 가능합니다:
+
+```js
+let rec = (width, height = width * 2) => ({ width, height });
+console.log(rec(1));
+```
+
+Rest parameter의 사용례:
+
+```js
+function max(first = -Infinity, ...rest) {
+  // 여기서 rest는 대응되는 인자가 없을시 빈 배열이지, undefined이지는 않습니다.
+  let maxVal = first;
+  for (let n of rest) maxVal = maxVal < n ? n : maxVal;
+  return maxVal;
+}
+
+console.log(max(3, 1, 4, 1, 5, 9, 2));
+```
+
+Spread operator를 사용한 재밌는 예시:
+
+```js
+function timed(f) {
+  return function (...args) {
+    console.log(`Entering ${f.name}`);
+    let startTime = performance.now();
+    try {
+      return f(...args);
+    } finally {
+      // finally문으로 처리했기에 f에서 에러를 던져도 괜찮습니다.
+      console.log(`Exiting ${f.name} after ${performance.now() - startTime}ms`);
+    }
+  };
+}
+
+function benchmark(n) {
+  let sum = 0;
+  for (let i = 0; i <= n; i++) sum += i;
+  return sum;
+}
+
+timed(benchmark)(100000);
+```
+
+함수 매개변수에서도 destructuring이 아래와 같이 가능합니다:
+
+```js
+function vectorAdd([x1, y1], [x2, y2]) {
+  return [x1 + x2, y1 + y2];
+}
+console.log(vectorAdd([1, 2], [3, 4]));
+
+let vectorMultiply = ({ x, y, z = 0 }, scalar) => ({
+  x: x * scalar,
+  y: y * scalar,
+  z: z * scalar,
+});
+console.log(vectorMultiply({ x: 1, y: 2 }, 10));
+```
+
+### 4. Functions as Values
+
+```js
+uniqueInteger.counter = 0;
+
+function uniqueInteger() {
+  return uniqueInteger.counter++;
+}
+
+console.log(uniqueInteger());
+console.log(uniqueInteger());
+```
+
+<br />
+
+```js
+function fibo(n) {
+  if (n <= 2) return 1;
+  if (fibo[n]) return fibo[n];
+  fibo[n] = fibo(n - 1) + fibo(n - 2);
+  return fibo[n];
+}
+
+console.log([...Array(100).keys()].map(fibo).join(' '));
+```
+
+### 5. Functions as Namespaces
+
+> 즉시 실행 함수 표현(IIFE, Immediately Invoked Function Expression) 은
+> 정의되자마자 즉시 실행되는 Javascript Function 를 말한다.
+>
+> https://developer.mozilla.org/ko/docs/Glossary/IIFE
+
+IIFE를 네임스페이스로 활용할 수 있습니다.
+
+### 6. Closures
 
 <br />
 
 ## 메모
 
 https://stackoverflow.com/questions/43709005/let-const-and-var-on-global-functions-in-javascript
+
+객체의 프로퍼티들을 순회/열거하는 방법들:
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Enumerability_and_ownership_of_properties
