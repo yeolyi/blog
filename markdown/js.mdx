@@ -1,5 +1,6 @@
 import ImageViewer from '@/components/image/ImageViewer';
 import jsbook from '@/public/jsbook.jpeg';
+import pythonArg from '@/public/python_default_arg.png';
 
 # 자바스크립트
 
@@ -24,12 +25,6 @@ console.log('🌸 🌼 🌸 🌼');
 코어 js에는 입출력 기능이 포함되어있지 않습니다. 입출력, 네트워크, 그래픽 등의
 기능은 js가 임베딩된 호스트 환경의 책임입니다.
 
-### 3. A Tour of JavaScript
-
-```js
-console.log([1, 2] + [3, 4, 5]);
-```
-
 **표현식**은 어떤 값으로 계산되지만 프로그램의 상태를 바꾸지는 않고, **문**은
 값은 없지만 상태를 바꿉니다.
 
@@ -38,12 +33,14 @@ console.log([1, 2] + [3, 4, 5]);
 프로그래밍 언어의 lexical structure는 해당 언어로 프로그램을 어떻게 작성할지
 알려주는 기본적인 규칙들입니다.
 
+_( 이전 챕터 생략 )_
+
 ### 4. Identifiers and Reserved Words
 
-쓸 일은 없지만, let도 변수명으로 경우에 따라 쓸 수는 있습니다. 주석을
-해제해보세요:
+쓸 일은 없지만, let도 변수명으로 경우에 따라 쓸 수는 있습니다.
 
 ```js
+// ✍️ 아래 주석을 해제해보세요
 // 'use strict'
 var let = 'hello, world!';
 console.log(let);
@@ -86,7 +83,7 @@ let y = 1 + 2
 ## 3. Types, Values, and Variables
 
 JS는 함수와 클래스가 단순 언어 구문(syntax)의 일부가 아니라 코드에 의해 조작될
-수 있는 값 점에서 다른 정적 언어들과 다릅니다.
+수 있는 값이라는 점에서 다른 정적 언어들과 다릅니다.
 
 ### 1. Overview and Definitions
 
@@ -280,7 +277,7 @@ console.log(s === t, s.toString(), Symbol.keyFor(t));
 
 브라우저에서 window 객체는 스스로를 참조하는 window 프로퍼티가 있어서 이
 프로퍼티를 사용해 전역 객체에 접근할 수 있습니다. (뭔가 메타적이고 신기한듯,,,)
-Web worker 스레드에서는 좀 다르다는데 이후 챕터해서 공부해봅시다.
+Web worker 스레드에서는 좀 다르다는데 이후 챕터에서 공부해봅시다.
 
 원래는 노드에서는 global, 브라우저에서는 window로 전역 객체에 접근했지만
 ES2020부터는 globalThis로 표준화되었습니다.
@@ -1778,43 +1775,96 @@ console.log(Array.prototype.push.call(a, '!'));
 
 ## 8. Functions
 
-> In addition to the arguments, each invocation has another value—the invocation
-> context—that is the value of the this keyword.
+각 함수 호출은 인자 외에도 **invocation context**라는 값을 가지고 이는 `this`
+키워드의 값입니다. 함수가 객체를 통해(객체의 메서드로서) 호출되면 해당 객체가
+invocation context가 됩니다.
 
-> When a function is invoked on or through an object, that object is the
-> invocation context or this value for the function.
+따라서 `this`를 암묵적으로 전달된 함수 인자로 볼 수도 있어요. 이런 관점이 보다
+명확한 파이썬의 `self`를 참고해보세요:
+
+https://stackoverflow.com/questions/2709821/what-is-the-purpose-of-the-self-parameter-why-is-it-needed
 
 ### 1. Defining Functions
 
-함수 선언문은 호이스팅됩니다:
+함수 선언문은 호이스팅됩니다. 함수 표현식은 호이스팅되지 않습니다.:
 
 ```js
-console.log(f(5));
+f();
+g();
 
-function f(x) {
-  return x <= 1 ? 1 : x * f(x - 1);
+function f() {
+  console.log('f');
 }
+let g = () => console.log('g');
 ```
 
-함수 표현식은 호이스팅되지 않습니다.
+화살표함수는 정의된 환경의 this 값을 그대로 사용하며 `prototype` 프로퍼티를
+가지지 않아 클래스 생성자로서 사용될 수 없습니다.
 
-화살표함수는 정의된 환경의 this 값을 그대로 사용합니다. 화살표함수는 `prototype`
-프로퍼티를 가지지 않아 클래스 생성자로서 사용될 수 없습니다.
+```js
+// 일반 객체 예제
+const obj = {
+  i: 10,
+  b: () => this.i,
+  c() {
+    return this.i;
+  },
+};
+
+console.log(obj.b(), obj.c());
+
+let { b, c } = obj;
+console.log(b(), c());
+
+// 클래스 예제
+class A {
+  i = 10;
+  d = () => this.i;
+  e() {
+    return this.i;
+  }
+}
+
+let a = new A();
+console.log(a.d(), a.e());
+
+let { d, e } = a;
+console.log(d());
+console.log(e());
+```
+
+화살표 함수의 `this`값이 일반 객체와 클래스에서 다른 이유:
+
+> Because a class's body has a this context, arrow functions as class fields
+> close over the class's this context, and the this inside the arrow function's
+> body will correctly point to the instance (or the class itself, for static
+> fields). However, because it is a **closure, not the function's own binding**,
+> the value of this will not change based on the execution context.
+>
+> https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
 
 ### 2. Invoking Functions
 
-함수는 다음 방법으로 호출될 수 있어요:
+함수는 다음 방법들로 호출될 수 있어요:
 
-- As functions
-- As methods
-- As constructors
-- Indirectly through their call() and apply() methods
-- Implicitly, via JavaScript language features that do not appear like normal
-  function invocations
+- 함수로
+- 메서드로
+- 생성자로
+- call이나 apply 메서드를 사용해 간접적으로
+- JS에 의해 암묵적으로
+  - get/set
+  - toString, valueOf
+  - iteration 관련 함수들
+  - tagged template literal,
+  - Proxy등...
 
-strict mode면 this가 undefined, 아니면 전역 객체가 됩니다:
+this에 해당하는 객체가 없을 때 strict mode면 undefined, 아니면 전역 객체가 돼요:
 
 ```js
+// 아래 예제는 현재 블로그상에서 작동하지 않습니다 :(
+// 상위에 JS 샌드박스가 있어서 strict mode에 상관없이 this가 항상 window가 돼요.
+// 브라우저 콘솔에서 실행해보세요 🙇‍♂️🙇‍♂️
+
 // 'use strict'
 const isStrict = (function () {
   return !this;
@@ -1823,31 +1873,48 @@ const isStrict = (function () {
 console.log(isStrict);
 ```
 
-메서드는 객체의 프로퍼티에 할당된 함수입니다. 객체는 **invocation context**가
-되고 함수 본문에서 **this** 키워드로 접근할 수 있습니다. 이 this값을 암묵적인
-함수 인자로 볼 수도 있어요.
-
 함수가 this를 반환하도록하면 **method chaining** 스타일의 API를 만들 수 있어요:
 
-```
-new Square().x(100).y(100).size(50).outline('red').draw();
+```js
+class Square {
+  x(val) {
+    this.x = val;
+    return this;
+  }
+  y(val) {
+    this.y = val;
+    return this;
+  }
+  outline(color) {
+    this.outline = color;
+    return this;
+  }
+  toString() {
+    return `Square\n - x: ${this.x}\n - y: ${this.y}\n - outline: ${this.outline}`;
+  }
+}
+
+console.log(String(new Square().x(100).y(100).outline('red')));
 ```
 
-중첩 함수의 this는 외부 스코프의 this값과 다를 수 있어요. JS의 결함으로
-여겨진다고 합니다:
+중첩 함수의 this는 외부 스코프의 this값과 다를 수 있어요. 책 말로는 JS의
+결함으로 여겨진다고 하네요:
 
 ```js
 let o = {
   m: function () {
+    console.log(this + '');
     let self = this;
-    console.log(this === o);
-
-    f();
 
     function f() {
-      console.log(this === o);
-      console.log(self === o);
+      console.log(this + '');
+      console.log(self + '');
     }
+
+    f();
+  },
+  toString() {
+    return '[object O]';
   },
 };
 
@@ -1857,13 +1924,13 @@ o.m();
 위 코드처럼 self와 같은 별도의 변수를 사용하거나, bind 메서드를 사용하거나,
 화살표 함수를 사용하면 해결할 수 있습니다.
 
-new 키워드를 붙이면 타겟 함수는 **생성자(constructor)**로 기능하고 일반 함수
-호출과는 다르게 처리됩니다. 생성자의 `prototype` 프로퍼티를 상속받는 객체가
-생성되고 함수 본문의 `this`가 이 객체를 가르킵니다. 함수 본문의 return에서
-객체를 반환한다면 그 객체가 반환되고, 나머지 경우는 무시됩니다.
+new 키워드를 붙이면 타겟 함수는 <strong>생성자(constructor)</strong>로 기능하고
+일반 함수 호출과 다르게 처리돼요.
 
-get/set, toString, valueOf, 순회 관련 함수들, tagged template literal,
-Proxy등에서 implicit하게 함수가 호출될 수 있습니다.
+- 생성자의 `prototype` 프로퍼티를 상속받는 객체가 생성되고 함수 본문의 `this`가
+  이 객체를 가르킵니다.
+- 함수 본문의 return에서 객체를 반환한다면 그 객체가 반환되고, 객체가 아닌걸
+  반환하면 해당 return문은 무시됩니다.
 
 ### 3. Function Arguments and Parameters
 
@@ -1877,22 +1944,30 @@ console.log(getPropertyNames({ a: 1 }));
 console.log(getPropertyNames(document));
 ```
 
-위 코드에서 인자의 기본값은 호출마다 초기화되고 이는 파이썬과의 차이점입니다:
+인자의 기본값(위 코드에서는 빈 배열 `a`)은 호출마다 초기화되고 이는 파이썬과의
+차이점이에요.
 
-https://twitter.com/holdenmatt/status/1774866242282672365
+<ImageViewer
+  src={pythonArg}
+  alt="파이썬 인자 특"
+  widthPercentage="50%"
+  priority
+  href="https://twitter.com/holdenmatt/status/1774866242282672365"
+/>
 
 기본값이 상수일 필요는 없고 다른 인자값에 의존적인 것도 가능합니다:
 
 ```js
-let rec = (width, height = width * 2) => ({ width, height });
+let rec = (width, height = width) => ({ width, height });
 console.log(rec(1));
 ```
 
-Rest parameter의 사용례:
+Rest parameter 예시:
 
 ```js
+// Edge case인 빈 배열을 인자 기본값을 주어 해결한게 신기했어요
 function max(first = -Infinity, ...rest) {
-  // 여기서 rest는 대응되는 인자가 없을시 빈 배열이지, undefined이지는 않습니다.
+  // rest는 대응되는 인자가 없으면 빈 배열입니다.
   let maxVal = first;
   for (let n of rest) maxVal = maxVal < n ? n : maxVal;
   return maxVal;
@@ -1917,13 +1992,18 @@ function timed(f) {
   };
 }
 
-function benchmark(n) {
-  let sum = 0;
-  for (let i = 0; i <= n; i++) sum += i;
-  return sum;
-}
+let fibo = (n) => (n <= 2 ? 1 : fibo(n - 1) + fibo(n - 2));
 
-timed(benchmark)(100000);
+let fibo2 = (n) => {
+  if (n <= 2) return 1;
+  if (fibo2[n]) return fibo2[n];
+
+  return (fibo2[n] = fibo2(n - 1) + fibo2(n - 2));
+};
+
+let N = 30;
+timed(fibo)(N);
+timed(fibo2)(N);
 ```
 
 함수 매개변수에서도 destructuring이 아래와 같이 가능합니다:
@@ -1932,6 +2012,7 @@ timed(benchmark)(100000);
 function vectorAdd([x1, y1], [x2, y2]) {
   return [x1 + x2, y1 + y2];
 }
+
 console.log(vectorAdd([1, 2], [3, 4]));
 
 let vectorMultiply = ({ x, y, z = 0 }, scalar) => ({
@@ -1939,10 +2020,14 @@ let vectorMultiply = ({ x, y, z = 0 }, scalar) => ({
   y: y * scalar,
   z: z * scalar,
 });
+
 console.log(vectorMultiply({ x: 1, y: 2 }, 10));
 ```
 
 ### 4. Functions as Values
+
+위의 `fibo2` 예제에서 미리 보여드렸지만, 함수도 객체이므로 프로퍼티를 가질 수
+있어요:
 
 ```js
 uniqueInteger.counter = 0;
@@ -1955,19 +2040,6 @@ console.log(uniqueInteger());
 console.log(uniqueInteger());
 ```
 
-<br />
-
-```js
-function fibo(n) {
-  if (n <= 2) return 1;
-  if (fibo[n]) return fibo[n];
-  fibo[n] = fibo(n - 1) + fibo(n - 2);
-  return fibo[n];
-}
-
-console.log([...Array(100).keys()].map(fibo).join(' '));
-```
-
 ### 5. Functions as Namespaces
 
 > 즉시 실행 함수 표현(IIFE, Immediately Invoked Function Expression) 은
@@ -1977,7 +2049,226 @@ console.log([...Array(100).keys()].map(fibo).join(' '));
 
 IIFE를 네임스페이스로 활용할 수 있습니다.
 
+```js
+(function () {
+  let val = 10;
+  console.log('IIFE');
+  // 변수 val로 이것저것 하기
+})();
+
+// IIFE 내부의 변수에 접근할 수 없습니다.
+console.log(val);
+```
+
 ### 6. Closures
+
+> 렉시컬 스코프 규칙을 따르는 자바스크립트의 함수는 호출 스택과 관계없이 각각의
+> (this를 제외한) 대응표를 소스코드 기준으로 정의하고, 런타임에 그 대응표를
+> 변경시키지 않는다.
+>
+> 클로저 = 함수 + 함수를 둘러싼 환경(lexical environment)
+>
+> https://ui.toast.com/weekly-pick/ko_20160311
+
+렉시컬 스코프를 구현하기 위해 함수 객체는 함수 정의가 위치한 스코프에 대한
+정보도 가지고 있어야합니다. 이러한 객체와 스코프의 조합을 **클로저**라고 해요.
+
+```js
+let scope = 'global scope';
+
+function foo() {
+  let scope = 'local scope';
+  return () => scope;
+}
+
+console.log(foo()());
+```
+
+여러 함수가 같은 스코프를 공유할 수도 있어요:
+
+```js
+let createCounter = (n) => {
+  return {
+    // 함수 인자도 클로저에서 사용할 수 있습니다
+    count: () => n++,
+    reset: () => (n = 0),
+  };
+};
+
+let c1 = createCounter(0),
+  c2 = createCounter(10);
+
+console.log(c1.count(), c2.count());
+c1.reset();
+console.log(c1.count(), c2.count());
+```
+
+var와 클로저의 조합으로 버그가 생긴 코드:
+
+```js
+// 목표: 0-9를 반환하는 함수의 배열을 반환합니다.
+const foo = () => {
+  let funcs = [];
+  // var가 함수 단위로 정의되어 i가 클로저들간에 공유됩니다.
+  // var -> let 으로 바꿔보세요
+  for (var i = 0; i < 10; i++) funcs[i] = () => i;
+  return funcs;
+};
+
+let a = foo();
+console.log(a[5]());
+```
+
+상위 함수의 `this`를 사용하는 클로저가 필요하다면...:
+
+```js
+let obj = {
+  x: 123,
+  f() {
+    // ⚠️ 일반 함수는 바깥 스코프의 this를 사용하지 않습니다.
+    let g1 = function () {
+      return this;
+    };
+
+    // ✅ 따라서 화살표 함수를 사용하거나,
+    let g2 = () => this;
+
+    // ✅ bind를 사용하거나,
+    let g3 = g1.bind(this);
+
+    // ✅ this를 클로저 내부의 별도 변수에 할당합니다.
+    let self = this;
+    let g4 = function () {
+      return self;
+    };
+
+    // ✍️ 다른 g 함수들을 대신 반환해보세요
+    return g1;
+  },
+
+  toString() {
+    return '[object obj]';
+  },
+};
+
+console.log(String(obj.f()()));
+```
+
+### 7. Function Properties, Methods, and Constructor
+
+```js
+let sum2 = (a, b) => a + b;
+let sum3 = (a, b, c) => a + b + c;
+let sum = (...args) => args.reduce((prev, cur) => prev + cur, 0);
+
+console.log(sum2.length, sum3.length, sum.length);
+console.log(sum2.name);
+```
+
+모든 함수는 서로 다른 프로토타입 객체를 가집니다. 함수가 생성자로 호출되면 새로
+생긴 객체는 이 프로토타입 객체를 상속받습니다:
+
+```js
+function f() {}
+function g() {}
+
+console.log(f.prototype, g.prototype, f.prototype === g.prototype);
+
+let a = new f();
+let b = new g();
+console.log(Object.getPrototypeOf(a) === f.prototype);
+```
+
+`call`과 `apply` 메서드는 함수가 다른 객체의 메서드인 것처럼 동작하게 해요:
+
+```js
+function f() {
+  console.log(this);
+}
+
+let o = { x: 123 };
+
+f();
+f.call(o, 1, 2);
+f.apply(o, [1, 2]);
+```
+
+`bind`는 함수 내 this 키워드에 해당하는 객체를 지정하고 인자 일부를 제공할 수
+있어요:
+
+```js
+// this 객체 지정하기
+let obj1 = { x: 123 };
+let obj2 = { x: 456 };
+function f() {
+  console.log(this.x);
+}
+
+let boundf1 = f.bind(obj1);
+// ⚠️ 한 번 bind된 함수는 override 할 수 없습니다
+let boundf2 = f.bind(obj1).bind(obj2);
+boundf1();
+boundf2();
+
+// 인자 일부를 미리 제공하기
+let sum = (x, y) => x + y;
+let inc = sum.bind(null, 1);
+console.log(inc(10));
+
+// 함수 이름도 바뀌어요
+console.log(inc.name);
+console.log(inc.bind().bind().bind().bind().name);
+```
+
+Function 생성자로 함수를 만들 수 있고 전역 함수인 것처럼 동작합니다:
+
+```js
+let sum = new Function('x', 'y', 'return x+y');
+console.log(sum(1, 2));
+```
+
+### 8. Functional Programming
+
+**고차 함수**(Higher order function)는 함수를 인자로 받거나 함수를 반환하는
+함수입니다:
+
+```js
+// 고차함수 예시
+function not(f) {
+  return function (...args) {
+    // ⚠️ return !f(args)
+    return !f.apply(this, args);
+  };
+}
+
+Array.prototype.isEmpty = function () {
+  return this.length === 0;
+};
+
+Array.prototype.notEmpty = not(Array.prototype.isEmpty);
+
+console.log([].isEmpty(), [].notEmpty());
+console.log([1].isEmpty(), [1].notEmpty());
+```
+
+합성함수 예제:
+
+```js
+function compose(f, g) {
+  return function (...args) {
+    // 🤔 왜 하나는 call이고 하나는 apply인지 고민해보세요
+    return f.call(this, g.apply(this, args));
+  };
+}
+
+const sum = (x, y) => x + y;
+const square = (x) => x * x;
+console.log(compose(square, sum)(2, 3));
+```
+
+## 9. Classes
+
+### 1. Classes and Prototypes
 
 <br />
 
@@ -1988,3 +2279,10 @@ https://stackoverflow.com/questions/43709005/let-const-and-var-on-global-functio
 객체의 프로퍼티들을 순회/열거하는 방법들:
 
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Enumerability_and_ownership_of_properties
+
+> 주의: Object.prototype.**proto**는 오늘날 대부분의 브라우저에서 지원되지만, 그
+> 존재와 정확한 동작은 오직 웹 브라우저와의 호환성을 보장하기 위한 레거시
+> 기능으로서 ECMAScript 2015 사양에서 비로소 표준화되었습니다. 더 나은 지원을
+> 위해 대신 Object.getPrototypeOf()를 사용하세요.
+>
+> https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Object/proto

@@ -185,16 +185,22 @@
     <script>
       const INDENT = '  ';
       const SECRET = '[secret 😜]';
+      const prev = console.log;
 
       const exec = (code, logger) => {
         console.log = logger;
         // js 예제 코드 중 전역에서 동작해야하는 것이 있어
-        // Function을 사용할 수 없다.
-        (0, eval)(code);
+        // Function을 사용할 수 없다(?)
+        new Function(code)();
+        console.log = prev;
       };
 
       const toString = (x, excluded) => {
         if (excluded.includes(x)) return SECRET;
+
+        // 전역 객체 stringify시 에러 우회
+        if (x === globalThis) return '[object Window]';
+
         // 두 번 stringify하는 것 방지(슬래시가 두 번 나오는 문제)
         if (typeof x === 'string') return `'${x}'`;
 

@@ -44,11 +44,12 @@ let rotationOnLose = [...new Array(MODEL_CNT).keys()].map(() => [
   Math.random(),
 ]);
 
-// https://stackoverflow.com/questions/71846348/add-several-copies-of-the-same-imported-model-in-a-scene-in-three-js
+// MEMO: https://stackoverflow.com/questions/71846348/add-several-copies-of-the-same-imported-model-in-a-scene-in-three-js
 const gltfLoader = new GLTFLoader();
 gltfLoader.load('/duck/glTF-Binary/Duck.glb', (gltf) => {
   const model = gltf.scene;
   modelList = [...Array(MODEL_CNT).keys()].map((idx) => {
+    // MEMO: clone
     const cloned = model.clone();
     const row = Math.floor(idx / TABLE_SIDE);
     const column = idx % TABLE_SIDE;
@@ -99,12 +100,11 @@ const sizes = {
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
 });
-renderer.setSize(sizes.width, sizes.height);
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 /**
  * Resize
  */
+// MEMO: ortho 카메라의 resize 처리
 const handleResize = () => {
   // Update sizes
   sizes.width = window.innerWidth;
@@ -245,7 +245,7 @@ const tick = () => {
   currentIntersect = null;
   const intersectList = raycaster.intersectObjects(modelList);
   intersectList.forEach((intersect) => {
-    // 와 이게 맞나??
+    // MEMO: 와 이게 맞나??
     const model = intersect.object.parent.parent;
     currentIntersect = model;
     model.scale.set(SCALE_FACTOR, SCALE_FACTOR, SCALE_FACTOR);

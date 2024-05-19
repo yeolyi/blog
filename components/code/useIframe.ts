@@ -17,6 +17,11 @@ export const useIframe = (_code: string) => {
   const [code, setCode] = useState(_code);
   const [logList, setLogList] = useState<Log[]>([]);
 
+  // dev에서 mdx의 코드블록 변화가 반영되게하기 위함
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') setCode(_code);
+  }, [_code]);
+
   useMessageListener(iframe, setLogList);
   useExecDebounce(iframe, code, setLogList, loaded);
 
