@@ -1775,18 +1775,18 @@ console.log(Array.prototype.push.call(a, '!'));
 
 ## 8. Functions
 
-각 함수 호출은 인자 외에도 **invocation context**라는 값을 가지고 이는 `this`
-키워드의 값입니다. 함수가 객체를 통해(객체의 메서드로서) 호출되면 해당 객체가
-invocation context가 됩니다.
+호출된 함수는 전달받은 인자 외에도 **invocation context**라는 값을 별도로
+가져요. `this` 키워드의 값이 바로 이 값이에요. 함수가 객체를 통해(객체의
+메서드로서) 호출되면 해당 객체가 invocation context가 됩니다.
 
-따라서 `this`를 암묵적으로 전달된 함수 인자로 볼 수도 있어요. 이런 관점이 보다
+따라서 `this`는 암묵적으로 전달된 함수 인자로도 볼 수 있어요. 이런 관점이 보다
 명확한 파이썬의 `self`를 참고해보세요:
 
 https://stackoverflow.com/questions/2709821/what-is-the-purpose-of-the-self-parameter-why-is-it-needed
 
 ### 1. Defining Functions
 
-함수 선언문은 호이스팅됩니다. 함수 표현식은 호이스팅되지 않습니다.:
+함수 선언문은 호이스팅됩니다. 함수 표현식은 호이스팅되지 않습니다:
 
 ```js
 f();
@@ -2268,7 +2268,483 @@ console.log(compose(square, sum)(2, 3));
 
 ## 9. Classes
 
+자바스크립트는 프로토타입 기반 상속을 사용합니다.
+
 ### 1. Classes and Prototypes
+
+range 객체를 생성해 반환하는 팩토리 함수 예제입니다. 프로토타입을 연결하는
+과정이 명시적으로 드러나요:
+
+```js
+function createRange(from, to) {
+  // 프로토타입 객체를 인자로 전달합니다.
+  let r = Object.create(createRange.methods);
+  r.from = from;
+  r.to = to;
+  return r;
+}
+
+// 프로토타입 객체를 정의합니다.
+createRange.methods = {
+  includes(x) {
+    return this.from <= x && x < this.to;
+  },
+};
+
+let r = createRange(1, 4);
+console.log(r.includes(2), r.includes(5));
+```
+
+### 2. Classes and Constructors
+
+`new` 키워드로 객체의 생성과 프로토타입 연결을 자동화할 수 있습니다:
+
+```js
+function Range(from, to) {
+  if (!new.target) throw new Error('일반 함수로 호출되었어요');
+  this.from = from;
+  this.to = to;
+}
+
+Range.prototype = {
+  includes(x) {
+    return this.from <= x && x < this.to;
+  },
+};
+
+// ✍️ new를 지워보세요
+let r = new Range(1, 4);
+console.log(r.includes(2), r.includes(5));
+```
+
+서로 다른 생성자 함수를 사용했어도 두 생성자 함수가 같은 `prototype` 프로퍼티를
+가진다면 같은 클래스의 인스턴스로 취급됩니다. 다르게 말하면 객체가 정확히 어떤
+생성자를 사용해 만들었는지 `instanceOf`로는 알 수 없습니다:
+
+```js
+function A() {}
+function B() {}
+A.prototype = B.prototype = {};
+
+let a = new A();
+let b = new B();
+console.log(a instanceof A, a instanceof B);
+console.log(b instanceof A, b instanceof B);
+
+// 이런 함수도 있네요.
+// createRange 예제처럼 생성자 함수가 없는 경우는
+// 아래 방법으로 프로토타입을 확인할 수 있습니다.
+console.log(A.prototype.isPrototypeOf(a));
+```
+
+정확한 생성자가 궁금하다면 `constructor` 프로퍼티를 활용할 수 있어요:
+
+```js
+function A() {}
+let a = new A();
+
+console.log(A === A.prototype.constructor);
+console.log(A === a.constructor);
+```
+
+따라서 프로토타입 객체를 직접 만들었다면 `constructor` 프로퍼티를 잘
+설정해줘야합니다:
+
+```js
+function A() {}
+
+// 방법 1
+A.prototype = {
+  constructor: A,
+  foo() {
+    console.log('foo');
+  },
+};
+
+function B() {}
+
+// 방법 2
+B.prototype.foo = function () {
+  console.log('foo');
+};
+
+console.log(new A().constructor === A, new B().constructor === B);
+```
+
+### 3. Classes with the class keyword
+
+ES6에 추가된 `class` 문법으로 클래스를 만들어봅시다:
+
+```js
+class Range {
+  constructor(from, to) {
+    this.from = from;
+    this.to = to;
+  }
+
+  includes(x) {
+    return this.from <= x && x < this.to;
+  }
+}
+let r = new Range(1, 4);
+console.log(r.includes(2), r.includes(5));
+```
+
+클래스의 본문은 자동으로 strict mode가 적용되며, 클래스 선언은 함수 선언과
+다르게 호이스팅되지 않습니다.
+
+static 메서드는 프로토타입 객체가 아닌 함수 자체에 추가됩니다.
+
+```js
+class A {
+  static foo() {
+    console.log('foo');
+  }
+}
+
+console.log('foo' in A, 'foo' in A.prototype);
+```
+
+비교적 최근에 메서드가 아닌 프로퍼티도 클래스 본문에서 초기화할 수 있게
+되었습니다:
+
+```js
+class Buffer {
+  static val = 10;
+
+  // private instance field
+  // (protected 접근제어자는 JS에 따로 없습니다)
+  #size = 0;
+
+  // ✍️ 아래 두 줄의 순서를 바꿔보세요
+  // 결과가 달라지는 이유는 뒤에 인스턴스 생성 순서를 다룰 때 설명할게요
+  capacity = 4096;
+  buffer = new Uint8Array(this.capacity);
+
+  constructor() {
+    console.log(this.buffer.length);
+  }
+}
+
+console.log(Buffer.val);
+new Buffer();
+```
+
+### 4. Adding Methods to Existing Classes
+
+프로토타입 객체를 수정해 클래스를 동적으로 수정할 수 있습니다.
+
+```js
+// ✍️ 화살표 함수로 바꾸고 결과를 확인해보세요
+Number.prototype.tree = function () {
+  let n = this.valueOf();
+  for (let i = 1; i <= n; i++) console.log('*'.repeat(i));
+};
+
+(3).tree();
+```
+
+다만 위 예제처럼 빌트인 객체를 수정하는 것은 다른 라이브러리와의, 혹은 JS
+버전간의 충돌이 있을 수 있어 좋지 않습니다.
+
+### 5. Subclasses
+
+ES6 이전 방식:
+
+```js
+function Range(from, to) {
+  this.from = from;
+  this.to = to;
+}
+
+Range.prototype = {
+  includes(x) {
+    return this.from <= x && x < this.to;
+  },
+  constructor: Range,
+};
+
+function Span(start, span) {
+  // 부모 클래스의 구현에 호환되도록 자식 클래스에서도 초기화를 해야합니다.
+  // ES6 전까지는 부모 클래스의 메서드나 생성자를 호출하는 방법(super)을 제공하지 않기에
+  // 부모 클래스의 구현을 정확히 알아야합니다.
+  this.from = start;
+  this.to = start + span;
+}
+
+// ⭐ 아래 줄을 이해해보세요
+Span.prototype = Object.create(Range.prototype);
+Span.prototype.constructor = Span;
+
+console.log(new Span(5, 5).includes(8));
+```
+
+`extends`와 `super`를 사용해 서브클래스 만들기:
+
+```js
+class Range {
+  constructor(from, to) {
+    this.from = from;
+    this.to = to;
+  }
+  includes(x) {
+    return this.from <= x && x < this.to;
+  }
+}
+
+class Span extends Range {
+  constructor(start, span) {
+    super(start, start + span);
+  }
+}
+
+console.log(new Span(5, 5).includes(8));
+```
+
+여담으로 클래스 표현식을 사용해 아래와 같은 표기도 가능하긴 가능합니다:
+
+```js
+class Span extends class {
+  constructor(from, to) {
+    this.from = from;
+    this.to = to;
+  }
+  includes(x) {
+    return this.from <= x && x < this.to;
+  }
+} {
+  constructor(start, span) {
+    super(start, start + span);
+  }
+}
+
+console.log(new Span(5, 5).includes(8));
+```
+
+`extends`를 사용하면 static 메서드도 알아서 상속됩니다. 이런 기능은 ES6 이전에는
+불가능했어요:
+
+```js
+class A {
+  static foo() {}
+}
+
+class B extends A {}
+
+console.log(A.foo === B.foo);
+```
+
+갑자기 생각난 예제:
+
+```js
+class A {
+  static toString() {
+    return 'class';
+  }
+  toString() {
+    return 'instance';
+  }
+}
+
+console.log(String(A));
+console.log(String(new A()));
+```
+
+책에는 없었지만 클래스 선언과 인스턴스의 생성 과정이 궁금해서 찾아봤어요. 우선
+클래스 선언문의 평가 순서입니다:
+
+```js
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes#evaluation_order
+
+// 1️⃣ extends가 있다면 생성자 함수가 맞는지 확인합니다
+// ✍️ 주석을 해제하고 어떤 에러가 뜨는지 확인해보세요
+class A /* extends 1 */ {
+  // 2️⃣ constructor 메서드를 extract(?)하고 없다면 기본 구현으로 대체합니다.
+  constructor() {}
+
+  // 3️⃣ 프로퍼티 '키'들을 선언 순서대로 평가합니다.
+
+  // 4️⃣ 메서드와 접근자를 선언 순서대로 install합니다.
+
+  // <인스턴스 메서드>는 prototype에,
+  method1() {}
+
+  // <private 인스턴스 메서드>는 나중에 인스턴스에 직접,
+  #method2() {}
+
+  // <static 메서드>는 클래스 자체에 install됩니다.
+  static method3() {}
+
+  // 5️⃣ 이제부터 클래스 A의 이름을 사용할 수 있습니다.
+  // 이전 단계에서 사용하면 ReferenceError가 발생합니다.
+  // ✍️ 맨 아래 logged 함수의 주석을 해제해보세요
+
+  // 6️⃣ 프로퍼티 '값'들이 평가됩니다
+
+  // <static 필드>의 '값'이 평가될 때 this는 클래스 자체입니다.
+  static [logged('key1')] = logged('val1');
+  static [logged('key2')] = (() => {
+    console.log(A === this);
+    // 🤔 왜 어떤건 undefined고 어떤건 아닌지 고민해보세요
+    console.log(A.key1, A.key3, A.method3);
+    return 'val2';
+  })();
+  static {
+    console.log('Static initialization blocks', this.key2, this.key3);
+  }
+  static [logged('key3')] = logged('val3');
+
+  // <인스턴스 필드>의 '값'들은 생성자 시작 전(base class인 경우) 혹은
+  // super의 리턴 전(derived class인 경우)에 초기화됩니다.
+  // 자세한건 나중 예제에서 볼게요
+  [logged('key4')] = logged('val4');
+}
+
+// helper function
+function logged(val) {
+  // console.log(A);
+  console.log(`log: ${val}`);
+  return val;
+}
+
+// 7️⃣ 끝!
+```
+
+참고로, 위 코드에서 등장한 **static initialization blocks**은 클래스의 유연한
+초기화를 가능하게 합니다:
+
+```js
+// ⚠️
+class A {
+  static init() {
+    //
+    // Access to private static fields is allowed here
+  }
+}
+
+// exposes an implementation detail to the user
+A.init();
+
+// ✅
+class B {
+  static {
+    // ...
+  }
+}
+```
+
+클래스 선언에서 키는 한 번, 인스턴스 필드 값은 매번 평가됨이 인상깊어서 아래
+예제를 만들어봤어요:
+
+```js
+class A {
+  [randomVal()] = randomVal();
+
+  toString() {
+    return JSON.stringify(this);
+  }
+}
+
+// 키가 항상 같습니다
+console.log(new A(), new A(), new A());
+
+// helper function
+function randomVal() {
+  return Math.floor(Math.random() * 10);
+}
+```
+
+인스턴스의 생성 과정 예제입니다:
+
+```js
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/constructor
+
+class A {
+  x = logged(123);
+
+  constructor() {
+    // this로 생성중인 객체, new.target으로 생성자 함수에 접근할 수 있습니다.
+    // 프로토타입 체인이 연결되어있고 자식 클래스의 메서드도 다 있기에  String(this)가 B입니다.
+    // 클래스가 잘 설계되었다면 부모쪽에서 자식 쪽 생성자를 궁금해할 이유가 없지만
+    // 디버깅등등에 유용하게 사용될 수 있다네요.
+    console.log(String(this), String(new.target));
+
+    // 하지만 자식 클래스의 프로퍼티는 아직 없습니다
+    console.log(this.y);
+  }
+
+  static toString() {
+    return 'class A';
+  }
+
+  toString() {
+    return 'instance of A';
+  }
+}
+
+class B extends A {
+  y = logged(456);
+
+  constructor() {
+    // 1️⃣ super 이전의 생성자 본문이 실행됩니다.
+    // 아직은 this 접근이 불가능합니다.
+    console.log('Before super');
+
+    // 2️⃣ super가 호출되어 부모 클래스 부분을 초기화합니다.
+    // 3️⃣ 이후 현재 클래스 필드들이 초기화됩니다.
+    super();
+
+    // 4️⃣ super 이후의 생성자 본문이 실행됩니다.
+    // 이제 this를 사용할 수 있습니다.
+    console.log('After super');
+    console.log(this.y);
+  }
+
+  static toString() {
+    // 생성자가 아닌 일반 메서드에는 `super`에 대한 제약이 없습니다
+    // 부모 클래스 버전의 메서드를 호출해도, 하지 않아도 됩니다.
+    console.log(super.toString());
+    return 'class B';
+  }
+
+  toString() {
+    return 'instance of B';
+  }
+}
+
+new B();
+
+// helper function
+function logged(val) {
+  console.log(`log: ${val}`);
+  return val;
+}
+```
+
+상속보다는 컴포지션(composition)을 선호하라는 말도 있습니다:
+
+https://en.wikipedia.org/wiki/Composition_over_inheritance
+
+JS가 abstract method나 abstract class를 공식적으로 지원하지는 않지만 아래와 같이
+흉내는 낼 수 있습니다:
+
+```js
+class AbstractSet {
+  has(x) {
+    throw new Error('Abstract method');
+  }
+}
+```
+
+여담으로 타입스크립트에서 abstract class를 따로 지원합니다:
+
+https://www.typescriptlang.org/docs/handbook/classes.html#abstract-classes
+
+프로토타입 객체와 생성자 함수의 관계를 잘 보여주는 책 원문으로 챕터를
+마무리할게요:
+
+> Although the prototype object is the key feature of the class, the constructor
+> function is the public identity of the class.
 
 <br />
 
