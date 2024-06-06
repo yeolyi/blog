@@ -22,3 +22,7 @@ export default function Page({ params }: { params: { id: string } }) {
     </PostLayout>
   );
 }
+
+export const generateStaticParams = () => {
+  return [...Array(id2Mdx.length).keys()].map((id) => ({ id: id.toString() }));
+};
