@@ -8,7 +8,6 @@ import {
 } from 'react';
 import { Log } from './log';
 import { useLoaded } from '@/util/hook';
-import parseCode from '@/util/sandbox';
 
 export const useIframe = (_code: string) => {
   const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null);
@@ -40,14 +39,12 @@ const useExecDebounce = (
     if (iframe === null || loaded === false) return;
     ref.current = false;
 
-    try {
-      const newCode = parseCode(code);
-      // globalThis에 있는 변수등을 초기화하기 위함
-      iframe.contentWindow?.postMessage('location.reload()', '*');
-      iframe.contentWindow?.postMessage(newCode, '*');
-    } catch {
-      iframe.contentWindow?.postMessage(code, '*');
-    }
+    // globalThis에 있는 변수등을 초기화하기 위함
+    // ...이었는데 알 수 없는 이유로 setTimeout이 동작을 안해 주석처리
+    // TODO: 고치기. var로 선언한 경우만 초기화가 필요해 우선순위가 낮은듯
+    // iframe.contentWindow?.postMessage('location.reload()', '*');
+
+    iframe.contentWindow?.postMessage(code, '*');
   }, [code, iframe, loaded]);
 
   useEffect(() => {

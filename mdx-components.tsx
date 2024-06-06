@@ -12,8 +12,19 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       const content = props.children?.toString() ?? '';
       const code = content.trim();
 
-      if (props.className === 'language-js') return <Sandbox code={code} />;
-      else return <code {...props} />;
+      if (props.className === 'language-js') {
+        const executable = !code.startsWith('// @noexec');
+        if (executable) {
+          return <Sandbox code={code} executable={executable} />;
+        } else {
+          return (
+            <Sandbox
+              code={code.substring(code.indexOf('\n') + 1)}
+              executable={executable}
+            />
+          );
+        }
+      } else return <code {...props} />;
     },
     a: PreviewAnchor,
   };

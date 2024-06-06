@@ -190,9 +190,16 @@
       const exec = (code, logger) => {
         console.log = logger;
         // js 예제 코드 중 전역에서 동작해야하는 것이 있어
-        // Function을 사용할 수 없다(?)
-        new Function(code)();
-        console.log = prev;
+        // Function을 사용할 수 없다. 예)
+        /* 
+          var a = 1;
+          let b = 1;
+          console.log(globalThis.a, globalThis.b);
+        */
+        (0, eval)(code);
+
+        // setTimeout등으로 아직 코드가 실행중일 수 있어서 되돌리면 안된다.
+        // console.log = prev;
       };
 
       const toString = (x, excluded) => {

@@ -6,6 +6,15 @@ import rehypeSlug from 'rehype-slug';
 const nextConfig = {
   // Configure `pageExtensions` to include MDX files
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
+  redirects() {
+    return [
+      {
+        source: '/js',
+        destination: '/js/0',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 const withMDX = createMDX({
