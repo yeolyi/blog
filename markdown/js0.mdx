@@ -887,20 +887,19 @@ console.log((a = b) === 1, a);
 `a op= b`와 `a = a op b`가 다른 경우가 있습니다:
 
 ```js
+// a op= b
 let data = [0, 1, 2];
 let i = 0;
-let log = () => console.log(data[0], data[1], data[2]);
 
-// a op= b
 data[i++] *= 2;
-log();
+console.log(data);
 
+// a = a op b
 data = [0, 1, 2];
 i = 0;
 
-// a = a op b
 data[i++] = data[i++] * 2;
-log();
+console.log(data);
 ```
 
 ### 12. Evaluation Expressions
