@@ -35,7 +35,8 @@ const Row = ({ log }: { log: Log }) => {
         color: log.type === 'log' ? '#6a737d' : '#ff4040',
       }}
     >
-      {log.data}
+      {/* 빈 문자열이어도 newline 반영 */}
+      {log.data === '' ? ' ' : log.data}
     </p>
   );
 };

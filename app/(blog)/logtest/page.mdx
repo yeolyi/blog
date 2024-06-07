@@ -1,0 +1,41 @@
+```js
+// primitive
+console.log(123.456);
+console.log(true);
+console.log(123n);
+console.log('string');
+console.log(undefined);
+console.log(null);
+console.log(Symbol());
+console.log(Symbol('symbol'));
+
+console.log();
+
+// function
+console.log(() => {});
+let foo = () => {};
+console.log(foo);
+
+console.log();
+
+// wrapper type
+console.log(new Number(10));
+console.log(new Function('a', 'b', 'return a + b'));
+
+console.log();
+
+// object
+console.log({});
+console.log({ x: 1, y: 2 });
+console.log({ x: 1, y: { z: 'z', w: { a: 4 } } });
+
+console.log();
+
+// class
+class A {}
+console.log(A);
+let a = new A();
+a.x = 1;
+a.y = 2;
+console.log(a);
+```

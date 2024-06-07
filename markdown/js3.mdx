@@ -237,14 +237,210 @@ console.log(it.throw(new Error('error')));
 
 ## 13. Asynchronous Javascript
 
+Asynchronous iterators and the for/await loop were introduced in ES2018 and
+allow you to work with streams of asynchronous events using simple loops that
+appear synchronous.
+
+JS는 비동기 코드를 처리하기 위한 여러 기능들을 제공하지만, 언어 코어에는
+비동기인 기능이 없습니다. 따라서 client/server-side JS를 조금 알아야합니다.
+
 ### 1. Asynchronous Programming with Callbacks
 
+클라이언드 사이드 자바스크립트는 거의 항상 event-driven입니다. 미리 알려진
+계산을 하지 않고 유저의 행동에 따라 반응합니다. 이를 위해 브라우저는 유저의
+행동에 따라 이벤트를 발생시키고 JS 프로그램은 이벤트마다 콜백을 등록해놓습니다.
+이때 콜백을 **event handler** 혹은 **event listener**라고 합니다.
+
+이벤트 핸들러의 등록은 `addEventHandler` 함수를 사용하거나, 타겟 객체의 onload,
+onerror와 같은 프로퍼티에 콜백을 할당하는 두 방법이 있습니다. 보통 여러 콜백을
+등록할 수 있는 전자를 많이 사용한다고 하네요:
+
+https://stackoverflow.com/a/6348533
+
+옛날 옛적 API 이상한 XMLHttpRequest 쓸 시절 콜백을 통한 네트워크 요청 예제:
+
+```js
+// @noexec
+let getVersion = (callback) => {
+  let request = new XMLHttpRequest();
+  request.open('GET', 'https://example.com/api/version');
+  request.send();
+
+  request.onload = function () {
+    if (request.status === 200) callback(null, request.responseText);
+    else callback(response.statusText, null);
+  };
+
+  request.onerror = request.ontimeout = (e) => callback(e.type, null);
+};
+```
+
 ### 2. Promises
+
+프로미스는 비동기 작업의 결과를 표현하는 객체로 결과가 준비되었는지 아닌지는
+콜백을 통해서만 접근할 수 있게 설계되었습니다.
+
+콜백은 nested되었지만 프로미스 체인은 리니어해서 보다 보기 좋게 바꿀 수 있어요.
+
+콜백은 에러 처리가 어렵습니다. 비동기 코드에서 에러가 던져져도 호출자로 에러가
+전파될 수 없습니다. 프로미스는 에러 처리 방법을 표준화해 제공합니다.
+
+https://stackoverflow.com/questions/3677783/is-it-possible-to-catch-exceptions-thrown-in-a-javascript-async-callback
+
+프로미스는 **하나의** 비동기 작업을 표현합니다. 따라서 `setInterval`이나 `click`
+이벤트는 프로미스로 다룰 수 없습니다.
+
+#### 1. Using Promises
+
+```js
+// @noexec
+getJSON('/api/user/profile').then(displayUserProfile);
+```
+
+`then()`에 전달된 콜백들은 한 번씩만 실행됩니다. then을 부르기 전에 비동기
+작업이 끝나더라도 콜백은 실행됩니다.
+
+동기 코드가 실행될 때 에러가 던져지면 catch문이 있을 때까지 콜 스택을 거슬러
+올라갑니다. 하지만 비동기 코드가 실행될 때는 호출자가 스택에 없으므로 호출자로
+에러를 건네줄 방법이 없습니다.
+
+```js
+// @noexec
+
+// getJSON과displayUserProfile의 에러가 처리되지 않습니다.
+// 이 방식은 잘 쓰이지 않아요
+getJSON('/api/user/profile').then(displayUserProfile, handleProfileError);
+
+// getJSON과 displayUserProfile의 에러가 handleProfileError에서 처리됩니다.
+getJSON('/api/user/profile').then(displayUserProfile).catch(handleProfileError);
+
+// 같아요
+getJSON('/api/user/profile')
+  .then(displayUserProfile)
+  .then(null, handleProfileError);
+```
+
+프로미스 기반 비동기 처리에서는 대신 `catch()`로 에러를 건네줍니다.
+
+프로미스는 약속
+
+- 약속이 지켜짐 -> fulfilled
+- 약속을 어김 -> rejected
+
+- 아직 어찌 됐는지 모름 -> pending
+- 지켜졌든 어겨졌든 뭐든 됨 -> settled
+
+> Remember how we defined Promises at the start of this section: “a Promise is
+> an object that represents the result of an asynchronous operation.” It is
+> important to remember that Promises are not just abstract ways registering
+> callbacks to run when some async code finishes—they represent the results of
+> that async code.
+
+> The reason that I want to be precise about Promise terminology is that
+> Promises can also be resolved. **It is easy to confuse this resolved state
+> with the fulfilled state or with settled state, but it is not precisely the
+> same as either**
+
+??????
+
+#### 2. Chaining Promises
+
+```js
+// @noexec
+fetch(url)
+  .then((response) => response.json())
+  .then(render)
+  .then(cacheInDatabase)
+  .catch(handleError);
+```
+
+보통 이런 method chaining을 구현할 때는 모든 메서드가 같은 객체를 리턴하지만
+프로미스에서는 모두 다른 객체를 반환합니다.
+
+즉 하나의 프로미스에 여러 콜백을 등록하는 것이 아닙니다.
+
+이전 프로미스 객체가 fulfilled되면 콜백을 실행합니다.
+
+https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Promise/then
+
+#### 3. Resolving Promises
+
+프로미스 p의 then에 전달한 콜백 c가 프로미스가 아닌 값 v를 반환하면 p는 v로
+**resolve**되고 즉시 **fulfilled**됩니다.
+
+하지만 v가 프로미스면 p는 **resolve**됐지만 **fulfilled**되지는 않습니다. p는
+v가 settled되기 전까지는 settled될 수 없습니다.
+
+p가 resolve된 이후엔 콜백 c는 no longer has any control over p. p is “resolved”
+in the sense that its fate now depends entirely on what happens to Promise v.
+
+```js
+// @noexec
+function c1(response) {
+  let p4 = response.json();
+  return p4;
+}
+function c2(profile) {
+  displayUserProfile(profile);
+}
+let p1 = fetch(url);
+let p2 = p1.then(c1);
+let p3 = p2.then(c2);
+```
+
+1. fetch에서 HTTP 요청을 시작하고 p1을 반환합니다.
+1. p1에 c1을 등록하고 p2를 반환합니다.
+1. p2에 c2를 등록하고 p3를 반환합니다.
+1. (네트워크 응답 도착)
+1. p1이 fulfilled되고 c1이 호출됩니다.
+1. c1이 p4를 반환하고 p2는 **resolve**됩니다.
+1. (body 처리 완료)
+1. p2와 p4가 **fulfill**됩니다.
+1. c2가 호출됩니다.
+
+#### 4. More on Promise and Errors
+
+동기 코드와 다르게 비동기 코드의 에러는 잘 처리하지 않으면 조용히 넘어갈 수도
+있으므로 아주 중요하고 신경써야합니다.
+
+동기 코드에서 에러 발생 시 콜 스택을 거슬러 올라가는 것처럼 프로미스에서는
+`.catch()`를 찾을 때까지 체인을 따라 내려갑니다.
+
+`.finally()` 메서드도 있어요. 프로미스가 settle되면 콜백이 호출됩니다. 보통
+콜백의 반환값은 무시되지만 에러를 던지면 reject됩니다. 메서드가 호출된
+프로미스의 상태를 따라갑니다.
+
+When a callback passed to .then() (or .catch()) throws a value, the Promise that
+was the return value of the .then() call is rejected with that thrown value.
+
+so idiomatic to end Promise chains with a .catch() call. it is also perfectly
+valid to use .catch() elsewhere in a Promise chain.
+
+https://stackoverflow.com/questions/42013104/placement-of-catch-before-and-after-then
+
+#### 5. Promise in Parallel
+
+체인을 따라 순차적으로가 아닌 여러 비동기 작업을 병렬로 실행해봅시다.
+
+`Promise.all`은 하나라도 리젝되면 리젝됩니다. 배열에 프로미스가 아닌게
+섞여있어도 됩니다.
+
+`Promise.allSettled`는 리젝돼도 괜찮습니다.
+
+```js
+
+```
+
+#### 6. Making Promises
+
+#### 7. Promises in Sequence
 
 ### 3. async and await
 
 ### 4. Asynchronous Iteration
 
 ### 5. Summary
+
+https://medium.com/swlh/implement-a-simple-promise-in-javascript-20c9705f197a
 
 ## 14. Metaprogramming
