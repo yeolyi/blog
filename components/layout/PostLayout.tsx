@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import Navigation from '../nav/Navigation';
-import Giscus from '../giscus/Giscus';
+import Giscus from '../Giscus';
 
 export default function PostLayout({ children }: { children: ReactNode }) {
   return (

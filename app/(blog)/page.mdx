@@ -1,4 +1,4 @@
-import ImageViewer from '@/components/image/ImageViewer';
+import ImageViewer from '@/components/ImageViewer';
 import instagram from '@/public/instagram.jpeg';
 
 export const metadata = {
@@ -36,11 +36,59 @@ JS를 공부하며 신기하고 어이없는 것들을 모았어요. 코드 예�
   객체들에 대해 배웠어요.
 - [파트3](./js/2)에서는 자바스크립트가 어떻게 모듈을 지원하는지와 Typed array나
   Intl과 같은 표준 라이브러리를 배웠어요.
-- 파트4에서는 이터레이터나 프로미스처럼 언어의 자세한 기능들을 배웠어요.
+- [파트4](./js/3)에서는 이터레이터나 프로미스처럼 언어의 자세한 기능들을
+  배웠어요.
 
 {/* 재밌는 주제들은 따로 글로 썼어요. */}
 
 {/* - [JS로 부동 소수점 최적화하기](./fisr) */}
+
+## CSS
+
+```html
+<!-- https://css-loaders.com/ -->
+<div class="loader"></div>
+<style>
+  .loader {
+    width: 120px;
+    height: 80px;
+    padding: 8px;
+    background:
+      linear-gradient(#000 0 0) 0 0/8px 20px,
+      linear-gradient(#000 0 0) 100% 0/8px 20px,
+      radial-gradient(farthest-side, #000 90%, #fff) 0 5px/8px 8px content-box,
+      #fff;
+    background-repeat: no-repeat;
+    animation: l3 2s infinite linear;
+  }
+  @keyframes l3 {
+    25% {
+      background-position:
+        0 0,
+        100% 100%,
+        100% calc(100% - 5px);
+    }
+    50% {
+      background-position:
+        0 100%,
+        100% 100%,
+        0 calc(100% - 5px);
+    }
+    75% {
+      background-position:
+        0 100%,
+        100% 0,
+        100% 5px;
+    }
+  }
+</style>
+```
+
+준비중...
+
+## Git
+
+준비중...
 
 ## @yeolyii
 

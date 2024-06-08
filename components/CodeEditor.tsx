@@ -1,21 +1,32 @@
 import hljs from 'highlight.js/lib/core';
 import js from 'highlight.js/lib/languages/javascript';
+import xml from 'highlight.js/lib/languages/xml';
+import css from 'highlight.js/lib/languages/css';
 import 'highlight.js/styles/github.css';
 import { KeyboardEventHandler } from 'react';
 
 hljs.registerLanguage('javascript', js);
+hljs.registerLanguage('xml', xml);
+hljs.registerLanguage('css', css);
 
 export default function CodeEditor({
+  language,
   code,
   setCode,
+  maxHeight,
 }: {
+  language: string;
   code: string;
   setCode: (code: string) => void;
+  maxHeight?: string;
 }) {
-  const { highlightedCode, handleKeyDown } = useEditor(code, setCode);
+  const { highlightedCode, handleKeyDown } = useEditor(code, setCode, language);
 
   return (
-    <div className="overflow-x-scroll bg-slate-50 shadow">
+    <div
+      className="overflow-x-scroll bg-slate-50 shadow"
+      style={{ height: maxHeight, resize: maxHeight ? 'vertical' : 'none' }}
+    >
       <div className="relative h-fit min-h-full w-fit min-w-full p-4 text-base leading-6">
         <pre
           dangerouslySetInnerHTML={{ __html: highlightedCode }}
@@ -39,10 +50,12 @@ export default function CodeEditor({
   );
 }
 
-const useEditor = (code: string, _setCode: (val: string) => void) => {
-  let highlightedCode = hljs.highlight(code, {
-    language: 'javascript',
-  }).value;
+const useEditor = (
+  code: string,
+  _setCode: (val: string) => void,
+  language: string,
+) => {
+  let highlightedCode = hljs.highlight(code, { language }).value;
 
   if (highlightedCode === '') highlightedCode = ' ';
   // TODO: 해결책 찾기

@@ -1,3 +1,5 @@
+# (작성중)
+
 ## 12. Iterators and Generators
 
 이터러블한 객체는 그 요소들을 순회할 수 있습니다. 아래 기능들에서 이미 조용히
@@ -22,6 +24,7 @@ console.log(iterationResult);
 
 // 언어 차원에서 암묵적으로 호출할 수도 있습니다.
 console.log(...iterator);
+ㅋㅌㅋㅌ;
 
 // 순회가 끝났기에 `done: true` 에요
 console.log(iterator.next());
@@ -427,11 +430,11 @@ https://stackoverflow.com/questions/42013104/placement-of-catch-before-and-after
 
 `Promise.allSettled`는 리젝돼도 괜찮습니다.
 
-```js
-
-```
+`Promise.race`는 가장 먼저 fulfill되는 프로미스를 반환해요.
 
 #### 6. Making Promises
+
+나만의 프로미스 기반 API를 만들어봅시다.
 
 #### 7. Promises in Sequence
 
