@@ -8,12 +8,7 @@ export default function HTMLSandbox({ code: _code }: { code: string }) {
 
   return (
     <div className="flex flex-col gap-2">
-      <CodeEditor
-        code={code}
-        setCode={setCode}
-        language="xml"
-        maxHeight="200px"
-      />
+      <CodeEditor code={code} setCode={setCode} language="xml" />
       <iframe srcDoc={code} className="resize-y shadow" />
     </div>
   );

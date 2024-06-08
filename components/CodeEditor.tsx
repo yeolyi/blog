@@ -13,20 +13,15 @@ export default function CodeEditor({
   language,
   code,
   setCode,
-  maxHeight,
 }: {
   language: string;
   code: string;
   setCode: (code: string) => void;
-  maxHeight?: string;
 }) {
   const { highlightedCode, handleKeyDown } = useEditor(code, setCode, language);
 
   return (
-    <div
-      className="overflow-x-scroll bg-slate-50 shadow"
-      style={{ height: maxHeight, resize: maxHeight ? 'vertical' : 'none' }}
-    >
+    <div className="overflow-x-scroll bg-slate-50 shadow">
       <div className="relative h-fit min-h-full w-fit min-w-full p-4 text-base leading-6">
         <pre
           dangerouslySetInnerHTML={{ __html: highlightedCode }}
