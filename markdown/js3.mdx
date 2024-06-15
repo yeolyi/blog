@@ -275,12 +275,6 @@ listener**라고 합니다.
 </script>
 ```
 
-이벤트 핸들러의 등록은 `addEventHandler` 함수를 사용하거나, 타겟 객체의 onload,
-onerror와 같은 프로퍼티에 콜백을 할당하는 두 방법이 있습니다. 보통 여러 콜백을
-등록할 수 있는 전자를 많이 사용한다고 하네요:
-
-https://stackoverflow.com/a/6348533
-
 마지막으로 **네트워크 이벤트**에요. 콜백을 쓰는 예제가 필요해서 옛날 옛적
 XMLHttpRequest를 들고왔어요:
 
@@ -305,15 +299,13 @@ let getVersion = (callback) => {
 프로미스는 **비동기 작업의 결과**를 표현하는 객체입니다. 결과가 준비되었는지
 아닌지는 콜백을 통해서만 접근할 수 있게 설계되었어요.
 
-콜백은 아래처럼 중첩되어 callback hell을 만들어내지만 프로미스 체인은
+아래 사진처럼 콜백은 중첩되어 callback hell을 만들어내지만 프로미스 체인은
 선형입니다.
 
 <ImageViewer src={callbackhell} alt="콜백 지옥 이미지" widthPercentage="80%" />
 
-또한 콜백은 에러 처리가 어렵습니다. 비동기 코드에서 에러가 던져져도 호출자로
+또한 콜백은 에러 처리가 어렵습니다. 비동기 코드에서 에러가 던져져도 바깥으로
 에러가 전파될 수 없습니다. 프로미스는 에러 처리 방법을 표준화해 제공합니다.
-
-https://stackoverflow.com/questions/3677783/is-it-possible-to-catch-exceptions-thrown-in-a-javascript-async-callback
 
 참고로 프로미스는 **하나의** 비동기 작업을 표현합니다. 따라서 비동기
 작업이더라도 `click` 이벤트처럼 반복되는 작업은 프로미스로 다룰 수 없습니다.
@@ -322,16 +314,15 @@ https://stackoverflow.com/questions/3677783/is-it-possible-to-catch-exceptions-t
 
 일단 프로미스를 사용해봅시다.
 
-실습을 위해 `wait(ms)`을 정의했어요. 구현은 보지 마시고 ms후에 완료되는 작업을
-표현한 비동기 함수라고 생각해주세요.
+실습을 위해 `wait(ms)`을 정의했어요. 구현은 보지 마시고 ms 밀리초 이후 완료되는
+작업을 표현한 비동기 함수라고 생각해주세요.
 
 비동기 함수는 프로미스를 반환해요:
 
 ```js
 let wait = (ms) => new Promise((res) => setTimeout(res, ms));
 
-let returnValue = wait(1000);
-console.log(returnValue instanceof Promise);
+console.log(wait(1000) instanceof Promise);
 ```
 
 `then()`으로 작업 완료 후 수행할 작업을 등록할 수 있습니다:
@@ -351,7 +342,7 @@ wait(1000).then(callback);
 let f = () => Promise.resolve();
 
 let callback = () => console.log('👍');
-f().then(callback); // f가 완료되었지만 콜백이 여기서 실행되지는 않습니다.
+f().then(callback); // f의 작업이 완료되었지만 콜백이 즉시 실행되지는 않습니다.
 console.log('after then');
 ```
 
@@ -789,57 +780,61 @@ async function foo() {
 foo();
 ```
 
-교재 예제 코드가 인상깊어서 가져왔어요:
+교재 예제 코드가 인상깊어서 조금 변형해 가져왔어요:
 
-```js
-class AsyncQueue {
-  values = [];
-  resolvers = [];
+```html
+<button>start</button>
+<script>
+  class AsyncQueue {
+    values = [];
+    resolvers = [];
 
-  enqueue(value) {
-    if (this.resolvers.length) {
-      this.resolvers.shift()(value);
-    } else {
-      this.values.push(value);
+    enqueue(value) {
+      if (this.resolvers.length) {
+        this.resolvers.shift()(value);
+      } else {
+        this.values.push(value);
+      }
+    }
+
+    dequeue() {
+      if (this.values.length) {
+        return Promise.resolve(this.values.shift());
+      } else {
+        return new Promise((resolve) => this.resolvers.push(resolve));
+      }
+    }
+
+    next() {
+      return this.dequeue().then((value) => ({ value }));
+    }
+
+    [Symbol.asyncIterator]() {
+      return this;
     }
   }
 
-  dequeue() {
-    if (this.values.length) {
-      return Promise.resolve(this.values.shift());
-    } else {
-      return new Promise((resolve) => this.resolvers.push(resolve));
+  let q = new AsyncQueue();
+  let wait = (ms) => new Promise((res) => setTimeout(res, ms));
+
+  let randomEnqueue = async () => {
+    let sec = Math.random();
+    await wait(sec * 1000);
+    q.enqueue(sec);
+    setTimeout(randomEnqueue, 0);
+  };
+
+  let readStream = async () => {
+    for await (let val of q) {
+      console.log(val);
     }
-  }
+  };
 
-  next() {
-    return this.dequeue().then((value) => ({ value }));
-  }
+  readStream();
 
-  [Symbol.asyncIterator]() {
-    return this;
-  }
-}
-
-let q = new AsyncQueue();
-let wait = (ms) => new Promise((res) => setTimeout(res, ms));
-
-let randomEnqueue = async () => {
-  let sec = Math.random();
-  await wait(sec * 1000);
-  q.enqueue(sec);
-  setTimeout(randomEnqueue, 0);
-};
-
-let readStream = async () => {
-  for await (let val of q) {
-    console.log(val);
-  }
-};
-
-readStream();
-// ✍️ 주석을 해제해보세요
-// randomEnqueue();
+  let button = document.querySelector('button');
+  button.addEventListener('click', randomEnqueue);
+</script>
 ```
 
 ### 5. Summary
