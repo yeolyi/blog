@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
 import CodeEditor from '../CodeEditor';
 import Console from './Console';
+import RefreshButton from './RefreshButton';
+import sandboxSrcdoc from './sandboxSrcdoc';
 import { useIframe } from './useIframe';
-import { useAppeared } from '@/util/hook';
 
 export default function JSSandbox({
   code: _code,
@@ -13,20 +13,19 @@ export default function JSSandbox({
   code: string;
   executable?: boolean;
 }) {
-  const [containerRef, setContainerRef] = useState<HTMLDivElement | null>(null);
-  const appeared = useAppeared(containerRef);
-  const { setIframe, code, setCode, logList } = useIframe(_code);
+  const { setIframe, code, setCode, logList, refresh } = useIframe(_code, 'js');
 
   return (
     <>
-      <div className="flex flex-col gap-2" ref={setContainerRef}>
+      <div className="relative flex flex-col gap-2">
         <CodeEditor code={code} setCode={setCode} language="javascript" />
+        {executable && <RefreshButton refresh={refresh} />}
         {executable && <Console logList={logList} />}
       </div>
-      {executable && appeared && (
+      {executable && (
         <iframe
+          srcDoc={sandboxSrcdoc}
           sandbox="allow-scripts"
-          src="/sandbox.html"
           ref={(ref) => setIframe(ref)}
           className="h-0 w-0"
         />

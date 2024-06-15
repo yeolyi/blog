@@ -1,91 +1,101 @@
 <!doctype html>
 <html>
-  <head>
-    <script>
-      function stringify(x, quote = false) {
-        // primitive + function
-        switch (typeof x) {
-          case 'number':
-          case 'boolean':
-            return x.toString();
-          case 'bigint':
-            return x.toString() + 'n';
-          case 'string':
-            // 두 번 stringify해 escape되는 것 방지
-            return quote ? `'${x}'` : x;
-          case 'undefined':
-            return 'undefined';
-          case 'symbol':
-            return `Symbol(${x.description})`;
-          case 'function':
-            return `[Function: ${x.name}]`;
-        }
-
-        // null
-        if (x === null) return 'null';
-
-        // 전역 객체 stringify시 에러 우회
-        if (x === globalThis) return 'Window {...}';
-
-        // 래퍼 객체
-        for (let wrapper of [Number, Boolean, BigInt, String])
-          if (x instanceof wrapper) return `[${wrapper.name}: ${x.toString()}]`;
-
-        // 배열
-        // 희소 배열 처리는 map 덕분에 자연스럽게 된다.
-        // 즉 stringify가 호출되지 않지만 join에 empty item이 반영된다.
-        if (x instanceof Array)
-          return `[${x.map((x) => stringify(x, true)).join(', ')}]`;
-
-        // Date
-        if (x instanceof Date) return x.toLocaleString();
-
-        // 일반 객체
-        let name = x.constructor.name;
-
-        let content = '{ ';
-        for (let [key, value] of Object.entries(x)) {
-          content += `${stringify(key)}: ${stringify(value, true)}, `;
-        }
-        content = content.length === 2 ? '{}' : content.slice(0, -2) + ' }';
-
-        if (name === 'Object') {
-          return content;
-        } else {
-          return `${name} ${content}`;
-        }
+  <body></body>
+  <script>
+    function stringify(x, quote = false) {
+      // primitive + function
+      switch (typeof x) {
+        case 'number':
+        case 'boolean':
+          return x.toString();
+        case 'bigint':
+          return x.toString() + 'n';
+        case 'string':
+          // 두 번 stringify해 escape되는 것 방지
+          return quote ? `'${x}'` : x;
+        case 'undefined':
+          return 'undefined';
+        case 'symbol':
+          return `Symbol(${x.description})`;
+        case 'function':
+          return `[Function: ${x.name}]`;
       }
 
-      let runCode = (code, log) => {
-        console.log = log;
+      // null
+      if (x === null) return 'null';
 
-        // MEMO: 아래와 같이 js 예제 코드 중 전역에서 동작해야하는 것이 있어 Function을 사용할 수 없다.
-        // var a = 1;
-        // let b = 1;
-        // console.log(globalThis.a, globalThis.b);
-        (0, eval)(code);
+      // 전역 객체 stringify시 에러 우회
+      if (x === globalThis) return 'Window {...}';
 
-        // MEMO: setTimeout등으로 코드가 실행중일 수 있어서 console.log를 되돌리면 안된다.
+      // 래퍼 객체
+      for (let wrapper of [Number, Boolean, BigInt, String])
+        if (x instanceof wrapper) return `[${wrapper.name}: ${x.toString()}]`;
+
+      // 배열
+      // 희소 배열 처리는 map 덕분에 자연스럽게 된다.
+      // 즉 stringify가 호출되지 않지만 join에 empty item이 반영된다.
+      if (x instanceof Array)
+        return `[${x.map((x) => stringify(x, true)).join(', ')}]`;
+
+      // Date
+      if (x instanceof Date) return x.toLocaleString();
+
+      // 일반 객체
+      let name = x.constructor.name;
+
+      let content = '{ ';
+      for (let [key, value] of Object.entries(x)) {
+        content += `${stringify(key)}: ${stringify(value, true)}, `;
+      }
+      content = content.length === 2 ? '{}' : content.slice(0, -2) + ' }';
+
+      if (name === 'Object') {
+        return content;
+      } else {
+        return `${name} ${content}`;
+      }
+    }
+
+    let runCode = (code, log) => {
+      console.log = log;
+      // MEMO: 아래와 같이 js 예제 코드 중 전역에서 동작해야하는 것이 있어 Function을 사용할 수 없다.
+      // var a = 1;
+      // let b = 1;
+      // console.log(globalThis.a, globalThis.b);
+      (0, eval)(code);
+
+      // MEMO: setTimeout등으로 코드가 실행중일 수 있어서 console.log를 되돌리면 안된다.
+    };
+
+    let messageHandler = (e) => {
+      let postMessage = (data) => e.source.postMessage(data, '*');
+
+      let log = (...data) => {
+        postMessage({
+          type: 'log',
+          data: data.map((x) => stringify(x)).join(' '),
+        });
       };
 
-      let messageHandler = (e) => {
-        let postMessage = (data) => e.source.postMessage(data, '*');
-
-        try {
-          let log = (...data) => {
-            postMessage({
-              type: 'log',
-              data: data.map((x) => stringify(x)).join(' '),
-            });
-          };
-
-          runCode(e.data, log);
-        } catch (e) {
-          postMessage({ type: 'exception', data: e.message });
+      try {
+        let { type, code } = e.data;
+        switch (type) {
+          case 'html':
+            let script = code.match(/<script[\s\S]*?>[\s\S]*?<\/script>/gi);
+            document.querySelector('body').innerHTML = code;
+            if (script && script.length) {
+              runCode(script[0].slice(8, -9), log);
+            }
+            break;
+          case 'js':
+            runCode(code, log);
+            break;
         }
-      };
+      } catch (e) {
+        postMessage({ type: 'exception', data: e.message });
+      }
+    };
 
-      window.addEventListener('message', messageHandler);
-    </script>
-  </head>
+    window.addEventListener('message', messageHandler);
+  </script>
 </html>

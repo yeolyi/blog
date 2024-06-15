@@ -9,7 +9,7 @@ import { RiPentagonLine } from 'react-icons/ri';
 export default function Header() {
   return (
     <IconContext.Provider value={{ className: 'w-6 h-6' }}>
-      <div className="absolute -top-10 left-4 flex justify-center gap-2">
+      <div className="absolute right-4 top-4 flex justify-center gap-2">
         <StyledLink href="/">
           <RiPentagonLine />
         </StyledLink>

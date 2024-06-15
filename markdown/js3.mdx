@@ -1,4 +1,5 @@
-# (작성중)
+import ImageViewer from '@/components/ImageViewer';
+import callbackhell from '@/public/callbackhell.png';
 
 ## 12. Iterators and Generators
 
@@ -24,7 +25,6 @@ console.log(iterationResult);
 
 // 언어 차원에서 암묵적으로 호출할 수도 있습니다.
 console.log(...iterator);
-ㅋㅌㅋㅌ;
 
 // 순회가 끝났기에 `done: true` 에요
 console.log(iterator.next());
@@ -240,19 +240,40 @@ console.log(it.throw(new Error('error')));
 
 ## 13. Asynchronous Javascript
 
-Asynchronous iterators and the for/await loop were introduced in ES2018 and
-allow you to work with streams of asynchronous events using simple loops that
-appear synchronous.
+> Most real-world JavaScript programming is asynchronous.
 
-JS는 비동기 코드를 처리하기 위한 여러 기능들을 제공하지만, 언어 코어에는
-비동기인 기능이 없습니다. 따라서 client/server-side JS를 조금 알아야합니다.
+JS는 비동기를 처리하기 위한 여러 기능들을 제공하지만 언어 자체에는 비동기인
+기능이 없습니다. 클라이언트(fetch)나 서버 사이드 JS(readFile)에만 있어요.
 
 ### 1. Asynchronous Programming with Callbacks
 
-클라이언드 사이드 자바스크립트는 거의 항상 event-driven입니다. 미리 알려진
-계산을 하지 않고 유저의 행동에 따라 반응합니다. 이를 위해 브라우저는 유저의
-행동에 따라 이벤트를 발생시키고 JS 프로그램은 이벤트마다 콜백을 등록해놓습니다.
-이때 콜백을 **event handler** 혹은 **event listener**라고 합니다.
+비동기 코드를 처리하는 가장 기초적인 방법은 **콜백**입니다. 함수 호출을 마치고
+값을 동기적으로 반환할 수 없어서 함수 호출자는 콜백을 함수 인자로 전달해
+반환값을 콜백을 통해 전달받습니다.
+
+비동기적인 코드의 예시를 살펴볼게요. 우선 **타이머**에요.
+
+```js
+// ✍️ timeout 시간을 바꿔보세요.
+console.log('before');
+setTimeout(() => console.log('👋'), 2000);
+console.log('after');
+```
+
+다음으로는 **이벤트**에요. 클라이언드 사이드 자바스크립트는 거의 항상 이벤트
+기반입니다. 미리 알려진 계산을 하지 않고 유저의 행동에 따라 반응합니다. 이를
+위해 브라우저는 유저의 행동에 따라 이벤트를 발생시키고 JS 프로그램은 이벤트마다
+**콜백**을 등록해놓습니다. 이때 콜백을 **event handler** 혹은 **event
+listener**라고 합니다.
+
+```html
+<!-- 이벤트 -->
+<button>click me!</button>
+<script>
+  let element = document.querySelector('button');
+  element.addEventListener('click', () => console.log('👋'));
+</script>
+```
 
 이벤트 핸들러의 등록은 `addEventHandler` 함수를 사용하거나, 타겟 객체의 onload,
 onerror와 같은 프로퍼티에 콜백을 할당하는 두 방법이 있습니다. 보통 여러 콜백을
@@ -260,7 +281,8 @@ onerror와 같은 프로퍼티에 콜백을 할당하는 두 방법이 있습니
 
 https://stackoverflow.com/a/6348533
 
-옛날 옛적 API 이상한 XMLHttpRequest 쓸 시절 콜백을 통한 네트워크 요청 예제:
+마지막으로 **네트워크 이벤트**에요. 콜백을 쓰는 예제가 필요해서 옛날 옛적
+XMLHttpRequest를 들고왔어요:
 
 ```js
 // @noexec
@@ -280,170 +302,550 @@ let getVersion = (callback) => {
 
 ### 2. Promises
 
-프로미스는 비동기 작업의 결과를 표현하는 객체로 결과가 준비되었는지 아닌지는
-콜백을 통해서만 접근할 수 있게 설계되었습니다.
+프로미스는 **비동기 작업의 결과**를 표현하는 객체입니다. 결과가 준비되었는지
+아닌지는 콜백을 통해서만 접근할 수 있게 설계되었어요.
 
-콜백은 nested되었지만 프로미스 체인은 리니어해서 보다 보기 좋게 바꿀 수 있어요.
+콜백은 아래처럼 중첩되어 callback hell을 만들어내지만 프로미스 체인은
+선형입니다.
 
-콜백은 에러 처리가 어렵습니다. 비동기 코드에서 에러가 던져져도 호출자로 에러가
-전파될 수 없습니다. 프로미스는 에러 처리 방법을 표준화해 제공합니다.
+<ImageViewer src={callbackhell} alt="콜백 지옥 이미지" widthPercentage="80%" />
+
+또한 콜백은 에러 처리가 어렵습니다. 비동기 코드에서 에러가 던져져도 호출자로
+에러가 전파될 수 없습니다. 프로미스는 에러 처리 방법을 표준화해 제공합니다.
 
 https://stackoverflow.com/questions/3677783/is-it-possible-to-catch-exceptions-thrown-in-a-javascript-async-callback
 
-프로미스는 **하나의** 비동기 작업을 표현합니다. 따라서 `setInterval`이나 `click`
-이벤트는 프로미스로 다룰 수 없습니다.
+참고로 프로미스는 **하나의** 비동기 작업을 표현합니다. 따라서 비동기
+작업이더라도 `click` 이벤트처럼 반복되는 작업은 프로미스로 다룰 수 없습니다.
 
 #### 1. Using Promises
 
+일단 프로미스를 사용해봅시다.
+
+실습을 위해 `wait(ms)`을 정의했어요. 구현은 보지 마시고 ms후에 완료되는 작업을
+표현한 비동기 함수라고 생각해주세요.
+
+비동기 함수는 프로미스를 반환해요:
+
 ```js
-// @noexec
-getJSON('/api/user/profile').then(displayUserProfile);
+let wait = (ms) => new Promise((res) => setTimeout(res, ms));
+
+let returnValue = wait(1000);
+console.log(returnValue instanceof Promise);
 ```
 
-`then()`에 전달된 콜백들은 한 번씩만 실행됩니다. then을 부르기 전에 비동기
-작업이 끝나더라도 콜백은 실행됩니다.
+`then()`으로 작업 완료 후 수행할 작업을 등록할 수 있습니다:
+
+```js
+let wait = (ms) => new Promise((res) => setTimeout(res, ms));
+
+let callback = () => console.log('👍');
+wait(1000).then(callback);
+```
+
+`addEventListener()`와 유사하지만 `then()`에 전달된 콜백들은 최대 한 번씩만
+실행됩니다. 또한 then을 부르기 전에 비동기 작업이 끝나더라도 콜백은 실행됩니다.
+
+```js
+// 즉시 완료되는 비동기함수입니다.
+let f = () => Promise.resolve();
+
+let callback = () => console.log('👍');
+f().then(callback); // f가 완료되었지만 콜백이 여기서 실행되지는 않습니다.
+console.log('after then');
+```
 
 동기 코드가 실행될 때 에러가 던져지면 catch문이 있을 때까지 콜 스택을 거슬러
 올라갑니다. 하지만 비동기 코드가 실행될 때는 호출자가 스택에 없으므로 호출자로
 에러를 건네줄 방법이 없습니다.
 
+프로미스 기반 비동기 처리에서는 대신 `catch()`로 에러를 처리합니다:
+
 ```js
-// @noexec
+let asyncFunc = () => Promise.resolve();
+let throwingCallback = () => {
+  throw new Error();
+};
 
-// getJSON과displayUserProfile의 에러가 처리되지 않습니다.
+// 콜백의 에러가 처리되지 않습니다.
 // 이 방식은 잘 쓰이지 않아요
-getJSON('/api/user/profile').then(displayUserProfile, handleProfileError);
+asyncFunc().then(throwingCallback, () => console.log('1'));
 
-// getJSON과 displayUserProfile의 에러가 handleProfileError에서 처리됩니다.
-getJSON('/api/user/profile').then(displayUserProfile).catch(handleProfileError);
+// 아래 두 개는 콜백의 에러도 처리합니다.
+asyncFunc()
+  .then(throwingCallback)
+  .catch(() => console.log('2'));
 
-// 같아요
-getJSON('/api/user/profile')
-  .then(displayUserProfile)
-  .then(null, handleProfileError);
+// 위와 동일한 코드에요
+asyncFunc()
+  .then(throwingCallback)
+  .then(null, () => console.log('3'));
 ```
 
-프로미스 기반 비동기 처리에서는 대신 `catch()`로 에러를 건네줍니다.
+프로미스는 단어 그대로 약속에 비유할 수 있어요:
 
-프로미스는 약속
+- 약속이 어떻게 됐는지 알게 됨: `settled`
+  - 약속이 지켜짐: `fulfilled`
+    - `then()`의 첫번째 인자로 전달된 콜백을 실행
+    - 콜백의 인자로 작업의 반환값을 전달
+  - 약속을 어김: `rejected`
+    - `then()`의 두번째 인자로 전달된 콜백을 실행
+    - 콜백의 인자로 에러를 전달
+- 아직 약속이 어떻게 됐는지 모름: `pending`
 
-- 약속이 지켜짐 -> fulfilled
-- 약속을 어김 -> rejected
-
-- 아직 어찌 됐는지 모름 -> pending
-- 지켜졌든 어겨졌든 뭐든 됨 -> settled
-
-> Remember how we defined Promises at the start of this section: “a Promise is
-> an object that represents the result of an asynchronous operation.” It is
-> important to remember that Promises are not just abstract ways registering
-> callbacks to run when some async code finishes—they represent the results of
-> that async code.
-
-> The reason that I want to be precise about Promise terminology is that
-> Promises can also be resolved. **It is easy to confuse this resolved state
-> with the fulfilled state or with settled state, but it is not precisely the
-> same as either**
-
-??????
+위의 상태를 말고도 `resolved`라는 상태가 있는데 곧 살펴볼게요.
 
 #### 2. Chaining Promises
 
+프로미스의 중요한 장점 중 하나는 일련의 비동기 작업을 체인 형태로 자연스럽게
+표현할 수 있다는 것입니다:
+
 ```js
-// @noexec
-fetch(url)
-  .then((response) => response.json())
-  .then(render)
-  .then(cacheInDatabase)
-  .catch(handleError);
+let wait = (ms) => new Promise((res) => setTimeout(res, ms));
+
+wait(1000)
+  .then(() => console.log('1'))
+  .then(() => wait(1000)) // 이 부분은 resolved와 함께 나중에 설명할게요
+  .then(() => console.log('2'));
+
+// 이렇게도 되긴 되는데 콜백 쓸 때처럼 nest되어서 굳이?에요
+wait(3000).then(() => {
+  console.log('3');
+  wait(1000).then(() => {
+    console.log('4');
+  });
+});
 ```
 
-보통 이런 method chaining을 구현할 때는 모든 메서드가 같은 객체를 리턴하지만
-프로미스에서는 모두 다른 객체를 반환합니다.
+따라서 `then()`이 프로미스를 반환함을 알 수 있어요.
 
-즉 하나의 프로미스에 여러 콜백을 등록하는 것이 아닙니다.
+보통 이런 method chaining을 구현할 때는 아래처럼 모든 메서드가 같은 객체를
+리턴해요:
 
-이전 프로미스 객체가 fulfilled되면 콜백을 실행합니다.
+```js
+class Square {
+  setSide(side) {
+    this.side = side;
+    return this;
+  }
+  setColor(color) {
+    this.color = color;
+    return this;
+  }
+}
 
-https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Promise/then
+console.log(new Square().setSide(10).setColor('red'));
+```
+
+하지만 프로미스 체인에서 `then()`은 모두 다른 객체를 반환합니다:
+
+```js
+let p1 = Promise.resolve(1);
+let p2 = p1.then(() => {});
+console.log(p1 instanceof Promise, p2 instanceof Promise);
+console.log(p1 === p2);
+```
+
+즉 then 체이닝은 하나의 프로미스에 여러 콜백을 등록하는게 아니에요. then에
+전달된 콜백이 완료되어 fulfilled되면 다음 then의 콜백이 실행됩니다.
+
+'콜백이 완료된다'는 이제 배울 resolved와 연관되어있어요.
 
 #### 3. Resolving Promises
 
-프로미스 p의 then에 전달한 콜백 c가 프로미스가 아닌 값 v를 반환하면 p는 v로
-**resolve**되고 즉시 **fulfilled**됩니다.
+콜백 c가 있고 then(c)이 반환한 프로미스가 p라고 할 때...
 
-하지만 v가 프로미스면 p는 **resolve**됐지만 **fulfilled**되지는 않습니다. p는
-v가 settled되기 전까지는 settled될 수 없습니다.
+- c가 프로미스가 아닌 값 v을 반환하면
+  - p는 v로 resolve되고 즉시 fulfilled됩니다.
+- c가 프로미스 v를 반환하면
+  - p는 resolve됐지만 fulfilled되지는 않습니다. p의 상태는 이제 v의 상태를
+    따라갑니다.
 
-p가 resolve된 이후엔 콜백 c는 no longer has any control over p. p is “resolved”
-in the sense that its fate now depends entirely on what happens to Promise v.
+> This is what the “resolved” state of a Promise means: the Promise has become
+> associated with, or “locked onto,” another Promise. We don’t know yet whether
+> p will be fulfilled or rejected, but our callback c no longer has any control
+> over that. p is “resolved” in the sense that its fate now depends entirely on
+> what happens to Promise v
+
+아래 코드를 이해해보세요:
 
 ```js
-// @noexec
+let asyncFunc = () => Promise.resolve();
+let asyncFunc2 = () => Promise.resolve();
+
 function c1(response) {
-  let p4 = response.json();
+  console.log('c1');
+  let p4 = asyncFunc2();
   return p4;
 }
+
 function c2(profile) {
-  displayUserProfile(profile);
+  console.log('c2');
 }
-let p1 = fetch(url);
+
+let p1 = asyncFunc();
+console.log('p1');
 let p2 = p1.then(c1);
+console.log('p2');
 let p3 = p2.then(c2);
+console.log('p3');
 ```
 
-1. fetch에서 HTTP 요청을 시작하고 p1을 반환합니다.
+1. asyncFunc에서 비동기 작업을 시작하고 p1을 반환합니다.
 1. p1에 c1을 등록하고 p2를 반환합니다.
 1. p2에 c2를 등록하고 p3를 반환합니다.
-1. (네트워크 응답 도착)
+1. (asyncFunc 작업 끝)
 1. p1이 fulfilled되고 c1이 호출됩니다.
-1. c1이 p4를 반환하고 p2는 **resolve**됩니다.
-1. (body 처리 완료)
-1. p2와 p4가 **fulfill**됩니다.
+1. c1이 p4를 반환하고 p2는 resolve됩니다.
+1. (asyncFunc2 작업 끝)
+1. p2와 p4가 fulfilled됩니다.
 1. c2가 호출됩니다.
 
 #### 4. More on Promise and Errors
 
-동기 코드와 다르게 비동기 코드의 에러는 잘 처리하지 않으면 조용히 넘어갈 수도
-있으므로 아주 중요하고 신경써야합니다.
+동기 코드와 다르게 비동기 코드의 에러는 잡지 않아도 조용히 넘어갈 수도 있으니 잘
+처리해야돼요.
 
 동기 코드에서 에러 발생 시 콜 스택을 거슬러 올라가는 것처럼 프로미스에서는
-`.catch()`를 찾을 때까지 체인을 따라 내려갑니다.
+`.catch()`를 찾을 때까지 체인을 따라 내려갑니다:
 
-`.finally()` 메서드도 있어요. 프로미스가 settle되면 콜백이 호출됩니다. 보통
-콜백의 반환값은 무시되지만 에러를 던지면 reject됩니다. 메서드가 호출된
-프로미스의 상태를 따라갑니다.
+```js
+let asyncFunc = () => Promise.reject(new Error('😠'));
 
-When a callback passed to .then() (or .catch()) throws a value, the Promise that
-was the return value of the .then() call is rejected with that thrown value.
+asyncFunc()
+  .then(() => console.log(1))
+  .then(() => console.log(2))
+  .catch((e) => console.log(e.message))
+  .then(() => console.log(4));
+```
 
-so idiomatic to end Promise chains with a .catch() call. it is also perfectly
-valid to use .catch() elsewhere in a Promise chain.
+`.finally()`도 있어요:
 
-https://stackoverflow.com/questions/42013104/placement-of-catch-before-and-after-then
+```js
+let asyncFunc = () => Promise.reject(new Error('😠'));
+
+asyncFunc()
+  .then(() => console.log(1))
+  // ✍️ 아래 줄을 지우고 finally의 콜백이 호출되는지 확인해보세요
+  .catch(() => console.log(2))
+  .finally(() => console.log(3));
+```
+
+finally에 전달된 콜백의 반환값은 보통 무시되고 프로미스의 상태를 그대로
+따라가지만 콜백에서 에러를 던지면 reject됩니다:
+
+```js
+let asyncFunc = () => Promise.resolve(1);
+
+asyncFunc()
+  .finally(() => 2)
+  .then(console.log);
+
+asyncFunc()
+  .finally(() => {
+    throw new Error();
+  })
+  .catch(console.log);
+```
+
+~왜 출력 순서가 반대지????~
 
 #### 5. Promise in Parallel
 
-체인을 따라 순차적으로가 아닌 여러 비동기 작업을 병렬로 실행해봅시다.
+여러 비동기 작업을 then 체인 순서대로가 아닌 병렬로 실행해봅시다.
 
-`Promise.all`은 하나라도 리젝되면 리젝됩니다. 배열에 프로미스가 아닌게
-섞여있어도 됩니다.
+`Promise.all`입니다:
 
-`Promise.allSettled`는 리젝돼도 괜찮습니다.
+```js
+let asyncFunc = (n) => Promise.resolve(n);
+let throwingAsyncFunc = (n) => Promise.reject(n);
 
-`Promise.race`는 가장 먼저 fulfill되는 프로미스를 반환해요.
+Promise.all([asyncFunc(1), asyncFunc(2), asyncFunc(3)]).then(console.log);
+
+// 배열에 프로미스가 아닌게 섞여있어도 됩니다.
+Promise.all([asyncFunc(1), 2, asyncFunc(3)]).then(console.log);
+
+// 하나라도 리젝되면 전체가 리젝됩니다
+Promise.all([asyncFunc(1), throwingAsyncFunc(2), asyncFunc(3)])
+  .then(console.log)
+  .catch(() => console.log('error'));
+```
+
+`Promise.allSettled`는 하나가 리젝돼도 나머지를 기다려요:
+
+```js
+let asyncFunc = (n) => Promise.resolve(n);
+let throwingAsyncFunc = (n) => Promise.reject(n);
+
+Promise.allSettled([asyncFunc(1), throwingAsyncFunc(2), asyncFunc(3)])
+  .then((x) => x.forEach((y) => console.log(y)))
+  .catch(() => console.log('error'));
+```
+
+`Promise.race`는 가장 먼저 fulfill되는 프로미스를 반환해요:
+
+```js
+let wait = (ms) => new Promise((resolve) => setTimeout(() => resolve(ms), ms));
+
+// ✍️ wait(2)를 wait(10)으로 바꿔보세요
+Promise.race([wait(5), wait(2), wait(3)]).then(console.log);
+```
 
 #### 6. Making Promises
 
-나만의 프로미스 기반 API를 만들어봅시다.
+비동기 함수 내부에 비동기가 아닌 작업이 있다면 해당 작업의 결과물도 프로미스
+형태로 반환하는 것이 낫습니다. (섞이면 함수 호출자에서 처리하기 곤란)
+
+이럴 때 `Promise.resolve()`나 `Promsie.reject()`를 활용합니다:
+
+```js
+Promise.resolve(1).then(console.log);
+Promise.reject(2).catch(console.log);
+// resolve, reject를 사용하더라도 동기 코드가 먼저 실행됩니다.
+console.log('sync code');
+```
+
+Promise 생성자로 다양한 비동기 패턴을 구현할 수 있어요:
+
+```js
+function wait(ms) {
+  // 인자에서 Promise.resolve와 Promise.reject가 떠오르네요
+  return new Promise((resolve, reject) => {
+    // resolve에 프로미스가 아닌 값을 건네면 해당 값으로 fulfill됩니다.
+    // 프로미스를 건네면 해당 값으로 resolve됩니다.
+    // 그래서 인자명이 fulfill이 아니라 resolve인가봐요.
+
+    // reject를 호출하면 해당 값으로 reject됩니다.
+    if (ms < 0) reject(new Error('...'));
+
+    // ms 이후에 resolve를 호출합니다.
+    setTimeout(resolve, ms);
+  });
+}
+
+// ✍️ 숫자를 음수로 바꿔보세요
+wait(1000)
+  .then(() => console.log('⏰'))
+  .catch(() => console.log('🤯'));
+```
+
+다른 비동기 프로그래밍 패턴(이벤트 핸들러)을 프로미스 생성자를 활용해 감싸기:
+
+```html
+<body>
+  <button>button</button>
+</body>
+<script>
+  let button = document.querySelector('button');
+
+  // 버튼이 클릭될 때까지 기다립니다
+  let waitClick = new Promise((res, rej) => {
+    let handler = () => {
+      // ✍️ rej로 바꿔보세요
+      res();
+      button.removeEventListener('click', handler);
+    };
+    button.addEventListener('click', handler);
+  });
+
+  waitClick.then(
+    () => console.log('👍'),
+    () => console.log('👎'),
+  );
+</script>
+```
 
 #### 7. Promises in Sequence
 
+프로미스 체인은 고정 개수의 프로미스를 순차적으로 실행시킵니다.
+
+프로미스 체인을 확장시켜 임의 개수의 프로미스도 순차적으로 실행해봅시다.
+
+```js
+let promiseSequence = (inputs, promiseMaker) => {
+  return inputs.reduce(
+    (acc, cur) =>
+      // ✍️ '() =>'를 지우고 바뀐 결과에 대한 이유를 고민해보세요.
+      acc.then(() => promiseMaker(cur)),
+    Promise.resolve([]),
+  );
+};
+
+let wait = (ms) => new Promise((res) => setTimeout(res, ms));
+let waitAndLog = (sec) => wait(sec * 1000).then(() => console.log(sec));
+
+promiseSequence([1, 2, 3, 4, 5], waitAndLog);
+```
+
 ### 3. async and await
+
+`async`, `await` 키워드는 프로미스 기반 코드에서 프로미스를 숨겨 동기 코드처럼
+읽히게 합니다.
+
+`await`는 프로미스가 settle되기를 기다립니다. await를 사용하는 코드는
+비동기적이기에 await 키워드는 async함수 내부에서만 사용할 수 있어요.
+
+```js
+let asyncFunc = () => Promise.resolve(1);
+let throwingAsyncFunc = () => Promise.reject(2);
+
+async function foo() {
+  try {
+    // ✍️ throwingAsyncFunc으로 바꿔보세요
+    let val = await asyncFunc();
+    console.log(val);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+foo();
+```
+
+async 함수는 프로미스가 아닌 값을 반환해도 프로미스에 래핑됩니다:
+
+```js
+async function foo() {
+  return 1;
+}
+
+console.log(foo() instanceof Promise);
+foo().then(console.log);
+```
 
 ### 4. Asynchronous Iteration
 
+단일한 비동기 이벤트가 아닌 이벤트의 스트림을 표현하는 방법을 배워봅시다.
+
+for/await loop의 예제에요:
+
+```js
+let promiseStream = [1, 2, 3, 4, 5].map((x) => Promise.resolve(x));
+
+async function foo() {
+  // 아래 두 방법은 같지만 후자가 더 간결합니다.
+  for (let promise of promiseStream) {
+    console.log(await promise);
+  }
+
+  for await (let val of promiseStream) {
+    console.log(val);
+  }
+}
+
+foo();
+```
+
+위 예제에서는 for/await를 동기적인 배열 이터러블인 `promiseStream`과 썼지만,
+비동기 이터러블과 쓰면 더 유용해요. 비동기 이터러블은 `Symbol.iterator`대신
+`Symbol.asyncIterator`에 정의되며 `next()`메서드가 프로미스를 반환합니다:
+
+```js
+let wait = () => new Promise((res) => setTimeout(res, 1000));
+
+let clock = () => ({
+  count: 0,
+
+  // 이번에는 value뿐만 아니라 반환값 자체가 Promise에요
+  // 즉 done 여부도 비동기적으로만 알 수 있습니다.
+  async next() {
+    if (5 <= this.count) return { done: true };
+    await wait(1000);
+    return { value: this.count++ };
+  },
+
+  [Symbol.asyncIterator]() {
+    return this;
+  },
+});
+
+async function foo() {
+  for await (let tick of clock()) {
+    console.log(tick);
+  }
+}
+
+foo();
+```
+
+이터레이터와 마찬가지로 제너레이터를 통해 간편하게 만들 수 있어요:
+
+```js
+let wait = () => new Promise((res) => setTimeout(res, 1000));
+
+async function* clock() {
+  for (let i = 0; i < 5; i++) {
+    await wait();
+    yield i;
+  }
+}
+
+async function foo() {
+  for await (let tick of clock()) {
+    console.log(tick);
+  }
+}
+
+foo();
+```
+
+교재 예제 코드가 인상깊어서 가져왔어요:
+
+```js
+class AsyncQueue {
+  values = [];
+  resolvers = [];
+
+  enqueue(value) {
+    if (this.resolvers.length) {
+      this.resolvers.shift()(value);
+    } else {
+      this.values.push(value);
+    }
+  }
+
+  dequeue() {
+    if (this.values.length) {
+      return Promise.resolve(this.values.shift());
+    } else {
+      return new Promise((resolve) => this.resolvers.push(resolve));
+    }
+  }
+
+  next() {
+    return this.dequeue().then((value) => ({ value }));
+  }
+
+  [Symbol.asyncIterator]() {
+    return this;
+  }
+}
+
+let q = new AsyncQueue();
+let wait = (ms) => new Promise((res) => setTimeout(res, ms));
+
+let randomEnqueue = async () => {
+  let sec = Math.random();
+  await wait(sec * 1000);
+  q.enqueue(sec);
+  setTimeout(randomEnqueue, 0);
+};
+
+let readStream = async () => {
+  for await (let val of q) {
+    console.log(val);
+  }
+};
+
+readStream();
+// ✍️ 주석을 해제해보세요
+// randomEnqueue();
+```
+
 ### 5. Summary
 
-https://medium.com/swlh/implement-a-simple-promise-in-javascript-20c9705f197a
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+
+https://blog.scottlogic.com/2021/01/07/await-twice.html
 
 ## 14. Metaprogramming
