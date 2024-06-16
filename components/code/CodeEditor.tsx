@@ -13,16 +13,18 @@ export default function CodeEditor({
   language,
   code,
   setCode,
+  noneditable = false,
 }: {
   language: string;
   code: string;
   setCode: (code: string) => void;
+  noneditable?: boolean;
 }) {
   const { highlightedCode, handleKeyDown } = useEditor(code, setCode, language);
 
   return (
     <div className="overflow-x-scroll bg-slate-50 shadow">
-      <div className="relative h-fit min-h-full w-fit min-w-full p-4 text-base leading-6">
+      <div className="relative h-fit min-h-full w-fit min-w-full p-4 text-sm leading-[1.4rem]">
         <pre
           dangerouslySetInnerHTML={{ __html: highlightedCode }}
           className="h-full w-full text-nowrap font-firacode not-italic"
@@ -39,6 +41,7 @@ export default function CodeEditor({
           autoComplete="off"
           spellCheck="false"
           className="absolute bottom-4 left-4 right-4 top-4 resize-none bg-transparent font-firacode text-transparent caret-sky-500 outline-none"
+          disabled={noneditable}
         />
       </div>
     </div>

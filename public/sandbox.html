@@ -1,5 +1,13 @@
 <!doctype html>
 <html>
+  <head>
+    <style>
+      body {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
   <body></body>
   <script>
     function stringify(x, quote = false) {
@@ -59,9 +67,11 @@
     let runCode = (code, log) => {
       console.log = log;
       // MEMO: 아래와 같이 js 예제 코드 중 전역에서 동작해야하는 것이 있어 Function을 사용할 수 없다.
+      // ```js
       // var a = 1;
       // let b = 1;
       // console.log(globalThis.a, globalThis.b);
+      // ```
       (0, eval)(code);
 
       // MEMO: setTimeout등으로 코드가 실행중일 수 있어서 console.log를 되돌리면 안된다.
@@ -92,10 +102,19 @@
             break;
         }
       } catch (e) {
-        postMessage({ type: 'exception', data: e.message });
+        postMessage({ type: 'exception', data: `에러: ${e.message}` });
       }
     };
 
     window.addEventListener('message', messageHandler);
+
+    // 잡히지 않은 에러가 콘솔에 뜨지 않도록 합니다.
+    window.addEventListener('error', (e) => {
+      e.preventDefault();
+    });
+
+    window.addEventListener('unhandledrejection', (e) => {
+      e.preventDefault();
+    });
   </script>
 </html>

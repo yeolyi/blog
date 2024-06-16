@@ -5,6 +5,7 @@ export default function Giscus() {
     <>
       <Script
         src="https://giscus.app/client.js"
+        strategy="lazyOnload" // link preaload 에러 제거용
         data-repo="yeolyi/blog"
         data-repo-id="R_kgDOKGpPEA"
         data-category="Announcements"

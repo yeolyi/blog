@@ -1,6 +1,6 @@
 'use client';
 
-import CodeEditor from '../CodeEditor';
+import CodeEditor from './CodeEditor';
 import Console from './Console';
 import RefreshButton from './RefreshButton';
 import sandboxSrcdoc from './sandboxSrcdoc';
@@ -18,7 +18,12 @@ export default function JSSandbox({
   return (
     <>
       <div className="relative flex flex-col gap-2">
-        <CodeEditor code={code} setCode={setCode} language="javascript" />
+        <CodeEditor
+          code={code}
+          setCode={setCode}
+          language="javascript"
+          noneditable={!executable}
+        />
         {executable && <RefreshButton refresh={refresh} />}
         {executable && <Console logList={logList} />}
       </div>

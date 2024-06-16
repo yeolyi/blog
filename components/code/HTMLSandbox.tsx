@@ -1,6 +1,6 @@
 'use client';
 
-import CodeEditor from '../CodeEditor';
+import CodeEditor from './CodeEditor';
 import Console from './Console';
 import RefreshButton from './RefreshButton';
 import sandboxSrcdoc from './sandboxSrcdoc';
