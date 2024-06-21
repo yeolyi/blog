@@ -9,22 +9,24 @@ import { useIframe } from './useIframe';
 export default function JSSandbox({
   code: _code,
   executable = true,
+  disableEdit = false,
 }: {
   code: string;
   executable?: boolean;
+  disableEdit?: boolean;
 }) {
   const { setIframe, code, setCode, logList, refresh } = useIframe(_code, 'js');
 
   return (
     <>
-      <div className="relative flex flex-col gap-2">
+      <div className="relative flex flex-col gap-2 overflow-hidden rounded-[7px]">
         <CodeEditor
           code={code}
           setCode={setCode}
           language="javascript"
-          noneditable={!executable}
+          noneditable={!executable || disableEdit}
         />
-        {executable && <RefreshButton refresh={refresh} />}
+        {!disableEdit && executable && <RefreshButton refresh={refresh} />}
         {executable && <Console logList={logList} />}
       </div>
       {executable && (

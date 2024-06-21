@@ -18,9 +18,42 @@
   }
 }
 
+:root {
+  --viewport-content: calc(100% - 180px);
+}
+
+@media (max-width: 1068px) {
+  :root {
+    --viewport-content: calc(100% - 134px);
+  }
+}
+
+@media (max-width: 734px) {
+  :root {
+    --viewport-content: 87.5%;
+  }
+}
+@media (max-width: 480px) {
+  :root {
+    --viewport-content: calc(100% - 44px);
+  }
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo',
-    'Pretendard Variable', Pretendard, Roboto, 'Noto Sans KR', 'Segoe UI',
-    'Malgun Gothic', 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+  font-family:
+    'Pretendard Variable',
+    Pretendard,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Apple SD Gothic Neo',
+    Roboto,
+    'Noto Sans KR',
+    'Segoe UI',
+    'Malgun Gothic',
+    'Apple Color Emoji',
+    'Segoe UI Emoji',
+    'Segoe UI Symbol',
     sans-serif;
+
+  word-break: keep-all;
 }
