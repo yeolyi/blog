@@ -10,7 +10,7 @@ const InstaBg = () => {
     let heartList = [...document.querySelectorAll('.heart')];
     heartList.forEach((heart) => {
       gsap.to(heart, {
-        bottom: '100%',
+        y: -600,
         repeat: -1,
         duration: 'random(3,5)',
         opacity: 0,
@@ -25,6 +25,7 @@ const InstaBg = () => {
       <ul className="hearts flying">
         {[...Array(30).keys()].map((i) => (
           <li
+            suppressHydrationWarning
             className="heart"
             key={i}
             style={{ left: Math.random() * 100 + '%' }}
@@ -53,20 +54,20 @@ export const projectProps: WideTileProps[] = [
 export const jsProps: TileProps[] = [
   {
     name: '파트 1',
-    description: '표현식과 구문같은 언어의 기본적인 내용을 배웠어요.',
-    concepts: '표현식, 구문',
+    description:
+      '기본적인 문법들을 배우며 자바스크립트의 특징이 뭔지 돌아봤어요.',
+    concepts: '값, 표현식, 연산자, 구문',
     href: '/js/0',
-    code: 'console.log("Hello!")',
+    code: `console.log('hi');`,
   },
   {
     name: '파트 2',
-    description:
-      '객체란 무엇인지, 그리고 배열과 함수같이 자주 쓰는 객체들에 대해 배웠어요',
-    concepts: '표현식, 구문',
+    description: '객체의 정의 및 특징과 자주 쓰는 객체의 종류들을 배웠어요',
+    concepts: '객체, 배열, 함수, 클래스',
     href: '/js/1',
     code: `let obj = {
   toString() {
-    return "🙌";
+    return "hi";
   }
 }
 console.log(obj + '');`,
@@ -74,7 +75,7 @@ console.log(obj + '');`,
   {
     name: '파트 3',
     description: '자바스크립트 모듈과 표준 라이브러리를 배웠어요.',
-    concepts: '표현식, 구문',
+    concepts: '모듈, Set, Map, Intl, URL...',
     href: '/js/2',
     code: `let s = new Set();
 s.add('h').add('i');
@@ -83,7 +84,7 @@ console.log(...s);`,
   {
     name: '파트 4',
     description: '이터레이터나 프로미스처럼 언어의 자세한 기능들을 배웠어요.',
-    concepts: '표현식, 구문',
+    concepts: '이터레이터, 제너레이터, 프로미스, async/await',
     href: '/js/3',
     code: `function* foo() {
   yield* ['h', 'i'];

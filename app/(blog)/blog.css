@@ -1,0 +1,45 @@
+main > div {
+  width: 816px;
+  border-radius: 16px;
+  background-color: #fff;
+  margin: 52px auto 64px;
+  padding-bottom: 80px;
+  padding-top: 20px;
+}
+
+@media (max-width: 1068px) {
+  main > div {
+    margin-top: 48px;
+    padding-bottom: 60px;
+    width: 692px;
+  }
+}
+
+@media (max-width: 734px) {
+  main > div {
+    padding-top: 44px;
+    padding-bottom: 52px;
+    margin: 0;
+    border-radius: 0;
+    width: 100%;
+  }
+}
+
+article {
+  margin-inline-start: auto;
+  margin-inline-end: auto;
+  width: 80%;
+}
+
+@media (max-width: 1068px) {
+  article {
+    width: 83.33%;
+  }
+}
+
+@media (max-width: 734px) {
+  article {
+    max-width: 414px;
+    width: 87.5%;
+  }
+}

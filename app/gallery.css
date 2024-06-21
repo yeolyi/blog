@@ -3,7 +3,7 @@
   --tile-height: 680px;
 
   --wide-tile-width: 955px;
-  --wide-tile-height: 600px;
+  --wide-tile-height: 580px;
 }
 
 @media (max-width: 1068px) {
@@ -12,7 +12,7 @@
     --tile-height: 628px;
 
     --wide-tile-width: 642px;
-    --wide-tile-height: 555px;
+    --wide-tile-height: 535px;
   }
 }
 
@@ -21,7 +21,7 @@
     --tile-width: 304px;
     --tile-height: 562px;
 
-    --wide-tile-width: 441px;
+    --wide-tile-width: 421px;
   }
 }
 
@@ -30,7 +30,7 @@
     --tile-width: 280px;
     --tile-height: 510px;
 
-    --wide-tile-width: 350px;
+    --wide-tile-width: 330px;
   }
 }
 
@@ -104,7 +104,26 @@ wide .gallery-grid {
   width: var(--tile-width);
   scroll-snap-align: start;
   border-radius: 28px;
-  background-color: rgb(30 41 59);
+  position: relative;
+  overflow: clip;
+}
+
+.tile-container-bg {
+  position: absolute;
+  top: -200px;
+  left: -200px;
+  bottom: -200px;
+  right: -200px;
+
+  background-color: white;
+
+  animation: spin 20s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .tile-content {
@@ -116,6 +135,8 @@ wide .gallery-grid {
   padding: 25px;
   padding-right: 25px;
   padding-top: 30px;
+  z-index: 10;
+  color: black;
 }
 
 @media (max-width: 734px) {
@@ -132,7 +153,6 @@ wide .gallery-grid {
   display: block;
   font-weight: 600;
   letter-spacing: 0.011em;
-  color: rgb(245, 245, 247);
 }
 
 @media (max-width: 1068px) {
@@ -154,7 +174,6 @@ wide .gallery-grid {
   font-weight: 400;
   line-height: 1.235;
   letter-spacing: 0.022em;
-  color: rgb(245, 245, 247);
 }
 
 @media (max-width: 1068px) {
@@ -168,7 +187,12 @@ wide .gallery-grid {
   cursor: pointer;
   font-size: 17px;
   font-weight: 400;
-  color: rgb(250 204 21);
+  display: flex;
+  align-items: center;
+  svg {
+    width: 10px;
+    height: 10px;
+  }
 }
 
 .tile-link:hover {
@@ -182,7 +206,7 @@ wide .gallery-grid {
 }
 
 .tile-sandbox-container {
-  margin-top: auto;
+  margin-top: 20px;
   margin-bottom: auto;
   width: 100%;
 }
@@ -192,7 +216,6 @@ wide .gallery-grid {
   font-weight: 400;
   line-height: 1.429;
   letter-spacing: 0em;
-  color: rgb(245, 245, 247);
 }
 
 .tile-footer h4 {
@@ -343,13 +366,13 @@ wide .gallery-grid {
 
 @media (max-width: 734px) {
   .csereal-tile-graphic {
-    --unit-size: 20px;
+    --unit-size: 18px;
   }
 }
 
 @media (max-width: 480px) {
   .csereal-tile-graphic {
-    --unit-size: 16px;
+    --unit-size: 14px;
   }
 }
 
@@ -382,6 +405,7 @@ wide .gallery-grid {
   width: var(--unit-size);
   height: var(--unit-size);
   pointer-events: none;
+  will-change: transform;
 }
 
 .instabg {
@@ -407,20 +431,21 @@ wide .gallery-grid {
 .heart {
   position: absolute;
   list-style: none;
-  width: 32px;
-  height: 32px;
   bottom: 0%;
   filter: blur(1px);
+  will-change: transform;
+  will-change: opacity;
+  will-change: bottom;
 }
 
 .heart:before,
 .heart:after {
   position: absolute;
   content: '';
-  left: 16px;
+  left: 24px;
   top: 0;
-  width: 16px;
-  height: 24px;
+  width: 24px;
+  height: 36px;
   background: red;
   border-radius: 16px 16px 0 0;
   transform: rotate(-45deg);

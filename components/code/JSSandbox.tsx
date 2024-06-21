@@ -10,10 +10,12 @@ export default function JSSandbox({
   code: _code,
   executable = true,
   disableEdit = false,
+  hideRefresh = false,
 }: {
   code: string;
   executable?: boolean;
   disableEdit?: boolean;
+  hideRefresh?: boolean;
 }) {
   const { setIframe, code, setCode, logList, refresh } = useIframe(_code, 'js');
 
@@ -26,7 +28,9 @@ export default function JSSandbox({
           language="javascript"
           noneditable={!executable || disableEdit}
         />
-        {!disableEdit && executable && <RefreshButton refresh={refresh} />}
+        {!hideRefresh && !disableEdit && executable && (
+          <RefreshButton refresh={refresh} />
+        )}
         {executable && <Console logList={logList} />}
       </div>
       {executable && (

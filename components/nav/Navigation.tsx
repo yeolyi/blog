@@ -15,7 +15,7 @@ export default function Navigation() {
 
   return (
     <nav
-      className={`not-prose fixed left-1/2 top-4 z-50 max-h-[50%] -translate-x-1/2 overflow-y-scroll overscroll-contain bg-white shadow-xl shadow-slate-700/10 ${expanded ? 'rounded-xl' : 'rounded-full'} no-scrollbar ring-1 ring-gray-900/5`}
+      className={`not-prose fixed left-1/2 top-4 z-50 h-fit max-h-[50%] -translate-x-1/2 overflow-y-scroll overscroll-contain bg-white shadow-xl shadow-slate-700/10 ${expanded ? 'rounded-xl' : 'rounded-full'} no-scrollbar ring-1 ring-gray-900/5`}
       onMouseEnter={() => setExpanded(true)}
       onMouseLeave={() => setExpanded(false)}
     >
@@ -39,7 +39,7 @@ const CurrentHeading = ({
 }) => {
   return (
     <div
-      className={`max-w-[80vw] self-center truncate whitespace-nowrap px-5 py-2 text-center text-base font-bold`}
+      className={`w-fit max-w-[80vw] self-center truncate whitespace-nowrap px-5 py-2 text-center text-base font-bold`}
     >
       {heading?.textContent ?? '-'}
     </div>

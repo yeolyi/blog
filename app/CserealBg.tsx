@@ -124,7 +124,7 @@ const Rectangle = ({
 }) => (
   <div onMouseOver={onMouseOver} onMouseOut={onMouseOut}>
     <svg xmlns="http://www.w3.org/2000/svg" fill="none">
-      <rect x="5.92188" width="50%" height="100%" fill="#EA751A" />
+      <rect x="25%" width="50%" height="100%" fill="#EA751A" />
     </svg>
   </div>
 );
