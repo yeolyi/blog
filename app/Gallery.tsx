@@ -2,6 +2,7 @@ import JSSandbox from '@/components/code/JSSandbox';
 import Link from 'next/link';
 import { ReactNode, useRef } from 'react';
 import { FaCircleChevronRight } from 'react-icons/fa6';
+import { FaChevronRight } from 'react-icons/fa6';
 
 import './gallery.css';
 
@@ -84,11 +85,14 @@ export type WideTileProps = {
 export const WideTile = ({ name, copy, href, bg }: WideTileProps) => (
   <li className="wide-tile-container">
     <div className="wide-tile-bg-container">{bg}</div>
-    <h2 className="wide-tile-title">{name}</h2>
-    <p className="wide-tile-description">{copy}</p>
-    <Link href={href} className="wide-tile-link">
-      더 알아보기
-    </Link>
+    <div className="wide-tile-content">
+      <h2 className="wide-tile-title">{name}</h2>
+      <p className="wide-tile-description">{copy}</p>
+      <Link href={href} className="wide-tile-link">
+        보러가기
+        <FaChevronRight />
+      </Link>
+    </div>
   </li>
 );
 

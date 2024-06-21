@@ -1,4 +1,54 @@
+'use client';
+
 import { TileProps, WideTileProps } from './Gallery';
+import { CserealBg } from './CserealBg';
+import { useEffect } from 'react';
+import gsap from 'gsap';
+
+const InstaBg = () => {
+  useEffect(() => {
+    let heartList = [...document.querySelectorAll('.heart')];
+    heartList.forEach((heart) => {
+      gsap.to(heart, {
+        bottom: '100%',
+        repeat: -1,
+        duration: 'random(3,5)',
+        opacity: 0,
+        filter: 'blur(4px)',
+        ease: 'sine.out',
+      });
+    });
+  }, []);
+
+  return (
+    <div className="instabg">
+      <ul className="hearts flying">
+        {[...Array(30).keys()].map((i) => (
+          <li
+            className="heart"
+            key={i}
+            style={{ left: Math.random() * 100 + '%' }}
+          />
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export const projectProps: WideTileProps[] = [
+  {
+    name: 'cse.snu.ac.kr',
+    copy: '서울대학교 컴퓨터공학부 홈페이지 리뉴얼에 프론트엔드 개발자로 참여했어요.',
+    href: 'https://cse.snu.ac.kr',
+    bg: <CserealBg />,
+  },
+  {
+    name: '@yeolyii',
+    copy: '인스타그램 개발 계정에 개발 일상을 나눠요. 최근에 팔로워 1만명을 넘었습니다 🎉',
+    href: 'https://instagram.com/yeolyii',
+    bg: <InstaBg />,
+  },
+];
 
 export const jsProps: TileProps[] = [
   {
@@ -39,20 +89,5 @@ console.log(...s);`,
   yield* ['h', 'i'];
 }
 console.log(...foo());`,
-  },
-];
-
-export const projectProps: WideTileProps[] = [
-  {
-    name: 'cse.snu.ac.kr',
-    copy: '서울대학교 컴퓨터공학부 홈페이지 리뉴얼에 프론트엔드 개발자로 참여했어요.\n관리자 로그인, 예약 페이지, I18n등을 작업했어요.',
-    href: 'https://cse.snu.ac.kr',
-    bg: <div className="h-full w-full bg-gray-800" />,
-  },
-  {
-    name: '@yeolyii',
-    copy: '인스타그램 개발 계정에 개발 일상을 나눠요. 최근에 팔로워 1만명을 넘었습니다 🎉',
-    href: 'https://cse.snu.ac.kr',
-    bg: <div className="h-full w-full bg-gray-800" />,
   },
 ];
