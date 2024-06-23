@@ -32,6 +32,15 @@ const config: Config = {
           },
         },
       },
+      screens: {
+        sm: '480px',
+        md: '734px',
+        lg: '1068px',
+      },
+      colors: {
+        lightgray: '#f5f5f7',
+        textblack: 'rgb(29,29,31)',
+      },
     },
   },
   plugins: [require('@tailwindcss/typography')],

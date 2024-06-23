@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 import { MouseEventHandler } from 'react';
 import cserealbg from '@/public/cserealbg.png';
@@ -80,51 +82,40 @@ export const CserealBg = () => {
         quality={100}
         fill
       />
-      <div className="csereal-tile-graphic">
-        {code.map((x, idx) =>
-          x ? (
-            <Rectangle
-              key={idx}
+      <div className="csereal-tile-graphic relative mx-auto grid w-fit grid-cols-8 pt-[120px] sm:pt-[90px] md:pt-[60px]">
+        {code.map((x, idx) => {
+          let row = Math.floor(idx / COL);
+          return (
+            <div
               onMouseOver={handleMouseOver}
               onMouseOut={handleMouseOut}
-            />
-          ) : (
-            <Circle
               key={idx}
-              onMouseOver={handleMouseOver}
-              onMouseOut={handleMouseOut}
-            />
-          ),
-        )}
+              className="flex h-[calc(2*var(--unit-size))] w-[calc(2*var(--unit-size))] items-center justify-center ease-in-out"
+              style={{
+                transition: 'transform 0.2s',
+                transform:
+                  row === 1 || row === 4
+                    ? 'translateX(calc(var(--unit-size) * 2))'
+                    : row === 2
+                      ? 'translateX(calc(-1 * var(--unit-size) * 2))'
+                      : '',
+              }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                className="pointer-events-none h-[var(--unit-size)] w-[var(--unit-size)] will-change-transform"
+              >
+                {x ? (
+                  <rect x="25%" width="50%" height="100%" fill="#EA751A" />
+                ) : (
+                  <circle cx="50%" cy="50%" r="40%" fill="#E75015" />
+                )}
+              </svg>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 };
-
-const Circle = ({
-  onMouseOver,
-  onMouseOut,
-}: {
-  onMouseOver: MouseEventHandler<HTMLDivElement>;
-  onMouseOut: MouseEventHandler<HTMLDivElement>;
-}) => (
-  <div onMouseOver={onMouseOver} onMouseOut={onMouseOut}>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none">
-      <circle cx="50%" cy="50%" r="40%" fill="#E75015" />
-    </svg>
-  </div>
-);
-
-const Rectangle = ({
-  onMouseOver,
-  onMouseOut,
-}: {
-  onMouseOver: MouseEventHandler<HTMLDivElement>;
-  onMouseOut: MouseEventHandler<HTMLDivElement>;
-}) => (
-  <div onMouseOver={onMouseOver} onMouseOut={onMouseOut}>
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none">
-      <rect x="25%" width="50%" height="100%" fill="#EA751A" />
-    </svg>
-  </div>
-);
