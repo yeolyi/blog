@@ -74,25 +74,6 @@
   width: var(--viewport-content);
 }
 
-body {
-  font-family:
-    'Pretendard Variable',
-    Pretendard,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Apple SD Gothic Neo',
-    Roboto,
-    'Noto Sans KR',
-    'Segoe UI',
-    'Malgun Gothic',
-    'Apple Color Emoji',
-    'Segoe UI Emoji',
-    'Segoe UI Symbol',
-    sans-serif;
-
-  word-break: keep-all;
-}
-
 .heart:before,
 .heart:after {
   position: absolute;

@@ -32,7 +32,7 @@ export default function RootLayout({
   return (
     <html
       lang="ko"
-      className={`${pretendard.variable} ${firaCode.variable} font-pretendard`}
+      className={`${pretendard.variable} ${firaCode.variable} break-keep font-pretendard`}
     >
       <Analytics />
       <body>{children}</body>
