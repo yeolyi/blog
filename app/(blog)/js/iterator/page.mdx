@@ -1,0 +1,239 @@
+import ImageViewer from '@/components/ImageViewer';
+import callbackhell from '@/public/callbackhell.png';
+
+## 12. Iterators and Generators
+
+이터러블한 객체는 그 요소들을 순회할 수 있습니다. 아래 기능들에서 이미 조용히
+활용되고 있었어요.
+
+- for/of loop
+- spread operator
+- destructuring assignment
+- Set/Map 등의 생성자의 인자
+
+### 1. How Iterators Work
+
+말보단 코드가 이해하기 쉬워요:
+
+```js
+let iterable = [1, 2, 3, 4];
+let iterator = iterable[Symbol.iterator]();
+
+// 직접 next 메서드를 호출할 수 있고,,,
+let iterationResult = iterator.next();
+console.log(iterationResult);
+
+// 언어 차원에서 암묵적으로 호출할 수도 있습니다.
+console.log(...iterator);
+
+// 순회가 끝났기에 `done: true` 에요
+console.log(iterator.next());
+```
+
+- **이터러블** 객체는 `iterator` 메서드가 있어 **이터레이터** 객체를 반환합니다.
+- 이터레이터는 `next` 메서드로 **이터레이션 결과**(iteration result) 객체를
+  반환합니다.
+- **이터레이션 결과** 객체는 `value`와 `done` 프로퍼티를 가지는 개체입니다.
+
+위 코드에서 spread operator는 이터러블을 필요로하지만 iterator 변수가
+이터레이터면서 이터러블이기에 spread operator에서 사용이 가능합니다. 이렇듯
+이터레이터인 동시에 이터러블인 객체는 사용이 편리한데, 이를
+**IterableIterator**라고도 합니다.
+
+### 2. Implementing Iterable Objects
+
+```js
+class Range {
+  constructor(from, to) {
+    this.from = from;
+    this.to = to;
+  }
+
+  [Symbol.iterator]() {
+    let next = this.from;
+    let last = this.to;
+
+    return {
+      next: () => (next <= last ? { value: next++ } : { done: true }),
+
+      // 이터레이터를 이터러블하게 만듭니다.
+      // ✍️ 아래 메서드를 지워보세요.
+      [Symbol.iterator]() {
+        return this;
+      },
+    };
+  }
+}
+
+for (let x of new Range(1, 5)) console.log(x);
+
+let iterable = new Range(6, 10);
+let iterator = iterable[Symbol.iterator]();
+console.log(iterator.next());
+console.log(...iterator);
+```
+
+이터레이션을 마치면 파일을 닫거나 네트워크 연결을 끊는 등 정리가 필요한 경우가
+있습니다. `done`에만 의존하면 끝까지 순회하기 전에 `break`문 등으로 끝나는
+경우를 처리하지 못하니 `return()` 메서드를 활용합니다.
+
+```js
+class MyIterable {
+  [Symbol.iterator]() {
+    let val = 1;
+
+    return {
+      next() {
+        if (5 < val) {
+          console.log('done');
+          return { done: true };
+        } else {
+          return { value: val++ };
+        }
+      },
+
+      return() {
+        console.log('return');
+        return { done: true };
+      },
+    };
+  }
+}
+
+// 순회가 정상적으로 끝나면 done이 프린트돼요
+[...new MyIterable()];
+
+// 순회가 중간에 끊기면 return이 프린트돼요
+let [a, b] = new MyIterable();
+
+// ✍️ break를 지워보세요
+for (let x of new MyIterable()) {
+  break;
+}
+```
+
+### 3. Generators
+
+제너레이터 함수를 호출하면 이터레이터의 일종인 **제너레이터 객체**가 반환됩니다:
+
+```js
+function* foo() {
+  yield 1;
+  yield 2;
+  yield 3;
+}
+
+console.log(...foo());
+```
+
+제너레이터를 활용하면 이터레이터를 만들기 간단해집니다:
+
+```js
+function* range(from, to) {
+  for (let x = from; x <= to; x++) yield x;
+}
+
+console.log(...range(0, 5));
+```
+
+제너레이터는 순회하려는 값이 자료구조가 아니라 계산의 결과일 때 특히 유용합니다.
+
+```js
+function* fibo() {
+  let x = 0;
+  let y = 1;
+
+  while (true) {
+    yield y;
+    [x, y] = [y, x + y];
+  }
+}
+
+function* take(n, iterable) {
+  let iterator = iterable[Symbol.iterator]();
+
+  for (let i = 0; i < n; i++) {
+    let { value, done } = iterator.next();
+    if (done) return;
+    yield value;
+  }
+}
+
+console.log(...take(10, fibo()));
+```
+
+`yield*` 키워드로 다른 이터러블의 yield 결과를 대신 yield할 수 있습니다:
+
+```js
+function* foo() {
+  yield* [1, 2];
+}
+
+function* bar() {
+  yield* foo();
+  yield 3;
+}
+
+console.log(...bar());
+```
+
+### 4. Advanced Generator Features
+
+제너레이터는 함수를 중간에 멈추고 이후 다시 실행할 수 있다는 점에서 일반
+이터레이터보다 강력합니다.
+
+일반적인 이터레이터와 제너레이터에서는 `value`가 유의미한 값이라면 `done`이
+`true`가 아니지만 제너레이터의 `return`문을 사용한 경우 `true`일 수도 있습니다:
+
+```js
+function* foo() {
+  yield 1;
+  // ✍️ return -> yield로 수정해보세요
+  return 2;
+}
+
+let gen = foo();
+console.log(gen.next());
+console.log(gen.next());
+```
+
+yield는 사실 표현식이며 외부에서 건네준 값으로 평가됩니다:
+
+```js
+function* foo() {
+  console.log(yield 1);
+  console.log(yield 2);
+}
+
+let gen = foo();
+console.log(gen.next('a')); // 'a'는 무시됩니다.
+console.log(gen.next('b'));
+console.log(gen.next('c'));
+```
+
+외부에서 제너레이터 함수 내부에 `return`과 `throw`를 요청할 수 있습니다.
+이터레이터와 달리 제너레이터에서는 `return()` 메서드를 직접 정의할 수는 없지만
+try/finallly를 활용해 cleanup을 수행할 수 있습니다.
+
+```js
+function* foo() {
+  try {
+    yield 1;
+  } catch (e) {
+    console.log('handling error...');
+  } finally {
+    console.log('cleaning...');
+    return 'finish';
+  }
+}
+
+console.log('🔽 return 예제');
+let it = foo();
+console.log(it.next());
+console.log(it.return());
+
+console.log('🔽 throw 예제');
+it = foo();
+console.log(it.next());
+console.log(it.throw(new Error('error')));
+```

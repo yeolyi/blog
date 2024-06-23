@@ -95,7 +95,7 @@ export const CserealBg = () => {
             (child) => child.firstElementChild!,
           ),
         );
-    }, 5000);
+    }, 4000);
     return () => clearInterval(id);
   }, []);
 

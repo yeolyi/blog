@@ -1,0 +1,257 @@
+## 6. Objects
+
+### 1. Introduction to Objects
+
+다른 기능들도 있지만 기본적으로 객체는 문자열을 값으로 매핑합니다. JS 객체는
+다른 객체(프로토타입)로부터 프로퍼티를 상속받고 이를 **prototypal
+inheritance**라 합니다.
+
+신기하게도 프로퍼티 이름으로 빈 문자열도 가능합니다:
+
+```js
+let a = { '': 1 };
+console.log(a['']);
+```
+
+상속받지 않은 객체의 프로퍼티를 **own property**라 합니다.
+
+각 프로퍼티는 아래 세 attribute들을 가집니다:
+
+- writable: 프로퍼티 값을 설정할 수 있는지
+- enumerable: for/in 루프로 순회할 수 있는지
+- configurable: 프로퍼티를 삭제하거나 attribute를 수정할 수 있는지
+
+### 2. Creating Objects
+
+중요한 문장이라고 생각해서 그대로 긁어왔어요:
+
+> Remember: almost all objects have a **prototype**, but only a relatively small
+> number of objects have `prototype` property. It is these objects with
+> `prototype` properties that define the **prototypes** for all the other
+> objects.
+
+Object.create의 인자는 생성된 객체의 프로토타입이 됩니다:
+
+```js
+let obj1 = {};
+console.log(String(obj1));
+
+let obj2 = Object.create(null);
+console.log(String(obj2));
+```
+
+### 3. Querying and Setting Properties
+
+일반 객체가 연관 배열(딕셔너리)로 자주 활용되기는 하지만 Map 클래스가 더 나은
+경우가 있습니다.
+
+같은 이름의 프로퍼티가 프로토타입 체인의 다른 곳에 위치할 수 있습니다:
+
+```js
+let a = { x: 1 };
+let b = Object.create(a);
+console.log(a, b);
+
+b.x = 2;
+console.log(a, b);
+```
+
+위 코드와 같은 특징 덕분에 상속받은 프로퍼티를 선택적으로 override할 수
+있도록합니다. 다만 setter 메서드 관련해서 예외가 있습니다:
+
+```js
+let parent = {
+  set val(x) {
+    this.y = 1;
+  },
+};
+
+let child = Object.create(parent);
+
+child.val = 2; // child에 프로퍼티가 추가되지 않고 parent의 setter가 호출됩니다.
+console.log(parent, child); // setter에서 추가한 프로퍼티는 child에 추가됩니다.
+```
+
+### 4. Deleting Properties
+
+delete 연산자는 객체 자신의 프로퍼티만 삭제합니다.
+
+암묵적으로/명시적으로 선언된 변수들의 차이가 delete 연산자에 관련하여 있습니다:
+
+```js
+// 원래는 var로 선언한 경우 삭제가 안되어야하는데
+// 콘솔 컴포넌트를 eval로 구현해서 차이가 생기는 것 같아요 (확인 필요)
+// 브라우저 콘솔에서 실행해보세요 :(
+var a = 10;
+console.log(globalThis.a);
+delete globalThis.a;
+console.log(globalThis.a);
+
+b = 20;
+console.log(globalThis.b);
+delete globalThis.b;
+console.log(globalThis.b);
+```
+
+### 5. Testing Properties
+
+```js
+let a = Object.create({ x: 1 });
+a.y = 2;
+
+console.log('x' in a);
+console.log(a.hasOwnProperty('x'));
+
+// 스스로의 enumerable한 프로퍼티인지
+console.log(a.propertyIsEnumerable('x'));
+console.log(a.propertyIsEnumerable('y'));
+```
+
+프로퍼티 유무 확인에서 in 연산자와 !== undefined의 차이:
+
+```js
+let a = { x: undefined };
+console.log('x' in a, a.x !== undefined);
+console.log('y' in a, a.y !== undefined);
+```
+
+### 6. Enumerating Properties
+
+```js
+let a = { x: 1 };
+let b = Object.create(a);
+b.y = 2;
+b[Symbol()] = 3;
+
+// own&inherited enumerable string
+for (i in b) console.log(i);
+// own enumerable string
+console.log(Object.keys(b));
+// own (non)enumerable string
+console.log(Object.getOwnPropertyNames(b));
+// own (non)enumerable symbols
+console.log(Object.getOwnPropertySymbols(b));
+// own (non)enumeratble string&symbols
+console.log(Reflect.ownKeys(b));
+```
+
+각종 메서드들의 프로퍼티 순회 순서입니다:
+
+1. 0이상의 자연수를 순서대로
+1. 문자열은 추가한 순서대로(리터럴에 있는 순서대로)
+1. 심볼도 추가한 순서대로
+
+for-in의 순서는 표준에 자세히 명시되어있진 않다는데,,, 최근에 수정된 것
+같습니다:
+
+https://stackoverflow.com/questions/30076219/does-es6-introduce-a-well-defined-order-of-enumeration-for-object-properties
+
+### 7. Extending Objects
+
+객체의 복사가 자주 있어서 ES6에서 `Object.assign()`을 추가했습니다. 두번째 이후
+인자들의 enumerable/own/string+symbol 프로퍼티들을 첫번째 인자 객체로
+복사합니다.
+
+### 8. Serializing Objects
+
+```js
+console.log(JSON.stringify([NaN, Infinity, -Infinity]));
+console.log(JSON.parse(JSON.stringify(new Date()))); // parse 후에도 문자열입니다.
+```
+
+stringify는 own enumerable property만 처리합니다.
+
+### 9. Object Methods
+
+Object.prototype에서 상속되는 메서드들:
+
+```js
+let point = {
+  x: 3,
+  y: 4,
+
+  toString() {
+    return `(${this.x}, ${this.y})`;
+  },
+
+  toLocaleString() {
+    return `(${this.x.toLocaleString()}, ${this.y.toLocaleString()})`;
+  },
+
+  valueOf() {
+    return Math.hypot(this.x, this.y);
+  },
+
+  // Object.prototype에는 없지만 JSON.stringify가 봅니다
+  toJSON() {
+    return this.toString();
+  },
+};
+
+console.log(String(point), Number(point), JSON.stringify(point));
+```
+
+### 10. Extended Object Literal Syntax
+
+심볼은 opaque value입니다:
+
+> In computer science, an opaque data type is a data type whose concrete data
+> structure is not defined in an interface.
+>
+> https://en.wikipedia.org/wiki/Opaque_data_type
+
+Symbol은 객체가 아닌 원시값이고 `Symbol()`은 생성자 함수가 아닌 팩토리
+함수입니다.
+
+Symbol이 값을 완전히 숨길 수는 없는데 `Object.getOwnPropertySymbols()`로 심볼을
+얻어내고 프로퍼티를 수정 혹은 삭제할 수 있기 때문입니다. 프로퍼티가 덮어씌워지는
+사고 방지(?)의 목적으로 생각하면 될 것 같아요.
+
+스프레드 연산자는 enumerable own 프로퍼티를 복사합니다. Mdn 문서에 스프레드
+연산자와 `Object.assign`과의 차이에 대한 재밌는 예제 코드가 있어서 가져왔어요.
+전자는 setter를 호출하지만 후자는 그렇지 않습니다.
+
+> ```js
+> const objectAssign = Object.assign(
+>   {
+>     set foo(val) {
+>       console.log(val);
+>     },
+>   },
+>   { foo: 1 },
+> );
+> // Logs "1"; objectAssign.foo is still the original setter
+>
+> const spread = {
+>   set foo(val) {
+>     console.log(val);
+>   },
+>   ...{ foo: 1 },
+> };
+> // Nothing is logged; spread.foo is 1
+> ```
+>
+> https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Spread_syntax
+
+아래 두 코드는 동일합니다. 후자가 더 간략해요:
+
+```js
+// @noexec
+let square = {
+  area: function () {
+    return this.side ** 2;
+  },
+  side: 10,
+};
+
+square = {
+  area() {
+    return this.side ** 2;
+  },
+  size: 10,
+};
+```
+
+getter가 정의되는 위치와 enumerable함에 대한 참고 링크:
+
+https://stackoverflow.com/questions/34517538

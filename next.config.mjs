@@ -13,6 +13,11 @@ const nextConfig = {
         destination: '/js/0',
         permanent: true,
       },
+      ...[...Array(4).keys()].map((i) => ({
+        source: `/js/${i}`,
+        destination: '/',
+        permanent: true,
+      })),
     ];
   },
 };

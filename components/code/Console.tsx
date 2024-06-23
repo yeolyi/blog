@@ -3,8 +3,14 @@
 import { useState } from 'react';
 import { Log } from './log';
 
-export default function Console({ logList }: { logList: Log[] }) {
-  const [expanded, setExpanded] = useState(false);
+export default function Console({
+  logList,
+  expandedDefault = false,
+}: {
+  logList: Log[];
+  expandedDefault?: boolean;
+}) {
+  const [expanded, setExpanded] = useState(expandedDefault);
   const expandable = 1 < logList.length;
 
   return (

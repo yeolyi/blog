@@ -11,6 +11,18 @@ export type TileProps = {
   code: string;
 };
 
+export const TileContainer = ({ children }: { children: ReactNode }) => (
+  <li className="relative flex w-[var(--tile-width)] snap-start overflow-clip rounded-[28px]">
+    {children}
+  </li>
+);
+
+export const TileTitle = ({ children }: { children: ReactNode }) => (
+  <h3 className="block text-[21px] font-semibold leading-[1.289] tracking-[0.011em] md:text-[24px] md:leading-[1.29] lg:text-[28px] lg:leading-[1.25]">
+    {children}
+  </h3>
+);
+
 export const Tile = ({
   name,
   description,
@@ -19,9 +31,9 @@ export const Tile = ({
   code,
 }: TileProps) => {
   return (
-    <li className="relative flex w-[var(--tile-width)] snap-start overflow-clip">
+    <TileContainer>
       <div
-        className="z-10 flex w-full flex-col items-start gap-[10px] rounded-[28px] p-[20px] pr-[25px] pt-[25px] text-textblack md:p-[25px] md:pt-[30px]"
+        className="z-10 flex w-full flex-col items-start gap-[10px] p-[20px] pr-[25px] pt-[25px] text-textblack md:p-[25px] md:pt-[30px]"
         style={{
           backgroundImage: `linear-gradient(
         163deg,
@@ -32,10 +44,8 @@ export const Tile = ({
   )`,
         }}
       >
-        <h3 className="block text-[21px] font-semibold leading-[1.289] tracking-[0.011em] md:text-[24px] md:leading-[1.29] lg:text-[28px] lg:leading-[1.25]">
-          {name}
-        </h3>
-        <p className="text-[14px] font-normal leading-[1.429] tracking-[0.022em] lg:text-[17px] lg:leading-[1.235]">
+        <TileTitle>{name}</TileTitle>
+        <p className="text-[14px] font-normal leading-[1.429] tracking-[0.022em] lg:text-[17px] lg:leading-[1.352]">
           {description}
         </p>
         <Link
@@ -46,15 +56,15 @@ export const Tile = ({
         </Link>
 
         <div className="mb-auto mt-[20px] w-full">
-          <JSSandbox code={code} hideRefresh />
+          <JSSandbox code={code} hideRefresh expandedDefault />
         </div>
 
         <div className="text-[14px] font-normal leading-[1.429] tracking-[0em]">
-          <h4 className="font-semibold">주요 개념</h4>
+          <h4 className="font-semibold">배운 것들</h4>
           <p>{concepts}</p>
         </div>
       </div>
-    </li>
+    </TileContainer>
   );
 };
 
