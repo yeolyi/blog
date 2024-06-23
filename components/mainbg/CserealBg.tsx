@@ -90,7 +90,7 @@ export const CserealBg = () => {
     let id = setInterval(() => {
       if (containerRef.current && 5000 < Date.now() - lastRippleRef.current)
         ripple(
-          0,
+          Math.floor(Math.random() * (COL * ROW - 1)),
           [...containerRef.current.children].map(
             (child) => child.firstElementChild!,
           ),
