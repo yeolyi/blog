@@ -14,7 +14,7 @@ import {
   Copy,
   SectionHeadline,
 } from '@/components/Typography';
-import { PostContainer, PostTile } from '@/components/Post';
+import { PostContainer, PostTile, PostTileProps } from '@/components/Post';
 import { CserealBg } from '@/components/mainbg/CserealBg';
 import InstaBg from '@/components/mainbg/InstaBg';
 
@@ -41,7 +41,7 @@ export default function Page() {
         </SectionHeadline>
 
         <Gallery wide>
-          {projectProps.map((prop) => (
+          {projectList.map((prop) => (
             <WideTile key={prop.href} {...prop} />
           ))}
         </Gallery>
@@ -56,7 +56,7 @@ export default function Page() {
         </div>
 
         <Gallery>
-          {jsProps.map((prop) => (
+          {jsList.map((prop) => (
             <Tile key={prop.href} {...prop} />
           ))}
         </Gallery>
@@ -68,12 +68,9 @@ export default function Page() {
         </SectionHeadline>
 
         <PostContainer>
-          <PostTile
-            title="타이틀"
-            dateStr="dateStr"
-            href="/logtest"
-            src={profile}
-          />
+          {postList.map((prop) => (
+            <PostTile key={prop.title} {...prop} />
+          ))}
         </PostContainer>
       </Section>
     </main>
@@ -94,7 +91,7 @@ let Section = ({
   </section>
 );
 
-export const projectProps: WideTileProps[] = [
+let projectList: WideTileProps[] = [
   {
     name: 'cse.snu.ac.kr',
     copy: '서울대학교 컴퓨터공학부 홈페이지 리뉴얼에 프론트엔드 개발자로 참여했어요.',
@@ -109,7 +106,7 @@ export const projectProps: WideTileProps[] = [
   },
 ];
 
-export const jsProps: TileProps[] = [
+let jsList: TileProps[] = [
   {
     name: '파트 1',
     description:
@@ -148,5 +145,14 @@ console.log(...s);`,
   yield* ['h', 'i'];
 }
 console.log(...foo());`,
+  },
+];
+
+let postList: PostTileProps[] = [
+  {
+    title: '준비중...',
+    dateStr: '2024.06.23',
+    href: '/',
+    src: '/cserealbg.png',
   },
 ];

@@ -1,77 +1,103 @@
 'use client';
 
 import Image from 'next/image';
-import { MouseEventHandler } from 'react';
+import { MouseEventHandler, useCallback, useEffect, useRef } from 'react';
 import cserealbg from '@/public/cserealbg.png';
 import gsap from 'gsap';
+import { throttle } from '@/util/throttle';
 
 const ROW = 6;
 const COL = 8;
-const RADIUS = 10;
-const CENTER_SCALE = 1.8;
-const COEF = 1.5;
+const RADIUS = Math.max(ROW, COL);
+const CENTER_SCALE = 1.5;
 const ROW_OFFSET = [0, 1, -1, 0, 1, 0];
 const DURATION = 0.15;
 
+let getDist = (m1: number, n1: number, m2: number, n2: number) => {
+  return (m1 - m2) ** 2 + (n1 + ROW_OFFSET[m1] - (n2 + ROW_OFFSET[m2])) ** 2;
+};
+
+let ripple = throttle((idx: number, elementList: Element[]) => {
+  const m = Math.floor(idx / COL);
+  const n = idx % COL;
+
+  for (let i = -RADIUS; i <= RADIUS; i++) {
+    for (let j = -RADIUS; j <= RADIUS; j++) {
+      if (i == 0 && j == 0) continue;
+
+      const m2 = m + i;
+      const n2 = n + j;
+      if (m2 < 0 || n2 < 0 || ROW <= m2 || COL <= n2) continue;
+
+      const dist = getDist(m, n, m2, n2);
+      const idx2 = m2 * COL + n2;
+
+      const target2 = elementList[idx2];
+      gsap.to(target2, {
+        scale: CENTER_SCALE,
+        duration: DURATION,
+        delay: dist / 50,
+      });
+      gsap.to(target2, {
+        scale: 1,
+        duration: DURATION,
+        delay: dist / 50 + 0.2,
+      });
+    }
+  }
+
+  gsap.to(elementList[idx], {
+    scale: 0.8,
+    duration: DURATION,
+  });
+
+  gsap.to(elementList[idx], {
+    scale: 1,
+    duration: DURATION,
+    delay: 0.2,
+  });
+}, 500)[0];
+
 export const CserealBg = () => {
+  let containerRef = useRef<HTMLDivElement | null>(null);
+  let lastRippleRef = useRef(0);
+
   let code = [...'SNUCSE']
     .map((x) =>
       [...x.charCodeAt(0).toString(2).padStart(8, '0')].map((x) => x === '1'),
     )
     .reduce((acc, cur) => acc.concat(cur), []);
 
-  const handleMouseOver: MouseEventHandler<HTMLDivElement> = (e) => {
-    const target = e.target;
-    if (target instanceof HTMLDivElement === false) return;
-    e.stopPropagation();
+  const handleMouseOver: MouseEventHandler<HTMLDivElement> = useCallback(
+    (e) => {
+      if (containerRef.current === null) return;
+      if (e.target instanceof HTMLDivElement === false) return;
+      e.stopPropagation();
 
-    const idx = [...target.parentElement!.children].indexOf(target);
+      const childList = [...containerRef.current.children];
+      let idx = childList.indexOf(e.target);
 
-    const m = Math.floor(idx / COL);
-    const n = idx % COL;
+      lastRippleRef.current = Date.now();
+      ripple(
+        idx,
+        childList.map((child) => child.firstElementChild!),
+      );
+    },
+    [],
+  );
 
-    for (let i = -RADIUS; i <= RADIUS; i++) {
-      for (let j = -RADIUS; j <= RADIUS; j++) {
-        if (i == 0 && j == 0) continue;
-
-        const m2 = m + i;
-        const n2 = n + j;
-        if (m2 < 0 || n2 < 0 || ROW <= m2 || COL <= n2) continue;
-
-        const dist =
-          (m - m2) ** 2 + (n + ROW_OFFSET[m] - (n2 + ROW_OFFSET[m2])) ** 2;
-        const scale = 1 + (CENTER_SCALE - 1) / (dist * COEF);
-        const idx2 = m2 * COL + n2;
-
-        const target2 = target.parentElement!.children[idx2];
-        gsap.to(target2.firstChild, {
-          scale,
-          duration: DURATION,
-          ease: 'sine.inOut',
-        });
-      }
-    }
-
-    gsap.to(target.firstChild, {
-      scale: CENTER_SCALE,
-      duration: DURATION,
-      ease: 'sine.inOut',
-    });
-  };
-
-  const handleMouseOut: MouseEventHandler<HTMLDivElement> = (e) => {
-    const target = e.target;
-    if (target instanceof HTMLDivElement === false) return;
-    e.stopPropagation();
-
-    [...target.parentElement!.children].forEach((child) =>
-      gsap.to(child.firstChild, {
-        scale: 1,
-        duration: DURATION,
-        ease: 'sine.inOut',
-      }),
-    );
-  };
+  useEffect(() => {
+    let id = setInterval(() => {
+      if (containerRef.current && 5000 < Date.now() - lastRippleRef.current)
+        ripple(
+          0,
+          [...containerRef.current.children].map(
+            (child) => child.firstElementChild!,
+          ),
+        );
+    }, 5000);
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <div className="relative h-full w-full">
@@ -82,15 +108,17 @@ export const CserealBg = () => {
         quality={100}
         fill
       />
-      <div className="csereal-tile-graphic relative mx-auto grid w-fit grid-cols-8 pt-[120px] sm:pt-[90px] md:pt-[60px]">
+      <div
+        className="csereal-tile-graphic relative mx-auto grid w-fit select-none grid-cols-8 pt-[120px] sm:pt-[90px] md:pt-[60px]"
+        ref={containerRef}
+      >
         {code.map((x, idx) => {
           let row = Math.floor(idx / COL);
           return (
             <div
-              onMouseOver={handleMouseOver}
-              onMouseOut={handleMouseOut}
+              onClick={handleMouseOver}
               key={idx}
-              className="flex h-[calc(2*var(--unit-size))] w-[calc(2*var(--unit-size))] items-center justify-center ease-in-out"
+              className="flex h-[calc(2*var(--unit-size))] w-[calc(2*var(--unit-size))] cursor-pointer items-center justify-center ease-in-out "
               style={{
                 transition: 'transform 0.2s',
                 transform:

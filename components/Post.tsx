@@ -4,22 +4,19 @@ import Link from 'next/link';
 import { ReactNode } from 'react';
 
 export let PostContainer = ({ children }: { children: ReactNode }) => (
-  <ul className="mx-auto flex w-[87.5%] max-w-[366px] flex-row flex-wrap items-stretch justify-between pb-[64px] md:w-[692px] lg:w-[980px] lg:pb-[80px]">
+  <ul className="horizontal-pad flex flex-wrap items-stretch gap-[20px] pb-[64px] lg:pb-[80px]">
     {children}
   </ul>
 );
 
-export let PostTile = ({
-  title,
-  src,
-  dateStr,
-  href,
-}: {
+export type PostTileProps = {
   title: string;
   src: string | StaticImport;
   dateStr: string;
   href: string;
-}) => (
+};
+
+export let PostTile = ({ title, src, dateStr, href }: PostTileProps) => (
   <li className="group relative mt-[24px] flex w-full list-none flex-col overflow-hidden rounded-[16px] bg-white md:w-[333px] lg:mt-[36px] lg:w-[303px]">
     <Link href={href} className="flex h-full w-full flex-col">
       <div className="relative h-[187px] overflow-hidden lg:h-[266px]">
