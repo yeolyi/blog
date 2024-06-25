@@ -1,11 +1,12 @@
-import ImageViewer from '@/components/ImageViewer';
-import jsbook from '@/public/jsbook.png';
+export let metadata = {
+  title: '자바스크립트 공부 기록 - 값',
+  description:
+    '다양한 종류의 값들을 살펴보고 이들간에 변환은 어떻게하는지 공부했습니다.',
+};
 
-아래 책으로 공부했어요.
+# 타입, 값, 변수
 
-<ImageViewer src={jsbook} alt="책 표지" priority />
-
-## 1. Introduction to Javascript
+## 자바스크립트 소개
 
 코어 js에는 입출력 기능이 포함되어있지 않습니다. 입출력, 네트워크, 그래픽 등의
 기능은 js가 임베딩된 호스트 환경의 책임입니다.
@@ -13,14 +14,7 @@ import jsbook from '@/public/jsbook.png';
 **표현식**은 어떤 값으로 계산되지만 프로그램의 상태를 바꾸지는 않고, **문**은
 값은 없지만 상태를 바꿉니다.
 
-## 2. Lexical Structure
-
-프로그래밍 언어의 lexical structure는 해당 언어로 프로그램을 어떻게 작성할지
-알려주는 기본적인 규칙들입니다.
-
-_( 이전 챕터 생략 )_
-
-### 4. Identifiers and Reserved Words
+### Identifiers and Reserved Words
 
 쓸 일은 없지만, let도 변수명으로 경우에 따라 쓸 수는 있습니다.
 
@@ -31,7 +25,7 @@ var let = 'hello, world!';
 console.log(let);
 ```
 
-### 5. Unicode
+### Unicode
 
 ```js
 // ✍️ 유니코드 값을 바꿔보세요
@@ -54,7 +48,7 @@ console.log(str);
 normalization 알고리즘이 있지만 JS가 이를 처리해주지는 않으므로 에디터에서 잘
 해주는지 확인합시다.
 
-### 6. Optional Semicolons
+### Optional Semicolons
 
 세미콜론이 없으면 동작이 직관과 다른 경우가 있습니다.
 
@@ -64,12 +58,12 @@ let y = 1 + 2
 (3 + 4).toString()
 ```
 
-## 3. Types, Values, and Variables
+## Types, Values, and Variables
 
 JS는 함수와 클래스가 단순 언어 구문(syntax)의 일부가 아니라 코드에 의해 조작될
 수 있는 값이라는 점에서 다른 정적 언어들과 다릅니다.
 
-### 1. Overview and Definitions
+### Overview and Definitions
 
 JS에서 문자열은 불변입니다. 이미 선언된 문자열의 일부를 수정할 수 없습니다.
 
@@ -80,7 +74,7 @@ str[0] = 'd';
 console.log(str);
 ```
 
-### 2. Numbers
+### Numbers
 
 64비트 부동소수점을 사용합니다. 오버플로우가 발생해도 에러를 던지지는 않습니다.
 
@@ -143,7 +137,7 @@ BigInt는 암호학에 쓰기는 부적합한데 timing attack에 대응하지 �
 
 https://timing.attacks.cr.yp.to/programming.html
 
-### 3. Text
+### Text
 
 UTF-16 인코딩을 사용합니다. Codepoint가 16비트에 들어가지 않는 유니코드 문자는
 **surrogate pair**로 알려진 UTF-16의 시퀀스를 사용합니다.
@@ -203,7 +197,7 @@ const str = String.raw`\n`;
 console.log(str);
 ```
 
-### 4. Boolean Values
+### Boolean Values
 
 ```js
 console.log(!!undefined);
@@ -214,7 +208,7 @@ console.log(!!NaN);
 console.log(!!'');
 ```
 
-### 5. null and undefined
+### null and undefined
 
 **undefined**는 언어 키워드인 null과는 다르게 미리 정의된 전역 상수값으로
 undefined로 초기화되어있습니다.
@@ -229,7 +223,7 @@ console.log('undefined' in globalThis);
 console.log('null' in globalThis);
 ```
 
-### 6. Symbols
+### Symbols
 
 프로퍼티명을 심볼로 정하고 이를 공유하지 않으면 다른 모듈의 코드가 실수로 해당
 프로퍼티를 건들지 않음을 보장받을 수 있습니다.
@@ -255,7 +249,7 @@ let t = Symbol.for('shared');
 console.log(s === t, s.toString(), Symbol.keyFor(t));
 ```
 
-### 7. The Global Object
+### The Global Object
 
 전역 객체의 프로퍼티들은 JS 프로그램에서 사용할 수 있는 전역적으로 정의된
 식별자들입니다. undefined, isNaN(), String(), Math 등등...
@@ -272,7 +266,7 @@ console.log(window === globalThis);
 console.log(window === window.window.window);
 ```
 
-### 8. Immutable Primitive Values and Mutable Object References
+### Immutable Primitive Values and Mutable Object References
 
 객체는 참조하는 대상이 같아야 같습니다:
 
@@ -282,7 +276,7 @@ let b = [1, 2, 3];
 console.log(a === b);
 ```
 
-### 9. Type Conversions
+### Type Conversions
 
 ~이딴게.. 언어...?~
 
@@ -416,7 +410,7 @@ console.log(a + '');
 console.log(a + 1);
 ```
 
-### 10. Variable Declaration and Assignment
+### Variable Declaration and Assignment
 
 확실히 안바뀌는 값에만 const를 쓰는 사람들이 있고, 일단 const로 선언하고 나중에
 바뀌어야한다면 let으로 수정하는 사람들이 있습니다. 아래는 참고할만한

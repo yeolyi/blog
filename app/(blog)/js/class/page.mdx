@@ -1,8 +1,14 @@
-## 9. Classes
+export let metadata = {
+  title: '자바스크립트 공부 기록 - 클래스',
+  description:
+    '클래스의 성질이 자바스크립트에서 어떻게 구현되는지 공부했습니다.',
+};
+
+# Classes
 
 자바스크립트는 프로토타입 기반 상속을 사용합니다.
 
-### 1. Classes and Prototypes
+## Classes and Prototypes
 
 range 객체를 생성해 반환하는 팩토리 함수 예제입니다. 프로토타입을 연결하는
 과정이 명시적으로 드러나요:
@@ -27,7 +33,7 @@ let r = createRange(1, 4);
 console.log(r.includes(2), r.includes(5));
 ```
 
-### 2. Classes and Constructors
+## Classes and Constructors
 
 `new` 키워드로 객체의 생성과 프로토타입 연결을 자동화할 수 있습니다:
 
@@ -103,7 +109,7 @@ B.prototype.foo = function () {
 console.log(new A().constructor === A, new B().constructor === B);
 ```
 
-### 3. Classes with the class keyword
+## Classes with the class keyword
 
 ES6에 추가된 `class` 문법으로 클래스를 만들어봅시다:
 
@@ -162,7 +168,7 @@ console.log(Buffer.val);
 new Buffer();
 ```
 
-### 4. Adding Methods to Existing Classes
+## Adding Methods to Existing Classes
 
 프로토타입 객체를 수정해 클래스를 동적으로 수정할 수 있습니다.
 
@@ -179,7 +185,7 @@ Number.prototype.tree = function () {
 다만 위 예제처럼 빌트인 객체를 수정하는 것은 다른 라이브러리와의, 혹은 JS
 버전간의 충돌이 있을 수 있어 좋지 않습니다.
 
-### 5. Subclasses
+## Subclasses
 
 ES6 이전 방식:
 

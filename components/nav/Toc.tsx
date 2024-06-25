@@ -55,7 +55,7 @@ const TocRow = ({
       ref={ref}
       key={heading.id}
       className={`max-w-[70vw] truncate text-left text-sm  hover:underline 
-      ${isH2 ? 'font-bold' : 'ml-2 font-normal text-neutral-500'} 
+      ${isH2 ? 'font-semibold' : 'ml-2 font-normal text-neutral-500'} 
       ${highlight && 'underline'}
       `}
       onClick={onClick}

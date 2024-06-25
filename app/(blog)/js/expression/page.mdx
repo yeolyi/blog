@@ -1,6 +1,11 @@
-## 4. Expressions and Operators
+export let metadata = {
+  title: '자바스크립트 공부 기록 - 연산자',
+  description: '값들을 연산자로 조합해 새로운 값을 만드는 방법을 공부했습니다.',
+};
 
-### 1. Primary Expressions
+# Expressions and Operators
+
+## Primary Expressions
 
 최소 단위의 표현식을 **primary expression**이라 합니다. 아래와 같은 것들이
 있어요:
@@ -25,7 +30,7 @@ console.log('undefined' in window);
 console.log(window.undefined === undefined);
 ```
 
-### 2. Object and Array Initializers
+## Object and Array Initializers
 
 Array initializer 내부의 표현식은 매번 평가됩니다:
 
@@ -43,7 +48,7 @@ console.log(f());
 console.log([1, , , 4, 5]);
 ```
 
-### 3. Function Definition Expressions
+## Function Definition Expressions
 
 객체를 만드는 객체 리터럴처럼 function definition expression은 함수 리터럴로 볼
 수 있습니다. ES6에서 추가된 화살표 함수와 함께 챕터 8에서 자세하게 살펴볼게요.
@@ -55,7 +60,7 @@ let square = function (x) {
 };
 ```
 
-### 4. Property Access Expressions
+## Property Access Expressions
 
 null과 undefined는 프로퍼티를 가지지 않습니다.
 
@@ -105,7 +110,7 @@ arr?.[index++];
 console.log(index); // 대괄호 내부 표현식이 평가되지 않았습니다.
 ```
 
-### 5. Invocation Expressions
+## Invocation Expressions
 
 Conditional invocation의 예시입니다:
 
@@ -133,7 +138,7 @@ f?.(x++); // 평가되지 않습니다.
 console.log(x);
 ```
 
-### 6. Object Creation Expressions
+## Object Creation Expressions
 
 (굳이 싶지만 ㅎ,,) 생성자에 전달되는 인자가 없으면 아래와 같은 문법도
 가능합니다:
@@ -143,7 +148,7 @@ console.log(x);
 console.log(new Date);
 ```
 
-### 7. Operator Overview
+## Operator Overview
 
 모든 자바스크립트 값들은 truthy 혹은 falsy합니다. 따라서 피연산자로 불 값을 받는
 연산자는 자동 형변환 덕분에 무슨 값에 대해서든 잘 동작합니다.
@@ -200,7 +205,7 @@ console.log(f() + g() * h());
 console.log(f() * g() + h());
 ```
 
-### 8. Arithmetic Expressions
+## Arithmetic Expressions
 
 0/0은 NaN입니다.
 
@@ -280,7 +285,7 @@ console.log(-1n >> 1n);
 console.log(-1n >>> 1n);
 ```
 
-### 9. Relational Expressions
+## Relational Expressions
 
 ==는 레거시 취급합시다.
 
@@ -365,14 +370,14 @@ console.log(a in [123]);
 console.log(a in []);
 ```
 
-### 10. Logical Expressions
+## Logical Expressions
 
 방금 살펴본 relational operator들은 &&, || 보다 우선순위가 높습니다.
 
 Side effect가 있는 표현식을 &&나 || 오른쪽에 쓸 때는 실행이 될 수도 안될 수도
 있으니 주의합시다.
 
-### 11. Assigment Expressions
+## Assigment Expressions
 
 ```js
 let a;
@@ -398,7 +403,7 @@ data[i++] = data[i++] * 2;
 console.log(data);
 ```
 
-### 12. Evaluation Expressions
+## Evaluation Expressions
 
 ```js
 let a = 1;
@@ -418,7 +423,7 @@ console.log((0, eval)('a'));
 
 strict mode에서는 eval이 reserved word가 되는 등 함수보다 키워드에 가까워집니다.
 
-### 13. Miscellaneous Operators
+## Miscellaneous Operators
 
 First-defined (??) 연산자는 첫 피연산자가 null이나 undefined면 두번째
 피연산자를, 아니면 첫번째 피연산자를 반환합니다. Truthy함이 기준인 ||와 다르게

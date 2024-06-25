@@ -1,6 +1,11 @@
-## 6. Objects
+export let metadata = {
+  title: '자바스크립트 공부 기록 - 객체',
+  description: '자바스크립트의 가장 중요한 주제인 객체를 공부했습니다.',
+};
 
-### 1. Introduction to Objects
+# Objects
+
+## Introduction to Objects
 
 다른 기능들도 있지만 기본적으로 객체는 문자열을 값으로 매핑합니다. JS 객체는
 다른 객체(프로토타입)로부터 프로퍼티를 상속받고 이를 **prototypal
@@ -21,7 +26,7 @@ console.log(a['']);
 - enumerable: for/in 루프로 순회할 수 있는지
 - configurable: 프로퍼티를 삭제하거나 attribute를 수정할 수 있는지
 
-### 2. Creating Objects
+## Creating Objects
 
 중요한 문장이라고 생각해서 그대로 긁어왔어요:
 
@@ -40,7 +45,7 @@ let obj2 = Object.create(null);
 console.log(String(obj2));
 ```
 
-### 3. Querying and Setting Properties
+## Querying and Setting Properties
 
 일반 객체가 연관 배열(딕셔너리)로 자주 활용되기는 하지만 Map 클래스가 더 나은
 경우가 있습니다.
@@ -72,7 +77,7 @@ child.val = 2; // child에 프로퍼티가 추가되지 않고 parent의 setter�
 console.log(parent, child); // setter에서 추가한 프로퍼티는 child에 추가됩니다.
 ```
 
-### 4. Deleting Properties
+## Deleting Properties
 
 delete 연산자는 객체 자신의 프로퍼티만 삭제합니다.
 
@@ -93,7 +98,7 @@ delete globalThis.b;
 console.log(globalThis.b);
 ```
 
-### 5. Testing Properties
+## Testing Properties
 
 ```js
 let a = Object.create({ x: 1 });
@@ -115,7 +120,7 @@ console.log('x' in a, a.x !== undefined);
 console.log('y' in a, a.y !== undefined);
 ```
 
-### 6. Enumerating Properties
+## Enumerating Properties
 
 ```js
 let a = { x: 1 };
@@ -146,13 +151,13 @@ for-in의 순서는 표준에 자세히 명시되어있진 않다는데,,, 최�
 
 https://stackoverflow.com/questions/30076219/does-es6-introduce-a-well-defined-order-of-enumeration-for-object-properties
 
-### 7. Extending Objects
+## Extending Objects
 
 객체의 복사가 자주 있어서 ES6에서 `Object.assign()`을 추가했습니다. 두번째 이후
 인자들의 enumerable/own/string+symbol 프로퍼티들을 첫번째 인자 객체로
 복사합니다.
 
-### 8. Serializing Objects
+## Serializing Objects
 
 ```js
 console.log(JSON.stringify([NaN, Infinity, -Infinity]));
@@ -161,7 +166,7 @@ console.log(JSON.parse(JSON.stringify(new Date()))); // parse 후에도 문자�
 
 stringify는 own enumerable property만 처리합니다.
 
-### 9. Object Methods
+## Object Methods
 
 Object.prototype에서 상속되는 메서드들:
 
@@ -191,7 +196,7 @@ let point = {
 console.log(String(point), Number(point), JSON.stringify(point));
 ```
 
-### 10. Extended Object Literal Syntax
+## Extended Object Literal Syntax
 
 심볼은 opaque value입니다:
 

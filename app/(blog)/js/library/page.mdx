@@ -1,6 +1,12 @@
-## 11. The JavaScript Standard Library
+export let metadata = {
+  title: '자바스크립트 공부 기록 - 표준 라이브러리',
+  description:
+    '자바스크립트 표준 라이브러리에 어떤 것들이 있는지 공부했습니다.',
+};
 
-### 1. Sets and Maps
+# The JavaScript Standard Library
+
+## Sets and Maps
 
 ```js
 // 이터러블을 인자로 받아요
@@ -96,7 +102,7 @@ WeakMap의 사용 예시:
 
 https://stackoverflow.com/questions/29413222/what-are-the-actual-uses-of-es6-weakmap
 
-### 2. Typed Arrays and Binary Data
+## Typed Arrays and Binary Data
 
 Typed array는 엄밀히 Array는 아니지만 대부분의 배열 메서드들을 구현합니다.
 
@@ -251,11 +257,11 @@ console.log(view.getUint16(0, true));
 Typed array와 DataView를 활용해 압축 데이터나 이미지 데이터 등등 이진 데이터를
 처리할 수 있어요.
 
-### 3. Pattern Matching with Regular Expressions
+## Pattern Matching with Regular Expressions
 
 재미없어서 다음에...
 
-### 4. Dates and Times
+## Dates and Times
 
 Date 객체 만들기:
 
@@ -338,7 +344,7 @@ console.log(d.toISOString());
 
 ~열심히 봤는데 이렇게 말한다고?~
 
-### 5. Error Classes
+## Error Classes
 
 JS에서는 아무 값이나 throw할 수 있습니다.
 
@@ -393,7 +399,7 @@ Error 클래스를 상속받은 여러 빌트인 에러 클래스들이 있습�
 
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error#error_types
 
-### 6. JSON Serialization and Parsing
+## JSON Serialization and Parsing
 
 자료 구조를 바이트/문자 스트림으로 바꾸는 과정을 **serialization**(marshaling,
 pickling)이라 합니다.
@@ -467,7 +473,7 @@ let o = { 1: 'one', 2: 'two', 3: 'three' };
 console.log(JSON.stringify(o, replacer));
 ```
 
-### 7. The Internalization API
+## The Internalization API
 
 숫자 포맷팅하기:
 
@@ -582,7 +588,7 @@ console.log(matcher('e', 'E') === 0);
 console.log(matcher('i', '  i  ') === 0);
 ```
 
-### 8. The Console API
+## The Console API
 
 블로그 컴포넌트에 Console API가 구현되어있지 않으니(ㅠ) 브라우저 콘솔탭에
 붙여넣기해서 실행해보세요.
@@ -677,7 +683,7 @@ console.log(
 );
 ```
 
-### 9. URL APIs
+## URL APIs
 
 ```js
 let url = new URL('https://example.com:3000/path/file?query=content#fragment');
@@ -779,7 +785,7 @@ console.log(encodeURIComponent(str));
 
 https://unixpapa.com/js/querystring.html
 
-### 10. Timers
+## Timers
 
 ```js
 // id의 타입은 브라우저와 노드에서 다릅니다.

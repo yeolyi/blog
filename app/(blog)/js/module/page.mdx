@@ -1,11 +1,17 @@
-## 10. Modules
+export let metadata = {
+  title: '자바스크립트 공부 기록 - 모듈',
+  description:
+    '모듈이 왜 필요한지, 자바스크립트에 어떤 종류의 모듈 시스템이 있는지 공부했습니다.',
+};
+
+# Modules
 
 모듈은 서로 다른 사람이 만든 코드들을 합쳐 거대한 프로그램을 만들 수 있도록
 돕습니다.
 
 합치는 과정에서 다른 모듈 있는 코드가 내 코드가 영향을 주지 못하도록 제한합니다.
 
-### 1. Modules with Classes, Objects, and Closures
+## Modules with Classes, Objects, and Closures
 
 **클로저**를 활용해 필요한 구현만 외부에 제공할 수 있습니다:
 
@@ -41,7 +47,7 @@ console.log(stats.stddev([1, 2, 3, 4, 5]));
 이와 같은 클로저 기반 모듈화는 **자동화**가 가능합니다. 웹팩 같은 번들러나
 노드의 `require`가 이러한 방식을 사용합니다.
 
-### 2. Modules in Node
+## Modules in Node
 
 파일을 네트워크에서 받아오는 브라우저와 달리 노드는 상대적으로 빠른 **파일
 시스템**을 사용합니다. 따라서 굳이 프로그램을 하나의 파일로 합칠 필요가
@@ -75,7 +81,7 @@ let stats = require('./stats.js');
 `import`, `export`가 도입되기 전까지는 브라우저에서도 번들러를 통해 `require`
 문법을 많이 사용했습니다.
 
-### 3. Modules in ES6
+## Modules in ES6
 
 ESM 이전 스크립트에서는 top-level 선언들이 모든 스크립트간에 공유되지만,
 ESM에서는 **파일 단위**로 한정됩니다. ES6 모듈을 사용하면 자동으로 'use
@@ -178,7 +184,7 @@ function localStringsURL(locale) {
 }
 ```
 
-### 4. Summary
+## Summary
 
 읽어볼만한 글들:
 

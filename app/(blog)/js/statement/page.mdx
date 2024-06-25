@@ -1,9 +1,14 @@
-## 5. Statements
+export let metadata = {
+  title: '자바스크립트 공부 기록 - 구문',
+  description: '여러 구문을 모아 프로그램을 만드는 방법을 공부했습니다.',
+};
+
+# Statements
 
 표현식은 평가되어 값이 되지만 문(statements) 실행되어 어떤 일을 일으킵니다.
 자바스크립트 프로그램은 세미콜론으로 구분된 문들의 나열이에요.
 
-### 2 Compound and Empty Statements
+## Compound and Empty Statements
 
 Statement block은 여러 문들을 하나의 compound statements로 묶습니다.
 세미콜론으로 끝나지 않음이 특징입니다.
@@ -28,7 +33,7 @@ for (let x = 1; x <= 10; sum += x++) /* empty */;
 console.log(sum);
 ```
 
-### 3. Conditionals
+## Conditionals
 
 JS에 else if 라는 별도의 문법?이 있는건 아니고 그냥 else문이랑 if문이랑
 붙은거라고 해요:
@@ -37,7 +42,7 @@ https://stackoverflow.com/a/4005623
 
 switch문에서는 같음을 === 연산자를 사용해 판단합니다.
 
-### 4. Loops
+## Loops
 
 흔하진 않지만 for문에서 initialize문이 없는 경우도 있습니다:
 
@@ -84,7 +89,7 @@ for/in은 객체면 다 됩니다. Enumerable한 스스로의 문자열 키들�
 상속받은 프로퍼티도 순회하기에 for/in대신 for/of와 Object.keys()를 쓰는 경우가
 많습니다.
 
-### 5. Jumps
+## Jumps
 
 break, continue의 기능을 포함한다면 while문으로 for문을 완벽하게 재현하는 것은
 불가능합니다.
@@ -125,7 +130,7 @@ while (i < 10) {
 }
 ```
 
-### 6. Miscallaneous Statements
+## Miscallaneous Statements
 
 with문은 객체의 프로퍼티를 변수가 선언된 것처럼 쓸 수 있게 합니다. 쓰지 마세요.
 
@@ -144,7 +149,7 @@ debugger문은 브라우저등에서 breakpoint로 기능합니다.
 
 https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#Duplicate_property_names
 
-### 7. Declarations
+## Declarations
 
 선언문(declarations)은 값에 이름을 부여해서 다른 구문들의 의미를 정의합니다.
 

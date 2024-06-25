@@ -1,6 +1,10 @@
 import Script from 'next/script';
 
-export default function Giscus() {
+export default function Giscus({
+  discussionNumber,
+}: {
+  discussionNumber?: number;
+}) {
   return (
     <>
       <Script
@@ -10,7 +14,8 @@ export default function Giscus() {
         data-repo-id="R_kgDOKGpPEA"
         data-category="Announcements"
         data-category-id="DIC_kwDOKGpPEM4CfIcY"
-        data-mapping="title"
+        data-mapping={discussionNumber ? 'number' : 'pathname'}
+        data-term={discussionNumber}
         data-strict="0"
         data-reactions-enabled="1"
         data-emit-metadata="0"
