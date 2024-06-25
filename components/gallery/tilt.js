@@ -1,334 +1,193 @@
-'use strict';
-
-/**
- * Created by Sergiu Șandor (micku7zu) on 1/27/2017.
- * Original idea: https://github.com/gijsroge/tilt.js
- * MIT License.
- * Version 1.8.1
- */
-
-export default class VanillaTilt {
-  constructor(element, settings = {}) {
-    if (!(element instanceof Node)) {
-      throw (
-        "Can't initialize VanillaTilt because " + element + ' is not a Node.'
-      );
-    }
-
-    this.width = null;
-    this.height = null;
-    this.clientWidth = null;
-    this.clientHeight = null;
-    this.left = null;
-    this.top = null;
-
-    // for Gyroscope sampling
-    this.gammazero = null;
-    this.betazero = null;
-    this.lastgammazero = null;
-    this.lastbetazero = null;
-
-    this.transitionTimeout = null;
-    this.updateCall = null;
-    this.event = null;
-
-    this.updateBind = this.update.bind(this);
-    this.resetBind = this.reset.bind(this);
-
+export default class UniversalTilt {
+  constructor(element, settings = {}, callbacks = {}) {
     this.element = element;
+    this.callbacks = callbacks;
+
     this.settings = this.extendSettings(settings);
 
+    if (typeof this.callbacks.onInit === 'function') {
+      this.callbacks.onInit(this.element);
+    }
+
     this.reverse = this.settings.reverse ? -1 : 1;
-    this.resetToStart = VanillaTilt.isSettingTrue(
-      this.settings['reset-to-start'],
-    );
-    this.glare = VanillaTilt.isSettingTrue(this.settings.glare);
-    this.glarePrerender = VanillaTilt.isSettingTrue(
-      this.settings['glare-prerender'],
-    );
-    this.fullPageListening = VanillaTilt.isSettingTrue(
-      this.settings['full-page-listening'],
-    );
-    this.gyroscope = VanillaTilt.isSettingTrue(this.settings.gyroscope);
-    this.gyroscopeSamples = this.settings.gyroscopeSamples;
 
-    this.elementListener = this.getElementListener();
+    if (this.settings.shine) this.shine();
 
-    if (this.glare) {
-      this.prepareGlare();
-    }
-
-    if (this.fullPageListening) {
-      this.updateClientSize();
-    }
+    this.element.style.transform = `perspective(${this.settings.perspective}px)`;
 
     this.addEventListeners();
-    this.reset();
-
-    if (this.resetToStart === false) {
-      this.settings.startX = 0;
-      this.settings.startY = 0;
-    }
   }
 
-  static isSettingTrue(setting) {
-    return setting === '' || setting === true || setting === 1;
+  isMobile() {
+    return (
+      window.DeviceMotionEvent && 'ontouchstart' in document.documentElement
+    );
   }
 
-  /**
-   * Method returns element what will be listen mouse events
-   * @return {Node}
-   */
-  getElementListener() {
-    if (this.fullPageListening) {
-      return window.document;
-    }
-
-    if (typeof this.settings['mouse-event-element'] === 'string') {
-      const mouseEventElement = document.querySelector(
-        this.settings['mouse-event-element'],
-      );
-
-      if (mouseEventElement) {
-        return mouseEventElement;
-      }
-    }
-
-    if (this.settings['mouse-event-element'] instanceof Node) {
-      return this.settings['mouse-event-element'];
-    }
-
-    return this.element;
-  }
-
-  /**
-   * Method set listen methods for this.elementListener
-   * @return {Node}
-   */
   addEventListeners() {
-    this.onMouseEnterBind = this.onMouseEnter.bind(this);
-    this.onMouseMoveBind = this.onMouseMove.bind(this);
-    this.onMouseLeaveBind = this.onMouseLeave.bind(this);
-    this.onWindowResizeBind = this.onWindowResize.bind(this);
-    this.onDeviceOrientationBind = this.onDeviceOrientation.bind(this);
+    if (this.isMobile()) {
+      window.addEventListener('devicemotion', this.onDeviceMove);
+    } else {
+      if (this.settings.base === 'element') {
+        this.base = this.element;
+      } else if (this.settings.base === 'window') {
+        this.base = window;
+      }
 
-    this.elementListener.addEventListener('mouseenter', this.onMouseEnterBind);
-    this.elementListener.addEventListener('mouseleave', this.onMouseLeaveBind);
-    this.elementListener.addEventListener('mousemove', this.onMouseMoveBind);
-
-    if (this.glare || this.fullPageListening) {
-      window.addEventListener('resize', this.onWindowResizeBind);
-    }
-
-    if (this.gyroscope) {
-      window.addEventListener(
-        'deviceorientation',
-        this.onDeviceOrientationBind,
-      );
+      this.base.addEventListener('mouseenter', this.onMouseEnter);
+      this.base.addEventListener('mousemove', this.onMouseMove);
+      this.base.addEventListener('mouseleave', this.onMouseLeave);
     }
   }
 
-  /**
-   * Method remove event listeners from current this.elementListener
-   */
   removeEventListeners() {
-    this.elementListener.removeEventListener(
-      'mouseenter',
-      this.onMouseEnterBind,
-    );
-    this.elementListener.removeEventListener(
-      'mouseleave',
-      this.onMouseLeaveBind,
-    );
-    this.elementListener.removeEventListener('mousemove', this.onMouseMoveBind);
-
-    if (this.gyroscope) {
-      window.removeEventListener(
-        'deviceorientation',
-        this.onDeviceOrientationBind,
-      );
-    }
-
-    if (this.glare || this.fullPageListening) {
-      window.removeEventListener('resize', this.onWindowResizeBind);
+    if (this.isMobile) {
+      window.removeEventListener('devicemotion', this.onDeviceMove);
+    } else {
+      this.base.removeEventListener('mouseenter', this.onMouseEnter);
+      this.base.removeEventListener('mousemove', this.onMouseMove);
+      this.base.removeEventListener('mouseleave', this.onMouseLeave);
     }
   }
 
   destroy() {
-    clearTimeout(this.transitionTimeout);
-    if (this.updateCall !== null) {
-      cancelAnimationFrame(this.updateCall);
+    clearTimeout(this.timeout);
+
+    if (this.updateCall !== null) cancelAnimationFrame(this.updateCall);
+
+    if (typeof this.callbacks.onDestroy === 'function') {
+      this.callbacks.onDestroy(this.element);
     }
 
-    this.element.style.willChange = '';
-    this.element.style.transition = '';
-    this.element.style.transform = '';
-    this.resetGlare();
+    this.reset();
 
     this.removeEventListeners();
-    this.element.vanillaTilt = null;
-    delete this.element.vanillaTilt;
+    this.element.universalTilt = null;
+    delete this.element.universalTilt;
 
     this.element = null;
   }
 
-  onDeviceOrientation(event) {
-    if (event.gamma === null || event.beta === null) {
-      return;
+  onMouseEnter = () => {
+    this.updateElementPosition();
+    this.transitions();
+
+    if (typeof this.callbacks.onMouseEnter === 'function') {
+      this.callbacks.onMouseEnter(this.element);
     }
+  };
+
+  onMouseMove = (e) => {
+    if (this.updateCall !== null) cancelAnimationFrame(this.updateCall);
+
+    this.event = e;
 
     this.updateElementPosition();
+    this.updateCall = requestAnimationFrame(() => this.update());
 
-    if (this.gyroscopeSamples > 0) {
-      this.lastgammazero = this.gammazero;
-      this.lastbetazero = this.betazero;
-
-      if (this.gammazero === null) {
-        this.gammazero = event.gamma;
-        this.betazero = event.beta;
-      } else {
-        this.gammazero = (event.gamma + this.lastgammazero) / 2;
-        this.betazero = (event.beta + this.lastbetazero) / 2;
-      }
-
-      this.gyroscopeSamples -= 1;
+    if (typeof this.callbacks.onMouseMove === 'function') {
+      this.callbacks.onMouseMove(this.element);
     }
+  };
 
-    const totalAngleX =
-      this.settings.gyroscopeMaxAngleX - this.settings.gyroscopeMinAngleX;
-    const totalAngleY =
-      this.settings.gyroscopeMaxAngleY - this.settings.gyroscopeMinAngleY;
+  onMouseLeave = () => {
+    this.transitions();
+    requestAnimationFrame(() => this.reset());
 
-    const degreesPerPixelX = totalAngleX / this.width;
-    const degreesPerPixelY = totalAngleY / this.height;
-
-    const angleX =
-      event.gamma - (this.settings.gyroscopeMinAngleX + this.gammazero);
-    const angleY =
-      event.beta - (this.settings.gyroscopeMinAngleY + this.betazero);
-
-    const posX = angleX / degreesPerPixelX;
-    const posY = angleY / degreesPerPixelY;
-
-    if (this.updateCall !== null) {
-      cancelAnimationFrame(this.updateCall);
+    if (typeof this.callbacks.onMouseLeave === 'function') {
+      this.callbacks.onMouseLeave(this.element);
     }
+  };
 
-    this.event = {
-      clientX: posX + this.left,
-      clientY: posY + this.top,
-    };
+  onDeviceMove = (e) => {
+    this.event = e;
 
-    this.updateCall = requestAnimationFrame(this.updateBind);
-  }
-
-  onMouseEnter() {
+    this.update();
     this.updateElementPosition();
-    this.element.style.willChange = 'transform';
-    this.setTransition();
-  }
+    this.transitions();
 
-  onMouseMove(event) {
-    if (this.updateCall !== null) {
-      cancelAnimationFrame(this.updateCall);
+    if (typeof this.callbacks.onDeviceMove === 'function') {
+      this.callbacks.onDeviceMove(this.element);
     }
-
-    this.event = event;
-    this.updateCall = requestAnimationFrame(this.updateBind);
-  }
-
-  onMouseLeave() {
-    this.setTransition();
-
-    if (this.settings.reset) {
-      requestAnimationFrame(this.resetBind);
-    }
-  }
+  };
 
   reset() {
-    this.onMouseEnter();
+    this.event = {
+      pageX: this.left + this.width / 2,
+      pageY: this.top + this.height / 2,
+    };
 
-    if (this.fullPageListening) {
-      this.event = {
-        clientX:
-          ((this.settings.startX + this.settings.max) /
-            (2 * this.settings.max)) *
-          this.clientWidth,
-        clientY:
-          ((this.settings.startY + this.settings.max) /
-            (2 * this.settings.max)) *
-          this.clientHeight,
-      };
-    } else {
-      this.event = {
-        clientX:
-          this.left +
-          ((this.settings.startX + this.settings.max) /
-            (2 * this.settings.max)) *
-            this.width,
-        clientY:
-          this.top +
-          ((this.settings.startY + this.settings.max) /
-            (2 * this.settings.max)) *
-            this.height,
-      };
+    if (this.settings.reset) {
+      this.element.style.transform = `perspective(${this.settings.perspective}px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
     }
 
-    let backupScale = this.settings.scale;
-    this.settings.scale = 1;
-    this.update();
-    this.settings.scale = backupScale;
-    this.resetGlare();
-  }
-
-  resetGlare() {
-    if (this.glare) {
-      this.glareElement.style.transform =
-        'rotate(180deg) translate(-50%, -50%)';
-      this.glareElement.style.opacity = '0';
+    if (this.settings.shine && !this.settings['shine-save']) {
+      Object.assign(this.shineElement.style, {
+        transform: 'rotate(180deg) translate3d(-50%, -50%, 0)',
+        opacity: '0',
+      });
     }
   }
 
   getValues() {
     let x, y;
 
-    if (this.fullPageListening) {
-      x = this.event.clientX / this.clientWidth;
-      y = this.event.clientY / this.clientHeight;
-    } else {
+    if (this.isMobile()) {
+      x = this.event.accelerationIncludingGravity.x / 4;
+      y = this.event.accelerationIncludingGravity.y / 4;
+
+      let stateX, stateY;
+
+      if (window.orientation === 90) {
+        stateX = (1.0 + x) / 2;
+        stateY = (1.0 - y) / 2;
+
+        y = stateX;
+        x = stateY;
+      } else if (window.orientation === -90) {
+        stateX = (1.0 - x) / 2;
+        stateY = (1.0 + y) / 2;
+
+        y = stateX;
+        x = stateY;
+      } else if (window.orientation === 0) {
+        stateY = (1.0 + y) / 2;
+        stateX = (1.0 + x) / 2;
+
+        y = stateY;
+        x = stateX;
+      } else if (window.orientation === 180) {
+        stateY = (1.0 - y) / 2;
+        stateX = (1.0 - x) / 2;
+
+        y = stateY;
+        x = stateX;
+      }
+    } else if (this.settings.base === 'element') {
       x = (this.event.clientX - this.left) / this.width;
       y = (this.event.clientY - this.top) / this.height;
+    } else if (this.settings.base === 'window') {
+      x = this.event.clientX / window.innerWidth;
+      y = this.event.clientY / window.innerHeight;
     }
 
     x = Math.min(Math.max(x, 0), 1);
     y = Math.min(Math.max(y, 0), 1);
 
-    let tiltX = (
-      this.reverse *
-      (this.settings.max - x * this.settings.max * 2)
-    ).toFixed(2);
-    let tiltY = (
-      this.reverse *
-      (y * this.settings.max * 2 - this.settings.max)
-    ).toFixed(2);
-    let angle =
-      Math.atan2(
-        this.event.clientX - (this.left + this.width / 2),
-        -(this.event.clientY - (this.top + this.height / 2)),
-      ) *
-      (180 / Math.PI);
+    const tiltX = (this.settings.max / 2 - x * this.settings.max).toFixed(2);
+    const tiltY = (y * this.settings.max - this.settings.max / 2).toFixed(2);
+
+    const angle = Math.atan2(x - 0.5, 0.5 - y) * (180 / Math.PI);
 
     return {
-      tiltX: tiltX,
-      tiltY: tiltY,
-      percentageX: x * 100,
-      percentageY: y * 100,
-      angle: angle,
+      tiltX: this.reverse * tiltX,
+      tiltY: this.reverse * tiltY,
+      angle,
     };
   }
 
   updateElementPosition() {
-    let rect = this.element.getBoundingClientRect();
+    const rect = this.element.getBoundingClientRect();
 
     this.width = this.element.offsetWidth;
     this.height = this.element.offsetHeight;
@@ -337,29 +196,28 @@ export default class VanillaTilt {
   }
 
   update() {
-    let values = this.getValues();
+    const values = this.getValues();
 
-    this.element.style.transform =
-      'perspective(' +
-      this.settings.perspective +
-      'px) ' +
-      'rotateX(' +
-      (this.settings.axis === 'x' ? 0 : values.tiltY) +
-      'deg) ' +
-      'rotateY(' +
-      (this.settings.axis === 'y' ? 0 : values.tiltX) +
-      'deg) ' +
-      'scale3d(' +
-      this.settings.scale +
-      ', ' +
-      this.settings.scale +
-      ', ' +
-      this.settings.scale +
-      ')';
+    this.element.style.transform = `perspective(${this.settings.perspective}px)
+      rotateX(${
+        this.settings.disabled && this.settings.disabled.toUpperCase() === 'X'
+          ? 0
+          : values.tiltY
+      }deg)
+      rotateY(${
+        this.settings.disabled && this.settings.disabled.toUpperCase() === 'Y'
+          ? 0
+          : values.tiltX
+      }deg)
+      scale3d(${this.settings.scale}, ${this.settings.scale}, ${
+        this.settings.scale
+      })`;
 
-    if (this.glare) {
-      this.glareElement.style.transform = `rotate(${values.angle}deg) translate(-50%, -50%)`;
-      this.glareElement.style.opacity = `${(values.percentageY * this.settings['max-glare']) / 100}`;
+    if (this.settings.shine) {
+      Object.assign(this.shineElement.style, {
+        transform: `rotate(${values.angle}deg) translate3d(-50%, -50%, 0)`,
+        opacity: `${this.settings['shine-opacity']}`,
+      });
     }
 
     this.element.dispatchEvent(
@@ -371,161 +229,86 @@ export default class VanillaTilt {
     this.updateCall = null;
   }
 
-  /**
-   * Appends the glare element (if glarePrerender equals false)
-   * and sets the default style
-   */
-  prepareGlare() {
-    // If option pre-render is enabled we assume all html/css is present for an optimal glare effect.
-    if (!this.glarePrerender) {
-      // Create glare element
-      const jsTiltGlare = document.createElement('div');
-      jsTiltGlare.classList.add('js-tilt-glare');
+  shine() {
+    const shineOuter = document.createElement('div');
+    const shineInner = document.createElement('div');
 
-      const jsTiltGlareInner = document.createElement('div');
-      jsTiltGlareInner.classList.add('js-tilt-glare-inner');
+    shineOuter.classList.add('shine');
+    shineInner.classList.add('shine-inner');
 
-      jsTiltGlare.appendChild(jsTiltGlareInner);
-      this.element.appendChild(jsTiltGlare);
-    }
+    shineOuter.appendChild(shineInner);
+    this.element.appendChild(shineOuter);
 
-    this.glareElementWrapper = this.element.querySelector('.js-tilt-glare');
-    this.glareElement = this.element.querySelector('.js-tilt-glare-inner');
+    this.shineWrapper = this.element.querySelector('.shine');
+    this.shineElement = this.element.querySelector('.shine-inner');
 
-    if (this.glarePrerender) {
-      return;
-    }
-
-    Object.assign(this.glareElementWrapper.style, {
+    Object.assign(this.shineWrapper.style, {
       position: 'absolute',
       top: '0',
       left: '0',
-      width: '100%',
       height: '100%',
+      width: '100%',
       overflow: 'hidden',
-      'pointer-events': 'none',
-      'border-radius': 'inherit',
     });
 
-    Object.assign(this.glareElement.style, {
+    Object.assign(this.shineElement.style, {
       position: 'absolute',
       top: '50%',
       left: '50%',
       'pointer-events': 'none',
-      'background-image': `linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%)`,
-      transform: 'rotate(180deg) translate(-50%, -50%)',
+      'background-image':
+        'linear-gradient(0deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%)',
+      width: `${this.element.offsetWidth * 2}px`,
+      height: `${this.element.offsetWidth * 2}px`,
+      transform: 'rotate(180deg) translate3d(-50%, -50%, 0)',
       'transform-origin': '0% 0%',
       opacity: '0',
     });
-
-    this.updateGlareSize();
   }
 
-  updateGlareSize() {
-    if (this.glare) {
-      const glareSize =
-        (this.element.offsetWidth > this.element.offsetHeight
-          ? this.element.offsetWidth
-          : this.element.offsetHeight) * 2;
+  transitions() {
+    clearTimeout(this.timeout);
 
-      Object.assign(this.glareElement.style, {
-        width: `${glareSize}px`,
-        height: `${glareSize}px`,
-      });
+    this.element.style.transition = `all ${this.settings.speed}ms ${this.settings.easing}`;
+
+    if (this.settings.shine) {
+      this.shineElement.style.transition = `opacity ${this.settings.speed}ms ${this.settings.easing}`;
     }
-  }
 
-  updateClientSize() {
-    this.clientWidth =
-      window.innerWidth ||
-      document.documentElement.clientWidth ||
-      document.body.clientWidth;
-
-    this.clientHeight =
-      window.innerHeight ||
-      document.documentElement.clientHeight ||
-      document.body.clientHeight;
-  }
-
-  onWindowResize() {
-    this.updateGlareSize();
-    this.updateClientSize();
-  }
-
-  setTransition() {
-    clearTimeout(this.transitionTimeout);
-    this.element.style.transition =
-      this.settings.speed + 'ms ' + this.settings.easing;
-    if (this.glare)
-      this.glareElement.style.transition = `opacity ${this.settings.speed}ms ${this.settings.easing}`;
-
-    this.transitionTimeout = setTimeout(() => {
+    this.timeout = setTimeout(() => {
       this.element.style.transition = '';
-      if (this.glare) {
-        this.glareElement.style.transition = '';
-      }
+      if (this.settings.shine) this.shineElement.style.transition = '';
     }, this.settings.speed);
   }
 
-  /**
-   * Method return patched settings of instance
-   * @param {boolean} settings.reverse - reverse the tilt direction
-   * @param {number} settings.max - max tilt rotation (degrees)
-   * @param {startX} settings.startX - the starting tilt on the X axis, in degrees. Default: 0
-   * @param {startY} settings.startY - the starting tilt on the Y axis, in degrees. Default: 0
-   * @param {number} settings.perspective - Transform perspective, the lower the more extreme the tilt gets
-   * @param {string} settings.easing - Easing on enter/exit
-   * @param {number} settings.scale - 2 = 200%, 1.5 = 150%, etc..
-   * @param {number} settings.speed - Speed of the enter/exit transition
-   * @param {boolean} settings.transition - Set a transition on enter/exit
-   * @param {string|null} settings.axis - What axis should be enabled. Can be "x" or "y"
-   * @param {boolean} settings.glare - if it should have a "glare" effect
-   * @param {number} settings.max-glare - the maximum "glare" opacity (1 = 100%, 0.5 = 50%)
-   * @param {boolean} settings.glare-prerender - false = VanillaTilt creates the glare elements for you, otherwise
-   * @param {boolean} settings.full-page-listening - If true, parallax effect will listen to mouse move events on the whole document, not only the selected element
-   * @param {string|object} settings.mouse-event-element - String selector or link to HTML-element what will be listen mouse events
-   * @param {boolean} settings.reset - false = If the tilt effect has to be reset on exit
-   * @param {boolean} settings.reset-to-start - true = On reset event (mouse leave) will return to initial start angle (if startX or startY is set)
-   * @param {gyroscope} settings.gyroscope - Enable tilting by deviceorientation events
-   * @param {gyroscopeSensitivity} settings.gyroscopeSensitivity - Between 0 and 1 - The angle at which max tilt position is reached. 1 = 90deg, 0.5 = 45deg, etc..
-   * @param {gyroscopeSamples} settings.gyroscopeSamples - How many gyroscope moves to decide the starting position.
-   */
   extendSettings(settings) {
-    let defaultSettings = {
-      reverse: false,
-      max: 15,
-      startX: 0,
-      startY: 0,
-      perspective: 1000,
-      easing: 'cubic-bezier(.03,.98,.52,.99)',
-      scale: 1,
-      speed: 300,
-      transition: true,
-      axis: null,
-      glare: false,
-      'max-glare': 1,
-      'glare-prerender': false,
-      'full-page-listening': false,
-      'mouse-event-element': null,
-      reset: true,
-      'reset-to-start': true,
-      gyroscope: true,
-      gyroscopeMinAngleX: -45,
-      gyroscopeMaxAngleX: 45,
-      gyroscopeMinAngleY: -45,
-      gyroscopeMaxAngleY: 45,
-      gyroscopeSamples: 10,
+    const defaultSettings = {
+      base: 'element', // element or window
+      disabled: null, // disable axis (X or Y)
+      easing: 'cubic-bezier(.03, .98, .52, .99)', // transition easing
+      exclude: null, // enable/disable tilt effect on selected user agents
+      max: 35, // max tilt value
+      perspective: 1000, // tilt effect perspective
+      reset: true, // enable/disable element position reset after mouseout
+      reverse: false, // reverse tilt effect directory
+      scale: 1.0, // element scale on mouseover
+      shine: false, // add/remove shine effect on mouseover
+      'shine-opacity': 0, // shine opacity (0-1) (shine value must be true)
+      'shine-save': false, // save/reset shine effect on mouseout (shine value must be true)
+      speed: 300, // transition speed
     };
 
-    let newSettings = {};
-    for (var property in defaultSettings) {
+    const newSettings = {};
+
+    for (const property in defaultSettings) {
       if (property in settings) {
         newSettings[property] = settings[property];
-      } else if (this.element.hasAttribute('data-tilt-' + property)) {
-        let attribute = this.element.getAttribute('data-tilt-' + property);
+      } else if (this.element.getAttribute(`data-${property}`)) {
+        const attribute = this.element.getAttribute(`data-${property}`);
+
         try {
           newSettings[property] = JSON.parse(attribute);
-        } catch (e) {
+        } catch {
           newSettings[property] = attribute;
         }
       } else {
@@ -536,23 +319,16 @@ export default class VanillaTilt {
     return newSettings;
   }
 
-  static init(elements, settings) {
-    if (elements instanceof Node) {
-      elements = [elements];
-    }
+  static init(data = {}) {
+    let { elements, settings, callbacks } = data;
 
-    if (elements instanceof NodeList) {
-      elements = [].slice.call(elements);
-    }
+    if (elements instanceof Node) elements = [elements];
+    if (elements instanceof NodeList) elements = [].slice.call(elements);
 
-    if (!(elements instanceof Array)) {
-      return;
-    }
-
-    elements.forEach((element) => {
-      if (!('vanillaTilt' in element)) {
-        element.vanillaTilt = new VanillaTilt(element, settings);
+    for (const element of elements) {
+      if (!('universalTilt' in element)) {
+        element.universalTilt = new UniversalTilt(element, settings, callbacks);
       }
-    });
+    }
   }
 }

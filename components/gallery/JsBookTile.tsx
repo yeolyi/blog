@@ -4,7 +4,7 @@ import Image from 'next/image';
 import { Tile } from './Tile';
 import jsbook from '@/public/jsbook.png';
 import { useEffect, useRef } from 'react';
-import VanillaTilt from './tilt';
+import UniversalTilt from './tilt';
 
 export default function JSBookTile() {
   let imageRef = useRef<HTMLDivElement | null>(null);
@@ -13,9 +13,12 @@ export default function JSBookTile() {
     let cur = imageRef.current;
     if (cur === null) return;
 
-    VanillaTilt.init(cur, { glare: true, 'max-glare': 0.5 });
+    UniversalTilt.init({
+      elements: cur,
+      settings: { shine: true, 'shine-opacity': 0.7, reverse: true },
+    });
     // @ts-expect-error
-    return () => cur.vanillaTilt.destroy();
+    return () => cur.universalTilt.destroy();
   }, []);
 
   return (
