@@ -233,10 +233,18 @@ console.log(...bar());`,
   },
   {
     name: '메타 프로그래밍',
-    description: '-',
-    concepts: '-',
+    description:
+      '코드를 수정하는 코드인 메타 프로그래밍에 관련된 API들을 공부했습니다.',
+    concepts: 'Property Attributes, Template Tags, Reflect, Proxy',
     href: '/js/meta',
-    content: ``,
+    content: `function accessDB() {}
+
+let { proxy, revoke } 
+  = Proxy.revocable(accessDB, {});
+
+proxy();
+revoke();
+proxy()`,
   },
 ];
 

@@ -413,11 +413,14 @@ console.log(raw`\n\n\n`);
 
 ## The Reflect API
 
-`Math` 객체처럼 서로 관련있는 함수들의 집합입니다. 다음에 배울
-`Proxy handler methods`들과 1:1 관계를 가져 유용합니다.
+`Math` 객체처럼 서로 관련있는 함수들의 집합입니다. 다음에 배울 프록시 핸들러
+메서드들과 1:1 관계를 가져 유용합니다.
 
 아래는 Reflect API의 목록입니다. 옆에 비슷한 일을 하는 코드를 병기했어요. 미묘한
-차이점은 있으니 자세한건 문서를 참고하세요:
+차이점은 있으니(get에서 대상이 없는 경우 undefined가 아닌 TypeError를 내는
+등...) 자세한건 문서를 참고하세요:
+
+https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Reflect
 
 | Reflect                                     | Similar code                                                 |
 | ------------------------------------------- | ------------------------------------------------------------ |
@@ -464,6 +467,98 @@ console.log(
 );
 ```
 
-https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Reflect
+> ...결국, Receiver는 말 그대로 프로토타입 체이닝 속에서, 최초로 작업 요청을
+> 받은 객체가 무엇인지 알 수 있게 해준다:
+
+https://ui.toast.com/posts/ko_20210413
 
 ## Proxy Objects
+
+JS의 가장 강력한 메타 프로그래밍 기능입니다.
+
+```js
+// @noexec
+let proxy = new Proxy(target, handlers);
+```
+
+프록시 객체 자체는 상태를 가지지 않고 프록시 객체를 향한 모든 작업은 핸들러
+객체가 타겟 객체로 디스패치됩니다. 핸들러 객체가 지원하는 작업은 Reflect API와
+동일합니다.
+
+`Proxy.revocable()`로 중지 가능한 프록시 객체를 만들 수 있습니다:
+
+```js
+function accessDB() {
+  // 구현 생략
+  return 123;
+}
+
+let { proxy, revoke } = Proxy.revocable(accessDB, {});
+console.log(proxy());
+revoke();
+console.log(proxy());
+```
+
+프록시 핸들러 예시:
+
+```js
+let loggingProxy = (o, objname) => {
+  let handlers = {
+    get(target, property, receiver) {
+      console.log(`Handler get(${objname},${property.toString()})`);
+      let value = Reflect.get(target, property, receiver);
+
+      let isOwnObject =
+        Reflect.ownKeys(target).includes(property) &&
+        (typeof value === 'object' || typeof value === 'function');
+
+      // logging behavior of this proxy is "contagious"
+      return isOwnObject
+        ? loggingProxy(value, `${objname}.${property.toString()}`)
+        : value;
+    },
+
+    // 무한 재귀를 막기 위해 receiver가 인자로 있는 경우의 핸들러는 직접 정의합니다.
+    set(target, prop, value, receiver) {
+      console.log(`Handler set(${objname},${prop.toString()},${value})`);
+      return Reflect.set(target, prop, value, receiver);
+    },
+
+    apply(target, receiver, args) {
+      console.log(`Handler ${objname}(${args})`);
+      return Reflect.apply(target, receiver, args);
+    },
+
+    construct(target, args, receiver) {
+      console.log(`Handler ${objname}(${args})`);
+      return Reflect.construct(target, args, receiver);
+    },
+  };
+
+  for (let handlerName of Reflect.ownKeys(Reflect)) {
+    if (handlerName in handlers) continue;
+
+    handlers[handlerName] = (target, ...args) => {
+      console.log(`Handler ${handlerName}(${objname},${args})`);
+      return Reflect[handlerName](target, ...args);
+    };
+  }
+
+  return new Proxy(o, handlers);
+};
+
+let data = [1, 2];
+let methods = { square: (x) => x * x };
+
+let proxyData = loggingProxy(data, 'data');
+let proxyMethods = loggingProxy(methods, 'methods');
+
+data.map(proxyMethods.square);
+console.log();
+
+proxyData.map(methods.square);
+console.log();
+
+for (let x of proxyData) {
+}
+```
