@@ -41,7 +41,7 @@ export default class UniversalTilt {
   }
 
   removeEventListeners() {
-    if (this.isMobile) {
+    if (this.isMobile()) {
       window.removeEventListener('devicemotion', this.onDeviceMove);
     } else {
       this.base.removeEventListener('mouseenter', this.onMouseEnter);

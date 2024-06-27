@@ -1,0 +1,469 @@
+# Metaprogramming
+
+> If regular programming is writing code to manipulate data, then
+> **metaprogramming** is writing code to manipulate other code
+
+## Property Attributes
+
+객체의 프로퍼티들은 세 가지의 속성을 가집니다
+
+- writable: 프로퍼티의 값이 바뀔 수 있는지
+- enumerable: `for/in` 루프나 `Object.keys()`에 의해 순회될 수 있는지
+- configurable: 프로퍼티가 삭제되거나 속성이 바뀔 수 있는지
+
+위 속성을 설정하는건 라이브러리 작성자들에게 특히 중요한데, 라이브러리 기능들이
+JS 빌트인 기능처럼 취급되도록 수정할 수 있기 때문입니다.
+
+속성을 얻는 방법입니다:
+
+```js
+let square = {
+  side: 1,
+  get area() {
+    return this.side ** 2;
+  },
+};
+
+console.log(Object.getOwnPropertyDescriptor(square, 'side'));
+console.log(Object.getOwnPropertyDescriptor(square, 'area'));
+console.log(Object.getOwnPropertyDescriptor(square, 'toString'));
+```
+
+`defineProperty`로 속성을 추가/수정하는 방법입니다:
+
+```js
+// ✍️ 아래 주석을 해제해보세요.
+// 'use strict';
+
+let arr = [1, 2, 3];
+
+// 추가. 명시되지 않은 속성은 false이기에 writable이 false입니다.
+Object.defineProperty(arr, '3', { value: 4, enumerable: true });
+arr[3] = 10;
+console.log(arr[3]);
+console.log();
+
+// 수정
+Object.defineProperty(arr, '1', { enumerable: false });
+
+// enumerable이 false면 순회하지 않습니다.
+for (let i in arr) console.log(arr[i]);
+console.log();
+
+// iterator 기반인 for/of 루프는 영향받지 않습니다.
+for (let i of arr) console.log(i);
+console.log();
+```
+
+`defineProperties`로 여러 프로퍼티를 한 번에 추가할 수 있고, `Object.create`의
+두 번째 인자와 쓰임새가 같아요:
+
+```js
+let props = {
+  x: { value: 1, writable: true, enumerable: true },
+  y: { value: 1, writable: true, enumerable: true },
+  r: {
+    get() {
+      return Math.sqrt(this.x * this.x + this.y * this.y);
+    },
+    // ✍️ 아래 주석을 해제해보세요.
+    // enumerable: true,
+  },
+};
+
+let obj1 = Object.defineProperties({}, props);
+console.log(obj1.r);
+console.log(Object.keys(obj1));
+
+let obj2 = Object.create({}, props);
+console.log(obj2.r);
+console.log(Object.keys(obj2));
+```
+
+데이터 프로퍼티가 configurable하지 않더라고 writable을 false로 바꿀 수는
+있습니다:
+
+```js
+let obj = Object.defineProperties({}, { x: { value: 1, writable: true } });
+
+// writable true -> false
+Object.defineProperty(obj, 'x', { writable: false });
+obj.x = 10;
+console.log(obj.x);
+
+// writable false -> true
+Object.defineProperty(obj, 'x', { writable: true });
+```
+
+writable이 false더라고 configurable하다면 어떻게든 값을 바꿀 수 있습니다:
+
+```js
+let obj = Object.defineProperties({}, { x: { value: 1, configurable: true } });
+Object.defineProperty(obj, 'x', { writable: true });
+obj.x = 123;
+Object.defineProperty(obj, 'x', { writable: false });
+console.log(obj.x);
+```
+
+`Object.assign` 혹은 스프레드 연산자는 enumerable한 프로퍼티의
+value만을(attribute는 x) 복사합니다:
+
+```js
+let obj1 = Object.defineProperties({}, { x: { value: 1, enumerable: true } });
+let obj2 = { ...obj1 };
+
+console.log(Object.getOwnPropertyDescriptor(obj1, 'x'));
+// 더이상 non-writable하지 않습니다.
+console.log(Object.getOwnPropertyDescriptor(obj2, 'x'));
+```
+
+또한 getter 함수 자체가 아닌 반환값을 복사합니다:
+
+```js
+let obj1 = {
+  x: 1,
+  get y() {
+    return this.x * 2;
+  },
+};
+let obj2 = { ...obj1 };
+
+// { get: ... }
+console.log(Object.getOwnPropertyDescriptor(obj1, 'y'));
+// { value: ... }
+console.log(Object.getOwnPropertyDescriptor(obj2, 'y'));
+
+obj1.x = 10;
+console.log(obj1.y);
+
+obj2.x = 10;
+console.log(obj2.y);
+```
+
+getter 함수 자체를 복사하려면 아래와 같은 방법이 있습니다:
+
+```js
+let assignDescriptors = (src, dst) => {
+  for (let name of Object.getOwnPropertyNames(src)) {
+    let desc = Object.getOwnPropertyDescriptor(src, name);
+    Object.defineProperty(dst, name, desc);
+  }
+  // (심볼도 복사하고 싶으면 같은 방식으로 getOwnPropertySymbols를 활용합니다.)
+  return dst;
+};
+
+let obj1 = {
+  x: 1,
+  get y() {
+    return this.x * 2;
+  },
+};
+let obj2 = assignDescriptors(obj1, {});
+console.log(Object.getOwnPropertyDescriptor(obj2, 'y'));
+```
+
+## Object Extensibility
+
+객체의 extensible 속성은 새로운 프로퍼티를 추가할 수 있는지 여부를 나타냅니다.
+
+```js
+let obj = {};
+console.log(Object.isExtensible(obj));
+
+Object.preventExtensions(obj);
+console.log(Object.isExtensible(obj));
+
+obj.x = 10;
+console.log(obj.x);
+```
+
+preventExtension을 하더라도 객체의 프로토타입 객체가 바뀌는거에는 영향을
+받습니다.
+
+```js
+let obj1 = {};
+let obj2 = Object.create(obj1);
+Object.preventExtensions(obj2);
+
+console.log(obj2.x);
+obj1.x = 123;
+console.log(obj2.x);
+```
+
+`Object.seal()`은 객체를 non-extensible하게, 프로퍼티들을 nonconfigurable하게
+합니다.
+
+```js
+let obj = { x: 1 };
+Object.seal(obj);
+console.log(Object.isSealed(obj));
+
+// 수정은 됩니다.
+obj.x = 123;
+console.log(obj.x);
+```
+
+`Object.freeze`는 수정도 안됩니다:
+
+```js
+let obj = { x: 1 };
+Object.freeze(obj);
+console.log(Object.isFrozen(obj));
+
+obj.x = 123;
+console.log(obj.x);
+```
+
+## The prototype Attribute
+
+```js
+let parent = { x: 1 };
+let child = Object.create(parent);
+
+console.log(parent.isPrototypeOf(child));
+console.log(Object.prototype.isPrototypeOf(parent));
+```
+
+`setPrototypeOf`로 프로토타입을 바꿀 수는 있지만 딱히 쓸 이유는 없고 최적화등을
+방해할 수도 있습니다:
+
+```js
+let parent1 = { x: 1 };
+let parent2 = { x: 2 };
+let child = Object.create(parent1);
+
+console.log(child.x);
+
+Object.setPrototypeOf(child, parent2);
+console.log(child.x);
+```
+
+## Well-Known Symbols
+
+### Symbol.iterator / Symbol.asyncIterator
+
+https://yeolyi.com/js/iterator
+
+### Symbol.hasInstance
+
+```js
+let obj = {
+  [Symbol.hasInstance](x) {
+    return true;
+  },
+};
+
+console.log(1 instanceof obj);
+console.log('hello' instanceof obj);
+console.log(/regex/ instanceof obj);
+```
+
+### Symbol.toStringTag
+
+`Object.prototype.toString`이 해당 심볼이 이름인 프로퍼티의 값을 참고합니다:
+
+```js
+function classof(o) {
+  return Object.prototype.toString.call(o).slice(8, -1);
+}
+
+class A {
+  get [Symbol.toStringTag]() {
+    return 'A';
+  }
+}
+
+console.log(classof(null));
+console.log(classof('string'));
+console.log(classof(new A()));
+```
+
+### Symbol.species
+
+빌트인 클래스를 상속해 커스텀 클래스를 만들었을 때, 아래와 같은 고민 사항이
+있습니다:
+
+```js
+class MyArray extends Array {}
+
+let arr = new MyArray(1, 2, 3);
+let arr2 = arr.map((x) => x + 1);
+
+// arr2는 자식 클래스의 인스턴스여야할까요 부모 클래스만의 인스턴스여야할까요?
+// 일단 JS에서는 기본적으로 자식 클래스의 인스턴스입니다.
+console.log(arr2 instanceof MyArray);
+console.log(arr2 instanceof Array);
+```
+
+따라서 `map`이나 `reduce`등의 메서드는
+`new this.constructor[Symbol.species]()`처럼 새로 만들 배열 객체를 어떻게 만들지
+`Symbol.species`에 물어봅니다.
+
+빌트인 Array 클래스에 정의된 `Symbol.species` 프로퍼티는 `this`를 반환하는
+getter 함수로 자식 클래스의 생성자에 자동으로 상속됩니다. setter가 없어 수정이
+불가능합니다.
+
+```js
+console.log(Array[Symbol.species] === Array);
+console.log(Object.getOwnPropertyDescriptor(Array, Symbol.species));
+
+class MyArray extends Array {}
+console.log(MyArray[Symbol.species] === MyArray);
+```
+
+`Object.defineProperty`로 수정할 수 있습니다:
+
+```js
+class MyArray extends Array {}
+Object.defineProperty(MyArray, Symbol.species, { value: Array });
+
+let arr = new MyArray(1, 2, 3);
+let arr2 = arr.map((x) => x + 1);
+
+console.log(arr2 instanceof MyArray);
+console.log(arr2 instanceof Array);
+```
+
+### Symbol.isConcatSpreadable
+
+`concat`에서 배열인 인자는 순회되어 그 원소가 추가됩니다:
+
+```js
+console.log([1, 2].concat([3, [4], 5]));
+```
+
+이때 인자가 배열인지 여부를 `Symbol.isConcatSpreadable` 프로퍼티가 있다면 해당
+프로퍼티의 값으로 판단합니다:
+
+```js
+let arraylike = {
+  length: 2,
+  0: 1,
+  1: 2,
+  // ✍️ false로 바꿔보세요
+  [Symbol.isConcatSpreadable]: true,
+};
+
+console.log([].concat(arraylike));
+```
+
+### Pattern-Matching Symbols
+
+이전에 regex 챕터 건너뛰어서 여기도 생략
+
+### Symbol.toPrimitive
+
+객체에서 원시값으로 바꾸는 과정에서 어떤 값을 선호할지 선택할 수 있습니다:
+
+```js
+let obj = {
+  [Symbol.toPrimitive](preference) {
+    console.log(preference);
+    return 123;
+  },
+};
+
+// string
+`${obj}`;
+// number
+obj < 1;
+// default
+obj + 1;
+obj == '1';
+```
+
+ES6 전까지 이런 짓은 네이티브 클래스에서만 가능했습니다.
+
+### Symbol.unscopables
+
+`with`문은 객체를 받아 해당 객체의 프로퍼티들이 선언된 스코프를 제공합니다:
+
+```js
+let obj = { x: 1 };
+with (obj) {
+  console.log(x);
+}
+```
+
+Array 클래스에 새로운 메서드들이 추가되었을 때 `with`문에 대한 호환성 이슈가
+있었는데, 이를 해결하기 위해 추가된 심볼입니다:
+
+```js
+// 아래에 있는 값들은 with에서 스코프에 제공하지 않습니다.
+console.log(Object.keys(Array.prototype[Symbol.unscopables]));
+```
+
+## Template Tags
+
+새로운 태그 함수를 만드는건 JS에 새로운 문법을 도입하는 것과 유사해서(GraphQL,
+emotion 등등...) 메타프로그래밍 중 하나로 생각할 수 있습니다.
+
+```js
+let foo = (...args) => args;
+console.log(foo`a${1}b${2}c`);
+```
+
+<br />
+
+```js
+let raw = (strings) => strings.raw.join('');
+console.log(String.raw`\n\n\n`);
+console.log(raw`\n\n\n`);
+```
+
+## The Reflect API
+
+`Math` 객체처럼 서로 관련있는 함수들의 집합입니다. 다음에 배울
+`Proxy handler methods`들과 1:1 관계를 가져 유용합니다.
+
+아래는 Reflect API의 목록입니다. 옆에 비슷한 일을 하는 코드를 병기했어요. 미묘한
+차이점은 있으니 자세한건 문서를 참고하세요:
+
+| Reflect                                     | Similar code                                                 |
+| ------------------------------------------- | ------------------------------------------------------------ |
+| Reflect.apply(f, o, args)                   | f.apply(o, args)                                             |
+| Reflect.construct                           |                                                              |
+| Reflect.defineProperty(o, name ,descriptor) | Object.defineProperty                                        |
+| Reflect.deleteProperty(o, name)             | delete o[name]                                               |
+| Reflect.get(o, name, receiver)              | o[name]                                                      |
+| Reflect.getOwnPropertyDescriptor(o, name)   | Object.getOwnPropertyDescriptor()                            |
+| Reflect.has(o, name)                        | name in o                                                    |
+| Reflect.isExtensible(o)                     | Object.isExtensible()                                        |
+| Reflect.ownKeys(o)                          | Object.getOwnPropertyNames(), Object.getOwnPropertySymbols() |
+| Reflect.preventExtensions(o)                | Object.preventExtensions()                                   |
+| Reflect.set(o, name, value, receiver)       | o[name] = value                                              |
+| Reflect.setPrototypeOf(o, p)                | Object.setPrototypeOf()                                      |
+
+```js
+// Reflect.construct
+// 세번째 인자로 new.target의 값을 설정할 수 있습니다.
+let obj = Reflect.construct(
+  function (...args) {
+    console.log(args);
+    this.x = 1;
+  },
+  [2, 3],
+);
+console.log(obj);
+
+// Reflect.get
+console.log(Reflect.get({ x: 1 }, 'x'));
+// name에 해당하는 프로퍼티가 getter 함수고 receiver를 전달했다면
+// 해당 객체의 메서드로서 getter가 실행됩니다.
+console.log(
+  Reflect.get(
+    {
+      x: 1,
+      get y() {
+        return this.x;
+      },
+    },
+    'y',
+    { x: 2 },
+  ),
+);
+```
+
+https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Reflect
+
+## Proxy Objects

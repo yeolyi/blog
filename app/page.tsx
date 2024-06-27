@@ -13,8 +13,8 @@ import { PostContainer, PostTile, PostTileProps } from '@/components/Post';
 import { CserealBg } from '@/components/mainbg/CserealBg';
 import InstaBg from '@/components/mainbg/InstaBg';
 import { WideTile, WideTileProps } from '@/components/gallery/WideTile';
-import jsbook from '@/public/jsbook.png';
 import JSBookTile from '@/components/gallery/JsBookTile';
+import Giscus from '@/components/Giscus';
 
 export default function Page() {
   return (
@@ -71,6 +71,13 @@ export default function Page() {
             <PostTile key={prop.title} {...prop} />
           ))}
         </PostContainer>
+      </Section>
+
+      <Section className="horizontal-pad pb-[64px]">
+        <SectionHeadline>
+          <strong>방명록 🙌</strong>
+        </SectionHeadline>
+        <Giscus notLazy />
       </Section>
     </main>
   );
@@ -223,6 +230,13 @@ console.log(...bar());`,
   .then(() => console.log(1))
   .then(() => console.log(2))
   .then(() => console.log(3));`,
+  },
+  {
+    name: '메타 프로그래밍',
+    description: '-',
+    concepts: '-',
+    href: '/js/meta',
+    content: ``,
   },
 ];
 
