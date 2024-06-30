@@ -1,6 +1,6 @@
 import type { MDXComponents } from 'mdx/types';
 import PreviewAnchor from './components/PreviewAnchor';
-import Sandbox from './components/code/Sandbox';
+import Code from './components/code/Code';
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
   return {
@@ -11,7 +11,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     code: (props) => {
       const content = props.children?.toString() ?? '';
       const code = content.trim();
-      return <Sandbox language={props.className} src={code} />;
+      return <Code language={props.className} src={code} />;
     },
     a: PreviewAnchor,
   };

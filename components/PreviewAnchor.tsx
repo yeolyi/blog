@@ -43,7 +43,14 @@ const fetchMetadata = async (href: string) => {
   try {
     const resp = await fetch(href);
     const data = await resp.text();
-    const dom = new JSDOM(data);
+
+    // CSS 제거 workaround
+    // https://github.com/jsdom/jsdom/issues/2005#issuecomment-1758940894
+    const dom = new JSDOM(
+      data
+        .replace(/<style([\S\s]*?)>([\S\s]*?)<\/style>/gim, '')
+        ?.replace(/<script([\S\s]*?)>([\S\s]*?)<\/script>/gim, ''),
+    );
     const document = dom.window.document;
 
     const ogtitle = document

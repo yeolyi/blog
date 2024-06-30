@@ -306,12 +306,13 @@ let webList: Omit<TileProps, 'background'>[] = [
     href: '/webapi/basic',
     content: {
       type: 'html',
-      code: `<span></span>
-<script>
-  let span = document.querySelector('span');
-  setInterval(() => {
-    span.innerText = new Date().toLocaleTimeString()
-  }, 1000);
+      code: `<script>
+  let update = () => {
+    let str = new Date().toLocaleTimeString();
+    document.body.innerText = str;
+  }
+  setInterval(update, 1000);
+  update();
 </script>`,
     },
   },
@@ -323,12 +324,23 @@ let webList: Omit<TileProps, 'background'>[] = [
     href: '/webapi/event',
     content: {
       type: 'html',
-      code: `<script>
+      code: `<h1></h1>
+<script>
   let setBody = (str) => document.body.innerText = str;
   addEventListener('offline', () => setBody('offline'));
   addEventListener('online', () => setBody('online'));
   setBody(navigator.onLine ? 'online' : 'offline');
 </script>`,
+    },
+  },
+  {
+    name: 'Document',
+    description: '',
+    concepts: '',
+    href: '/webapi/document',
+    content: {
+      type: 'html',
+      code: ``,
     },
   },
 ];

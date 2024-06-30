@@ -1,0 +1,209 @@
+# Scripting Documents
+
+Cliend-side JS는 정적인 HTML document를 인터렉티브한 웹 앱으로 바꾸기 위해
+존재합니다. Document를 제어하는(scripting)하는 방법을 공부해봅시다.
+
+## Selecting Document Elements
+
+`querySelectorAll()`은 선택자에 부합하는 자식 Element들을 반환합니다:
+
+```html
+<h1></h1>
+<h2></h2>
+<h3></h3>
+<script>
+  console.log(document.head, document.body);
+  let arrayLike = document.querySelectorAll('h1, h2, h3');
+  Array.from(arrayLike).forEach((h) => (h.innerText = 'hi'));
+</script>
+```
+
+`closest()`는 반대로 트리 위쪽을 탐색합니다:
+
+```html
+<ul>
+  <li></li>
+</ul>
+<script>
+  let insideList = (e) => e.closest('ul,ol,dl') !== null;
+  let li = document.querySelector('li');
+  console.log(insideList(li));
+</script>
+```
+
+`matches()`는 element가 선택자에 부합하는지 반환합니다:
+
+```html
+<h1></h1>
+<script>
+  let isHeading = (e) => e.matches('h1,h2,h3,h4,h5,h6');
+  let h = document.querySelector('h1');
+  console.log(isHeading(h));
+</script>
+```
+
+`querySelectorAll`는 `NodeList`를 반환합니다. `NodeList`는 DOM의 변화가 반영되는
+live한 것과 static한 것으로 나뉩니다:
+
+```html
+<div></div>
+<div></div>
+<script>
+  // childNodes는 live입니다.
+  // Node들을 반환합니다.
+  let list1 = document.body.childNodes;
+  // querySelectorAll은 static합니다.
+  // Element들을 반환합니다.
+  let list2 = document.body.querySelectorAll('div');
+  console.log(list1.constructor.name, list2.constructor.name);
+
+  console.log(list1.length, list2.length);
+  document.body.appendChild(document.createElement('div'));
+  console.log(list1.length, list2.length);
+</script>
+```
+
+`getElementsByTagName`과 `getElementsByClassName`은 `NodeList` 대신
+`HTMLCollection`을 반환합니다. Live 객체입니다:
+
+```html
+<h1></h1>
+<script>
+  let list = document.getElementsByTagName('h1');
+  console.log(list.constructor.name);
+
+  console.log(list.length);
+  document.body.appendChild(document.createElement('h1'));
+  console.log(list.length);
+</script>
+```
+
+https://www.reddit.com/r/learnjavascript/comments/ozmlr0/any_reason_to_use_any_other_document_selector/
+
+## Document Structure and Traversal
+
+Text Node에 관심 없고 Element 노드만 순회하고 싶으면 `Element`에 정의된
+traversal API를 활용할 수 있습니다. 따로 메서드는 없고 트리 관계에 연관된
+프로퍼티들이 있습니다:
+
+```html
+text1
+<div id="div1"></div>
+<!-- comment -->
+<div id="div2"></div>
+text2
+
+<script>
+  let body = document.body;
+  let div = document.querySelector('#div2');
+
+  console.log(div.parentNode);
+  console.log(...body.children);
+  console.log(body.firstElementChild, body.lastElementChild);
+  console.log(div.nextElementSibling, div.previousElementSibling);
+</script>
+```
+
+Text Node나 Comment Node도 포함해 순회하고 싶으면 아래 프로퍼티들을 사용합니다:
+
+```html
+<div id="div1">
+  text1
+  <div id="div2">
+    <div id="div3"></div>
+    text2
+  </div>
+  <!-- comment -->
+</div>
+
+<script>
+  let body = document.body;
+  let div = document.querySelector('#div1');
+
+  console.log(...div.childNodes);
+  console.log(div.firstChild, div.lastChild);
+  console.log(div.nextSibling, div.previousSibling);
+
+  // 예제
+  let logNode = (node) => {
+    console.log(
+      node.nodeType,
+      node.nodeName,
+      node.nodeType === Node.ELEMENT_NODE ? node.id : '',
+    );
+
+    for (let next of node.childNodes) logNode(next);
+  };
+
+  logNode(div);
+</script>
+```
+
+## Attributes
+
+HTML element는 태그 이름과 속성들로 구성됩니다. 대부분의 속성은 같은 이름의
+프로퍼티로 접근 및 수정할 수 있어요.
+
+몇몇 예외들입니다:
+
+```html
+<input value="default" class="foo" />
+<script>
+  let input = document.querySelector('input');
+
+  console.log(input.value, input.defaultValue);
+  console.log(input.className);
+</script>
+```
+
+속성을 없애고 싶으면 delete가 아닌 `removeAttribute()`를 사용합니다.
+
+`classList`로 클래스들을 수정할 수 있습니다:
+
+```html
+<style>
+  div {
+    width: 100px;
+    height: 100px;
+    background-color: blue;
+  }
+  .foo {
+    background-color: red;
+  }
+</style>
+<div />
+<script>
+  let div = document.querySelector('div');
+
+  // add
+  div.classList.add('foo');
+  console.log(...div.classList);
+
+  // remove
+  div.classList.remove('foo');
+
+  // contains
+  console.log(div.classList.contains('foo'));
+
+  div.addEventListener('click', () => div.classList.toggle('foo'));
+</script>
+```
+
+dataset 속성을 통해 element에 추가적인 정보를 붙일 수 있습니다:
+
+```html
+<h2 data-section-number="16.1">dataset attribute</h2>
+<script>
+  let h2 = document.querySelector('h2');
+  // 카멜 케이스로 접근 가능합니다.
+  console.log(h2.dataset.sectionNumber);
+</script>
+```
+
+## Element Content
+
+.
+
+## Creating, Inserting, and Deleting Nodes
+
+## Example: Generating a Table of Contents
