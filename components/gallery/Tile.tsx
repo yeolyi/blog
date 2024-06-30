@@ -1,15 +1,24 @@
 import Link from 'next/link';
-import { ReactNode } from 'react';
+import { CSSProperties, ReactNode } from 'react';
 import { FaChevronRight } from 'react-icons/fa6';
 import JSSandbox from '../code/JSSandbox';
+import HTMLSandbox from '../code/HTMLSandbox';
 
 export type TileProps = {
   name: string;
   description: string;
+  style?: CSSProperties;
   concepts?: string;
   href?: string;
-  content?: string | ReactNode;
-  background?: string;
+  content?:
+    | {
+        type: 'js' | 'html';
+        code: string;
+      }
+    | {
+        type: 'custom';
+        children: ReactNode;
+      };
 };
 
 export const Tile = ({
@@ -18,23 +27,13 @@ export const Tile = ({
   concepts,
   href,
   content,
-  background,
+  style,
 }: TileProps) => {
   return (
     <TileContainer>
       <div
         className="z-10 flex w-full flex-col items-start gap-[10px] p-[20px] pr-[25px] pt-[25px] text-textblack md:p-[25px] md:pt-[30px]"
-        style={{
-          backgroundImage:
-            background ??
-            `linear-gradient(
-        163deg,
-    hsl(51deg 97% 59%) 1%,
-    hsl(50deg 93% 58%) 51%,
-    hsl(49deg 90% 56%) 49%,
-    hsl(48deg 86% 54%) 99%
-  )`,
-        }}
+        style={style}
       >
         <TileTitle>{name}</TileTitle>
         <p className="text-[14px] font-normal leading-[1.429] tracking-[0.022em] lg:text-[17px] lg:leading-[1.352]">
@@ -50,10 +49,11 @@ export const Tile = ({
         )}
 
         <div className="mb-auto mt-[20px] w-full">
-          {typeof content === 'string' && (
-            <JSSandbox code={content} hideRefresh expandedDefault />
+          {content?.type === 'js' && (
+            <JSSandbox code={content.code} hideRefresh expandedDefault />
           )}
-          {typeof content !== 'string' && content}
+          {content?.type === 'html' && <HTMLSandbox code={content.code} />}
+          {content?.type === 'custom' && content.children}
         </div>
 
         {concepts !== undefined && (

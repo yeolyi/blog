@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head></head>
+  <body>
+    <button id="open">같은 origin의 새 창 열기</button>
+    <button id="change" disabled>열린 창의 내용물을 바꾸기</button>
+  </body>
+  <script>
+    let open = document.getElementById('open');
+    let change = document.getElementById('change');
+    let w;
+
+    open.addEventListener('click', () => {
+      open.disabled = true;
+      change.disabled = false;
+      w = window.open('/sopchild.html');
+    });
+
+    change.addEventListener('click', () => {
+      w.document.body.innerHTML = '수정됨!';
+      change.innerText = '수정 완료';
+      change.disabled = true;
+    });
+  </script>
+</html>

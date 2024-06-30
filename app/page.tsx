@@ -56,7 +56,39 @@ export default function Page() {
         <Gallery>
           <JSBookTile />
           {jsList.map((prop) => (
-            <Tile key={prop.href} {...prop} />
+            <Tile
+              key={prop.href}
+              {...prop}
+              style={{
+                backgroundImage: `linear-gradient(
+        163deg,
+    hsl(51deg 97% 59%) 1%,
+    hsl(50deg 93% 58%) 51%,
+    hsl(49deg 90% 56%) 49%,
+    hsl(48deg 86% 54%) 99%
+  )`,
+              }}
+            />
+          ))}
+        </Gallery>
+      </Section>
+
+      <Section>
+        <div className="horizontal-pad">
+          <SectionHeadline>
+            <strong>Web API 공부 기록</strong>
+          </SectionHeadline>
+        </div>
+
+        <Gallery>
+          {webList.map((prop) => (
+            <Tile
+              key={prop.href}
+              {...prop}
+              style={{
+                backgroundColor: '#4c8bf5E0',
+              }}
+            />
           ))}
         </Gallery>
       </Section>
@@ -112,7 +144,7 @@ let projectList: WideTileProps[] = [
   },
 ];
 
-let jsList: TileProps[] = [
+let jsList: Omit<TileProps, 'background'>[] = [
   {
     name: '값',
     description:
@@ -237,14 +269,27 @@ console.log(...bar());`,
       '코드를 수정하는 코드인 메타 프로그래밍에 관련된 API들을 공부했습니다.',
     concepts: 'Property Attributes, Template Tags, Reflect, Proxy',
     href: '/js/meta',
-    content: `function accessDB() {}
+    content: `const accessDB = () => 123;
 
 let { proxy, revoke } 
   = Proxy.revocable(accessDB, {});
 
-proxy();
+console.log(proxy());
 revoke();
-proxy()`,
+console.log(proxy())`,
+  },
+].map((x) => ({
+  ...x,
+  content: x.content ? { type: 'js', code: x.content } : undefined,
+}));
+
+let webList: Omit<TileProps, 'background'>[] = [
+  {
+    name: 'Web API 기초',
+    description:
+      '브라우저 환경에서 자바스크립트가 어떻게 실행되며 어떤 일을 할 수 있는지 배웠습니다',
+    concepts: 'defer, async, DOM, SOP, XSS',
+    href: '/webapi/basic',
   },
 ];
 

@@ -1,28 +1,72 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import CodeEditor from './CodeEditor';
 import Console from './Console';
-import RefreshButton from './RefreshButton';
-import sandboxSrcdoc from './sandboxSrcdoc';
-import { useIframe } from './useIframe';
+import { Log } from './log';
+
+let getSrcDoc = (body: string) => `<!doctype html>
+<html>
+  <head>
+    <style>
+      body {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <script>
+    console.log = (...data) => {
+      window.parent.postMessage({
+          type: 'log',
+          data: data.map((x) => typeof x === 'object' ? x.toString() : String(x)).join(' '),
+      }, "*");
+    }
+  </script>
+  <body>${body}</body>
+</html>
+`;
 
 export default function HTMLSandbox({ code: _code }: { code: string }) {
-  const { setIframe, code, setCode, logList, refresh } = useIframe(
-    _code,
-    'html',
-  );
+  const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null);
+  const [code, setCode] = useState(_code);
+  const [logList, setLogList] = useState<Log[]>([]);
+  const [srcDoc, setSrcDoc] = useState('');
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') setCode(_code);
+  }, [_code]);
+
+  useEffect(() => {
+    if (iframe === null) return;
+
+    const handleMessage = (e: MessageEvent) => {
+      if (e.origin !== 'null' || e.source !== iframe.contentWindow) return;
+      setLogList((list) => [...list, e.data]);
+    };
+
+    addEventListener('message', handleMessage);
+
+    setLogList([]);
+
+    let id = setTimeout(() => setSrcDoc(getSrcDoc(code)), 800);
+
+    return () => {
+      removeEventListener('message', handleMessage);
+      clearTimeout(id);
+    };
+  }, [code, iframe]);
 
   return (
     <div className="relative flex flex-col gap-2">
       <CodeEditor code={code} setCode={setCode} language="xml" />
-      <RefreshButton refresh={refresh} />
+      <Console logList={logList} />
       <iframe
-        srcDoc={sandboxSrcdoc}
+        srcDoc={srcDoc}
         sandbox="allow-scripts"
         className="resize-y shadow"
         ref={(ref) => setIframe(ref)}
       />
-      <Console logList={logList} />
     </div>
   );
 }

@@ -1,14 +1,5 @@
 <!doctype html>
 <html>
-  <head>
-    <style>
-      body {
-        width: 100%;
-        height: 100%;
-      }
-    </style>
-  </head>
-  <body></body>
   <script>
     function stringify(x, quote = false) {
       // primitive + function
@@ -89,18 +80,7 @@
 
       try {
         let { type, code } = e.data;
-        switch (type) {
-          case 'html':
-            let script = code.match(/<script[\s\S]*?>[\s\S]*?<\/script>/gi);
-            document.querySelector('body').innerHTML = code;
-            if (script && script.length) {
-              runCode(script[0].slice(8, -9), log);
-            }
-            break;
-          case 'js':
-            runCode(code, log);
-            break;
-        }
+        runCode(code, log);
       } catch (e) {
         postMessage({ type: 'exception', data: `에러: ${e.message}` });
       }
