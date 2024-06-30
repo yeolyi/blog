@@ -12,6 +12,7 @@ let getSrcDoc = (body: string) => `<!doctype html>
       body {
         width: 100%;
         height: 100%;
+        background-color: white;
       }
     </style>
   </head>
@@ -27,7 +28,13 @@ let getSrcDoc = (body: string) => `<!doctype html>
 </html>
 `;
 
-export default function HTMLSandbox({ code: _code }: { code: string }) {
+export default function HTMLSandbox({
+  code: _code,
+  iframeHeight,
+}: {
+  code: string;
+  iframeHeight?: string;
+}) {
   const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null);
   const [code, setCode] = useState(_code);
   const [logList, setLogList] = useState<Log[]>([]);
@@ -60,13 +67,14 @@ export default function HTMLSandbox({ code: _code }: { code: string }) {
   return (
     <div className="relative flex flex-col gap-2">
       <CodeEditor code={code} setCode={setCode} language="xml" />
-      <Console logList={logList} />
       <iframe
         srcDoc={srcDoc}
         sandbox="allow-scripts"
         className="resize-y shadow"
         ref={(ref) => setIframe(ref)}
+        style={{ height: iframeHeight }}
       />
+      {0 < logList.length && <Console logList={logList} />}
     </div>
   );
 }

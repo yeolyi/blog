@@ -1,0 +1,32 @@
+# Prettier
+
+(작성중)
+
+```html
+<textarea style="width: 90%; height: 100px;"> </textarea>
+<button>prettify</button>
+<button>reset</button>
+<script type="module">
+  import * as prettier from 'https://unpkg.com/prettier@3.3.2/standalone.mjs';
+  import prettierPluginBabel from 'https://unpkg.com/prettier@3.3.2/plugins/babel.mjs';
+  import prettierPluginEstree from 'https://unpkg.com/prettier@3.3.2/plugins/estree.mjs';
+
+  let prettifyButton = document.querySelector('button:nth-of-type(1)');
+  let resetButton = document.querySelector('button:nth-of-type(2)');
+  let textarea = document.querySelector('textarea');
+
+  let defaultValue = `let a=10;let b=20;for (let c=a;c<b;c++){console.log(c)}`;
+  textarea.value = defaultValue;
+
+  prettifyButton.addEventListener('click', async () => {
+    textarea.value = await prettier.format(textarea.value, {
+      parser: 'babel',
+      plugins: [prettierPluginBabel, prettierPluginEstree],
+    });
+  });
+
+  resetButton.addEventListener('click', () => {
+    textarea.value = defaultValue;
+  });
+</script>
+```

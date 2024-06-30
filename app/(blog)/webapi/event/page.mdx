@@ -1,0 +1,177 @@
+# Events
+
+Client-side JS에서는 `document` 내부에 있는 임의의 `element`가 이벤트를 발생시킬
+수 있고 이로 인해 브라우저의 이벤트 모델은 노드의 이벤트 모델보다 복잡합니다.
+
+## Event Categories
+
+- Device-dependent input events
+  - mousedown, mousemove, mouseup, touchstart, touchmove, touchend, keydown,
+    keyup
+- Device-independent input events
+  - click, input, pointerdown, pointermove, pointerup
+- User interface events
+  - focus, change, submit
+- State-change events
+  - load, DOMContentLoaded, online, offline, popstate
+- API-specific events
+  - waiting, playing, seeking, volumechange
+  - 프로미스 이전 비동기 API들은 이벤트 기반이었습니다.
+    - IndexedDB: success, error
+
+```html
+<script>
+  addEventListener('click', ({ pageX, pageY }) => {
+    console.log(pageX, pageY);
+  });
+</script>
+```
+
+## Registering Event Handlers
+
+Event target이 될 수 있는 모든 객체는 `addEventListener()`를 메서드로 가집니다.
+
+이벤트 핸들러가 여러번 등록되었으면 이벤트 발생시 등록된 순서대로 실행됩니다.
+같은 함수를 여러번 등록 시도하면 아무 일도 일어나지 않습니다.
+
+```html
+<script>
+  let f = () => console.log(2);
+  addEventListener('click', () => console.log(1));
+  addEventListener('click', f);
+  addEventListener('click', () => console.log(3));
+  addEventListener('click', f);
+</script>
+```
+
+`addEventHandler()`는 세번째 인자도 가져요. `true`를 전달하면 capturing event
+handler가 돼요:
+
+```html
+<button>click me</button>
+<script>
+  // ✍️ true를 지워보세요
+  addEventListener('click', () => console.log('window'), true);
+  let button = document.querySelector('button');
+  button.addEventListener('click', () => console.log('button'));
+</script>
+```
+
+객체를 전달할 수도 있습니다:
+
+```html
+<script>
+  addEventListener('click', () => console.log(1), {
+    // capturing handler로 설정
+    capture: true,
+    // 한 번 실행 후 제거
+    once: true,
+    // 핸들러가 preventDefault를 절대 호출하지 않음을 나타냅니다.
+    // 브라우저가 smooth scroll등을 핸들러가 실행되는 동시에 처리할 수 있도록 합니다.
+    passive: true,
+  });
+</script>
+```
+
+Capturing event handler를 등록했다면 `removeEventListener()`를 할 때도
+capturing임을 알려야합니다:
+
+```html
+<script>
+  let f = () => console.log(1);
+  addEventListener('click', f, true);
+
+  // 제거되지 않습니다.
+  // ✍️ 세번째 인자로 true 혹은 { capture: true }를 넣어보세요.
+  removeEventListener('click', f);
+</script>
+```
+
+## Event Handler Invocation
+
+```html
+<button>click me</button>
+<script>
+  function handler(e) {
+    console.log(e.type);
+    // 이벤트가 발생한 객체
+    console.log(e.target);
+    // 실행중인 핸들러가 등록된 객체
+    console.log(e.currentTarget);
+    console.log(e.timeStamp);
+    // 브라우저가 발생시킨 이벤트면 true,
+    // JS 코드가 발생시킨 이벤트면 false
+    console.log(e.isTrusted);
+
+    // this는 이벤트 핸들러가 등록된 객체입니다.
+    console.log(this === e.currentTarget);
+  }
+
+  addEventListener('click', handler);
+  document.querySelector('button').addEventListener('click', handler);
+</script>
+```
+
+## Event Propagation & Cancellation
+
+`focus`, `blur`, `scroll`등의 이벤트를 제외하면 대부분의 이벤트는 버블링합니다.
+`load` 이벤트는 document까지만 버블링되고 window까지는 가지 않습니다(window
+자체의 `load`를 제외하고).
+
+이벤트 전파는 세 단계로 구성됩니다:
+
+1. capturing phase
+1. target phase - invocation of event handlers of the target object
+1. bubbling phase
+
+> Event capturing provides an opportunity to peek at events before they are
+> delivered to their target.
+
+> Some events have default actions associated with them. Event handlers can
+> prevent this default action by invoking a method of the event object.
+
+```html
+<div><button>click me</button></div>
+<script>
+  let div = document.querySelector('div');
+  let button = document.querySelector('button');
+
+  addEventListener('click', () => console.log(1));
+  addEventListener('click', () => console.log(2), { capture: true });
+
+  div.addEventListener('click', () => console.log(3));
+  div.addEventListener('click', () => console.log(4), { capture: true });
+
+  button.addEventListener('click', () => console.log(5));
+  button.addEventListener('click', (e) => {
+    console.log(6);
+    // ✍️ 주석을 해제해보세요.
+    // e.stopPropagation();
+
+    // stopImmediatePropagation로 같은 객체의 다른 핸들러의 실행도 막습니다.
+    // ✍️ stopPropagation을 stopImmediatePropagation로 수정해보세요
+  });
+  button.addEventListener('click', () => console.log(7));
+  button.addEventListener('click', () => console.log(8), { capture: true });
+</script>
+```
+
+## Dispatching Custom Events
+
+`addEventListener()`를 가진 객체는 이벤트 타겟이 될 수 있고 `dispatchEvent()`
+메서드도 가집니다:
+
+```html
+<div></div>
+<script>
+  let div = document.querySelector('div');
+
+  addEventListener('busy', (e) => console.log(e.detail));
+  div.addEventListener('busy', (e) => console.log(e.detail));
+
+  div.dispatchEvent(new CustomEvent('busy', { detail: true, bubbles: false }));
+  div.dispatchEvent(new CustomEvent('busy', { detail: false, bubbles: true }));
+</script>
+```
+
+https://developer.mozilla.org/ko/docs/Web/API/CustomEvent/CustomEvent

@@ -29,10 +29,15 @@ export const Tile = ({
   content,
   style,
 }: TileProps) => {
+  let textColor = 'text-textblack';
+  if (style?.backgroundColor && isColorDark(style.backgroundColor)) {
+    textColor = 'text-white';
+  }
+
   return (
     <TileContainer>
       <div
-        className="z-10 flex w-full flex-col items-start gap-[10px] p-[20px] pr-[25px] pt-[25px] text-textblack md:p-[25px] md:pt-[30px]"
+        className={`z-10 flex w-full flex-col items-start gap-[10px] p-[20px] pr-[25px] pt-[25px] md:p-[25px] md:pt-[30px] ${textColor}`}
         style={style}
       >
         <TileTitle>{name}</TileTitle>
@@ -48,11 +53,13 @@ export const Tile = ({
           </Link>
         )}
 
-        <div className="mb-auto mt-[20px] w-full">
+        <div className="mb-auto mt-[20px] w-full text-textblack">
           {content?.type === 'js' && (
             <JSSandbox code={content.code} hideRefresh expandedDefault />
           )}
-          {content?.type === 'html' && <HTMLSandbox code={content.code} />}
+          {content?.type === 'html' && (
+            <HTMLSandbox code={content.code} iframeHeight="50px" />
+          )}
           {content?.type === 'custom' && content.children}
         </div>
 
@@ -78,3 +85,16 @@ export const TileTitle = ({ children }: { children: ReactNode }) => (
     {children}
   </h3>
 );
+
+const isColorDark = (hex: string) => {
+  hex = hex.substring(1);
+
+  let rgb = parseInt(hex, 16);
+  let r = (rgb >> 16) & 0xff;
+  let g = (rgb >> 8) & 0xff;
+  let b = (rgb >> 0) & 0xff;
+
+  let luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
+
+  return luma < 128;
+};

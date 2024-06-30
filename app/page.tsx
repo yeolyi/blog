@@ -76,7 +76,8 @@ export default function Page() {
       <Section>
         <div className="horizontal-pad">
           <SectionHeadline>
-            <strong>Web API 공부 기록</strong>
+            <strong>Web API 공부 기록.</strong> 자바스크립트로 브라우저
+            조작하기.
           </SectionHeadline>
         </div>
 
@@ -86,12 +87,26 @@ export default function Page() {
               key={prop.href}
               {...prop}
               style={{
-                backgroundColor: '#4c8bf5E0',
+                backgroundColor: '#083e98',
               }}
             />
           ))}
         </Gallery>
       </Section>
+
+      {/* <Section>
+        <div className="horizontal-pad">
+          <SectionHeadline>
+            <strong>프론트엔드 라이브러리 찍먹</strong>
+          </SectionHeadline>
+        </div>
+
+        <Gallery>
+          {libraryList.map((prop) => (
+            <Tile key={prop.href} {...prop} />
+          ))}
+        </Gallery>
+      </Section> */}
 
       <Section className="bg-lightgray">
         <SectionHeadline className="horizontal-pad">
@@ -286,10 +301,49 @@ console.log(proxy())`,
 let webList: Omit<TileProps, 'background'>[] = [
   {
     name: 'Web API 기초',
-    description:
-      '브라우저 환경에서 자바스크립트가 어떻게 실행되며 어떤 일을 할 수 있는지 배웠습니다',
+    description: '브라우저에서 JS가 어떤 과정으로 실행되는지 배웠습니다',
     concepts: 'defer, async, DOM, SOP, XSS',
     href: '/webapi/basic',
+    content: {
+      type: 'html',
+      code: `<span></span>
+<script>
+  let span = document.querySelector('span');
+  setInterval(() => {
+    span.innerText = new Date().toLocaleTimeString()
+  }, 1000);
+</script>`,
+    },
+  },
+  {
+    name: '이벤트',
+    description:
+      '브라우저에서 이벤트가 어떻게 발생되고 전파되는지 공부했습니다.',
+    concepts: '이벤트의 등록, 전파, 취소, 디스패치',
+    href: '/webapi/event',
+    content: {
+      type: 'html',
+      code: `<script>
+  let setBody = (str) => document.body.innerText = str;
+  addEventListener('offline', () => setBody('offline'));
+  addEventListener('online', () => setBody('online'));
+  setBody(navigator.onLine ? 'online' : 'offline');
+</script>`,
+    },
+  },
+];
+
+let libraryList: TileProps[] = [
+  {
+    name: 'Prettier',
+    description: 'opinionated code formatter',
+    href: '/library/prettier',
+    style: {
+      backgroundColor: '#1b2b35',
+      backgroundImage: 'url(/prettier.png)',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+    },
   },
 ];
 
