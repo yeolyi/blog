@@ -101,7 +101,7 @@ export default function Sandbox({
             style={{ height: 0 }}
             ref={(ref) => setIframe(ref)}
             srcDoc={srcdoc}
-            key={srcdoc}
+            key={srcdoc + tmp}
           />
         )}
         {showConsole && (
