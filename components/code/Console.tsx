@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Log } from './log';
+import { Log } from './type';
 
 export default function Console({
   logList,

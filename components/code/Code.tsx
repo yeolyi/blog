@@ -13,7 +13,10 @@ export default function Code({ src, language }: SandboxProps) {
       return (
         <Sandbox
           code={code}
-          options={{ type: 'js', executeDisabled: attr.noexec }}
+          options={{
+            type: attr.babel ? 'babel' : 'js',
+            executeDisabled: attr.noexec,
+          }}
         />
       );
     case 'language-html':
@@ -38,6 +41,7 @@ let parseSrc = (src: string) => {
   return {
     attr: {
       noexec: attrStr.includes('noexec'),
+      babel: attrStr.includes('babel'),
     },
     code,
   };

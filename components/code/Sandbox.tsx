@@ -3,19 +3,12 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import CodeEditor from './CodeEditor';
 import Console from './Console';
-import { Log } from './log';
-import { createSrcDoc } from './createSrcDoc';
+import { Log } from './type';
+import { createSrcDoc } from './src/createSrcDoc';
 import RefreshButton from './RefreshButton';
 
-export type SandboxOptions = (
-  | {
-      type: 'html';
-      iframeHeight?: string;
-    }
-  | {
-      type: 'js';
-    }
-) & {
+export type SandboxOptions = {
+  type: 'js' | 'babel' | 'html';
   executeDisabled?: boolean;
   editDisabled?: boolean;
   refreshDisabled?: boolean;
@@ -82,6 +75,15 @@ export default function Sandbox({
     };
   }, [code, iframe, options.type, runCode]);
 
+  let showRefresh =
+    !options.executeDisabled &&
+    !options.editDisabled &&
+    !options.refreshDisabled;
+
+  let showConsole =
+    !options.executeDisabled &&
+    !(options.type === 'html' && logList.length === 0);
+
   return (
     <>
       <div className="relative flex flex-col gap-2">
@@ -91,21 +93,22 @@ export default function Sandbox({
           language={getCodeEditorLang(options.type)}
           noneditable={options.editDisabled}
         />
-        {!options.refreshDisabled && <RefreshButton refresh={refresh} />}
+        {showRefresh && <RefreshButton refresh={refresh} />}
         {options.type === 'html' && (
           <iframe
             sandbox="allow-scripts"
             className="min-h-[50px] resize-y bg-white shadow"
+            style={{ height: 0 }}
             ref={(ref) => setIframe(ref)}
             srcDoc={srcdoc}
             key={srcdoc}
           />
         )}
-        {!options.executeDisabled && !options.editDisabled && (
+        {showConsole && (
           <Console logList={logList} expandedDefault={options.logExpanded} />
         )}
       </div>
-      {options.type === 'js' && (
+      {options.type !== 'html' && (
         // https://velog.io/@younyikim/React%EC%97%90%EC%84%9C-Iframe-%EC%82%AC%EC%9A%A9%EC%8B%9C-%EB%92%A4%EB%A1%9C%EA%B0%80%EA%B8%B0%EA%B0%80-%EB%90%98%EC%A7%80-%EC%95%8A%EB%8A%94-%EB%B2%84%EA%B7%B8
         <iframe
           sandbox="allow-scripts"

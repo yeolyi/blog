@@ -60,13 +60,7 @@ export const Tile = ({
             />
           )}
           {content?.type === 'html' && (
-            <Sandbox
-              code={content.code}
-              options={{
-                type: 'html',
-                iframeHeight: '50px',
-              }}
-            />
+            <Sandbox code={content.code} options={{ type: 'html' }} />
           )}
           {content?.type === 'custom' && content.children}
         </div>

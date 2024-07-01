@@ -1,0 +1,19 @@
+```js
+// @babel
+// setup
+function one () { return 1; }
+function double (x) { return x * 2; }
+
+let _;
+_ = one()
+  |> double(@@)
+  |> Promise.resolve().then(() =>
+    // This prints 2, as intended.
+    console.log(@@));
+
+_ = one();
+
+function test(param = throw new Error("required!")) {
+  const test = param === true || throw new Error("Falsy!");
+}
+```
