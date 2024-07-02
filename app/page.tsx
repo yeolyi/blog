@@ -126,7 +126,7 @@ export default function Page() {
           <SectionHeadline>
             <strong>방명록 🙌</strong>
           </SectionHeadline>
-          <Giscus notLazy />
+          <Giscus />
         </Section>
       </main>
       <Footer />

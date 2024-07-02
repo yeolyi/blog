@@ -13,5 +13,11 @@ export let getStarGazers = async (): Promise<number> => {
     owner: 'yeolyi',
     repo: 'blog',
   });
+  // console.log(
+  //   await octokit.request('GET /rate_limit', {
+  //     owner: 'yeolyi',
+  //     repo: 'blog',
+  //   }),
+  // );
   return resp.data.stargazers_count;
 };
