@@ -5,13 +5,12 @@ export let metadata = {
 
 # Statements
 
-표현식은 평가되어 값이 되지만 문(statements) 실행되어 어떤 일을 일으킵니다.
-자바스크립트 프로그램은 세미콜론으로 구분된 문들의 나열이에요.
+자바스크립트 프로그램을 (세미콜론으로 구분된) 문들의 나열로 볼 수 있어요.
 
 ## Compound and Empty Statements
 
-Statement block은 여러 문들을 하나의 compound statements로 묶습니다.
-세미콜론으로 끝나지 않음이 특징입니다.
+Statement block은 여러 문들을 하나로 묶습니다. 세미콜론으로 끝나지 않음이
+특징입니다.
 
 ```js
 // @noexec
@@ -21,39 +20,51 @@ Statement block은 여러 문들을 하나의 compound statements로 묶습니�
 }
 ```
 
-여러 종류의 JS 문들이 하나의 자식 문을 가질 수 있는데, compound statement를
-사용해 자식 문에 원하는 만큼의 문을 집어넣을 수 있습니다.
+많은 JS 문들이 자식 문을 하나만 가질 수 있는데, statement block을 활용해 자식
+문에 원하는 만큼의 문을 집어넣을 수 있습니다.
 
 반대되는 역할의 문으로 empty statement가 있습니다:
 
 ```js
 let sum = 0;
-// prettier-ignore
-for (let x = 1; x <= 10; sum += x++) /* empty */;
+for (let x = 1; x <= 10; sum += x++); // <- empty statement
 console.log(sum);
 ```
 
 ## Conditionals
 
-JS에 else if 라는 별도의 문법?이 있는건 아니고 그냥 else문이랑 if문이랑
-붙은거라고 해요:
+JS에 else if 라는 별도의 syntax가 있는건 아니고 그냥 else문과 if문이 붙은거라고
+해요:
 
 https://stackoverflow.com/a/4005623
 
-switch문에서는 같음을 === 연산자를 사용해 판단합니다.
+switch문에서는 같음을 === 연산자를 사용해 판단합니다:
+
+```js
+switch (1) {
+  case '1':
+    console.log('string');
+    break;
+  case 1:
+    console.log('number');
+    break;
+}
+```
 
 ## Loops
 
 흔하진 않지만 for문에서 initialize문이 없는 경우도 있습니다:
 
 ```js
-let list = { val: 1, next: { val: 2, next: { val: 3 } } };
+let linkedList = { val: 1, next: { val: 2, next: { val: 3 } } };
 
 let print = (l) => {
-  for (; l; l = l.next) console.log(l.val);
+  for (; l; l = l.next) {
+    console.log(l.val);
+  }
 };
 
-print(list);
+print(linkedList);
 ```
 
 for of에서 배열 순회중에 배열이 수정되면 순회 과정에 영향을 줍니다.
@@ -61,8 +72,8 @@ for of에서 배열 순회중에 배열이 수정되면 순회 과정에 영향�
 ```js
 let arr = [1];
 for (let element of arr) {
-  arr.push(element * 2);
-  if (100 < element) break;
+  arr.push(element + 1);
+  if (element === 9) break;
 }
 console.log(arr);
 ```
@@ -70,43 +81,72 @@ console.log(arr);
 Map을 for of로 순회하면 키와 값이 모두 나옵니다:
 
 ```js
-let m = new Map([[1, 'one']]);
-for (let [k, v] of m) console.log(k, v);
-```
+let m = new Map([
+  [1, 'one'],
+  [2, 'two'],
+]);
 
-뒤에서 배울 for/await 예제 미리보기:
-
-```js
-// @noexec
-async function printStream(stream) {
-  for await (let chunk of stream) {
-    console.log(chunk);
-  }
+for (let [k, v] of m) {
+  console.log(k, v);
 }
 ```
 
-for/in은 객체면 다 됩니다. Enumerable한 스스로의 문자열 키들을 순회합니다. 다만
-상속받은 프로퍼티도 순회하기에 for/in대신 for/of와 Object.keys()를 쓰는 경우가
-많습니다.
+for/in은 모든 객체 대상으로 사용할 수 있습니다.. 객체의 문자열 키들 중
+enumerable한 것들을 순회합니다.
+
+다만 상속받은 프로퍼티도 순회하기에 for/in대신 for/of와 Object.keys() 조합을
+쓰는 경우가 많습니다:
+
+```js
+let a = { x: 1 };
+let b = Object.create(a);
+b.y = 2;
+
+for (let i in b) {
+  console.log(i);
+}
+
+for (let i of Object.keys(b)) {
+  console.log(i);
+}
+```
 
 ## Jumps
 
-break, continue의 기능을 포함한다면 while문으로 for문을 완벽하게 재현하는 것은
-불가능합니다.
-
 JS가 에러를 던질 때 Error 클래스와 그 서브클래스를 사용합니다. name 프로퍼티는
-에러의 종류를 나타내고 message는 생성자 함수에 전달된 문자열입니다.
+에러의 종류를 나타내고 message는 생성자 함수에 전달된 문자열입니다:
 
-finally 블록은 try절 실행 이후 cleanup을 위해 주로 사용됩니다. try+finally
-조합도 가능합니다. finally 블록이 return/continue/break/throw등으로 점프를
-한다면 기존에 예약?된 점프는 무시됩니다:
+```js
+try {
+  console.log(foo);
+} catch (e) {
+  console.log(e instanceof Error);
+  console.log(e.name);
+  console.log(e.message);
+}
+```
+
+finally는 try 실행 이후 정리를 위해 주로 사용됩니다.
+
+어색하지만 try+finally 조합도 가능합니다:
+
+```js
+try {
+  console.log('try');
+} finally {
+  console.log('finally');
+}
+```
+
+finally 블록이 return/continue/break/throw등으로 점프를 한다면 기존에 예약된(?)
+점프는 무시됩니다:
 
 ```js
 let f = () => {
   try {
     throw new Error('Error!!');
   } finally {
-    // 아래 주석을 해제해보세요.
+    // ✍️ 아래 주석을 해제해보세요.
     // return;
   }
 };
@@ -115,8 +155,9 @@ f();
 console.log('실행 완료');
 ```
 
-아래처럼 while로 for문을 재현할 수 있어요. 다만 break문에 대해서는 실행 결과가
-조금 다릅니다. finally문을 이렇게 쓰는게 신기해서 가져왔습니다:
+아래처럼 continue의 기능을 포함해 while로 for를 재현할 수 있어요. 다만 break문에
+대해서는 실행 결과가 조금 다릅니다. finally문을 이렇게 쓰는게 신기해서
+가져왔어요:
 
 ```js
 let i = 0;
@@ -134,34 +175,36 @@ while (i < 10) {
 
 with문은 객체의 프로퍼티를 변수가 선언된 것처럼 쓸 수 있게 합니다. 쓰지 마세요.
 
-debugger문은 브라우저등에서 breakpoint로 기능합니다.
+`debugger`는 브라우저등에서 breakpoint로 기능합니다:
 
 'use strict'는 코드를 strict mode로 동작하게합니다. ES6 module, class 내부에
-있는 코드에는 자동적용됩니다. strict mode에서는 대표적으로 다음과 같은 차이점이
+있는 코드에는 자동 적용됩니다. strict mode에서는 대표적으로 다음과 같은 차이점이
 있어요:
 
 - with 사용 불가
 - 선언되지 않은 변수 사용 불가
 - (메서드가 아닌) 함수로 호출된 함수의 this값이 undefined
 
-책에서는 strict mode에서 duplicated property name이 안된다고 했는데 ES2015부터
-다시 허용하나봅니다:
+```js
+// ✍️ 주석을 해제해보세요
+// 'use strict';
 
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#Duplicate_property_names
+function f() {
+  console.log(this);
+}
+
+f();
+```
 
 ## Declarations
 
 선언문(declarations)은 값에 이름을 부여해서 다른 구문들의 의미를 정의합니다.
 
-모던 JS에서 var를 쓸 이유는 없습니다.
-
-함수 선언은 호이스팅되어 다른 코드보다 먼저 처리됩니다. 클래스 선언은
-호이스팅되지 않아요:
+함수 선언은 호이스팅되어 다른 코드보다 먼저 처리됩니다:
 
 ```js
 f(5);
 
-// (함수 내부 변수가 존재하는지는 함수 실행 전까지는 확인 안하는건가?)
 function f(n) {
   console.log('f');
   n && g(n - 1);
@@ -171,7 +214,11 @@ function g(n) {
   console.log('g');
   n && f(n - 1);
 }
+```
 
+클래스 선언은 호이스팅되지 않아요:
+
+```js
 let a = new A();
 class A {}
 ```

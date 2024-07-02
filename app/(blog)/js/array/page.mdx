@@ -14,21 +14,18 @@ export let metadata = {
 Spread operator를 통한 배열 생성은 모든 이터러블 객체에서 가능해요:
 
 ```js
-console.log([...'0123456789ABCDEF']);
+console.log([...'Hello']);
 
 // 중복 원소 없애기
-console.log([...new Set([...'hello world'])]);
+console.log([...new Set([...'Hellooooo'])]);
 ```
 
-Array 생성자에 하나의 숫자를 전달하면 length 속성이 해당 숫자로 설정된
-array(?)가 반환됩니다:
+Array 생성자에 하나의 숫자를 전달하면 `length`가 해당 숫자인 배열이 반환됩니다:
 
 ```js
 let a = new Array(10);
 console.log(a.length, a[0], 0 in a);
-
-// 이럴 때 말고 언제 쓰는지는 저는 잘 모르겠네요 ㅎ,,,
-console.log([...Array(10).keys()].join(' '));
+console.log([...a.keys()].join(' '));
 ```
 
 `Array.of`는 전달된 인자들을 가지는 배열을 반환하는 팩토리 매서드에요:
@@ -51,9 +48,7 @@ console.log(Array.from(arraylike, (x) => 2 * x));
 
 ## Reading and Writing Array Elements
 
-배열 인덱스(array index)와 객체의 프로퍼티명(object property name)을 구분하는
-것이 도움이 됩니다. 모든 배열 인덱스는 프로퍼티명이지만, 프로퍼티명 중에 0이상
-2^32-1미만의 정수만 인덱스로 기능할 수 있어요.
+0이상 2^32-1미만의 정수만 배열 인덱스로 사용할 수 있어요.
 
 https://stackoverflow.com/questions/6154989/maximum-size-of-an-array-in-javascript
 
@@ -74,14 +69,13 @@ console.log(a[0], a[1]);
 let a = new Array(5); // 희소 배열입니다.
 console.log(a.length);
 
-a = [];
-console.log(a.length);
-
-a[1000] = 0;
-console.log(a.length);
+let b = [];
+console.log(b.length);
+b[1000] = 0;
+console.log(b.length);
 ```
 
-희소 배열이 희소(sparse)할수록 느리지만 메모리 효율적인 방식으로 처리됩니다.
+희소 배열은 희소(sparse)할수록 느려지지만 메모리 효율적인 방식으로 처리됩니다.
 
 ## Array Length
 
@@ -94,30 +88,6 @@ console.log(a);
 ```
 
 ## Adding and Deleting Array Elements
-
-재미로만 보는 push와 a[a.length]의 성능 테스트:
-
-```js
-let ITER = 123456;
-
-let arr = new Array();
-let t = performance.now();
-for (let i = 0; i < ITER; i++) {
-  arr[arr.length] = i;
-}
-
-console.log(performance.now() - t);
-
-arr = new Array();
-t = performance.now();
-for (let i = 0; i < ITER; i++) {
-  arr.push(i);
-}
-
-console.log(performance.now() - t);
-```
-
-https://stackoverflow.com/questions/6772757/using-the-push-method-or-length-when-adding-to-array
 
 요소를 delete한다고 길이가 달라지지는 않습니다:
 
@@ -135,14 +105,22 @@ console.log(2 in a, a[2], a.length);
 for (const [k, v] of [...'abcdef'].entries()) console.log(k, v);
 ```
 
+`Object.keys(arr)`과 `arr.keys()`도 차이가 있어요:
+
 > 배열에 실제로 존재하는 키만 포함하는 Object.keys()와 달리, keys() 반복자는
 > 누락된 속성을 나타내는 빈 공간을 무시하지 않습니다.
 >
 > https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/keys
 
+```js
+let arr = [1, 2, , , , 3];
+console.log(Object.keys(arr));
+console.log(...arr.keys());
+```
+
 ## Multidimensional Arrays
 
-> 희소 배열의 빈 슬롯은 배열 메서드 간에 일관성 없이 동작합니다. 일반적으로
+> **희소 배열의 빈 슬롯은 배열 메서드 간에 일관성 없이 동작합니다**. 일반적으로
 > 오래된 메서드(forEach 등)는 빈 슬롯을 건너뛰는 반면, 최신 메서드(for/of 등)는
 > 빈 슬롯을 undefined로 처리합니다.
 >
@@ -156,6 +134,8 @@ for (const [k, v] of [...'abcdef'].entries()) console.log(k, v);
 
 ### Array Iterator Methods
 
+forEach와 for문은 유사하지만 for문의 break에 대응되는 문법은 없습니다:
+
 ```js
 let a = [1, , 3];
 a.forEach(
@@ -168,19 +148,14 @@ a.forEach(
 );
 ```
 
-forEach와 for문은 유사하지만 for문의 break에 대응되는 문법은 없습니다.
-
-filter 함수는 predicate 함수를 받아요:
-
-https://stackoverflow.com/questions/3230944/what-does-predicate-mean-in-the-context-of-computer-science
-
-희소 배열의 간격 없애기 예제:
+희소 배열의 간격 없애기 예제. filter 메서드는 희소 배열의 빈 슬롯은 순회하지
+않아요:
 
 ```js
 console.log([1, , 2, , , 3, 4, , 5, , , 6, , ,].filter(() => true));
 ```
 
-수학적 관습?으로 인해 빈 배열에 대해서 every와 some의 결과는 다음과 같습니다:
+수학적 관습으로 인해 빈 배열에 대해서 every와 some의 결과는 다음과 같습니다:
 
 ```js
 console.log([].every((x) => true));
@@ -191,10 +166,12 @@ reduce 함수는 첫번째 인자로 지금까지의 누적된 결과를 전달�
 value를 전달해주지 않으면 첫번째 요소을 사용합니다:
 
 ```js
+// reduceRight는 인덱스 내림차순으로 처리합니다.
+// ✍️ reduce -> reduceRight
 let ret = [1, , , 2, , , 3].reduce((acc, val, idx, arr) => {
   console.log(acc, val, idx, arr);
   return acc + val;
-}, 0); // 인자 0을 지워보세요
+}, 0); // ✍️ 인자 0을 지워보세요
 
 console.log(ret);
 ```
@@ -205,10 +182,8 @@ console.log(ret);
 [].reduce((acc, val) => acc + val);
 ```
 
-reduceRight는 인덱스 내림차순으로 처리합니다. (왜 써본 적이 없지,,,)
-
-reduce/reduceRight는 this를 설정하는 인자가 없습니다. 설정해야된다면 나중에 배울
-bind를 쓰면 돼요.
+`reduce`/`reduceRight`는 `forEach`처럼 this를 설정하는 인자가 없습니다.
+설정해야된다면 나중에 배울 bind를 쓰면 돼요.
 
 ### Flattening arrays with flat() and flatMap()
 
@@ -220,29 +195,29 @@ console.log(arr.flat(2));
 console.log(arr.flat(3));
 ```
 
-`a.flatMap(f)`는 `a.map(f).flat()`과 같지만 더 효율적입니다. 입력 배열의 각
-요소마다 N(>=0)개의 요소를 대응시킬 수 있도록 일반화된 `map`으로 생각할 수
-있어요:
+`a.flatMap(f)`는 `a.map(f).flat()`과 같지만 더 효율적입니다. 일반 map은 입력
+배열의 요소에 1개의 결과만을 대응시킬 수 있지만 flatMap은 N(>=0)개의 요소를
+대응시킬 수 있도록 일반화된 `map`으로 생각할 수 있어요:
 
 ```js
+// 1개 이상의 요소 대응시키기
 let phrases = ['hello world!', 'hello visitors!'];
 console.log(phrases.flatMap((x) => x.split(' ')));
 
+// 0개도 대응시킬 수 있습니다
 let numbers = [-2, -1, 0, 1, 2];
 console.log(numbers.flatMap((x) => (x < 0 ? [] : Math.sqrt(x))));
 ```
 
 ### Adding arrays with concat()
 
-기존 배열을 바꾸지 않아요.
-
 ```js
-console.log([1, 2].concat([3, [4]], 5));
+let arr = [1, 2];
+console.log(arr.concat([3, [4]], 5));
+console.log(arr);
 ```
 
 ### Stacks and Queues with push(), pop(), shift(), and unshift()
-
-저는 shift랑 unshift를 자꾸 까먹어요:
 
 ```js
 let a = [1, 2, 3];
@@ -252,6 +227,8 @@ console.log(a);
 ```
 
 ### Subarrays with slice(), splice(), fill(), and copyWithin()
+
+slice 예제:
 
 ```js
 let a = [1, 2, 3, 4, 5];
@@ -264,11 +241,16 @@ splice는 start index, length, 삽입할 요소들을 인자로 받습니다:
 
 ```js
 let a = [1, 2, 3, 4, 5];
-console.log(a.splice(1, 2), a);
-console.log(a.splice(0, 2, [1, 2], 3), a);
+
+console.log(a.splice(1, 2));
+console.log(a);
+
+// 여러 요소를 삽입할 수 있습니다.
+console.log(a.splice(0, 2, [1, 2], 3));
+console.log(a);
 ```
 
-<br />
+fill 예제:
 
 ```js
 let a = new Array(5);
@@ -277,10 +259,12 @@ console.log(a.fill(9, 1));
 console.log(a.fill(8, 2, -1));
 ```
 
-copyWithin은 배열 일부분을 배열의 다른 곳으로 옯겨요. 고성능 메서드로 설계되었고
-나중에 배울 typed array에 유용합니다. C의 memmove()를 본땄다고 하네요. 목적지
-인덱스, 시작 인덱스(없으면 0), 개수 인덱스(없으면 배열 길이) 순으로 인자를
-받아요:
+copyWithin은 배열 일부분을 동일 배열의 다른 곳으로 옯겨요. 고성능 메서드로
+설계되었고 나중에 배울 typed array에 유용합니다. C의 `memmove()`를 본땄다고
+하네요.
+
+목적지 인덱스, 시작 인덱스(없으면 0), 개수 인덱스(없으면 배열 길이) 순으로
+인자를 받아요:
 
 ```js
 let a = [1, 2, 3, 4, 5];
@@ -298,7 +282,8 @@ console.log(a.lastIndexOf(2));
 console.log(a.indexOf(4));
 ```
 
-indexOf의 두번째 인자는 탐색을 시작할 인덱스를 의미합니다:
+indexOf의 두번째 인자는 탐색을 시작할 인덱스를 의미합니다. 응용하면 아래와 같은
+함수를 만들 수 있어요:
 
 ```js
 let findAll = (a, x) => {
@@ -323,14 +308,15 @@ console.log(a.indexOf(NaN));
 console.log(a.includes(NaN));
 ```
 
-https://stackoverflow.com/questions/66743472/why-does-nan-includesnan-return-true-in-javascript
-
 `sort`는 요소를 문자열로 바꿔서 사전순으로 정렬합니다. 대신 undefined는
 마지막으로 간대요:
 
 ```js
 console.log([undefined, 9, 10, '200'].sort());
 console.log([33, 4, 1111, 222].sort());
+// compareFunction을 제공할 수 있습니다.
+// f(a, b) < 0 이면 a가 먼저
+// f(a, b) > 0 이면 b가 먼저
 console.log([33, 4, 1111, 222].sort((a, b) => a - b));
 ```
 
@@ -340,37 +326,32 @@ Array 객체의 toString은 인자 없는 join처럼 동작합니다:
 
 ```js
 console.log([1, 2, 3].toString());
+console.log([1, 2, 3].join());
 console.log([, , ,].toString());
+console.log([, , ,].join());
+```
 
-let a = { toLocaleString: () => 'aaa' };
-let b = { toLocaleString: () => 'bbb' };
+요소의 `toString()` 혹은 `toLocaleString()`을 활용합니다:
+
+```js
+let a = { toString: () => 'a', toLocaleString: () => 'aaa' };
+let b = { toString: () => 'b', toLocaleString: () => 'bbb' };
 console.log([a, b].toString());
 console.log([a, b].toLocaleString());
 ```
 
 ### Static Array Functions
 
-> Array.isArray()는 프로토타입 체인에 Array.prototype이 있지만 실제 배열이 아닌
-> 객체를 거부합니다. instanceof Array는 이를 허용합니다.
->
-> https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray
-
-> Determining with absolute accuracy whether or not a JavaScript object is an
-> array
->
-> https://web.mit.edu/jwalden/www/isArray.html
+https://stackoverflow.com/a/22289982
 
 ## Array-Like Objects
 
-배열 관련된 많은 알고리즘들이 객체가 length 프로퍼티와 0 이상 정수 프로퍼티들을
-가지기만해도 잘 동작합니다:
+배열 관련된 많은 알고리즘들이 객체가 유사 배열 객체이기만해도 잘 동작합니다:
 
 ```js
 let a = { 0: 'a', 1: 'b', 2: 'c', length: 3 };
 console.log(Array.prototype.join.call(a, '+'));
 ```
-
-Client-side JS에서 많은 HTML document 메서드들이 유사 배열 객체를 반환합니다.
 
 ## Strings as Arrays
 
@@ -381,3 +362,14 @@ console.log(Array.prototype.join.call(a, ' '));
 // string은 immutable합니다
 console.log(Array.prototype.push.call(a, '!'));
 ```
+
+## 읽어볼만한 것들
+
+filter 함수는 predicate 함수를 받아요:
+
+https://stackoverflow.com/questions/3230944/what-does-predicate-mean-in-the-context-of-computer-science
+
+배열의 `include` 메서드는 `sameValueZero` 알고리즘으로 원소를 비교하기에 NaN을
+올바르게 처리합니다:
+
+![](/sameness.png)

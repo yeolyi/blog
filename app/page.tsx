@@ -15,86 +15,88 @@ import InstaBg from '@/components/mainbg/InstaBg';
 import { WideTile, WideTileProps } from '@/components/gallery/WideTile';
 import JSBookTile from '@/components/gallery/JsBookTile';
 import Giscus from '@/components/Giscus';
+import Footer from '@/components/layout/Footer';
 
 export default function Page() {
   return (
-    <main>
-      <Image
-        src={profile}
-        alt="어렸을 때 사진"
-        className="block h-[calc(100vh-350px)] max-h-[calc(((100vw*9)/16))] min-h-[calc(((100vw*9)/16)*0.57)] w-full object-cover"
-      />
+    <>
+      <main>
+        <Image
+          src={profile}
+          alt="어렸을 때 사진"
+          className="block h-[calc(100vh-350px)] max-h-[calc(((100vw*9)/16))] min-h-[calc(((100vw*9)/16)*0.57)] w-full object-cover"
+        />
 
-      <TopSection>
-        <Headline>이성열 yeolyi</Headline>
-        <Copy>
-          배우고 익히는 재미로 사는 프론트엔드 개발자입니다. 제가 배운 것과
-          경험한 것들을 다듬어 여기에 공유해요.
-        </Copy>
-      </TopSection>
+        <TopSection>
+          <Headline>이성열 yeolyi</Headline>
+          <Copy>
+            배우고 익히는 재미로 사는 프론트엔드 개발자입니다. 제가 배운 것과
+            경험한 것들을 다듬어 여기에 공유해요.
+          </Copy>
+        </TopSection>
 
-      <Section>
-        <SectionHeadline className="horizontal-pad">
-          <strong>프로젝트</strong>
-        </SectionHeadline>
-
-        <Gallery wide>
-          {projectList.map((prop) => (
-            <WideTile key={prop.href} {...prop} />
-          ))}
-        </Gallery>
-      </Section>
-
-      <Section>
-        <div className="horizontal-pad">
-          <SectionHeadline>
-            <strong>자바스크립트 공부 기록.</strong> 예제 코드를 수정하고
-            실행해보세요.
+        <Section>
+          <SectionHeadline className="horizontal-pad">
+            <strong>프로젝트</strong>
           </SectionHeadline>
-        </div>
 
-        <Gallery>
-          <JSBookTile />
-          {jsList.map((prop) => (
-            <Tile
-              key={prop.href}
-              {...prop}
-              style={{
-                backgroundImage: `linear-gradient(
+          <Gallery wide>
+            {projectList.map((prop) => (
+              <WideTile key={prop.href} {...prop} />
+            ))}
+          </Gallery>
+        </Section>
+
+        <Section>
+          <div className="horizontal-pad">
+            <SectionHeadline>
+              <strong>자바스크립트 공부 기록.</strong> 예제 코드를 수정하고
+              실행해보세요.
+            </SectionHeadline>
+          </div>
+
+          <Gallery>
+            <JSBookTile />
+            {jsList.map((prop) => (
+              <Tile
+                key={prop.href}
+                {...prop}
+                style={{
+                  backgroundImage: `linear-gradient(
         163deg,
     hsl(51deg 97% 59%) 1%,
     hsl(50deg 93% 58%) 51%,
     hsl(49deg 90% 56%) 49%,
     hsl(48deg 86% 54%) 99%
   )`,
-              }}
-            />
-          ))}
-        </Gallery>
-      </Section>
+                }}
+              />
+            ))}
+          </Gallery>
+        </Section>
 
-      <Section>
-        <div className="horizontal-pad">
-          <SectionHeadline>
-            <strong>Web API 공부 기록.</strong> 자바스크립트로 브라우저
-            조작하기.
-          </SectionHeadline>
-        </div>
+        <Section>
+          <div className="horizontal-pad">
+            <SectionHeadline>
+              <strong>Web API 공부 기록.</strong> 자바스크립트로 브라우저
+              조작하기.
+            </SectionHeadline>
+          </div>
 
-        <Gallery>
-          {webList.map((prop) => (
-            <Tile
-              key={prop.href}
-              {...prop}
-              style={{
-                backgroundColor: '#083e98',
-              }}
-            />
-          ))}
-        </Gallery>
-      </Section>
+          <Gallery>
+            {webList.map((prop) => (
+              <Tile
+                key={prop.href}
+                {...prop}
+                style={{
+                  backgroundColor: '#083e98',
+                }}
+              />
+            ))}
+          </Gallery>
+        </Section>
 
-      {/* <Section>
+        {/* <Section>
         <div className="horizontal-pad">
           <SectionHeadline>
             <strong>프론트엔드 라이브러리 찍먹</strong>
@@ -108,25 +110,27 @@ export default function Page() {
         </Gallery>
       </Section> */}
 
-      <Section className="bg-lightgray">
-        <SectionHeadline className="horizontal-pad">
-          <strong>게시글</strong>
-        </SectionHeadline>
+        <Section className="bg-lightgray">
+          <SectionHeadline className="horizontal-pad">
+            <strong>게시글</strong>
+          </SectionHeadline>
 
-        <PostContainer>
-          {postList.map((prop) => (
-            <PostTile key={prop.title} {...prop} />
-          ))}
-        </PostContainer>
-      </Section>
+          <PostContainer>
+            {postList.map((prop) => (
+              <PostTile key={prop.title} {...prop} />
+            ))}
+          </PostContainer>
+        </Section>
 
-      <Section className="horizontal-pad pb-[64px]">
-        <SectionHeadline>
-          <strong>방명록 🙌</strong>
-        </SectionHeadline>
-        <Giscus notLazy />
-      </Section>
-    </main>
+        <Section className="horizontal-pad pb-[64px]">
+          <SectionHeadline>
+            <strong>방명록 🙌</strong>
+          </SectionHeadline>
+          <Giscus notLazy />
+        </Section>
+      </main>
+      <Footer />
+    </>
   );
 }
 
@@ -163,7 +167,7 @@ let jsList: Omit<TileProps, 'background'>[] = [
   {
     name: '값',
     description:
-      '다양한 종류의 값들을 살펴보고 이들간에 변환은 어떻게하는지 공부했습니다.',
+      '자바스크립트에 있는 값들의 종류와 형변환 과정을 공부했습니다.',
     concepts: '타입, 값, 변수, 형변환',
     href: '/js/value',
     content: `let n = 123.4567;
@@ -185,7 +189,7 @@ console.log('2' + '2' - '2');`,
     description: '여러 구문을 모아 프로그램을 만드는 방법을 공부했습니다.',
     concepts: 'if, for, while, 선언문',
     href: '/js/statement',
-    content: `for (let i = 0; i < 5; i++) {
+    content: `for (let i = 1; i < 5; i++) {
     console.log('x'.repeat(i));
 }`,
   },
@@ -284,14 +288,9 @@ console.log(...bar());`,
       '코드를 수정하는 코드인 메타 프로그래밍에 관련된 API들을 공부했습니다.',
     concepts: 'Property Attributes, Template Tags, Reflect, Proxy',
     href: '/js/meta',
-    content: `const accessDB = () => 123;
-
-let { proxy, revoke } 
-  = Proxy.revocable(accessDB, {});
-
-console.log(proxy());
-revoke();
-console.log(proxy())`,
+    content: `let obj = { x: 1 };
+Object.freeze(obj);
+console.log(Object.isFrozen(obj));`,
   },
 ].map((x) => ({
   ...x,
@@ -307,12 +306,10 @@ let webList: Omit<TileProps, 'background'>[] = [
     content: {
       type: 'html',
       code: `<script>
-  let update = () => {
+  setInterval(() => {
     let str = new Date().toLocaleTimeString();
     document.body.innerText = str;
-  }
-  setInterval(update, 1000);
-  update();
+  }, 1000);
 </script>`,
     },
   },
@@ -326,21 +323,26 @@ let webList: Omit<TileProps, 'background'>[] = [
       type: 'html',
       code: `<h1></h1>
 <script>
-  let setBody = (str) => document.body.innerText = str;
-  addEventListener('offline', () => setBody('offline'));
-  addEventListener('online', () => setBody('online'));
-  setBody(navigator.onLine ? 'online' : 'offline');
+  let h = document.querySelector('h1');
+  let cnt = 0;
+  addEventListener('click', () => {
+    h.innerText = ++cnt;
+  });
 </script>`,
     },
   },
   {
-    name: 'Document',
-    description: '',
-    concepts: '',
+    name: 'Document 인터페이스',
+    description: 'JS로 웹페이지의 내용을 바꾸는 방법을 공부했습니다.',
+    concepts: 'Element의 쿼리, 순회, 속성, 생성, 삽입, 삭제',
     href: '/webapi/document',
     content: {
       type: 'html',
-      code: ``,
+      code: `<p></p>
+<script>
+  let p = document.querySelector('p');
+  p.innerHTML = "Hello, World!";
+</script>`,
     },
   },
 ];

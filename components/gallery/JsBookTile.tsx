@@ -24,7 +24,7 @@ export default function JSBookTile() {
   return (
     <Tile
       name="소개"
-      description="JS를 복습하며 기초적인 내용보다는 흥미롭고 지엽적인 내용 위주로 기록했습니다. 아래 책으로 공부했어요."
+      description="JS를 복습하며 몰랐었고 흥미로웠던 내용 위주로 기록했습니다. 아래 책으로 공부했어요."
       content={{
         type: 'custom',
         children: (

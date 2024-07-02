@@ -8,10 +8,13 @@ export let metadata = {
 
 자바스크립트는 프로토타입 기반 상속을 사용합니다.
 
+> Although the prototype object is the key feature of the class, the constructor
+> function is the public identity of the class.
+
 ## Classes and Prototypes
 
-range 객체를 생성해 반환하는 팩토리 함수 예제입니다. 프로토타입을 연결하는
-과정이 명시적으로 드러나요:
+팩토리 함수로 동일한 프로토타입을 가지는 객체들을 반환하는 예제입니다.
+프로토타입을 연결하는 과정이 명시적으로 드러나요:
 
 ```js
 function createRange(from, to) {
@@ -29,17 +32,22 @@ createRange.methods = {
   },
 };
 
-let r = createRange(1, 4);
-console.log(r.includes(2), r.includes(5));
+let r1 = createRange(1, 4);
+console.log(r1.includes(2));
+
+let r2 = createRange(2, 3);
+console.log(r2.includes(5));
 ```
 
 ## Classes and Constructors
 
-`new` 키워드로 객체의 생성과 프로토타입 연결을 자동화할 수 있습니다:
+`new` 키워드를 통해 객체의 생성과 프로토타입 연결을 자동화할 수 있습니다:
 
 ```js
 function Range(from, to) {
-  if (!new.target) throw new Error('일반 함수로 호출되었어요');
+  if (!new.target) {
+    throw new Error('함수가 생성자로서 호출되지 않았습니다');
+  }
   this.from = from;
   this.to = to;
 }
@@ -55,58 +63,37 @@ let r = new Range(1, 4);
 console.log(r.includes(2), r.includes(5));
 ```
 
-서로 다른 생성자 함수를 사용했어도 두 생성자 함수가 같은 `prototype` 프로퍼티를
-가진다면 같은 클래스의 인스턴스로 취급됩니다. 다르게 말하면 객체가 정확히 어떤
-생성자를 사용해 만들었는지 `instanceOf`로는 알 수 없습니다:
+`instanceOf`는 프로토타입 객체가 같은지만 확인하지 객체를 만든 생성자를 정확히
+알려주는건 아닙니다:
 
 ```js
 function A() {}
 function B() {}
+// 이런 경우가 얼마나 있겠나 싶지만,,,
 A.prototype = B.prototype = {};
 
 let a = new A();
-let b = new B();
 console.log(a instanceof A, a instanceof B);
-console.log(b instanceof A, b instanceof B);
-
-// 이런 함수도 있네요.
-// createRange 예제처럼 생성자 함수가 없는 경우는
-// 아래 방법으로 프로토타입을 확인할 수 있습니다.
-console.log(A.prototype.isPrototypeOf(a));
 ```
 
-정확한 생성자가 궁금하다면 `constructor` 프로퍼티를 활용할 수 있어요:
+따라서 혹시나 프로토타입 객체를 직접 만든다면 constructor 객체를 잘
+설정해줍시다:
 
 ```js
-function A() {}
-let a = new A();
+function Range(from, to) {
+  this.from = from;
+  this.to = to;
+}
 
-console.log(A === A.prototype.constructor);
-console.log(A === a.constructor);
-```
-
-따라서 프로토타입 객체를 직접 만들었다면 `constructor` 프로퍼티를 잘
-설정해줘야합니다:
-
-```js
-function A() {}
-
-// 방법 1
-A.prototype = {
-  constructor: A,
-  foo() {
-    console.log('foo');
+Range.prototype = {
+  includes(x) {
+    return this.from <= x && x < this.to;
   },
+  constructor: Range,
 };
 
-function B() {}
-
-// 방법 2
-B.prototype.foo = function () {
-  console.log('foo');
-};
-
-console.log(new A().constructor === A, new B().constructor === B);
+let r = new Range(1, 5);
+console.log(r.constructor);
 ```
 
 ## Classes with the class keyword
@@ -126,25 +113,31 @@ class Range {
 }
 let r = new Range(1, 4);
 console.log(r.includes(2), r.includes(5));
+// constructor를 자동으로 잘 설정해줍니다.
+console.log(r.constructor);
 ```
 
-클래스의 본문은 자동으로 strict mode가 적용되며, 클래스 선언은 함수 선언과
-다르게 호이스팅되지 않습니다.
-
-static 메서드는 프로토타입 객체가 아닌 함수 자체에 추가됩니다.
+클래스의 본문은 자동으로 strict mode가 적용됩니다:
 
 ```js
 class A {
-  static foo() {
-    console.log('foo');
+  constructor() {
+    with () {}
   }
+}
+```
+
+static 메서드는 프로토타입 객체가 아닌 함수 자체에 추가됩니다:
+
+```js
+class A {
+  static foo() {}
 }
 
 console.log('foo' in A, 'foo' in A.prototype);
 ```
 
-비교적 최근에 메서드가 아닌 프로퍼티도 클래스 본문에서 초기화할 수 있게
-되었습니다:
+최근에 더 많은 종류의 프로퍼티들을 클래스 본문에서 초기화할 수 있게 되었습니다:
 
 ```js
 class Buffer {
@@ -154,8 +147,6 @@ class Buffer {
   // (protected 접근제어자는 JS에 따로 없습니다)
   #size = 0;
 
-  // ✍️ 아래 두 줄의 순서를 바꿔보세요
-  // 결과가 달라지는 이유는 뒤에 인스턴스 생성 순서를 다룰 때 설명할게요
   capacity = 4096;
   buffer = new Uint8Array(this.capacity);
 
@@ -190,6 +181,7 @@ Number.prototype.tree = function () {
 ES6 이전 방식:
 
 ```js
+// 부모 클래스 생성자
 function Range(from, to) {
   this.from = from;
   this.to = to;
@@ -202,12 +194,17 @@ Range.prototype = {
   constructor: Range,
 };
 
+// 자식 클래스 생성자
 function Span(start, span) {
   // 부모 클래스의 구현에 호환되도록 자식 클래스에서도 초기화를 해야합니다.
-  // ES6 전까지는 부모 클래스의 메서드나 생성자를 호출하는 방법(super)을 제공하지 않기에
+  // ES6 전까지는 부모 클래스의 메서드나 생성자를 호출하는 방법을 제공하지 않기에
   // 부모 클래스의 구현을 정확히 알아야합니다.
+
   this.from = start;
   this.to = start + span;
+
+  // 이런 짓도 가능합니다.
+  // Range.call(this, start, start + span);
 }
 
 // ⭐ 아래 줄을 이해해보세요
@@ -239,27 +236,7 @@ class Span extends Range {
 console.log(new Span(5, 5).includes(8));
 ```
 
-여담으로 클래스 표현식을 사용해 아래와 같은 표기도 가능하긴 가능합니다:
-
-```js
-class Span extends class {
-  constructor(from, to) {
-    this.from = from;
-    this.to = to;
-  }
-  includes(x) {
-    return this.from <= x && x < this.to;
-  }
-} {
-  constructor(start, span) {
-    super(start, start + span);
-  }
-}
-
-console.log(new Span(5, 5).includes(8));
-```
-
-`extends`를 사용하면 static 메서드도 알아서 상속됩니다. 이런 기능은 ES6 이전에는
+`extends`를 사용하면 static 메서드도 알아서 상속됩니다. 이런 작업은 ES6 이전에는
 불가능했어요:
 
 ```js
@@ -288,16 +265,40 @@ console.log(String(A));
 console.log(String(new A()));
 ```
 
-책에는 없었지만 클래스 선언과 인스턴스의 생성 과정이 궁금해서 찾아봤어요. 우선
-클래스 선언문의 평가 순서입니다:
+**static initialization blocks**은 클래스의 유연한 초기화를 가능하게 합니다:
 
 ```js
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes#evaluation_order
+// @noexec
+// ⚠️
+class A {
+  static init() {
+    //
+    // Access to private static fields is allowed here
+  }
+}
 
+// exposes an implementation detail to the user
+A.init();
+
+// ✅
+class B {
+  static {
+    // ...
+  }
+}
+```
+
+책에는 없었지만 클래스 선언과 인스턴스의 생성 과정이 궁금해서 찾아봤어요.
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes#evaluation_order
+
+우선 클래스 선언문의 평가 순서입니다:
+
+```js
 // 1️⃣ extends가 있다면 생성자 함수가 맞는지 확인합니다
 // ✍️ 주석을 해제하고 어떤 에러가 뜨는지 확인해보세요
 class A /* extends 1 */ {
-  // 2️⃣ constructor 메서드를 extract(?)하고 없다면 기본 구현으로 대체합니다.
+  // 2️⃣ constructor 메서드의 존재를 확인하고 없다면 기본 구현으로 대체합니다.
   constructor() {}
 
   // 3️⃣ 프로퍼티 '키'들을 선언 순서대로 평가합니다.
@@ -319,7 +320,7 @@ class A /* extends 1 */ {
 
   // 6️⃣ 프로퍼티 '값'들이 평가됩니다
 
-  // <static 필드>의 '값'이 평가될 때 this는 클래스 자체입니다.
+  // <static 필드>의 '값'이 평가될 때 this의 값은 클래스 자체입니다.
   static [logged('key1')] = logged('val1');
   static [logged('key2')] = (() => {
     console.log(A === this);
@@ -348,27 +349,70 @@ function logged(val) {
 // 7️⃣ 끝!
 ```
 
-참고로, 위 코드에서 등장한 **static initialization blocks**은 클래스의 유연한
-초기화를 가능하게 합니다:
+인스턴스의 생성 과정 예제입니다:
+
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/constructor
 
 ```js
-// @noexec
-// ⚠️
 class A {
-  static init() {
-    //
-    // Access to private static fields is allowed here
+  x = logged(123);
+
+  constructor() {
+    // 3️⃣
+    // this로 생성중인 객체에 접근 가능합니다
+    // 프로토타입 객체는 이미 클래스가 만들어질 때 초기화됐기에 B 인스턴스의 toString이 잘 불립니다.
+    console.log(this.toString());
+
+    // new.target으로 생성자 함수에 접근할 수 있습니다.
+    // 클래스가 잘 설계되었다면 부모쪽에서 자식 쪽 생성자를 궁금해할 이유가 없지만 디버깅등등에 유용하게 사용될 수 있다네요.
+    console.log(new.target.toString());
+
+    // 하지만 자식 클래스의 프로퍼티는 아직 없습니다
+    console.log(this.y);
+  }
+
+  static toString() {
+    return 'class A';
+  }
+
+  toString() {
+    return 'instance of A';
   }
 }
 
-// exposes an implementation detail to the user
-A.init();
+class B extends A {
+  y = logged(456);
 
-// ✅
-class B {
-  static {
-    // ...
+  constructor() {
+    // 1️⃣ super 이전의 생성자 본문이 실행됩니다.
+    // 아직은 this 접근이 불가능합니다.
+    console.log('Before super');
+
+    // 2️⃣ super가 호출되어 부모 클래스 부분을 초기화합니다.
+    super();
+    // 4️⃣ 현재 클래스 필드들이 초기화됩니다.
+
+    // 5️⃣ super 이후의 생성자 본문이 실행됩니다.
+    // 이제 this를 사용할 수 있습니다.
+    console.log('After super');
+    console.log(this.y);
   }
+
+  static toString() {
+    return 'class B';
+  }
+
+  toString() {
+    return 'instance of B';
+  }
+}
+
+new B();
+
+// helper function
+function logged(val) {
+  console.log(`log: ${val}`);
+  return val;
 }
 ```
 
@@ -393,72 +437,11 @@ function randomVal() {
 }
 ```
 
-인스턴스의 생성 과정 예제입니다:
+## 읽어볼만한 것들
 
-```js
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes/constructor
+`apply`를 활용한 옛날옛적 상속 구현:
 
-class A {
-  x = logged(123);
-
-  constructor() {
-    // this로 생성중인 객체, new.target으로 생성자 함수에 접근할 수 있습니다.
-    // 프로토타입 체인이 연결되어있고 자식 클래스의 메서드도 다 있기에  String(this)가 B입니다.
-    // 클래스가 잘 설계되었다면 부모쪽에서 자식 쪽 생성자를 궁금해할 이유가 없지만
-    // 디버깅등등에 유용하게 사용될 수 있다네요.
-    console.log(String(this), String(new.target));
-
-    // 하지만 자식 클래스의 프로퍼티는 아직 없습니다
-    console.log(this.y);
-  }
-
-  static toString() {
-    return 'class A';
-  }
-
-  toString() {
-    return 'instance of A';
-  }
-}
-
-class B extends A {
-  y = logged(456);
-
-  constructor() {
-    // 1️⃣ super 이전의 생성자 본문이 실행됩니다.
-    // 아직은 this 접근이 불가능합니다.
-    console.log('Before super');
-
-    // 2️⃣ super가 호출되어 부모 클래스 부분을 초기화합니다.
-    // 3️⃣ 이후 현재 클래스 필드들이 초기화됩니다.
-    super();
-
-    // 4️⃣ super 이후의 생성자 본문이 실행됩니다.
-    // 이제 this를 사용할 수 있습니다.
-    console.log('After super');
-    console.log(this.y);
-  }
-
-  static toString() {
-    // 생성자가 아닌 일반 메서드에는 `super`에 대한 제약이 없습니다
-    // 부모 클래스 버전의 메서드를 호출해도, 하지 않아도 됩니다.
-    console.log(super.toString());
-    return 'class B';
-  }
-
-  toString() {
-    return 'instance of B';
-  }
-}
-
-new B();
-
-// helper function
-function logged(val) {
-  console.log(`log: ${val}`);
-  return val;
-}
-```
+https://fromanegg.com/post/2013/01/03/constructor-chaining-inheritance-in-javascript/
 
 상속보다는 컴포지션(composition)을 선호하라는 말도 있습니다:
 
@@ -476,12 +459,6 @@ class AbstractSet {
 }
 ```
 
-여담으로 타입스크립트에서 abstract class를 따로 지원합니다:
+여담으로 타입스크립트에서는 abstract class를 따로 지원합니다:
 
 https://www.typescriptlang.org/docs/handbook/classes.html#abstract-classes
-
-프로토타입 객체와 생성자 함수의 관계를 잘 보여주는 책 원문으로 챕터를
-마무리할게요:
-
-> Although the prototype object is the key feature of the class, the constructor
-> function is the public identity of the class. @/components/ImageViewer

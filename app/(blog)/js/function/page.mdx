@@ -9,65 +9,87 @@ export let metadata = {
 
 # Functions
 
-호출된 함수는 전달받은 인자 외에도 **invocation context**라는 값을 별도로
-가져요. `this` 키워드의 값이 바로 이 값이에요. 함수가 객체를 통해(객체의
-메서드로서) 호출되면 해당 객체가 invocation context가 됩니다.
-
-따라서 `this`는 암묵적으로 전달된 함수 인자로도 볼 수 있어요. 이런 관점이 보다
-명확한 파이썬의 `self`를 참고해보세요:
-
-https://stackoverflow.com/questions/2709821/what-is-the-purpose-of-the-self-parameter-why-is-it-needed
+호출된 함수는 전달받은 인자 외에도 **invocation context**라는 값을 별도로 가지고
+`this` 키워드로 참조할 수 있어요. 함수가 객체를 통해(객체의 메서드로서) 호출되면
+해당 객체가 invocation context가 됩니다.
 
 ## Defining Functions
 
-함수 선언문은 호이스팅됩니다. 함수 표현식은 호이스팅되지 않습니다:
+함수 선언문은 호이스팅됩니다:
 
 ```js
 f();
-g();
-
 function f() {
   console.log('f');
 }
-let g = () => console.log('g');
 ```
 
-화살표함수는 정의된 환경의 this 값을 그대로 사용하며 `prototype` 프로퍼티를
-가지지 않아 클래스 생성자로서 사용될 수 없습니다.
+함수 표현식은 호이스팅되지 않습니다:
 
 ```js
-// 일반 객체 예제
-const obj = {
-  i: 10,
-  b: () => this.i,
-  c() {
-    return this.i;
+f();
+let f = function () {
+  console.log('f');
+};
+```
+
+화살표 함수는 `prototype` 프로퍼티를 가지지 않아 클래스 생성자로 사용될 수
+없습니다.
+
+```js
+let f = function () {};
+let g = () => {};
+
+console.log('prototype' in f);
+console.log('prototype' in g);
+
+new g();
+```
+
+일반 함수는 호출 방법에 따라 `this`의 값이 달라집니다:
+
+```js
+let obj = {
+  x: 123,
+  f: function () {
+    return this.x;
   },
 };
 
-console.log(obj.b(), obj.c());
+console.log(obj.f());
 
-let { b, c } = obj;
-console.log(b(), c());
-
-// 클래스 예제
-class A {
-  i = 10;
-  d = () => this.i;
-  e() {
-    return this.i;
-  }
-}
-
-let a = new A();
-console.log(a.d(), a.e());
-
-let { d, e } = a;
-console.log(d());
-console.log(e());
+let g = obj.f;
+console.log(g());
 ```
 
-화살표 함수의 `this`값이 일반 객체와 클래스에서 다른 이유:
+화살표함수는 정의된 환경의 this 값을 그대로 사용합니다:
+
+```js
+let obj1 = {
+  x: 123,
+  // 화살표 함수가 만들어질 때 this의 값은 전역 객체입니다
+  f: () => this.x,
+};
+
+console.log(obj1.f());
+
+class A {
+  x = 123;
+  // 화살표 함수는 A의 인스턴스 생성 시점에 만들어지고
+  // 이때 this의 값은 생성중인 인스턴스입니다.
+  g = () => this.x;
+}
+
+let obj2 = new A();
+console.log(obj2.g());
+
+// 화살표 함수를 뜯어내 실행해도 this의 값은 유지됩니다.
+let g = obj2.g;
+console.log(g());
+```
+
+화살표 함수가 객체 내부에 있을떄와 클래스 내부에 있을 때 다르게 동작하는 이유는
+아래를 참고하세요.
 
 > Because a class's body has a this context, arrow functions as class fields
 > close over the class's this context, and the this inside the arrow function's
@@ -81,11 +103,11 @@ console.log(e());
 
 함수는 다음 방법들로 호출될 수 있어요:
 
-- 함수로
-- 메서드로
-- 생성자로
-- call이나 apply 메서드를 사용해 간접적으로
-- JS에 의해 암묵적으로
+- 함수로서
+- 메서드로서
+- 생성자로서
+- call이나 apply 메서드를 사용해 간접적으로서
+- JS에 의해 암묵적으로서
   - get/set
   - toString, valueOf
   - iteration 관련 함수들
@@ -95,10 +117,7 @@ console.log(e());
 this에 해당하는 객체가 없을 때 strict mode면 undefined, 아니면 전역 객체가 돼요:
 
 ```js
-// 아래 예제는 현재 블로그상에서 작동하지 않습니다 :(
-// 상위에 JS 샌드박스가 있어서 strict mode에 상관없이 this가 항상 window가 돼요.
-// 브라우저 콘솔에서 실행해보세요 🙇‍♂️🙇‍♂️
-
+// ✍️ 주석을 해제해보세요
 // 'use strict'
 const isStrict = (function () {
   return !this;
@@ -131,18 +150,16 @@ class Square {
 console.log(String(new Square().x(100).y(100).outline('red')));
 ```
 
-중첩 함수의 this는 외부 스코프의 this값과 다를 수 있어요. 책 말로는 JS의
-결함으로 여겨진다고 하네요:
+함수 호출 방법에 따라 달라지는 `this`의 특징으로 인해 중첩 함수의 this는 외부
+스코프의 this값과 다를 수 있어요. 책 말로는 JS의 결함으로 여겨진다고 하네요:
 
 ```js
 let o = {
   m: function () {
-    console.log(this + '');
-    let self = this;
+    console.log(this.toString());
 
     function f() {
-      console.log(this + '');
-      console.log(self + '');
+      console.log(this.toString());
     }
 
     f();
@@ -155,31 +172,31 @@ let o = {
 o.m();
 ```
 
-위 코드처럼 self와 같은 별도의 변수를 사용하거나, bind 메서드를 사용하거나,
-화살표 함수를 사용하면 해결할 수 있습니다.
+위 같은 문제는 self와 같은 별도의 변수를 사용해 쓰고자하는 `this`를 변수로
+잡아두거나, bind 메서드를 사용하거나, 화살표 함수를 사용하면 해결할 수 있습니다.
 
 new 키워드를 붙이면 타겟 함수는 <strong>생성자(constructor)</strong>로 기능하고
 일반 함수 호출과 다르게 처리돼요.
 
 - 생성자의 `prototype` 프로퍼티를 상속받는 객체가 생성되고 함수 본문의 `this`가
   이 객체를 가르킵니다.
-- 함수 본문의 return에서 객체를 반환한다면 그 객체가 반환되고, 객체가 아닌걸
+- 함수 본문의 return에서 객체를 반환하면 그 객체가 반환되고, 객체가 아닌걸
   반환하면 해당 return문은 무시됩니다.
 
 ## Function Arguments and Parameters
 
 ```js
-function getPropertyNames(o, a = []) {
-  for (let property in o) a.push(property);
-  return a;
+function foo(a = []) {
+  console.log(a);
+  a.push(1);
 }
 
-console.log(getPropertyNames({ a: 1 }));
-console.log(getPropertyNames(document));
+foo();
+foo();
+foo();
 ```
 
-인자의 기본값(위 코드에서는 빈 배열 `a`)은 호출마다 초기화되고 이는 파이썬과의
-차이점이에요.
+함수 인자 기본값은 호출마다 초기화되고 이는 파이썬과의 차이점이에요.
 
 <ImageViewer
   src={pythonArg}
@@ -196,48 +213,16 @@ let rec = (width, height = width) => ({ width, height });
 console.log(rec(1));
 ```
 
-Rest parameter 예시:
+Rest parameter 함수 인자 예제:
 
 ```js
-// Edge case인 빈 배열을 인자 기본값을 주어 해결한게 신기했어요
-function max(first = -Infinity, ...rest) {
-  // rest는 대응되는 인자가 없으면 빈 배열입니다.
-  let maxVal = first;
-  for (let n of rest) maxVal = maxVal < n ? n : maxVal;
-  return maxVal;
+function multiply(multiplier, ...theArgs) {
+  return theArgs.map((element) => {
+    return multiplier * element;
+  });
 }
 
-console.log(max(3, 1, 4, 1, 5, 9, 2));
-```
-
-Spread operator를 사용한 재밌는 예시:
-
-```js
-function timed(f) {
-  return function (...args) {
-    console.log(`Entering ${f.name}`);
-    let startTime = performance.now();
-    try {
-      return f(...args);
-    } finally {
-      // finally문으로 처리했기에 f에서 에러를 던져도 괜찮습니다.
-      console.log(`Exiting ${f.name} after ${performance.now() - startTime}ms`);
-    }
-  };
-}
-
-let fibo = (n) => (n <= 2 ? 1 : fibo(n - 1) + fibo(n - 2));
-
-let fibo2 = (n) => {
-  if (n <= 2) return 1;
-  if (fibo2[n]) return fibo2[n];
-
-  return (fibo2[n] = fibo2(n - 1) + fibo2(n - 2));
-};
-
-let N = 30;
-timed(fibo)(N);
-timed(fibo2)(N);
+console.log(multiply(2, 15, 25, 42));
 ```
 
 함수 매개변수에서도 destructuring이 아래와 같이 가능합니다:
@@ -260,23 +245,21 @@ console.log(vectorMultiply({ x: 1, y: 2 }, 10));
 
 ## Functions as Values
 
-위의 `fibo2` 예제에서 미리 보여드렸지만, 함수도 객체이므로 프로퍼티를 가질 수
-있어요:
+함수도 객체이므로 프로퍼티를 가질 수 있어요:
 
 ```js
-uniqueInteger.counter = 0;
+let fibo = (n) => {
+  if (fibo.n) return fibo.n;
+  if (n <= 2) return 1;
+  return (fibo.n = fibo(n - 1) + fibo(n - 2));
+};
 
-function uniqueInteger() {
-  return uniqueInteger.counter++;
-}
-
-console.log(uniqueInteger());
-console.log(uniqueInteger());
+console.log(fibo(100));
 ```
 
 ## Functions as Namespaces
 
-> 즉시 실행 함수 표현(IIFE, Immediately Invoked Function Expression) 은
+> 즉시 실행 함수 표현(IIFE, Immediately Invoked Function Expression)은
 > 정의되자마자 즉시 실행되는 Javascript Function 를 말한다.
 >
 > https://developer.mozilla.org/ko/docs/Glossary/IIFE
@@ -304,36 +287,36 @@ console.log(val);
 >
 > https://ui.toast.com/weekly-pick/ko_20160311
 
-렉시컬 스코프를 구현하기 위해 함수 객체는 함수 정의가 위치한 스코프에 대한
-정보도 가지고 있어야합니다. 이러한 객체와 스코프의 조합을 **클로저**라고 해요.
-
 ```js
 let scope = 'global scope';
 
-function foo() {
+function createClosure() {
   let scope = 'local scope';
   return () => scope;
 }
 
-console.log(foo()());
+let closure = createClosure();
+console.log(closure());
 ```
 
-여러 함수가 같은 스코프를 공유할 수도 있어요:
+여러 함수가 같은 환경을 공유할 수 있어요:
 
 ```js
 let createCounter = (n) => {
   return {
-    // 함수 인자도 클로저에서 사용할 수 있습니다
+    // 함수 인자도 클로저에서 사용할 수 있어요.
+    // count와 reset은 같은 환경을 공유합니다.
     count: () => n++,
     reset: () => (n = 0),
   };
 };
 
-let c1 = createCounter(0),
-  c2 = createCounter(10);
+let c1 = createCounter(1);
+let c2 = createCounter(10);
 
 console.log(c1.count(), c2.count());
-c1.reset();
+console.log(c1.count(), c2.count());
+c2.reset();
 console.log(c1.count(), c2.count());
 ```
 
@@ -343,9 +326,13 @@ var와 클로저의 조합으로 버그가 생긴 코드:
 // 목표: 0-9를 반환하는 함수의 배열을 반환합니다.
 const foo = () => {
   let funcs = [];
-  // var가 함수 단위로 정의되어 i가 클로저들간에 공유됩니다.
-  // var -> let 으로 바꿔보세요
-  for (var i = 0; i < 10; i++) funcs[i] = () => i;
+
+  // i가 클로저들간에 공유됩니다.
+  // ✍️ var -> let 으로 바꿔보세요
+  for (var i = 0; i < 10; i++) {
+    funcs[i] = () => i;
+  }
+
   return funcs;
 };
 
@@ -353,7 +340,8 @@ let a = foo();
 console.log(a[5]());
 ```
 
-상위 함수의 `this`를 사용하는 클로저가 필요하다면...:
+상위 함수의 `this`를 사용하는 클로저가 필요하다면 아래 방법들 중 하나를
+활용합니다:
 
 ```js
 let obj = {
@@ -399,17 +387,15 @@ console.log(sum2.length, sum3.length, sum.length);
 console.log(sum2.name);
 ```
 
-모든 함수는 서로 다른 프로토타입 객체를 가집니다. 함수가 생성자로 호출되면 새로
-생긴 객체는 이 프로토타입 객체를 상속받습니다:
+모든 함수는 서로 다른 프로토타입 객체를 가집니다. 함수가 생성자로서 호출되면
+새로 생긴 객체는 이 프로토타입 객체를 상속받습니다:
 
 ```js
 function f() {}
 function g() {}
-
-console.log(f.prototype, g.prototype, f.prototype === g.prototype);
+console.log(f.prototype === g.prototype);
 
 let a = new f();
-let b = new g();
 console.log(Object.getPrototypeOf(a) === f.prototype);
 ```
 
@@ -427,23 +413,26 @@ f.call(o, 1, 2);
 f.apply(o, [1, 2]);
 ```
 
-`bind`는 함수 내 this 키워드에 해당하는 객체를 지정하고 인자 일부를 제공할 수
-있어요:
+`bind`는 함수 내 this 키워드에 해당하는 객체를 지정할 수 있어요:
 
 ```js
-// this 객체 지정하기
-let obj1 = { x: 123 };
-let obj2 = { x: 456 };
 function f() {
   console.log(this.x);
 }
+
+let obj1 = { x: 123 };
+let obj2 = { x: 456 };
 
 let boundf1 = f.bind(obj1);
 // ⚠️ 한 번 bind된 함수는 override 할 수 없습니다
 let boundf2 = f.bind(obj1).bind(obj2);
 boundf1();
 boundf2();
+```
 
+인자 일부를 제공할 수 있습니다:
+
+```js
 // 인자 일부를 미리 제공하기
 let sum = (x, y) => x + y;
 let inc = sum.bind(null, 1);
@@ -470,6 +459,7 @@ console.log(sum(1, 2));
 // 고차함수 예시
 function not(f) {
   return function (...args) {
+    // ✍️ 아래 코드로 바꾸고 왜 결과가 달라지는지 생각해보세요.
     // ⚠️ return !f(args)
     return !f.apply(this, args);
   };
@@ -499,3 +489,9 @@ const sum = (x, y) => x + y;
 const square = (x) => x * x;
 console.log(compose(square, sum)(2, 3));
 ```
+
+## 읽어볼만한 것들
+
+JS의 `this`를 공부하다가 파이썬의 `self`가 떠올랐어요:
+
+https://stackoverflow.com/questions/2709821/what-is-the-purpose-of-the-self-parameter-why-is-it-needed

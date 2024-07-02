@@ -12,9 +12,8 @@ Cliend-side JS는 정적인 HTML document를 인터렉티브한 웹 앱으로 �
 <h2></h2>
 <h3></h3>
 <script>
-  console.log(document.head, document.body);
   let arrayLike = document.querySelectorAll('h1, h2, h3');
-  Array.from(arrayLike).forEach((h) => (h.innerText = 'hi'));
+  arrayLike.forEach((h) => (h.innerText = 'hi'));
 </script>
 ```
 
@@ -52,10 +51,12 @@ live한 것과 static한 것으로 나뉩니다:
   // childNodes는 live입니다.
   // Node들을 반환합니다.
   let list1 = document.body.childNodes;
+  console.log(list1.constructor);
+
   // querySelectorAll은 static합니다.
   // Element들을 반환합니다.
   let list2 = document.body.querySelectorAll('div');
-  console.log(list1.constructor.name, list2.constructor.name);
+  console.log(list2.constructor);
 
   console.log(list1.length, list2.length);
   document.body.appendChild(document.createElement('div'));
@@ -171,21 +172,17 @@ HTML element는 태그 이름과 속성들로 구성됩니다. 대부분의 속�
     background-color: red;
   }
 </style>
-<div />
+<div class="bar" />
 <script>
   let div = document.querySelector('div');
 
-  // add
   div.classList.add('foo');
-  console.log(...div.classList);
-
-  // remove
   div.classList.remove('foo');
 
-  // contains
-  console.log(div.classList.contains('foo'));
-
-  div.addEventListener('click', () => div.classList.toggle('foo'));
+  div.addEventListener('click', () => {
+    div.classList.toggle('foo');
+    console.log(div.classList.contains('foo'), ...div.classList);
+  });
 </script>
 ```
 
@@ -202,8 +199,110 @@ dataset 속성을 통해 element에 추가적인 정보를 붙일 수 있습니�
 
 ## Element Content
 
-.
+Element의 내용물은 HTML 문자열 혹은 일반 문자열로 표현될 수 있습니다:
+
+```html
+<button>innerHTML</button>
+<button>textContent</button>
+<div></div>
+<script>
+  let b1 = document.querySelector('button:nth-of-type(1)');
+  let b2 = document.querySelector('button:nth-of-type(2)');
+  let div = document.querySelector('div');
+
+  b1.addEventListener('click', () => {
+    div.innerHTML = '<h1>Oops</h1>';
+  });
+
+  b2.addEventListener('click', () => {
+    div.textContent = '<h1>Oops</h1>';
+  });
+</script>
+```
+
+`outerHTML`은 스스로도 포함합니다:
+
+```html
+<h1>Hello, world!</h1>
+<script>
+  let h = document.querySelector('h1');
+  console.log(h.innerHTML);
+  console.log(h.outerHTML);
+</script>
+```
+
+`insertAdjacentHTML()`와 `insertAdjacentText()`는 인접한 어딘가에 HTML을
+삽입합니다:
+
+https://developer.mozilla.org/ko/docs/Web/API/Element/insertAdjacentHTML
+
+https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentText
+
+`textContent`와 비슷한 `innerText`도 있습니다. 후자는 보이지 않는 것은 포함하지
+않으며 `HTMLElement`에만 정의되어있습니다(`Node`에는 없음).
+
+```html
+<span>Hello <span style="display: none;">World</span></span>
+<script>
+  let span = document.querySelector('span');
+  console.log(span.textContent);
+  console.log(span.innerText);
+</script>
+```
 
 ## Creating, Inserting, and Deleting Nodes
 
-## Example: Generating a Table of Contents
+```html
+<div id="root"></div>
+<script>
+  let root = document.querySelector('#root');
+
+  let strong = document.createElement('strong');
+  strong.append('World'); // 문자열은 TextNode로 변환됩니다.
+
+  root.append('ello ', strong, '!');
+  root.prepend('H');
+
+  strong.after('✨');
+  strong.before('⭐️');
+</script>
+```
+
+존재하는 element를 다른 곳에 넣으면 복사되지 않고 위치가 이동됩니다:
+
+```html
+<style>
+  .a {
+    width: 100px;
+    height: 100px;
+    border: 1px solid red;
+  }
+  .b {
+    width: 80px;
+    height: 80px;
+    border: 1px solid blue;
+  }
+  .c {
+    width: 60px;
+    height: 60px;
+    border: 1px solid green;
+  }
+</style>
+<button>move</button>
+<div class="a">
+  <div class="b"><div class="c"></div></div>
+</div>
+<script>
+  let a = document.querySelector('.a');
+  let b = document.querySelector('.b');
+  let button = document.querySelector('button');
+
+  button.addEventListener('click', () => {
+    // ✍️ a.after(b.cloneNode(true)); 로 바꿔보세요
+    a.after(b);
+  });
+</script>
+```
+
+예전 API인 `appendChild()`, `insertBefore()`, `replaceChild()`,
+`removeChild()`도 있지만 쓰기 어렵고 필요할 일이 잘 없을 것이라고 하네요.

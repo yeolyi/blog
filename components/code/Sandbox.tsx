@@ -5,6 +5,7 @@ import CodeEditor from './CodeEditor';
 import Console from './Console';
 import { Log } from './type';
 import { createSrcDoc } from './src/createSrcDoc';
+import RefreshButton from './RefreshButton';
 
 export type SandboxOptions = {
   type: 'js' | 'babel' | 'html';
@@ -25,7 +26,7 @@ export default function Sandbox({
 }) {
   const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null);
   const { logList, reset } = useIframeListener(iframe, options.type);
-  const { code, setCode, srcdoc, iframeKey } = useDebouncedSrcDoc(
+  const { code, setCode, srcdoc, iframeKey, refresh } = useDebouncedSrcDoc(
     _code,
     options.type,
     reset,
@@ -34,6 +35,8 @@ export default function Sandbox({
   let showConsole =
     !options.executeDisabled &&
     !(options.type === 'html' && logList.length === 0);
+
+  let showRefresh = !options.executeDisabled && !options.refreshDisabled;
 
   return (
     <>
@@ -44,11 +47,12 @@ export default function Sandbox({
           language={options.type === 'html' ? 'xml' : 'js'}
           noneditable={options.editDisabled}
         />
+        {showRefresh && <RefreshButton refresh={refresh} />}
         {options.type === 'html' && (
           <iframe
             key={iframeKey}
             sandbox="allow-scripts"
-            className="min-h-[50px] resize-y bg-white shadow"
+            className="min-h-[50px] bg-white shadow"
             style={{ height: 0 }}
             ref={(ref) => setIframe(ref)}
             srcDoc={srcdoc}
@@ -106,7 +110,7 @@ let useIframeListener = (iframe: HTMLIFrameElement | null, type: CodeType) => {
 let useDebouncedSrcDoc = (
   _code: string,
   type: CodeType,
-  onWait: () => void,
+  resetLog: () => void,
 ) => {
   const [code, setCode] = useState(_code);
   const [srcdoc, setSrcdoc] = useState('');
@@ -117,7 +121,7 @@ let useDebouncedSrcDoc = (
   }, [_code]);
 
   useEffect(() => {
-    onWait();
+    resetLog();
     setSrcdoc(createSrcDoc('', type));
 
     let id = setTimeout(() => {
@@ -126,7 +130,12 @@ let useDebouncedSrcDoc = (
     }, 800);
 
     return () => clearTimeout(id);
-  }, [code, onWait, type]);
+  }, [code, resetLog, type]);
 
-  return { code, setCode, srcdoc, iframeKey: iframeKey.current };
+  let refresh = useCallback(() => {
+    resetLog();
+    iframeKey.current++;
+  }, [resetLog]);
+
+  return { code, setCode, srcdoc, iframeKey: iframeKey.current, refresh };
 };

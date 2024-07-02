@@ -51,33 +51,40 @@ let _createSrcDoc = (bodyContent: string) => `<!doctype html>
             data: data.map((x) => stringify(x)).join(' '),
         }, "*");
       }
-
-      // 잡히지 않은 에러가 콘솔에 뜨지 않도록 합니다.
-      window.addEventListener('error', (e) => {
-        window.parent.postMessage({ 
-          type: 'exception', 
-          data: \`에러: \${e.message}\` 
-        }, "*");
-        e.preventDefault();
-      });
-
-      window.addEventListener('unhandledrejection', (e) => {
-        window.parent.postMessage({
-          type: 'exception',
-          data: \`비동기 에러: \${e.message}\`,
-        }, "*");
-        e.preventDefault();
-      });
     </script>
-    <script defer>
+
+    <script type="module">
       let resizeObserver = new ResizeObserver(entries => {
         window.parent.postMessage({
           type: 'height',
-          data: document.body.scrollHeight + 'px',
+          // TODO: 해결하기 귀찮아서 넣은 여유값 없애기
+          data: document.body.scrollHeight + 2 + 'px',
         }, "*");
       })
 
       resizeObserver.observe(document.body);
+    </script>
+
+    <script>
+      // MEMO: type="module"이면 async 에러만 잡힌다.
+      // 마이크로 큐가 문서 파싱 끝나고 도는건가? 신기방기
+      // 잡히지 않은 에러가 콘솔에 뜨지 않도록 합니다.
+      addEventListener('error', (e) => {
+        console.info(e);
+        parent.postMessage({ 
+          type: 'exception', 
+          data: e.message
+        }, "*");
+        e.preventDefault();
+      });
+
+      addEventListener('unhandledrejection', (e) => {
+        parent.postMessage({
+          type: 'exception',
+          data: e.message
+        }, "*");
+        e.preventDefault();
+      });
     </script>
 
     ${bodyContent}
