@@ -181,3 +181,28 @@ class Span extends class {
 
 console.log(new Span(5, 5).includes(8));
 ```
+
+## Web API 개요
+
+단일한 구현 주체가 있는 노드와 달리 Web API는 다수의 브라우저 벤더의 합의에 의해
+정의됩니다. 벤더들이 제공하는 문서는 JS 개발자보다는 API를 개발하는 C++ 개발자
+중심으로 작성되어있습니다:
+
+https://v8.dev/docs
+
+https://docs.webkit.org/
+
+MDN web docs에는 사용자 입장으로 작성되어있습니다:
+
+https://developer.mozilla.org/
+
+## Timers
+
+```js
+// id의 타입은 브라우저와 노드에서 다릅니다.
+// opaque value로 취급하세요.
+let id = setTimeout(() => console.log('boom'), 1000);
+```
+
+Microtask, macrotask 등등 타이머 관련해서 다룰 내용이 많지만 web api쪽에서 더
+살펴볼게요.

@@ -14,8 +14,7 @@ export let metadata = {
 ## Asynchronous Programming with Callbacks
 
 비동기 코드를 처리하는 가장 기초적인 방법은 **콜백**입니다. 비동기 함수는 작업을
-마치고 값을 동기적으로 반환(`return`)할 수 없기에 콜백을 통해 반환값을
-전달합니다.
+마치고 값을 동기적으로 반환할 수 없기에 콜백을 통해 반환값을 전달합니다.
 
 콜백의 예시들을 살펴볼게요. 우선 **타이머**에요. 동기 작업들이 우선 끝나는 것을
 확인하실 수 있어요:
@@ -23,12 +22,12 @@ export let metadata = {
 ```js
 // ✍️ timeout 시간을 바꿔보세요.
 console.log(1);
-setTimeout(() => console.log(2), 2000);
+setTimeout(() => console.log(2), 500);
 console.log(3);
 ```
 
 다음으로는 **이벤트**에요. 클라이언드 사이드 자바스크립트는 이벤트 중심으로
-동작합니다. 정해진 작업들을 하기보다는 유저의 행동에 따라 해야 할 작업이
+동작합니다. 사전에 정해진 작업들을 하기보다는 유저의 행동에 따라 해야 할 작업이
 정해집니다. 이를 위해 브라우저는 유저의 행동에 따라 이벤트를 발생시키고 JS
 프로그램은 이벤트마다 **콜백**을 등록해놓습니다. 이때 콜백을 **event handler**
 혹은 **event listener**라고 합니다.
@@ -39,8 +38,8 @@ console.log(3);
   let button = document.querySelector('button');
 
   button.addEventListener('click', () => {
-    button.style.left = Math.random() * window.innerWidth + 'px';
-    button.style.top = Math.random() * window.innerHeight + 'px';
+    button.style.left = Math.random() * window.innerWidth * 0.9 + 'px';
+    button.style.top = Math.random() * window.innerHeight * 0.9 + 'px';
   });
 </script>
 ```
@@ -48,20 +47,21 @@ console.log(3);
 마지막으로 **네트워크 이벤트**에요. 콜백을 사용하는 옛날 옛적 XMLHttpRequest를
 들고왔어요:
 
-```js
-// @noexec
-let getVersion = (callback) => {
+```html
+<script>
   let request = new XMLHttpRequest();
-  request.open('GET', 'https://example.com/api/version');
+  request.open(
+    'GET',
+    'https://cdn.jsdelivr.net/npm/is-sorted@1.0.5/index.min.js',
+  );
   request.send();
 
-  request.onload = function () {
-    if (request.status === 200) callback(null, request.responseText);
-    else callback(response.statusText, null);
+  request.onload = () => {
+    console.log(request.status, request.responseText);
   };
 
-  request.onerror = request.ontimeout = (e) => callback(e.type, null);
-};
+  request.onerror = (e) => console.log(e);
+</script>
 ```
 
 ## Promises
@@ -69,7 +69,7 @@ let getVersion = (callback) => {
 프로미스는 **비동기 작업의 결과**를 표현하는 객체입니다. 결과가 준비되었는지
 아닌지는 콜백을 통해서만 접근할 수 있게 설계되었어요.
 
-콜백은 아래처럼 중첩되어 콜백 지옥을 만들냅니다:
+콜백은 아래처럼 중첩되어 콜백 지옥을 만들어냅니다:
 
 <ImageViewer src={callbackhell} alt="콜백 지옥 이미지" widthPercentage="80%" />
 
@@ -112,10 +112,8 @@ Promise.reject()
 
 ### Using Promises
 
-일단 프로미스를 사용해봅시다.
-
-예제를 위해 `wait(ms)`을 정의했어요. 구현은 보지 마시고 ms 밀리초 이후 완료되는
-작업을 표현한 비동기 함수라고 생각해주세요.
+일단 프로미스를 사용해봅시다. 예제를 위해 `wait(ms)`을 정의했어요. 구현은 보지
+마시고 ms 밀리초 이후 완료되는 작업을 표현한 비동기 함수라고 생각해주세요.
 
 비동기 함수는 프로미스를 반환해요:
 
@@ -152,14 +150,16 @@ console.log('2');
 ```js
 let asyncFunc = () => Promise.resolve();
 let throwingCallback = () => {
-  throw new Error();
+  throw new Error('callback error');
 };
 
-// 콜백의 에러가 처리되지 않습니다.
-// 이 방식은 잘 쓰이지 않아요
+// then 메서드의 첫번째 인자는 Promise가 이행됐을 때,
+// 두번째 인자는 거부됐을 때 실행되는 콜백 함수입니다.
+
+// 첫번째 콜백의 에러가 처리되지 않습니다. 이 방식은 잘 쓰이지 않아요.
 asyncFunc().then(throwingCallback, () => console.log('1'));
 
-// 아래 두 개는 동일하며 콜백의 에러도 처리합니다.
+// 아래 두 개는 동일한 코드로 콜백의 에러도 처리합니다.
 asyncFunc()
   .then(throwingCallback)
   .catch(() => console.log('2'));
@@ -196,7 +196,7 @@ wait(1000)
   .then(() => console.log('2'));
 ```
 
-따라서 `then()`이 프로미스를 반환함을 알 수 있어요.
+따라서 `then()`이 프로미스를 반환할 것임을 알 수 있어요.
 
 보통 이런 method chaining을 구현할 때는 모든 메서드가 같은 객체를 리턴해요.
 하지만 프로미스 체인에서 `then()`은 모두 다른 객체를 반환합니다:
@@ -204,7 +204,6 @@ wait(1000)
 ```js
 let p1 = Promise.resolve(1);
 let p2 = p1.then(() => {});
-console.log(p1 instanceof Promise, p2 instanceof Promise);
 console.log(p1 === p2);
 ```
 
@@ -272,7 +271,7 @@ console.log('p3');
 `.catch()`를 찾을 때까지 체인을 따라 내려갑니다:
 
 ```js
-let asyncFunc = () => Promise.reject(new Error('😠'));
+let asyncFunc = () => Promise.reject(new Error('async error'));
 
 asyncFunc()
   .then(() => console.log(1))
@@ -284,7 +283,7 @@ asyncFunc()
 `.finally()`도 있어요:
 
 ```js
-let asyncFunc = () => Promise.reject(new Error('😠'));
+let asyncFunc = () => Promise.reject(new Error('async error'));
 
 asyncFunc()
   .then(() => console.log(1))

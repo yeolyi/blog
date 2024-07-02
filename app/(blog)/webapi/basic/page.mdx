@@ -6,18 +6,6 @@ export let metadata = {
 
 # Web Programming Basics
 
-## Web API 개요
-
-단일한 구현 주체가 있는 노드와 달리 Web API는 다수의 브라우저 벤더의 합의에 의해
-정의됩니다. 벤더들의 문서는 JS 개발자보다는 API를 개발하는 C++ 개발자 중심으로
-작성되어있고, MDN web docs에는 사용자 입장으로 작성되어있습니다.
-
-https://v8.dev/docs
-
-https://docs.webkit.org/
-
-https://developer.mozilla.org/
-
 ## JavaScript in HTML \<script> Tags
 
 JS 도입 초창기에는 DOM을 순회 및 조작할 수 없었고 `document.write()`를 사용해
@@ -26,19 +14,20 @@ JS 도입 초창기에는 DOM을 순회 및 조작할 수 없었고 `document.wr
 
 https://developer.mozilla.org/en-US/docs/Web/API/Document/write
 
-하지만 이는 웹페이지의 파싱과 렌더링을 크게 늦출 수 있습니다. 대신 스크립트를
-`defer` 혹은 `async`하게 실행할 수 있습니다. 이들은 스크립트가
+하지만 이는 웹페이지의 파싱과 렌더링을 크게 늦출 수 있습니다. 이를 막기 위해
+스크립트를 `defer` 혹은 `async`하게 실행할 수 있습니다. 이들은 스크립트가
 `document.write()`를 하지 않음을 암시하기에 브라우저는 스크립트를 다운로드하는
 동시에 document를 파싱하고 렌더링할 수 있습니다.
 
 ![defer vs async](/deferasync.png)
 
 `defer`는 document의 로드가 완료될 때까지 스크립트 실행을 미루고 `async`는
-가능한 빨리 스크립트를 실행합니다. `defer`는 스크립트 선언 순서대로 실행되고
-`async`는 순서가 보장되지 않습니다. 모듈 스크립트는 기본적으로 `defer`입니다.
+준비되는대로 스크립트를 실행합니다. `defer`는 스크립트 선언 순서대로 실행되고
+`async`는 순서가 보장되지 않습니다.
 
-여담으로 모듈이 아닌 인라인 스크립트에서는 defer와 async가 무시됩니다. 아래
-예제에서 `type="module"`을 `defer`로 바꾸면 효과가 없을거에요:
+모듈 스크립트는 기본적으로 `defer`입니다. 모듈이 아닌 인라인 스크립트에서는
+defer와 async가 무시됩니다. 아래 예제에서 `type="module"`을 `defer`로 바꾸면
+결과가 달라질거에요:
 
 ```html
 <script>
@@ -89,8 +78,8 @@ https://developer.mozilla.org/en-US/docs/Web/API/Document/write
 ## The Document Object Model
 
 DOM API는 HTML 문서의 구조를 반영합니다. HTML 태그마다 상응되는 Element 객체가
-있고 텍스트마다 상응되는 Text 객체가 있습니다. 두 객체는 다시 Node 클래스를
-부모로 가집니다.
+있고 텍스트마다 상응되는 Text 객체가 있습니다. 두 객체는 Node 클래스를 부모로
+가집니다.
 
 https://stackoverflow.com/a/9979779
 
@@ -119,6 +108,7 @@ https://stackoverflow.com/a/9979779
   console.log(div.constructor.name);
 
   let audio = document.querySelector('audio');
+  // 추가적인 메서드 예시
   console.log(audio.play);
 </script>
 ```
@@ -144,12 +134,10 @@ document의 모든 스크립트와 모듈은 하나의 전역 객체를 공유�
 
 ## Execution of JavaScript Programs
 
-Client-side JS에서 **프로그램**이 무엇인지 공식적으로 정의된 바는 없지만,
-document에 포함되거나 document가 참조하는 자바스크립트 코드들로 구성된다고 할 수
-있습니다. 이들은 모두 공통의 전역 Window 객체를 공유하며 HTML document를
-나타내는 동일한 DOM 객체에 접근 가능합니다.
-
-다만 `iframe`은 독립된 전역 Window 객체와 DOM 객체를 가집니다.
+Client-side JS에서 **프로그램**은 document에 포함되거나 document가 참조하는
+자바스크립트 코드들로 구성된다고 할 수 있습니다. 이들은 공통의 전역 Window
+객체를 공유하며 HTML document를 나타내는 동일한 DOM 객체에 접근 가능합니다.
+(예외적으로 `iframe`은 독립된 전역 Window 객체와 DOM 객체를 가집니다.)
 
 아래 예제에서 브라우저가 3초 멈추듯이 자바스크립트는 싱글 스레드입니다:
 
@@ -174,12 +162,12 @@ document에 포함되거나 document가 참조하는 자바스크립트 코드�
 자바스크립트가 어떤 순서로 실행되는지 알아봅시다.
 
 1. 브라우저가 document 객체를 만들고 웹페이지 파싱을 시작합니다.
-   `document.readyState == "loading"`.
+   `document.readyState -> "loading"`.
 1. 파싱중 async, defer, module 그 무엇도 아닌 스크립트 태그를 만나면 즉시
    동기적으로 실행합니다.
 1. 파서가 `async`한 스크립트를 만나면 비동기적으로 다운로드 후 즉시 실행합니다.
-   모듈이면 의존성을 가진 다른 스크립트들도 모두 다운로드합니다.
-1. 파싱이 완료됩니다. `document.readyState == "interactive"`.
+   모듈 스크립트라면 의존성을 가진 다른 스크립트들도 모두 다운로드합니다.
+1. document 파싱이 완료됩니다. `document.readyState -> "interactive"`.
 1. defer인 스크립트(혹은 async 속성이 없는 모듈 스크립트)가 문서에 나타나는
    순서대로 실행됩니다.
 1. DOMContentLoaded 이벤트가 발새합니다. 이제부터 동기적인 스크립트 실행
@@ -206,7 +194,7 @@ document에 포함되거나 document가 참조하는 자바스크립트 코드�
   });
 </script>
 <script type="module">
-  // 전체 노드에 접근할 수 있습니다.
+  // 아래에 있는 div 포함 전체 노드에 접근할 수 있습니다.
   console.log(...document.body.children);
 </script>
 <div>2</div>
@@ -214,7 +202,7 @@ document에 포함되거나 document가 참조하는 자바스크립트 코드�
 
 ## Program Input and Output
 
-navigator 프로퍼티는 브라우저와 OS에 대한 정보를 줘요:
+navigator 프로퍼티는 브라우저와 OS에 대한 정보를 줍니다:
 
 ```js
 console.log(navigator.userAgent);
@@ -224,7 +212,7 @@ console.log(navigator.hardwareConcurrency);
 
 ## Program Errors
 
-발생한 에러가 처리되지 않더라도 등록된 이벤트 핸들러들은 잘 실행됩니다.
+에러가 잡히지 않더라도 웹사이트가 종료되지는 않습니다.
 
 > If you would like to define an error handler of last resort to be invoked when
 > this kind of uncaught exception occurs, set the onerror property of the Window
@@ -238,14 +226,16 @@ console.log(navigator.hardwareConcurrency);
 
 ```html
 <script>
-  window.addEventListener('error', (e) => {
-    e.preventDefault();
+  // 잡히지 않은 동기 에러 잡기
+  addEventListener('error', (e) => {
     console.log(e);
   });
-  window.addEventListener('unhandledrejection', (e) => {
-    e.preventDefault();
+
+  // 잡히지 않은 비동기 에러 잡기
+  addEventListener('unhandledrejection', (e) => {
     console.log(e);
   });
+
   Promise.reject(new Error('async'));
   throw new Error('sync');
 </script>

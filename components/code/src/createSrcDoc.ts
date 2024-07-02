@@ -66,24 +66,22 @@ let _createSrcDoc = (bodyContent: string) => `<!doctype html>
     </script>
 
     <script>
+      // 잡히지 않은 에러가 콘솔에 뜨지 않도록 합니다.
+
       // MEMO: type="module"이면 async 에러만 잡힌다.
       // 마이크로 큐가 문서 파싱 끝나고 도는건가? 신기방기
-      // 잡히지 않은 에러가 콘솔에 뜨지 않도록 합니다.
       addEventListener('error', (e) => {
-        console.info(e);
         parent.postMessage({ 
           type: 'exception', 
           data: e.message
         }, "*");
-        e.preventDefault();
       });
 
       addEventListener('unhandledrejection', (e) => {
         parent.postMessage({
           type: 'exception',
-          data: e.message
+          data: e.reason.message
         }, "*");
-        e.preventDefault();
       });
     </script>
 

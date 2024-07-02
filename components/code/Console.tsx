@@ -5,7 +5,7 @@ import { Log } from './type';
 
 export default function Console({
   logList,
-  expandedDefault = false,
+  expandedDefault = true,
 }: {
   logList: Log[];
   expandedDefault?: boolean;

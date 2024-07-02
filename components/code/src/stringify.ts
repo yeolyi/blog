@@ -1,5 +1,5 @@
 export let stringifySrc = `
-function stringify(x, quote = false) {
+function stringify(x) {
   // primitive + function
   switch (typeof x) {
     case 'number':
@@ -9,7 +9,7 @@ function stringify(x, quote = false) {
       return x.toString() + 'n';
     case 'string':
       // 두 번 stringify해 escape되는 것 방지
-      return quote ? \`'\${x}'\` : x;
+      return \`'\${x}'\`;
     case 'undefined':
       return 'undefined';
     case 'symbol':
@@ -32,7 +32,7 @@ function stringify(x, quote = false) {
   // 희소 배열 처리는 map 덕분에 자연스럽게 된다.
   // 즉 stringify가 호출되지 않지만 join에 empty item이 반영된다.
   if (x instanceof Array)
-    return \`[\${x.map((x) => stringify(x, true)).join(', ')}]\`;
+    return \`[\${x.map((x) => stringify(x)).join(', ')}]\`;
 
   // Date
   if (x instanceof Date) return x.toLocaleString();
