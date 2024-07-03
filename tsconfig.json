@@ -27,7 +27,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "app/_page.mdx"
-, "app/(blog)/webapi/css/page.mdx"  ],
+    "app/_page.mdx",
+    "app/(blog)/webapi/css/page.mdx"
+, "app/(blog)/library/react/page.mdx"  ],
   "exclude": ["node_modules"]
 }

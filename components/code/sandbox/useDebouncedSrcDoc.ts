@@ -10,9 +10,9 @@ export let useDebouncedSrcDoc = (
   const [srcdoc, setSrcdoc] = useState('');
   const iframeKey = useRef(0);
 
-  // useEffect(() => {
-  //   if (process.env.NODE_ENV === 'development') setCode(_code);
-  // }, [_code]);
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') setCode(_code);
+  }, [_code]);
 
   useEffect(() => {
     resetLog();
@@ -25,10 +25,7 @@ export let useDebouncedSrcDoc = (
     }, 800);
 
     return () => clearTimeout(id);
-
-    // str1과 str3는 상수값임이 보장
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [code, resetLog]);
+  }, [code, preset, resetLog]);
 
   let refresh = useCallback(() => {
     resetLog();

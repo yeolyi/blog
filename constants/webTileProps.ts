@@ -44,7 +44,7 @@ let _webTileProps: TileProps[] = [
       code: `<p></p>
 <script>
   let p = document.querySelector('p');
-  p.innerHTML = "Hello, World!";
+  p.innerText = "Hello, World!";
 </script>`,
     },
   },

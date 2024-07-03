@@ -6,7 +6,8 @@ import Console from '../Console';
 import RefreshButton from '../RefreshButton';
 import { useIframeListener } from './useIframeListener';
 import { useDebouncedSrcDoc } from './useDebouncedSrcDoc';
-import { presetMap, PresetName } from '../preset/preset';
+import { PresetName } from '../preset/preset';
+import { presetMap } from '../preset/presetMap';
 
 export type SandboxProps = {
   presetName: PresetName;
@@ -27,7 +28,7 @@ export default function Sandbox({
   refreshDisabled,
   logExpanded,
 }: SandboxProps) {
-  let preset = presetMap.get(presetName)!;
+  let preset = presetMap[presetName];
 
   const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null);
   const { logList, reset } = useIframeListener(iframe, preset.showIframe);

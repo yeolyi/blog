@@ -1,6 +1,6 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react';
 import Sandbox, { SandboxProps } from './sandbox/Sandbox';
-import { PresetName } from './preset/preset';
+import { PresetName, presetNameList } from './preset/preset';
 
 export default function Code(
   codeProps: DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>,
@@ -22,28 +22,20 @@ let parseProps = (
   className: string,
 ): Partial<SandboxProps> & { presetName?: PresetName } => {
   let { code, options } = parseFirstLine(src);
-
   let executeDisabled = options.has('noexec');
-  let babel = options.has('babel');
-  let rxjs = options.has('rxjs');
 
+  let presetName = presetNameList.find((name) => options.has(name));
+
+  if (presetName) return { presetName, code, executeDisabled };
+
+  // fallback
   if (className === 'language-html') {
     return { presetName: 'html', code, executeDisabled };
-  }
-
-  if (className === 'language-js') {
-    if (rxjs) {
-      return { presetName: 'rxjs', code, executeDisabled };
-    }
-
-    if (babel) {
-      return { presetName: 'babel', code, executeDisabled };
-    }
-
+  } else if (className === 'language-js') {
     return { presetName: 'js', code, executeDisabled };
+  } else {
+    return {};
   }
-
-  return {};
 };
 
 let parseFirstLine = (src: string) => {
