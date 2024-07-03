@@ -1,48 +1,58 @@
-import Sandbox from './Sandbox';
+import { DetailedHTMLProps, HTMLAttributes } from 'react';
+import Sandbox, { SandboxProps } from './sandbox/Sandbox';
+import { PresetName } from './preset/preset';
 
-type SandboxProps = {
-  src: string;
-  language?: string;
-};
+export default function Code(
+  codeProps: DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>,
+) {
+  let content = codeProps.children?.toString()?.trim();
+  let className = codeProps.className;
+  if (content === undefined || className === undefined)
+    return <code {...codeProps} />;
 
-export default function Code({ src, language }: SandboxProps) {
-  let { attr, code } = parseSrc(src);
+  let { presetName, code, ...props } = parseProps(content, className);
+  if (presetName === undefined || code === undefined)
+    return <code>{content}</code>;
 
-  switch (language) {
-    case 'language-js':
-      return (
-        <Sandbox
-          code={code}
-          options={{
-            type: attr.babel ? 'babel' : 'js',
-            executeDisabled: attr.noexec,
-          }}
-        />
-      );
-    case 'language-html':
-      return (
-        <Sandbox
-          code={code}
-          options={{ type: 'html', executeDisabled: attr.noexec }}
-        />
-      );
-    default:
-      return <code>{code}</code>;
-  }
+  return <Sandbox presetName={presetName} code={code} {...props} />;
 }
 
-let parseSrc = (src: string) => {
-  if (src.startsWith('// @') === false) return { attr: {}, code: src };
+let parseProps = (
+  src: string,
+  className: string,
+): Partial<SandboxProps> & { presetName?: PresetName } => {
+  let { code, options } = parseFirstLine(src);
+
+  let executeDisabled = options.has('noexec');
+  let babel = options.has('babel');
+  let rxjs = options.has('rxjs');
+
+  if (className === 'language-html') {
+    return { presetName: 'html', code, executeDisabled };
+  }
+
+  if (className === 'language-js') {
+    if (rxjs) {
+      return { presetName: 'rxjs', code, executeDisabled };
+    }
+
+    if (babel) {
+      return { presetName: 'babel', code, executeDisabled };
+    }
+
+    return { presetName: 'js', code, executeDisabled };
+  }
+
+  return {};
+};
+
+let parseFirstLine = (src: string) => {
+  if (!src.startsWith('// @')) return { code: src, options: new Set() };
 
   let idx = src.indexOf('\n');
-  let attrStr = src.slice(0, idx);
+  let attrStr = src.slice(src.indexOf('@') + 1, idx);
   let code = src.slice(idx + 1);
+  let options = new Set(attrStr.split(' '));
 
-  return {
-    attr: {
-      noexec: attrStr.includes('noexec'),
-      babel: attrStr.includes('babel'),
-    },
-    code,
-  };
+  return { code, options };
 };

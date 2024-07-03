@@ -28,6 +28,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/_page.mdx"
-  ],
+, "app/(blog)/webapi/css/page.mdx"  ],
   "exclude": ["node_modules"]
 }

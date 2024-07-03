@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { CSSProperties, ReactNode } from 'react';
 import { FaChevronRight } from 'react-icons/fa6';
-import Sandbox from '../code/Sandbox';
+import Sandbox from '../code/sandbox/Sandbox';
 
 export type TileProps = {
   name: string;
@@ -55,12 +55,14 @@ export const Tile = ({
         <div className="mb-auto mt-[20px] w-full text-textblack">
           {content?.type === 'js' && (
             <Sandbox
+              presetName="js"
               code={content.code}
-              options={{ type: 'js', refreshDisabled: true, logExpanded: true }}
+              refreshDisabled
+              logExpanded
             />
           )}
           {content?.type === 'html' && (
-            <Sandbox code={content.code} options={{ type: 'html' }} />
+            <Sandbox presetName="html" code={content.code} />
           )}
           {content?.type === 'custom' && content.children}
         </div>

@@ -8,11 +8,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     pre: (props) => (
       <pre className={props.className ?? 'not-prose'}>{props.children}</pre>
     ),
-    code: (props) => {
-      const content = props.children?.toString() ?? '';
-      const code = content.trim();
-      return <Code language={props.className} src={code} />;
-    },
+    code: Code,
     a: PreviewAnchor,
   };
 }
