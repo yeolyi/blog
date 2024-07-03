@@ -53,22 +53,6 @@ let _webTileProps: TileProps[] = [
     description: 'JS로 CSS 스타일을 바꾸는 방법을 공부했습니다',
     href: '/webapi/css',
   },
-  {
-    name: 'WIP',
-    description: '공부중이에요',
-    content: {
-      type: 'html',
-      code: `<h1></h1>
-<script>
-  let h1 = document.querySelector('h1');
-  let cnt = 0;
-  setInterval(() => {
-      cnt = (cnt + 1) % 4;
-      h1.innerText = 'WIP' + '.'.repeat(cnt);
-  }, 300);
-</script>`,
-    },
-  },
 ];
 
 export let webTileProps = _webTileProps.map((x) => ({

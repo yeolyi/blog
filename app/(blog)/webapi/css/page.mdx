@@ -2,10 +2,206 @@
 
 ## CSS Classes
 
-## Inline Styled
+JS로 HTML 요소의 스타일을 바꾸는 가장 쉬운 방법은 `class` 속성을 수정하는
+것입니다:
+
+```html
+<h1>Hello!</h1>
+<style>
+  .hidden {
+    display: none;
+  }
+</style>
+<script>
+  let h = document.querySelector('h1');
+  addEventListener('click', () => {
+    h.classList.toggle('hidden');
+  });
+</script>
+```
+
+## Inline Styles
+
+위치를 동적으로 바꾸는 등의 작업은 위 방법으로는 할 수 없습니다.
+
+이 경우 `style` 속성을 수정합니다:
+
+```html
+<style>
+  div {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border: 1px solid red;
+  }
+</style>
+<div>
+  <h1>Hello!</h1>
+</div>
+<input />
+<script>
+  let h = document.querySelector('h1');
+  console.log(h.style.constructor);
+  h.style.position = 'absolute';
+
+  let input = document.querySelector('input');
+  input.addEventListener('input', (e) => {
+    h.style.left = `${e.target.value}px`;
+  });
+</script>
+```
+
+`CSSStyleDeclaration` 객체가 대신 일반 **문자열**로 스타일을 볼 수도 있습니다:
+
+```html
+<style>
+  div {
+    background-color: gray;
+  }
+</style>
+<div style="width: 20px; height: 20px; border: 1px solid black"></div>
+<script>
+  let div = document.querySelector('div');
+
+  // ⚠️ 스타일시트의 내용 없이 인라인 스타일만 반환됩니다.
+  console.log(div.getAttribute('style'));
+  console.log(div.style.cssText);
+
+  let newDiv = document.createElement('div');
+  newDiv.setAttribute('style', div.getAttribute('style'));
+  div.after(newDiv);
+
+  let newDiv2 = document.createElement('div');
+  newDiv2.style.cssText = div.style.cssText;
+  newDiv.after(newDiv2);
+</script>
+```
 
 ## Computed Styles
 
+inline style과 달리 **computed style**은 스타일시트의 내용들도 반영된 값으로
+실제로 요소를 그릴 때 사용되는 속성입니다.
+
+- 읽기 전용
+- 모든 상대적인 값(퍼센트 등...)이 절대적인 값(px, rgb, rgba...)으로 바뀝니다
+- `cssText`는 유효한 값이 아닙니다.
+
+```html
+<style>
+  p {
+    font-size: 2rem;
+  }
+</style>
+<p>Hello</p>
+<script>
+  let p = document.querySelector('p');
+  let style = window.getComputedStyle(p);
+  console.log(style.getPropertyValue('font-size'));
+  console.log(style.getPropertyValue('top'));
+  console.log(style.cssText);
+</script>
+```
+
+요소의 위치나 크기를 쿼리하려면 CSS보다 `getBoundingClientRect()`등의 메서드를
+쓰는 편이 간단합니다. `getComputedStyle()`은 `top`이 `auto`인 등 도움이 안되는
+경우가 있어요.
+
 ## Scripting Stylesheets
 
+스타일시트도 `Element`의 일종이기에 js로 직접 수정할 수 있습니다:
+
+```html
+<style>
+  div {
+    width: 100px;
+    height: 100px;
+  }
+</style>
+<style id="light-theme">
+  body {
+    background-color: white;
+  }
+  div {
+    background-color: black;
+  }
+</style>
+<style id="dark-theme" disabled>
+  body {
+    background-color: black;
+  }
+  div {
+    background-color: white;
+  }
+</style>
+
+<div></div>
+
+<script>
+  let lightTheme = document.querySelector('#light-theme');
+  let darkTheme = document.querySelector('#dark-theme');
+  addEventListener('click', () => {
+    if (darkTheme.disabled) {
+      darkTheme.disabled = false;
+      lightTheme.disabled = true;
+    } else {
+      darkTheme.disabled = true;
+      lightTheme.disabled = false;
+    }
+  });
+</script>
+```
+
+JS로 스타일시트 자체를 조작하는 자세한 방법은 아래 링크를 참고하세요:
+
+https://developer.mozilla.org/ko/docs/Web/API/CSS_Object_Model
+
 ## CSS Animations and Events
+
+CSS로 애니메이션을 넣어주면 실제 작업은 브라우저가 해줍니다. JS에서는 애니메이션
+관련 이벤트들을 받아볼 수 있어요:
+
+```html
+<style>
+  .transparent {
+    opacity: 0;
+  }
+  .fadeable {
+    transition: opacity 0.25s ease-in;
+    transition-delay: 0.5s;
+  }
+</style>
+<h1 class="fadeable">Hello!</h1>
+<script>
+  let h = document.querySelector('h1');
+
+  addEventListener('click', () => {
+    h.classList.toggle('transparent');
+  });
+
+  addEventListener('transitionrun', (e) => {
+    console.log('run', e.target);
+  });
+
+  // transition-delay가 있다면 딜레이 이후 transitionstart가 fire됩니다.
+  addEventListener('transitionstart', (e) => {
+    console.log('start', e.target, e.propertyName);
+  });
+
+  addEventListener('transitionend', (e) => {
+    console.log('end', e.target, e.elapsedTime);
+  });
+</script>
+```
+
+이외에도 CSS animation과 관련된 `animationstart`, `animationend`,
+`animationiteration` 이벤트들이 있습니다. 각 이벤트 객체에는 `animationName`,
+`elapsedTime` 프로퍼티등이 있어요.
+
+## 읽어볼만한 것들
+
+https://stackoverflow.com/a/21044802
+
+`getComputedStyle`의 `font-family`에서 폰트들의 목록이 반환될 수 있는데 실제로
+어떤 폰트가 브라우저에 의해 선택되었는지는 알기 어렵습니다:
+
+https://stackoverflow.com/questions/7444451/how-to-get-the-actual-rendered-font-when-its-not-defined-in-css
