@@ -1,0 +1,175 @@
+# Document Geometry and Scrolling
+
+지금까지는 document를 트리 형태로 연결된 노드들로만 생각했지만, 렌더링된 노드의
+정확한 크기와 위치를 알고싶을 수 있습니다.
+
+abstract, tree-based **model**와 geometrical, coordinate-based **view**를
+오고가며 document를 보는 방법을 공부해봅시다.
+
+## Document Coordinates and Viewport Coordinates
+
+Element의 위치는 픽셀 단위로 측정됩니다.
+
+**뷰포트**(viewport, 혹은 window)는 현재 창에서 문서를 볼 수 있는
+부분(전체화면이라면 화면 전체)을 말합니다. 뷰포트 바깥의 콘텐츠는 스크롤 하기
+전엔 보이지 않습니다.
+
+웹사이트에서는 스크롤이 가능해 document가 뷰포트보다 클 수 있습니다. 스크롤되는
+document 안에 다시 스크롤되는 element가 있는 경우를 생각해보면, document에서
+요소의 위치를 단순 (x, y) 좌표로 나타내는 것이 유용하지(?) 않음을 알 수
+있습니다. 따라서 client-side JS는 보통 뷰포트 기준 좌표를 사용합니다.
+
+예를 들어 아래 에제에서 스크롤 위치에 상관 없이 `clientX`와 `clientY`는 뷰포트
+기준 좌표를 알려줍니다:
+
+```html
+<div style="height: 100px; overflow: scroll">
+  <div style="height: 1000px"></div>
+</div>
+<script>
+  addEventListener('click', (e) => {
+    console.log(e.clientX, e.clientY);
+  });
+</script>
+```
+
+Document coordinate와 viewport coordinate외에도 부모 요소의 위치에 상대적인
+**container coordinate**가 있습니다:
+
+```html
+<style>
+  div {
+    width: 20px;
+    height: 20px;
+  }
+</style>
+<div style="position: relative; background: red">
+  <div
+    style="position: absolute; background: blue; top: 10px; left: 10px"
+  ></div>
+</div>
+```
+
+## Querying the Geometry of an Element
+
+`getBoundingClientRect()` 혹은 `getClientRects()`를 활용합니다. 후자는 element가
+여러 줄에 걸쳐있을 수 있을 때 사용돼요:
+
+```html
+<div style="width: 150px">
+  이 법은
+  <strong
+    >도로에서 일어나는 교통상의 모든 위험과 장해를 방지하고 제거하여 안전하고
+    원활한</strong
+  >
+  교통을 확보함을 목적으로 한다.
+</div>
+<script>
+  let div = document.querySelector('div');
+  let strong = document.querySelector('strong');
+
+  let rect = div.getBoundingClientRect();
+  console.log(rect.left, rect.right, rect.width);
+  console.log(rect.top, rect.bottom, rect.height);
+
+  rect = strong.getClientRects();
+  console.log(...rect);
+</script>
+```
+
+## Determining the Element at a Point
+
+`elementFromPoint()`를 사용해 반대로 좌표에서 요소를 얻을 수도 있습니다. 가장
+위에 있는 요소를 반환해요:
+
+```html
+<div style="width: 150px">Hello, <em>World!</em></div>
+
+<script>
+  addEventListener('click', (e) => {
+    let element = document.elementFromPoint(e.clientX, e.clientY);
+    console.log(element.tagName);
+  });
+</script>
+```
+
+## Scrolling
+
+`scrollTo()`는 뷰포트의 좌상단을 전달받은 좌표로 설정합니다:
+
+```html
+<style>
+  .container {
+    width: 200px;
+    height: 200px;
+    border: 1px solid red;
+    overflow: scroll;
+  }
+  .content {
+    width: 400px;
+    height: 400px;
+    position: relative;
+  }
+  .object {
+    width: 20px;
+    height: 20px;
+    background: red;
+    position: absolute;
+    top: 190px;
+    left: 190px;
+  }
+</style>
+
+<button>scrollTo</button>
+<button>scrollBy</button>
+<button>scrollIntoView</button>
+
+<div class="container">
+  <div class="content">
+    <div class="object"></div>
+  </div>
+
+  <script>
+    let scrollToButton = document.querySelector('button:nth-of-type(1)');
+    let scrollByButton = document.querySelector('button:nth-of-type(2)');
+    let scrollIntoViewButton = document.querySelector('button:nth-of-type(3)');
+    let container = document.querySelector('.container');
+    let object = document.querySelector('.object');
+
+    scrollToButton.addEventListener('click', () => {
+      container.scrollTo({ left: 200, top: 200, behavior: 'smooth' });
+    });
+    scrollByButton.addEventListener('click', () => {
+      container.scrollBy({ left: 20, top: 20, behavior: 'smooth' });
+    });
+
+    // smooth를 넣으면 크롬에서 한 번밖에 동작하지 않는 것 같아요
+    // https://stackoverflow.com/questions/62150827/
+    scrollIntoViewButton.addEventListener('click', () => {
+      object.scrollIntoView({
+        block: 'center',
+        inline: 'start',
+      });
+    });
+  </script>
+</div>
+```
+
+## Viewport Size, Content Size, and Scroll Position
+
+```html
+<h1>Hello, World!</h1>
+<script>
+  // 뷰포트 크기 얻기
+  console.log(window.innerWidth, window.innerHeight);
+
+  // document 크기 얻기
+  let element = document.documentElement;
+  console.log(element.getBoundingClientRect());
+  console.log(element.offsetWidth, element.offsetHeight);
+</script>
+```
+
+## 읽어볼만한 것들
+
+https://developer.mozilla.org/ko/docs/Web/API/Window/devicePixelRatio

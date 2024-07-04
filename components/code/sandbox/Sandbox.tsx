@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import CodeEditor from '../CodeEditor';
-import Console from '../Console';
-import RefreshButton from '../RefreshButton';
+import CodeEditor from '../editor/CodeEditor';
+import Console from '../console/Console';
+import RefreshButton from '../editor/RefreshButton';
 import { useIframeListener } from './useIframeListener';
 import { useDebouncedSrcDoc } from './useDebouncedSrcDoc';
 import { PresetName } from '../preset/preset';
@@ -56,7 +56,7 @@ export default function Sandbox({
           <iframe
             key={iframeKey}
             sandbox="allow-scripts"
-            className="min-h-[50px] bg-white shadow"
+            className="min-h-[150px] resize-y bg-white shadow"
             style={{ height: 0 }}
             ref={(ref) => setIframe(ref)}
             srcDoc={srcdoc}

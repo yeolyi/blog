@@ -52,6 +52,14 @@ let _webTileProps: TileProps[] = [
     name: 'CSS 조작',
     description: 'JS로 CSS 스타일을 바꾸는 방법을 공부했습니다',
     href: '/webapi/css',
+    content: {
+      type: 'html',
+      code: `<h1>Hello!</h1>
+<script>
+  let h1 = document.querySelector('h1');
+  h1.style.color = 'royalblue'
+</script>`,
+    },
   },
 ];
 

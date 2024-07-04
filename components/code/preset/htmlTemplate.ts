@@ -25,7 +25,7 @@ export let srcdocHead = `<!doctype html>
       }
     </script>
 
-    <script type="module">
+    <!-- <script type="module">
       let resizeObserver = new ResizeObserver(entries => {
         window.parent.postMessage({
           type: 'height',
@@ -35,7 +35,7 @@ export let srcdocHead = `<!doctype html>
       })
 
       resizeObserver.observe(document.body);
-    </script>
+    </script> -->
 
     <script>
       // 잡히지 않은 에러가 콘솔에 뜨지 않도록 합니다.

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Star from './Star';
+import Follower from './Follower';
 
 export default function Footer() {
   return (
@@ -9,7 +10,10 @@ export default function Footer() {
           <Link href="https://github.com/yeolyi">GitHub</Link>
           <Link href="https://instagram.com/yeolyii">Instagram</Link>
         </div>
-        <Star />
+        <div className="flex gap-3">
+          <Star />
+          <Follower />
+        </div>
       </div>
     </footer>
   );
