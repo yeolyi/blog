@@ -4,7 +4,7 @@ let _webTileProps: TileProps[] = [
   {
     name: 'Web API 기초',
     description: '브라우저에서 JS가 어떤 과정으로 실행되는지 배웠습니다',
-    concepts: 'defer, async, DOM, SOP, XSS',
+    // concepts: 'defer, async, DOM, SOP, XSS',
     href: '/webapi/basic',
     content: {
       type: 'html',
@@ -20,7 +20,7 @@ let _webTileProps: TileProps[] = [
     name: '이벤트',
     description:
       '브라우저에서 이벤트가 어떻게 발생되고 전파되는지 공부했습니다.',
-    concepts: '이벤트의 등록, 전파, 취소, 디스패치',
+    // concepts: '이벤트의 등록, 전파, 취소, 디스패치',
     href: '/webapi/event',
     content: {
       type: 'html',
@@ -37,7 +37,7 @@ let _webTileProps: TileProps[] = [
   {
     name: 'Document 조작',
     description: 'JS로 웹페이지의 내용을 바꾸는 방법을 공부했습니다.',
-    concepts: 'Element의 쿼리, 순회, 속성, 생성, 삽입, 삭제',
+    // concepts: 'Element의 쿼리, 순회, 속성, 생성, 삽입, 삭제',
     href: '/webapi/document',
     content: {
       type: 'html',
@@ -58,6 +58,21 @@ let _webTileProps: TileProps[] = [
 <script>
   let h1 = document.querySelector('h1');
   h1.style.color = 'royalblue'
+</script>`,
+    },
+  },
+  {
+    name: '좌표와 스크롤',
+    description:
+      '요소의 크기와 위치, 스크롤을 알고 조작하는 법을 공부했습니다.',
+    href: '/webapi/geometry',
+    content: {
+      type: 'html',
+      code: `<script>
+  addEventListener("click", (e) => {
+    console.log(e.offsetX, e.offsetY);
+    console.log(e.screenX, e.screenY);
+  });
 </script>`,
     },
   },

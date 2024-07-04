@@ -2,19 +2,23 @@ import Image from 'next/image';
 import { Gallery } from '../components/gallery/Gallery';
 import profile from '@/public/profile.jpg';
 import { ReactNode } from 'react';
-import { Tile, TileProps } from '@/components/gallery/Tile';
+import { Tile } from '@/components/gallery/Tile';
 import {
   TopSection,
   Headline,
   Copy,
   SectionHeadline,
-} from '@/components/Typography';
-import { PostContainer, PostTile, PostTileProps } from '@/components/Post';
+} from '@/components/common/Typography';
+import {
+  PostContainer,
+  PostTile,
+  PostTileProps,
+} from '@/components/common/Post';
 import { CserealBg } from '@/components/mainbg/CserealBg';
 import InstaBg from '@/components/mainbg/InstaBg';
 import { WideTile, WideTileProps } from '@/components/gallery/WideTile';
 import JSBookTile from '@/components/gallery/JsBookTile';
-import Giscus from '@/components/Giscus';
+import Giscus from '@/components/common/Giscus';
 import Footer from '@/components/layout/Footer';
 import { jsTileProps } from '@/constants/jsTileProps';
 import { webTileProps } from '@/constants/webTileProps';

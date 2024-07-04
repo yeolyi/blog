@@ -57,7 +57,7 @@ export const Tile = ({
             <Sandbox
               presetName="js"
               code={content.code}
-              refreshDisabled
+              norefresh
               logExpanded
             />
           )}

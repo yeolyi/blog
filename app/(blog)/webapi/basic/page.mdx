@@ -30,6 +30,7 @@ defer와 async가 무시됩니다. 아래 예제에서 `type="module"`을 `defer
 결과가 달라질거에요:
 
 ```html
+// @noiframe
 <script>
   console.log(1, !!document.querySelector('#foo'));
 </script>
@@ -101,6 +102,7 @@ https://stackoverflow.com/a/9979779
 추가적인 메서드도 정의합니다:
 
 ```html
+// @noiframe
 <div></div>
 <audio></audio>
 <script>
@@ -117,6 +119,7 @@ document의 모든 스크립트와 모듈은 하나의 전역 객체를 공유�
 자바스크립트 표준 라이브러리들과 web api들이 있어요:
 
 ```html
+// @noiframe
 <script>
   window.a = 1;
 </script>
@@ -225,6 +228,7 @@ console.log(navigator.hardwareConcurrency);
 > register a handler for “unhandledrejection” events
 
 ```html
+// @noiframe
 <script>
   // 잡히지 않은 동기 에러 잡기
   addEventListener('error', (e) => {

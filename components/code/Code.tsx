@@ -22,29 +22,39 @@ let parseProps = (
   className: string,
 ): Partial<SandboxProps> & { presetName?: PresetName } => {
   let { code, options } = parseFirstLine(src);
-  let executeDisabled = options.has('noexec');
 
-  let presetName = presetNameList.find((name) => options.has(name));
+  let presetName = presetNameList.find((name) => name in options);
 
-  if (presetName) return { presetName, code, executeDisabled };
+  if (presetName) return { presetName, code, ...options };
 
   // fallback
   if (className === 'language-html') {
-    return { presetName: 'html', code, executeDisabled };
+    return { presetName: 'html', code, ...options };
   } else if (className === 'language-js') {
-    return { presetName: 'js', code, executeDisabled };
+    return { presetName: 'js', code, ...options };
   } else {
     return {};
   }
 };
 
 let parseFirstLine = (src: string) => {
-  if (!src.startsWith('// @')) return { code: src, options: new Set() };
+  if (!src.startsWith('// @')) return { code: src, options: {} };
 
   let idx = src.indexOf('\n');
   let attrStr = src.slice(src.indexOf('@') + 1, idx);
   let code = src.slice(idx + 1);
-  let options = new Set(attrStr.split(' '));
+
+  let options = attrStr
+    .split(' ')
+    .reduce<{ [key: string]: boolean | number }>((acc, cur) => {
+      if (cur.includes('=')) {
+        let [key, val] = cur.split('=');
+        acc[key] = Number(val);
+      } else {
+        acc[cur] = true;
+      }
+      return acc;
+    }, {});
 
   return { code, options };
 };

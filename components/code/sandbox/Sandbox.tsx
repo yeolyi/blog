@@ -9,29 +9,38 @@ import { useDebouncedSrcDoc } from './useDebouncedSrcDoc';
 import { PresetName } from '../preset/preset';
 import { presetMap } from '../preset/presetMap';
 
+export type SandboxOptions = {
+  noexec?: boolean;
+  noedit?: boolean;
+  norefresh?: boolean;
+  noiframe?: boolean;
+
+  logExpanded?: boolean;
+  iframeHeight?: number;
+};
+
 export type SandboxProps = {
   presetName: PresetName;
   code: string;
-
-  executeDisabled?: boolean;
-  editDisabled?: boolean;
-  refreshDisabled?: boolean;
-  logExpanded?: boolean;
-};
+} & SandboxOptions;
 
 export default function Sandbox({
   presetName,
   code: _code,
 
-  executeDisabled,
-  editDisabled,
-  refreshDisabled,
+  noexec,
+  noedit,
+  norefresh,
   logExpanded,
+  noiframe,
+  iframeHeight,
 }: SandboxProps) {
   let preset = presetMap[presetName];
 
   const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null);
-  const { logList, reset } = useIframeListener(iframe, preset.showIframe);
+  const { logList, reset } = useIframeListener(iframe, {
+    listenResize: preset.showIframe && iframeHeight === undefined,
+  });
 
   const { code, setCode, srcdoc, iframeKey, refresh } = useDebouncedSrcDoc(
     _code,
@@ -39,8 +48,9 @@ export default function Sandbox({
     reset,
   );
 
-  let showConsole = !executeDisabled && preset.showConsole(logList.length);
-  let showRefresh = !executeDisabled && !refreshDisabled;
+  let showConsole = !noexec && preset.showConsole(logList.length);
+  let showRefresh = !noexec && !norefresh;
+  let showIframe = !noiframe && preset.showIframe;
 
   return (
     <>
@@ -49,15 +59,15 @@ export default function Sandbox({
           code={code}
           setCode={setCode}
           language={preset.language}
-          noneditable={editDisabled}
+          noneditable={noedit}
         />
         {showRefresh && <RefreshButton refresh={refresh} />}
-        {preset.showIframe && (
+        {showIframe && (
           <iframe
             key={iframeKey}
             sandbox="allow-scripts"
-            className="min-h-[150px] resize-y bg-white shadow"
-            style={{ height: 0 }}
+            className="min-h-[100px] bg-white shadow"
+            style={{ height: iframeHeight ? `${iframeHeight}px` : 0 }}
             ref={(ref) => setIframe(ref)}
             srcDoc={srcdoc}
           />
@@ -66,7 +76,7 @@ export default function Sandbox({
           <Console logList={logList} expandedDefault={logExpanded} />
         )}
       </div>
-      {!preset.showIframe && (
+      {!showIframe && (
         <iframe
           key={iframeKey}
           sandbox="allow-scripts"

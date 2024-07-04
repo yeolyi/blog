@@ -1,5 +1,5 @@
 import type { MDXComponents } from 'mdx/types';
-import PreviewAnchor from './components/PreviewAnchor';
+import PreviewAnchor from './components/common/PreviewAnchor';
 import Code from './components/code/Code';
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {

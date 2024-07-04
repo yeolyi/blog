@@ -4,6 +4,10 @@ export let srcdocHead = `<!doctype html>
 <html>
   <head>
     <style>
+      html {
+        width: 100%;
+        height: 100%;
+      }
       body {
         width: 100%;
         height: 100%;
@@ -24,18 +28,6 @@ export let srcdocHead = `<!doctype html>
         }, "*");
       }
     </script>
-
-    <!-- <script type="module">
-      let resizeObserver = new ResizeObserver(entries => {
-        window.parent.postMessage({
-          type: 'height',
-          // TODO: 해결하기 귀찮아서 넣은 여유값 없애기
-          data: document.body.scrollHeight + 2 + 'px',
-        }, "*");
-      })
-
-      resizeObserver.observe(document.body);
-    </script> -->
 
     <script>
       // 잡히지 않은 에러가 콘솔에 뜨지 않도록 합니다.

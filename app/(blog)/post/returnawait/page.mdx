@@ -1,0 +1,16 @@
+```js
+let f = async () => {
+  throw new Error('async error!');
+};
+
+let g = async () => {
+  try {
+    // ✍️ + await
+    return f();
+  } catch {
+    console.log('catched!');
+  }
+};
+
+g();
+```

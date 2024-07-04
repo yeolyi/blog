@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import Navigation from '../nav/Navigation';
-import Giscus from '../Giscus';
+import Giscus from '../common/Giscus';
 
 export default function PostLayout({
   discussionNumber,
