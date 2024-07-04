@@ -1,3 +1,5 @@
+import Code from '@/components/code/Code';
+import Sandbox from '@/components/code/sandbox/Sandbox';
 import { TileProps } from '@/components/gallery/Tile';
 
 export let jsTileProps: TileProps[] = [
@@ -131,7 +133,9 @@ console.log(Object.isFrozen(obj));`,
   },
 ].map((x) => ({
   ...x,
-  content: x.content ? { type: 'js', code: x.content } : undefined,
+  children: x.content ? (
+    <Sandbox presetName="js" code={x.content} norefresh />
+  ) : undefined,
   style: {
     backgroundImage: `linear-gradient(
         163deg,

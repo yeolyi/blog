@@ -9,15 +9,7 @@ export type TileProps = {
   style?: CSSProperties;
   concepts?: string;
   href?: string;
-  content?:
-    | {
-        type: 'js' | 'html';
-        code: string;
-      }
-    | {
-        type: 'custom';
-        children: ReactNode;
-      };
+  children?: ReactNode;
 };
 
 export const Tile = ({
@@ -25,8 +17,8 @@ export const Tile = ({
   description,
   concepts,
   href,
-  content,
   style,
+  children,
 }: TileProps) => {
   let textColor = 'text-textblack';
   if (style?.backgroundColor && isColorDark(style.backgroundColor)) {
@@ -53,18 +45,7 @@ export const Tile = ({
         )}
 
         <div className="mb-auto mt-[20px] w-full text-textblack">
-          {content?.type === 'js' && (
-            <Sandbox
-              presetName="js"
-              code={content.code}
-              norefresh
-              logExpanded
-            />
-          )}
-          {content?.type === 'html' && (
-            <Sandbox presetName="html" code={content.code} />
-          )}
-          {content?.type === 'custom' && content.children}
+          {children}
         </div>
 
         {concepts !== undefined && (

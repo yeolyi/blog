@@ -66,8 +66,11 @@ export default function Sandbox({
           <iframe
             key={iframeKey}
             sandbox="allow-scripts"
-            className="min-h-[100px] bg-white shadow"
-            style={{ height: iframeHeight ? `${iframeHeight}px` : 0 }}
+            className="bg-white shadow"
+            style={{
+              height: iframeHeight ? `${iframeHeight}px` : 0,
+              minHeight: iframeHeight ? undefined : '200px',
+            }}
             ref={(ref) => setIframe(ref)}
             srcDoc={srcdoc}
           />

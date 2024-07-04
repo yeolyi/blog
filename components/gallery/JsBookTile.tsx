@@ -25,14 +25,6 @@ export default function JSBookTile() {
     <Tile
       name="소개"
       description="JS를 복습하며 몰랐었고 흥미로웠던 내용 위주로 기록했습니다. 아래 책으로 공부했어요."
-      content={{
-        type: 'custom',
-        children: (
-          <div ref={imageRef} className="overflow-hidden rounded-[13px]">
-            <Image src={jsbook} alt="자바스크립트 책 표지" />
-          </div>
-        ),
-      }}
       style={{
         backgroundImage: `linear-gradient(
         163deg,
@@ -42,6 +34,10 @@ export default function JSBookTile() {
     hsl(48deg 86% 54%) 99%
   )`,
       }}
-    />
+    >
+      <div ref={imageRef} className="overflow-hidden rounded-[13px]">
+        <Image src={jsbook} alt="자바스크립트 책 표지" />
+      </div>
+    </Tile>
   );
 }
