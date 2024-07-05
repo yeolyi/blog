@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CodeEditor from '../editor/CodeEditor';
 import Console from '../console/Console';
 import RefreshButton from '../editor/RefreshButton';

@@ -19,6 +19,14 @@ export let srcdocHead = `<!doctype html>
   </head>
   <body>
     <script>
+      // https://stackoverflow.com/questions/41869122/
+      // It seems Safari on IOS denies touch listeners to window 
+      // unless other DOM objects also have listeners.
+      document.addEventListener('click', () => {});
+      document.addEventListener('touchstart', () => {});
+    </script>
+
+    <script>
       ${stringifySrc}
 
       console.log = (...data) => {

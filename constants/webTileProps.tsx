@@ -62,6 +62,17 @@ let _webTileProps: TileProps[] = [
   });
 </script>`,
   },
+  {
+    name: '컴포넌트',
+    description: '네이티브로 컴포넌트를 구현하는 방법을 공부했습니다',
+    href: '/webapi/component',
+    code: `<div>light DOM</div>
+<script>
+  let shadowHost = document.querySelector('div');
+  let shadowRoot = shadowHost.attachShadow({ mode: 'open' });
+  shadowRoot.innerHTML = '<p>shadow DOM <slot></slot></p>'
+</script>`,
+  },
 ].map((x) => ({
   ...x,
   children: (
