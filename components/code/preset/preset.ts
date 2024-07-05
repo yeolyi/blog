@@ -1,6 +1,13 @@
 import { srcdocHead, srcdocTail } from './htmlTemplate';
 
-export let presetNameList = ['js', 'html', 'rxjs', 'babel', 'react'] as const;
+export let presetNameList = [
+  'js',
+  'html',
+  'rxjs',
+  'babel',
+  'react',
+  'jquery',
+] as const;
 export type PresetName = (typeof presetNameList)[number];
 
 export type Preset = {
@@ -85,6 +92,19 @@ export let reactPreset: Preset = {
     );
   },
   language: 'javascript',
+};
+
+export let jqueryPreset: Preset = {
+  name: 'jquery',
+  showConsole: () => true,
+  showIframe: true,
+  createSrcDoc: async (code) => {
+    let jquery = await fetchText(
+      'https://code.jquery.com/jquery-3.7.1.slim.min.js',
+    );
+    return wrapTemplateHTML(`<script>${jquery}</script>${code}`);
+  },
+  language: 'xml',
 };
 
 let wrapTemplateHTML = (src: string) => `${srcdocHead}${src}${srcdocTail}`;

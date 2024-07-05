@@ -38,7 +38,7 @@ let parseProps = (
 };
 
 let parseFirstLine = (src: string) => {
-  if (!src.startsWith('// @')) return { code: src, options: {} };
+  if (!src.includes('@')) return { code: src, options: {} };
 
   let idx = src.indexOf('\n');
   let attrStr = src.slice(src.indexOf('@') + 1, idx);

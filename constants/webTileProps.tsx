@@ -1,4 +1,3 @@
-import Code from '@/components/code/Code';
 import Sandbox from '@/components/code/sandbox/Sandbox';
 import { TileProps } from '@/components/gallery/Tile';
 

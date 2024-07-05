@@ -1,0 +1,33 @@
+# jquery
+
+```html
+<!-- @jquery -->
+<button></button>
+<script>
+  $('button')
+    .html('Next Step...')
+    .on('click', () => console.log('clicked!'));
+</script>
+```
+
+<br />
+
+```html
+<!-- @jquery -->
+<button>click me</button>
+<p></p>
+
+<script>
+  $('button').on('click', () => {
+    let defer = $.Deferred();
+
+    defer
+      .then((value) => value * 2)
+      .done((value) => {
+        $('p').html(value);
+      });
+
+    defer.resolve(5);
+  });
+</script>
+```

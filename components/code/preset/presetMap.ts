@@ -6,6 +6,7 @@ import {
   babelPreset,
   rxjsPreset,
   reactPreset,
+  jqueryPreset,
 } from './preset';
 
 export let presetMap: { [key in PresetName]: Preset } = {
@@ -14,4 +15,5 @@ export let presetMap: { [key in PresetName]: Preset } = {
   babel: babelPreset,
   rxjs: rxjsPreset,
   react: reactPreset,
+  jquery: jqueryPreset,
 };
