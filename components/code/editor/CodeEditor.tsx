@@ -3,7 +3,7 @@ import js from 'highlight.js/lib/languages/javascript';
 import xml from 'highlight.js/lib/languages/xml';
 import css from 'highlight.js/lib/languages/css';
 import 'highlight.js/styles/github.css';
-import { KeyboardEventHandler, ReactNode } from 'react';
+import { KeyboardEvent as KeyboardEventReact, ReactNode } from 'react';
 
 hljs.registerLanguage('javascript', js);
 hljs.registerLanguage('xml', xml);
@@ -24,82 +24,121 @@ export default function CodeEditor({
   noneditable?: boolean;
   toolbar?: ReactNode;
 }) {
-  const { highlightedCode, handleKeyDown } = useEditor(code, setCode, language);
+  let highlightedCode = highlightCode(code, language);
 
   return (
     <div>
       <div className={`relative overflow-x-scroll rounded bg-slate-50`}>
-        <div className="relative h-fit min-h-full w-fit min-w-full p-4 text-sm leading-[1.4rem]">
+        <div className="relative h-fit min-h-full w-fit min-w-full p-4 font-firacode text-sm leading-[1.4rem]">
           <pre
             dangerouslySetInnerHTML={{ __html: highlightedCode }}
-            className="h-full w-full text-nowrap font-firacode not-italic"
+            className="h-full w-full text-nowrap not-italic"
           />
           <textarea
             name="code"
             aria-label="editor"
-            defaultValue={code}
-            onKeyDown={handleKeyDown}
-            onChange={(e) => {
-              setCode(e.target.value);
-            }}
             autoCapitalize="off"
             autoComplete="off"
             spellCheck="false"
-            className="absolute bottom-4 left-4 right-4 top-4 resize-none bg-transparent font-firacode text-transparent caret-sky-500 outline-none"
+            className="absolute bottom-4 left-4 right-4 top-4 resize-none whitespace-pre bg-transparent text-transparent caret-sky-500 outline-none"
+            value={code}
             disabled={noneditable}
+            onChange={(e) => setCode(e.target.value)}
+            onKeyDown={(e) => handleKeyDown(e, setCode)}
           />
         </div>
       </div>
-      <div className="absolute right-3 top-2 flex items-center gap-2 font-firacode text-[12px] text-neutral-400">
-        {toolbar}
+      <div className="absolute right-3 top-4 flex items-center gap-2 font-firacode text-[12px] text-neutral-400">
         {presetName.toLocaleUpperCase()}
+        {toolbar}
       </div>
     </div>
   );
 }
 
-const useEditor = (
-  code: string,
-  _setCode: (val: string) => void,
-  language: string,
-) => {
+// TODO: newline 처리 더 깔끔하게
+let highlightCode = (code: string, language: string) => {
   let highlightedCode = hljs.highlight(code, { language }).value;
 
   if (highlightedCode === '') highlightedCode = ' ';
-  // TODO: 해결책 찾기
   if (highlightedCode[highlightedCode.length - 1] === '\n')
     highlightedCode += ' ';
 
-  const handleKeyDown: KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
-    const textarea = e.target as HTMLTextAreaElement;
-    const code = textarea.value;
-    const isCtrlZ = (e.metaKey || e.ctrlKey) && e.key === 'z';
-
-    const setCode = (code: string) => {
-      textarea.value = code;
-      _setCode(code);
-    };
-
-    if (e.key === 'Tab') {
-      e.preventDefault();
-
-      const { selectionStart, selectionEnd } = textarea;
-
-      const indent = '  ';
-      const newValue = insertAt(code, indent, selectionStart);
-
-      setCode(newValue);
-
-      textarea.selectionStart = selectionStart + indent.length;
-      textarea.selectionEnd = selectionEnd + indent.length;
-    } else if (isCtrlZ) {
-      // TODO
-      e.stopPropagation();
-    }
-  };
-
-  return { handleKeyDown, highlightedCode };
+  return highlightedCode;
 };
 
-const insertAt = (str1: string, str2: string, idx: number) =>
-  `${str1.slice(0, idx)}${str2}${str1.slice(idx)}`;
+let getLineIndices = (str: string, idx: number) => {
+  let lineStart = idx;
+  while (lineStart > 0 && str[lineStart - 1] != '\n') lineStart--;
+
+  let wordStart = lineStart;
+  while (str[wordStart] == ' ' || str[wordStart] == '\t') wordStart++;
+
+  return { wordStart, lineStart };
+};
+
+let handleEnterKeyDown = (e: KeyboardEventReact<HTMLTextAreaElement>) => {
+  let target = e.target as HTMLTextAreaElement;
+  if (target.selectionStart !== target.selectionEnd) return;
+
+  let selection = target.selectionStart;
+  let lastLetter = target.value[selection - 1];
+
+  let { wordStart, lineStart } = getLineIndices(target.value, selection);
+  let blank = wordStart - lineStart + (lastLetter === '{' ? TAB.length : 0);
+  if (blank === 0) return;
+
+  // Insert carriage return and indented text
+  // https://stackoverflow.com/questions/60581285/
+  document.execCommand('insertText', false, '\n' + ' '.repeat(blank));
+  e.preventDefault();
+};
+
+let TAB = '  ';
+
+let handleTabKeyDown = (
+  e: KeyboardEventReact<HTMLTextAreaElement>,
+  setCode: (val: string) => void,
+) => {
+  let target = e.target as HTMLTextAreaElement;
+
+  if (target.selectionStart == target.selectionEnd) {
+    // undoable
+    if (!e.shiftKey) {
+      document.execCommand('insertText', false, TAB);
+    } else {
+      let { wordStart, lineStart } = getLineIndices(
+        target.value,
+        target.selectionStart,
+      );
+
+      let blank = wordStart - lineStart;
+      if (blank < TAB.length) return;
+
+      // TODO: undo 이후 selection 남는거 없애기
+      let tmp = target.selectionStart;
+      target.selectionStart = wordStart - TAB.length;
+      target.selectionEnd = wordStart;
+      document.execCommand('delete');
+      target.selectionStart = target.selectionEnd = Math.max(0, tmp - 2);
+    }
+  } else {
+    //
+  }
+};
+
+// https://stackoverflow.com/questions/6637341/use-tab-to-indent-in-textarea
+function handleKeyDown(
+  e: KeyboardEventReact<HTMLTextAreaElement>,
+  setCode: (val: string) => void,
+) {
+  switch (e.key) {
+    case 'Enter':
+      handleEnterKeyDown(e);
+      break;
+    case 'Tab':
+      e.preventDefault();
+      handleTabKeyDown(e, setCode);
+      break;
+  }
+}
