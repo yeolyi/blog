@@ -1,5 +1,5 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react';
-import { PresetName, presetNameList } from './preset/preset';
+import { PresetName, presetNameList } from './sandbox/preset/preset';
 import Sandbox, { SandboxProps } from './sandbox/Sandbox';
 
 export default function Code(

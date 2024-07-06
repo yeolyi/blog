@@ -1,11 +1,11 @@
 import { getStarGazers } from '@/api/github';
-import FooterBadge from './FooterBadge';
+import { Badge } from './Badge';
 
 export default async function Star() {
   let cnt = await getStarGazers();
   let href = 'https://github.com/yeolyi/blog';
 
-  return <FooterBadge title="star" icon={<StarSVG />} cnt={cnt} href={href} />;
+  return <Badge title="star" icon={<StarSVG />} cnt={cnt} href={href} />;
 }
 
 let StarSVG = () => (

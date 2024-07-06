@@ -73,6 +73,18 @@ let _webTileProps: TileProps[] = [
   shadowRoot.innerHTML = '<p>shadow DOM <slot></slot></p>'
 </script>`,
   },
+  {
+    name: 'SVG',
+    description:
+      '해상도 상관없이 깔끔하게 렌더링되는 이미지 포맷을 공부했습니다',
+    href: '/webapi/svg',
+    code: `<svg version="1.1" width="50" height="50" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="25" cy="25" r="25" fill="black" />
+  <text x="25" y="32" font-size="18" text-anchor="middle" fill="white">
+    SVG
+  </text>
+</svg>`,
+  },
 ].map((x) => ({
   ...x,
   children: (

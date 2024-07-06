@@ -1,1 +1,211 @@
 # SVG: Scalable Vector Graphics
+
+SVG는 모든 해상도에서 깔끔하게 렌더링되는 이미지를 서술합니다.
+
+> SVG is, essentially, to graphics what HTML is to text.
+>
+> https://developer.mozilla.org/ko/docs/Web/SVG
+
+즉 SVG는 이미지를 그리는 방법을 서술합니다.
+
+## SVG in HTML
+
+`img` 태그를 통해 svg 파일을 사용할 수도 있지만 HTML에 직접 넣을 수 있습니다:
+
+```html
+<!-- @iframeHeight=220 -->
+<svg version="1.1" width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="100" cy="100" r="80" fill="black" />
+  <text x="100" y="120" font-size="60" text-anchor="middle" fill="white">
+    SVG
+  </text>
+</svg>
+```
+
+## Scripting SVG
+
+svg를 직접 넣으면 DOM API로 svg를 조작할 수 있습니다:
+
+```html
+<!-- @iframeHeight=270 -->
+<style>
+  #clock .hands {
+    stroke-width: 2;
+    stroke: black;
+    stroke-linecap: round;
+    fill: #ffe;
+  }
+</style>
+
+<!-- viewBox 속성은 내부에서 사용할 좌표계의 크기를, -->
+<!-- width와 height 속성은 그래픽의 크기를 나타냅니다. -->
+<svg id="clock" viewBox="0 0 100 100" width="250" height="250">
+  <g class="hands">
+    <line class="hourhand" x1="50" y1="50" x2="50" y2="30" />
+    <line class="minutehand" x1="50" y1="50" x2="50" y2="25" />
+    <line class="secondhand" x1="50" y1="50" x2="50" y2="20" />
+  </g>
+</svg>
+
+<script>
+  let minhand = document.querySelector('#clock .minutehand');
+  let hourhand = document.querySelector('#clock .hourhand');
+  let secondhand = document.querySelector('#clock .secondhand');
+
+  let rotate = (element, angle) =>
+    element.setAttribute('transform', `rotate(${angle},50,50)`);
+
+  let updateClock = () => {
+    let now = new Date();
+
+    let sec = now.getSeconds();
+    let min = now.getMinutes() + sec / 60;
+    let hour = (now.getHours() % 12) + min / 60;
+
+    rotate(secondhand, sec * 6);
+    rotate(minhand, min * 6);
+    rotate(hourhand, hour * 30);
+  };
+
+  updateClock();
+  setInterval(updateClock, 1000);
+</script>
+```
+
+## Creating SVG Images with JavaScript
+
+SVG 태그가 HTML 문서에 포함될 수는 있지만 기술적으로는 여전히 XML 태그들입니다.
+따라서 `createElement()`가 아닌 `createElementNS()`로 태그를 생성합니다.
+
+```html
+<!-- @iframeHeight=500 -->
+<a
+  href="https://survey.stackoverflow.co/2023/#section-most-popular-technologies-programming-scripting-and-markup-languages"
+  >stackoverflow - Most popular technologies 2023</a
+>
+
+<script>
+  // svg 요소의 namespace
+  const svg = 'http://www.w3.org/2000/svg';
+
+  let createPieChart = ({ width, height, cx, cy, r, lx, ly, data }) => {
+    let chart = createContainer(width, height);
+
+    let labels = Object.keys(data);
+    let values = Object.values(data);
+    let angles = calculateAngle(values);
+
+    values.forEach((value, i) => {
+      let color = indexToColor(i);
+      chart.append(createSlice(cx, cy, r, angles[i], angles[i + 1], color));
+
+      let icony = ly + 30 * i;
+      chart.append(createIcon(lx, icony, color));
+      chart.append(createLabel(lx + 30, icony + 16, `${labels[i]} ${value}`));
+    });
+
+    return chart;
+  };
+
+  let createContainer = (width, height) => {
+    let chart = document.createElementNS(svg, 'svg');
+    chart.setAttribute('width', width);
+    chart.setAttribute('height', height);
+    chart.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    chart.setAttribute('font-family', 'sans-serif');
+    chart.setAttribute('font-size', '18');
+
+    return chart;
+  };
+
+  // i번째 파이 조각은 angle[i]에서 시작해 angle[i+1]에서 끝납니다.
+  // 0(radian)은 12시 방향을 뜻하고 시계 방향으로 각이 증가합니다.
+  let calculateAngle = (values) => {
+    let total = values.reduce((x, y) => x + y);
+
+    let angles = [0];
+    values.forEach((x, i) =>
+      angles.push(angles[i] + (x / total) * 2 * Math.PI),
+    );
+
+    return angles;
+  };
+
+  // 원리가 뭐지??
+  let indexToColor = (i) =>
+    `hsl(${(i * 40) % 360},${90 - 3 * i}%,${50 + 2 * i}%)`;
+
+  let createSlice = (cx, cy, r, startangle, endangle, color) => {
+    let x1 = cx + r * Math.sin(startangle);
+    let y1 = cy - r * Math.cos(startangle);
+    let x2 = cx + r * Math.sin(endangle);
+    let y2 = cy - r * Math.cos(endangle);
+
+    // 반원보다 크면 1입니다. 아래 SVG arc에서 사용됩니다.
+    let big = startangle - endangle > Math.PI ? 1 : 0;
+
+    let path =
+      `M${cx},${cy}` + // Move to circle center.
+      `L${x1},${y1}` + // Draw line to (x1,y1).
+      `A${r},${r} 0 ${big} 1` + // Draw an arc of radius r...
+      `${x2},${y2}` + // ...ending at to (x2,y2).
+      'Z'; // Close path back to (cx,cy).
+
+    let slice = document.createElementNS(svg, 'path');
+    slice.setAttribute('d', path);
+    slice.setAttribute('fill', color);
+    slice.setAttribute('stroke', 'black');
+    slice.setAttribute('stroke-width', '1');
+
+    return slice;
+  };
+
+  let createIcon = (x, y, color) => {
+    let icon = document.createElementNS(svg, 'rect');
+    icon.setAttribute('x', x);
+    icon.setAttribute('y', y);
+    icon.setAttribute('width', 20);
+    icon.setAttribute('height', 20);
+    icon.setAttribute('fill', color);
+    icon.setAttribute('stroke', 'black');
+    icon.setAttribute('stroke-width', '1');
+
+    return icon;
+  };
+
+  let createLabel = (x, y, text) => {
+    let label = document.createElementNS(svg, 'text');
+    label.setAttribute('x', x);
+    label.setAttribute('y', y);
+    label.append(text);
+
+    return label;
+  };
+</script>
+
+<script>
+  document.body.append(
+    createPieChart({
+      width: 640,
+      height: 400,
+      cx: 200,
+      cy: 200,
+      r: 180,
+      lx: 400,
+      ly: 40,
+      data: {
+        JavaScript: 63.61,
+        'HTML/CSS': 52.97,
+        Python: 49.28,
+        SQL: 48.66,
+        TypeScript: 38.87,
+        Shell: 32.37,
+        Java: 30.55,
+        'C#': 27.62,
+        'C++': 22.42,
+        C: 19.34,
+      },
+    }),
+  );
+</script>
+```
