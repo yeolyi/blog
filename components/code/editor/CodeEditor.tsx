@@ -3,7 +3,7 @@ import js from 'highlight.js/lib/languages/javascript';
 import xml from 'highlight.js/lib/languages/xml';
 import css from 'highlight.js/lib/languages/css';
 import 'highlight.js/styles/github.css';
-import { KeyboardEventHandler } from 'react';
+import { KeyboardEventHandler, ReactNode } from 'react';
 
 hljs.registerLanguage('javascript', js);
 hljs.registerLanguage('xml', xml);
@@ -13,36 +13,46 @@ export default function CodeEditor({
   language,
   code,
   setCode,
+  presetName,
   noneditable = false,
+  toolbar,
 }: {
   language: string;
   code: string;
   setCode: (code: string) => void;
+  presetName: string;
   noneditable?: boolean;
+  toolbar?: ReactNode;
 }) {
   const { highlightedCode, handleKeyDown } = useEditor(code, setCode, language);
 
   return (
-    <div className="overflow-x-scroll bg-slate-50 shadow">
-      <div className="relative h-fit min-h-full w-fit min-w-full p-4 text-sm leading-[1.4rem]">
-        <pre
-          dangerouslySetInnerHTML={{ __html: highlightedCode }}
-          className="h-full w-full text-nowrap font-firacode not-italic"
-        />
-        <textarea
-          name="code"
-          aria-label="editor"
-          defaultValue={code}
-          onKeyDown={handleKeyDown}
-          onChange={(e) => {
-            setCode(e.target.value);
-          }}
-          autoCapitalize="off"
-          autoComplete="off"
-          spellCheck="false"
-          className="absolute bottom-4 left-4 right-4 top-4 resize-none bg-transparent font-firacode text-transparent caret-sky-500 outline-none"
-          disabled={noneditable}
-        />
+    <div>
+      <div className={`relative overflow-x-scroll rounded bg-slate-50`}>
+        <div className="relative h-fit min-h-full w-fit min-w-full p-4 text-sm leading-[1.4rem]">
+          <pre
+            dangerouslySetInnerHTML={{ __html: highlightedCode }}
+            className="h-full w-full text-nowrap font-firacode not-italic"
+          />
+          <textarea
+            name="code"
+            aria-label="editor"
+            defaultValue={code}
+            onKeyDown={handleKeyDown}
+            onChange={(e) => {
+              setCode(e.target.value);
+            }}
+            autoCapitalize="off"
+            autoComplete="off"
+            spellCheck="false"
+            className="absolute bottom-4 left-4 right-4 top-4 resize-none bg-transparent font-firacode text-transparent caret-sky-500 outline-none"
+            disabled={noneditable}
+          />
+        </div>
+      </div>
+      <div className="absolute right-3 top-2 flex items-center gap-2 font-firacode text-[12px] text-neutral-400">
+        {toolbar}
+        {presetName.toLocaleUpperCase()}
       </div>
     </div>
   );

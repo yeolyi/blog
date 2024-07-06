@@ -54,14 +54,15 @@ export default function Sandbox({
 
   return (
     <>
-      <div className="relative flex flex-col gap-2">
+      <div className={`relative flex flex-col gap-2`}>
         <CodeEditor
           code={code}
           setCode={setCode}
           language={preset.language}
+          presetName={preset.name}
           noneditable={noedit}
+          toolbar={<>{showRefresh && <RefreshButton refresh={refresh} />}</>}
         />
-        {showRefresh && <RefreshButton refresh={refresh} />}
         {showIframe && (
           <iframe
             key={iframeKey}

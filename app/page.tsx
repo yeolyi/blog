@@ -31,6 +31,7 @@ export default function Page() {
           src={profile}
           alt="어렸을 때 사진"
           className="block h-[calc(100vh-350px)] max-h-[calc(((100vw*9)/16))] min-h-[calc(((100vw*9)/16)*0.57)] w-full object-cover"
+          priority
         />
 
         <TopSection>
