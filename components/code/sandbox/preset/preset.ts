@@ -45,6 +45,8 @@ export let babelPreset: Preset = {
         ${await fetchText('/babel.txt')}
         // 왜???
         Babel.availablePlugins["transform-class-properties"] = {};
+        Babel.availablePlugins["transform-object-rest-spread"] = {};
+        Babel.availablePlugins["transform-flow-strip-types"] = {};
       </script>
       <script type="text/babel" data-presets="stage-0" data-type="module">${code}</script>`,
     );

@@ -29,10 +29,12 @@ export default function CodeEditor({
   return (
     <div>
       <div className={`relative overflow-x-scroll rounded bg-slate-50`}>
-        <div className="relative h-fit min-h-full w-fit min-w-full p-4 font-firacode text-sm leading-[1.4rem]">
+        <div className="relative h-fit min-h-full w-fit min-w-full p-4 text-sm leading-[1.4rem]">
+          {/* 폰트 설정은 pre와 textarea에 각각 한다. */}
+          {/* 상위 div에 하면 적용이 안되는듯 */}
           <pre
             dangerouslySetInnerHTML={{ __html: highlightedCode }}
-            className="h-full w-full text-nowrap not-italic"
+            className="h-full w-full text-nowrap font-firacode not-italic "
           />
           <textarea
             name="code"
@@ -40,7 +42,7 @@ export default function CodeEditor({
             autoCapitalize="off"
             autoComplete="off"
             spellCheck="false"
-            className="absolute bottom-4 left-4 right-4 top-4 resize-none whitespace-pre bg-transparent text-transparent caret-sky-500 outline-none"
+            className="absolute bottom-4 left-4 right-4 top-4 resize-none whitespace-pre bg-transparent font-firacode text-transparent caret-sky-500 outline-none "
             value={code}
             disabled={noneditable}
             onChange={(e) => setCode(e.target.value)}
