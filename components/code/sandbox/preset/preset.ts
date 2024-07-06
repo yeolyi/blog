@@ -41,19 +41,12 @@ export let babelPreset: Preset = {
   createSrcDoc: async (code: string) => {
     // TODO: iframe에서 캐싱하는 방법은 없나?
     return wrapTemplateHTML(
-      `<script>${await fetchText('https://unpkg.com/@babel/standalone/babel.min.js')}</script>
-    <script>
-      Babel.registerPreset("env-plus", {
-        plugins: [
-          [Babel.availablePlugins["proposal-decorators"], { version: '2023-11' }],
-          [Babel.availablePlugins["proposal-throw-expressions"], { version: '2023-11' }],
-          [Babel.availablePlugins["proposal-pipeline-operator"], { proposal: 'hack', topicToken: '@@' }],
-        ],
-      });
-    </script>
-    <script type="text/babel" data-presets="env-plus">` +
-        code +
-        '</script>',
+      `<script>
+        ${await fetchText('/babel.txt')}
+        // 왜???
+        Babel.availablePlugins["transform-class-properties"] = {};
+      </script>
+      <script type="text/babel" data-presets="stage-0" data-type="module">${code}</script>`,
     );
   },
   language: 'javascript',

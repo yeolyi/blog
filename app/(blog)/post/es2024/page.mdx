@@ -1,3 +1,42 @@
+# ES2024
+
+## Partial Application
+
+```
+// @babel
+function add(x, y) {
+  return x + y;
+}
+
+const addOne = add(1, ?); // apply from the left
+console.log(addOne(2)); // 3
+
+const addTen = add(?, 10); // apply from the right
+console.log(addTen(2)); // 12
+```
+
+## Decorator
+
+```js
+// @babel
+class C {
+  message = 'hello!';
+
+  @bound
+  m() {
+    console.log(this.message);
+  }
+}
+
+function bound(value, { name, addInitializer }) {
+  addInitializer(function () {
+    this[name] = this[name].bind(this);
+  });
+}
+```
+
+## Pipe
+
 ```js
 // @babel
 // setup
@@ -16,4 +55,88 @@ _ = one();
 function test(param = throw new Error("required!")) {
   const test = param === true || throw new Error("Falsy!");
 }
+```
+
+## bind
+
+https://babeljs.io/docs/babel-plugin-proposal-function-bind
+
+```js
+// @babel
+const box = {
+  weight: 2,
+  getWeight() {
+    return this.weight;
+  },
+};
+
+const { getWeight } = box;
+
+console.log(box.getWeight()); // prints '2'
+
+const bigBox = { weight: 10 };
+console.log(bigBox::getWeight()); // prints '10'
+
+// Can be chained:
+function add(val) {
+  return this + val;
+}
+
+console.log(bigBox::getWeight()::add(5)); // prints '15'
+```
+
+## Optional chaining assign
+
+```js
+// @babel
+function doSomething(maybeOptions) {
+  maybeOptions?.retries = 5;
+}
+doSomething(null);
+let obj = {};
+doSomething(obj);
+console.log(obj);
+```
+
+<br />
+
+```js
+function doSomething(maybeOptions) {
+  maybeOptions?.retries = 5;
+}
+doSomething(null);
+```
+
+## Explicit
+
+https://github.com/tc39/proposal-explicit-resource-management?tab=readme-ov-file
+
+```js
+// @babel
+const res = {
+  [Symbol.dispose]() {
+    console.log('disposed!');
+  },
+};
+
+let f = () => {
+  console.log('before use');
+  using a = res;
+  console.log('after use');
+};
+
+console.log('before f');
+f();
+console.log('after f');
+```
+
+## json
+
+https://babeljs.io/docs/babel-plugin-proposal-json-modules
+
+https://github.com/tc39/proposal-json-modules/
+
+```js
+// @babel
+import data from 'https://jsonplaceholder.typicode.com/todos/1' with { type: 'json' };
 ```

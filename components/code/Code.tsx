@@ -7,10 +7,10 @@ export default function Code(
 ) {
   let content = codeProps.children?.toString()?.trim();
   let className = codeProps.className;
-  if (content === undefined || className === undefined)
-    return <code {...codeProps} />;
+  if (content === undefined) return <code {...codeProps} />;
 
   let { presetName, code, ...props } = parseProps(content, className);
+
   if (presetName === undefined || code === undefined)
     return <code>{content}</code>;
 
@@ -19,7 +19,7 @@ export default function Code(
 
 let parseProps = (
   src: string,
-  className: string,
+  className?: string,
 ): Partial<SandboxProps> & { presetName?: PresetName } => {
   let { code, options } = parseFirstLine(src);
 
