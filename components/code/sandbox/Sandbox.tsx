@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { RefObject, useEffect, useRef, useState } from 'react';
 import CodeEditor from '../editor/CodeEditor';
 import Console from '../console/Console';
 import RefreshButton from '../editor/RefreshButton';
@@ -38,6 +38,9 @@ export default function Sandbox({
   let preset = presetMap[presetName];
 
   const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null);
+  let containerRef = useRef<HTMLDivElement>(null);
+  let onscreen = useOnScreen(containerRef);
+
   const { logList, reset } = useIframeListener(iframe, {
     listenResize: preset.showIframe && iframeHeight === undefined,
   });
@@ -46,6 +49,7 @@ export default function Sandbox({
     _code,
     preset,
     reset,
+    onscreen,
   );
 
   let showConsole = !noexec && preset.showConsole(logList.length);
@@ -54,7 +58,7 @@ export default function Sandbox({
 
   return (
     <>
-      <div className={`relative flex flex-col gap-2`}>
+      <div className={`relative flex flex-col gap-2`} ref={containerRef}>
         <CodeEditor
           code={code}
           setCode={setCode}
@@ -91,4 +95,24 @@ export default function Sandbox({
       )}
     </>
   );
+}
+
+export function useOnScreen(ref: RefObject<HTMLElement>) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsVisible(entry.isIntersecting);
+    });
+
+    const currentElement = ref?.current;
+
+    if (currentElement) observer.observe(currentElement);
+
+    return () => {
+      if (currentElement) observer.unobserve(currentElement);
+    };
+  }, [ref]);
+
+  return isVisible;
 }

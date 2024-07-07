@@ -5,6 +5,7 @@ export let useDebouncedSrcDoc = (
   _code: string,
   preset: Preset,
   resetLog: () => void,
+  onScreen: boolean,
 ) => {
   const [code, setCode] = useState(_code);
   const [srcdoc, setSrcdoc] = useState('');
@@ -15,6 +16,8 @@ export let useDebouncedSrcDoc = (
   }, [_code]);
 
   useEffect(() => {
+    if (!onScreen) return;
+
     resetLog();
     setSrcdoc('');
 
@@ -25,7 +28,7 @@ export let useDebouncedSrcDoc = (
     }, 800);
 
     return () => clearTimeout(id);
-  }, [code, preset, resetLog]);
+  }, [code, onScreen, preset, resetLog]);
 
   let refresh = useCallback(() => {
     resetLog();
