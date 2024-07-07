@@ -63,10 +63,10 @@ export default function Sandbox({
           noneditable={noedit}
           toolbar={<>{showRefresh && <RefreshButton refresh={refresh} />}</>}
         />
-        {showIframe && (
+        {showIframe && !noexec && (
           <iframe
             key={iframeKey}
-            sandbox="allow-scripts"
+            sandbox="allow-scripts "
             className="bg-white shadow"
             style={{
               height: iframeHeight ? `${iframeHeight}px` : 0,
@@ -80,7 +80,7 @@ export default function Sandbox({
           <Console logList={logList} expandedDefault={logExpanded} />
         )}
       </div>
-      {!showIframe && (
+      {!showIframe && !noexec && (
         <iframe
           key={iframeKey}
           sandbox="allow-scripts"

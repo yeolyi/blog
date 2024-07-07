@@ -41,9 +41,9 @@ export let babelPreset: Preset = {
   createSrcDoc: async (code: string) => {
     // TODO: iframe에서 캐싱하는 방법은 없나?
     return wrapTemplateHTML(
-      `<script>
-        ${await fetchText('/babel.txt')}
-        ${await fetchText('/recordtuple.txt')}
+      // TODO: main 브랜치로 바꾸기
+      `<script>${await fetchText('https://cdn.jsdelivr.net/gh/yeolyi/babel-proposals-standalone@dev/index.js')}</script>
+      <script>
         // 왜???
         Babel.availablePlugins["transform-class-properties"] = {};
         Babel.availablePlugins["transform-object-rest-spread"] = {};
