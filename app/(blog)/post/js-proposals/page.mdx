@@ -1,0 +1,623 @@
+export let metadata = {
+  title: '미래의 자바스크립트 미리 써보기',
+  description:
+    '어떤 기능들이 논의되고있는지 살펴보고 블로그에 준비된 babel로 직접 사용해봅시다',
+};
+
+# 미래의 자바스크립트 미리 써보기
+
+## 시작에 앞서
+
+아래 코드를 수정하며 pipeline operator를 써보세요:
+
+```
+// @babel
+12 |> % + 1 |> % * 2 |> console.log(%);
+```
+
+## 개요
+
+JS에는 매년 새로운 기능들이 꾸준히 추가되고 있습니다. ECMAScript의 깃허브에서
+어떤 기능들이 논의중인지 구경할 수 있는데 몇몇은 Babel 플러그인으로 데모가
+가능합니다.
+
+**Babel**은 주로 최신 문법의 코드를 변환해 구형 브라우저를 지원하는데 사용되지만
+미래의 문법을 변환시키는 것도 가능합니다.
+
+어떤 기능들이 추가될지 텍스트로 읽는 것도 좋지만 직접 실행해볼 수 있으면 더
+재미있겠다고 생각했습니다. 그래서 Babel을 사용해 미래에 있을 JS 기능들을 실행실
+수 있는 플레이그라운드를 블로그에 구현했습니다.
+
+언어에 기능이 일단 추가되면 수정되기가 **아주아주** 어렵기 때문에 신중하게
+고민해야합니다. ECMAScript 멤버들의 주장을 살펴보고 코드를 실행해보며 인사이트를
+얻어보세요.
+
+재밌는 예제를 만드셨다면 댓글로 알려주세요 🙌
+
+## Stage 3
+
+각 proposal은 진행사항에 따라 여러 stage들로 나뉩니다. stage3에는 대부분 완성이
+된 proposal이 속합니다.
+
+### Explicit Resource Management
+
+https://github.com/tc39/proposal-explicit-resource-management
+
+I/O나 메모리 같은 자원을 사용할 때 acquire 후 release하는 패턴을 자주
+사용합니다. C의 `malloc`과 `free`를 떠올리시면 돼요. 이 패턴을 간략화시키는
+문법이 제안되었습니다.
+
+우선 proposal에서 말하는 현재 자원 관리 방법의 문제점들을 살펴볼게요:
+
+- 개발 중 실수하기 쉽습니다
+  - ```js
+    // @noexec noedit
+    const reader = stream.getReader();
+    ...
+    // 위쪽 어딘가에서 에러가 던져지면 자원이 release되지 않아요
+    reader.releaseLock();
+    ```
+- 자원을 스코프 내부에 한정시키기 어렵습니다:
+  - ```js
+    // @noexec noedit
+    const handle = getResource();
+    try {
+      ...
+    } finally {
+      handle.close();
+    }
+    // handle 변수에 접근 가능하지만 사용하면 안됩니다.
+    ```
+- 다수의 자원을 사용할 때 실수하기 쉽습니다:
+  - ```js
+    // @noexec noedit
+    const a = ...;
+    const b = ...;
+    try {
+      ...
+    } finally {
+      a.close(); // 자원 b가 a에 의존적이라면 문제가 생길 수 있습니다.
+      b.close(); // a.close()가 에러를 내면 b.close()가 실행되지 않습니다.
+    }
+    ```
+
+따라서 현재의 문법으로 처리를 올바르게 하려면 다음과 같이 코드가 길어집니다:
+
+```js
+// @noexec noedit
+{ // 스코프 바깥으로 자원 변수가 나가는 것 방지
+  const a = ...;
+  try {
+    const b = ...;
+    try {
+      ...
+    }
+    finally {
+      b.close(); // b가 a 이전에 닫힘
+    }
+  }
+  finally {
+    a.close(); // b를 할당받을 때 에러가 발생해도 a가 닫히는 것 보장
+  }
+}
+```
+
+새로운 문법을 사용한다면 아래와 같이 간략화시킬 수 있습니다:
+
+```js
+// @noexec noedit
+using a = ..., b = ...;
+```
+
+대부분의 경우 만들어진 함수를 쓰겠지만, using에 호환되는 함수는 `Symbol.dispose`
+혹은 `Symbol.asyncDispose`를 사용해 아래와 같이 정의됩니다.
+
+```js
+// @babel
+let openFile = (name) => {
+  // ...
+  return {
+    [Symbol.dispose]() {
+      console.log(`closing file ${name}`);
+    },
+    // ...
+  };
+};
+
+let foo = () => {
+  using file = openFile('A');
+};
+
+let bar = () => {
+  using file = openFile('B');
+  foo();
+};
+
+using file = openFile('C');
+bar();
+// ✍️ 파일 D도 열어보세요
+```
+
+### JSON Modules
+
+https://github.com/tc39/proposal-json-modules/
+
+모듈을 JSON으로 바로 import할 수 있습니다.
+
+```js
+// @babel
+import data from 'https://jsonplaceholder.typicode.com/todos/1' with { type: 'json' };
+
+console.log(data);
+console.log(typeof data);
+console.log(Object.keys(data));
+console.log(Object.values(data));
+```
+
+### Decorator
+
+https://github.com/tc39/proposal-decorators
+
+지금의 JS에서는 **함수를 대상으로** 데코레이터 패턴을 아래와 같이 사용할 수
+있습니다:
+
+```js
+function logResult(fn) {
+  return function (...args) {
+    const result = fn.call(this, ...args);
+    console.log(result);
+    return;
+  };
+}
+
+const plusOne = logResult((x) => x + 1);
+plusOne(1); // 2
+```
+
+하지만 **객체와 클래스**에 대해서는 데코레이터 패턴을 간단하게 사용할 수
+없습니다. Decorator를 언어의 기능으로 제공하면 클래스, 클래스 메서드, 필드,
+접근자들에 데코레이터 패턴을 간편하게 사용할 수 있습니다:
+
+```js
+// @babel
+function logResult(value, { kind }) {
+  if (kind === 'method') {
+    return function (...args) {
+      const ret = value.call(this, ...args);
+      console.log(ret);
+      return ret;
+    };
+  }
+}
+
+class C {
+  @logResult foo() {
+    return 1;
+  }
+}
+
+new C().foo();
+```
+
+## Stage 2
+
+여기서부터는 앞으로 명세가 변경될 가능성이 높고, 표준에 포함되거나 포함되지 않을
+수 있는 제안들입니다.
+
+### throw expressions
+
+https://github.com/tc39/proposal-throw-expressions
+
+`throw`를 표현식 단위로 할 수 있게 합니다.
+
+```js
+// @babel
+let foo = (param = throw new Error('A')) => {
+  console.log(param || throw new Error('B'));
+};
+
+// ✍️ "Hello"와 false를 인자로 건네보세요.
+foo();
+```
+
+### Function Sent
+
+https://github.com/tc39/proposal-function.sent
+
+제너레이터를 사용할 때 첫 `next()`에 전달된 인자를 알아내는 방법은 현재
+없습니다:
+
+```js
+function* gen() {
+  console.log(yield 'a');
+  console.log(yield 'b');
+}
+
+let iter = gen();
+console.log(iter.next(1)); // 1은 사라집니다.
+console.log(iter.next(2));
+console.log(iter.next(3));
+```
+
+따라서 `function.sent`로 `next()` 메서드에 가장 최근에 전달된 값을 알 수 있도록
+합니다:
+
+```
+// @babel
+function* gen() {
+  console.log(function.sent);
+  console.log(yield 'a');
+  console.log(yield 'b');
+}
+
+let iter = gen();
+console.log(iter.next(1));
+console.log(iter.next(2));
+console.log(iter.next(3));
+```
+
+### Record and Tuple
+
+https://github.com/tc39/proposal-record-tuple
+
+원시값만 담을 수 있으며 **deeply immutable**한 아래 두 자료구조를 새로운 원시
+타입으로서 도입합니다.
+
+- 객체와 유사한 Record `#{ x: 1, y: 2 }`
+- 배열과 유사한 Tuple`#[1, 2, 3, 4]`
+
+```js
+// @babel
+let record = #{ a: 1, b: '2', c: #{ d: 3, e: 4 } };
+console.log(record.a);
+console.log(record.c.d);
+console.log(Object.keys(record));
+
+let tuple = #[1, 2, 3, #[4, 5]];
+console.log(tuple[0], tuple[3][1]);
+console.log(tuple.slice(2));
+
+// deeply immutable 합니다
+// ✍️ 수정을 시도해보세요
+// record.c.d = 4;
+// tuple[3] = 4;
+```
+
+내용물이 같은 Tuple/Record는 같습니다:
+
+```js
+// @babel
+console.log(#{ a: 1 } === #{ a: 1 });
+console.log({ a: 1 } === { a: 1 });
+
+console.log(#[1, 2] === #[1, 2]);
+console.log([1, 2] === [1, 2]);
+
+console.log(#[1, 2, #[3, #[4]]] === #[1, 2, #[3, #[4]]]);
+```
+
+위와 같은 **값 기반 동등성**이 Tuple과 Record를 유용하게 만듭니다.
+
+Deeply immutable하기 때문에 다른 곳에 건네준 뒤에도 그 내용이 바뀌지 않았음을
+확신할 수 있습니다:
+
+```js
+// @babel
+let func = (obj) => {
+  // ...
+};
+
+let record = #{ a: #{ b: 1 } };
+func(record);
+console.log(record.a.b); // record.a.b는 반드시 1입니다
+```
+
+### Pipeline Operator
+
+https://github.com/tc39/proposal-pipeline-operator
+
+함수 호출와 같은 일련의 작업을 어떤 값에 순차적으로 적용하고 싶을 떄 다음 두
+가지 방법이 있습니다:
+
+```js
+// @noexec
+// nesting
+three(two(one(value)));
+
+// chaining
+value.one().two().three();
+```
+
+**Nesting**은 함수 외에도 산술 연산, `await`, `yield`와 같은 다양한 작업에
+적용할 수 있다는 장점이 있지만 가독성이 떨어지고 수정이 어렵다는 단점이
+있습니다. 예시로 React의 코드를 확인해보세요:
+
+https://github.com/facebook/react/blob/17.0.2/scripts/jest/jest-cli.js#L295
+
+**Chaining**은 가독성이 좋고 수정하기도 좋아 (**fluent interface**라는 이름이
+따로 있을 정도로) 자주 사용되지만 값에 메서드가 미리 정의되어있어야하고 메서드가
+아닌 JS의 다른 syntax에 적용하기 어렵다는 문제가 있습니다.
+
+파이프라인 연산자는 두 방법의 장점을 합칩니다:
+
+```js
+// @babel
+12 |> % + 1 |> % * 2 |> console.log(%);
+```
+
+물론 파이프라인 연산자가 아니더라도 **임시 변수**를 통해 가독성을 개선할 수
+있습니다. 하지만 임시 변수의 이름을 매번 짓는 것은 코드 작성자에게나 읽는
+사람에게나 지겹고 어려운 일입니다.
+
+그렇다면 변수명을 `_`로 통일하면 괜찮지 않을까요? 이 경우 mutable해지기 때문에
+아래와 같은 버그가 발생할 수 있습니다:
+
+```js
+let one = () => 1;
+let double = (a) => a * 2;
+
+let _;
+_ = one();
+_ = double(_);
+_ = Promise.resolve().then(() =>
+  // ❌ 2가 출력되지 않습니다.
+  console.log(_),
+);
+
+_ = one(_);
+```
+
+파이프라인 연산자를 사용하면 위와 같은 문제가 없습니다.
+
+```js
+// @babel
+let one = () => 1;
+let double = (a) => a * 2;
+
+let _;
+_ = one() |> double(%) |> Promise.resolve().then(() => console.log(%));
+_ = one();
+```
+
+또한 구문을 사용해야되는 임시 변수 방식과 다르게 파이프라인은 표현식이기에
+편리합니다:
+
+```js
+// @noexec noedit
+// JSX 예제
+return (
+  <ul>
+    {values
+    |> Object.keys(%)
+    |> [...Array.from(new Set(%))]
+    |> %.map((envar) => <li onClick={() => doStuff(values)}>{envar}</li>)}
+  </ul>
+);
+```
+
+### Destructuring private
+
+https://github.com/tc39/proposal-destructuring-private
+
+Destructuring을 클래스의 private field에도 가능하게합니다.
+
+```js
+// @babel
+class Foo {
+  #x = 1;
+
+  constructor() {
+    const { #x: x } = this;
+    console.log(x);
+  }
+
+  equals({ #x: otherX }) {
+    const { #x: currentX } = this;
+    return currentX === otherX;
+  }
+}
+
+let a = new Foo();
+let b = new Foo();
+console.log(a.equals(b));
+```
+
+## Stage 1
+
+### `do` Expressions
+
+https://github.com/tc39/proposal-do-expressions
+
+표현식을 작성하는 새로운 문법을 추가합니다.
+
+```
+// @babel
+// 임시로 사용할 변수를 스코프 내부에만 한정시킬 수 있습니다:
+let timeStr = do {
+  let date = new Date();
+  date.toLocaleTimeString();
+};
+console.log(timeStr);
+
+// 분기 처리가 여럿 필요할 때 인라인으로 작성할 수 있습니다
+let foo = () => 0.5 < Math.random();
+console.log(do {
+  if (foo()) '1/2';
+  else if (foo()) '1/4';
+  else if (foo()) '1/8';
+  else '1/8';
+});
+```
+
+JSX를 쓸 때 좀 더 자유로워질 것 같아요:
+
+```js
+// @noexec
+return (
+  <nav>
+    <Home />
+    {do {
+      if (loggedIn) {
+        <LogoutButton />;
+      } else {
+        <LoginButton />;
+      }
+    }}
+  </nav>
+);
+```
+
+### `async do` Expressions
+
+https://github.com/tc39/proposal-async-do-expressions
+
+위 제안의 비동기 버전입니다. 기존에 `(async () => {...})()`로 썼던걸
+`async do {}`로 쓸 수 있습니다.
+
+```js
+// @babel
+Promise.all([
+  async do {
+    const result = await fetch('https://jsonplaceholder.typicode.com/todos/1');
+    await result.json();
+  },
+  async do {
+    const result = await fetch('https://jsonplaceholder.typicode.com/todos/2');
+    await result.json();
+  },
+]).then(([a, b]) => {
+  console.log(a);
+  console.log(b);
+});
+```
+
+### Optional chaining assign
+
+https://github.com/tc39/proposal-optional-chaining-assignment
+
+Optional chaining 표현식을 할당 연산자의 좌측에 쓸 수 있습니다.
+
+```js
+// @babel
+let obj = {};
+obj?.a = 10;
+console.log(obj);
+```
+
+원래는 안됐어요:
+
+```js
+let obj = {};
+obj?.a = 10;
+console.log(obj);
+```
+
+### Partial Application
+
+https://github.com/tc39/proposal-partial-application
+
+함수를 호출할 때 일부 인자에만 값을 제공하는 문법을 제공합니다.
+
+기존에도 `Function.prototype.bind`나 화살표 함수를 사용해 유사한 작업을 할 수
+있습니다:
+
+```js
+function add(x, y) {
+  return x + y;
+}
+
+// Function.prototype.bind
+const addOne = add.bind(null, 1);
+console.log(addOne(2));
+
+// arrow functions
+const addTen = (x) => add(x, 10);
+console.log(addTen(2));
+```
+
+하지만 bind 함수는 앞쪽에 있는 인자 순으로만 값을 제공할 수 있고 화살표 함수는
+lazy하게 본문이 실행되기에 의도치 않은 side-effect가 있을 수 있습니다.
+
+이에 `?`를 placeholder로 사용해 함수 인자를 일부만 제공하는 기능을 제안합니다:
+
+```
+// @babel
+let add = (x, y) => x + y;
+
+const addOne = add(1, ?); // apply from the left
+console.log(addOne(2)); // 3
+
+const addTen = add(?, 10); // apply from the right
+console.log(addTen(2)); // 12
+```
+
+## Stage 0
+
+### Function Bind
+
+https://github.com/tc39/proposal-bind-operator
+
+화살표 함수가 도입되어 `this`를 bind할 일은 줄었지만 여전히 use case가 있습니다:
+
+```js
+// 특정 this 값으로 함수를 호출하기
+let hasOwnProp = Object.prototype.hasOwnProperty;
+let obj = { x: 100 };
+hasOwnProp.call(obj, 'x');
+
+// 객체에서 메서드 떼내기
+Promise.resolve(123).then(console.log.bind(console));
+```
+
+이러한 경우에 대한 syntatic sugar로 `::` 연산자를 제안합니다:
+
+```js
+// @babel
+const box = {
+  weight: 2,
+  getWeight() {
+    return this.weight;
+  },
+};
+
+// getWeight에 bigBox를 bind합니다.
+const { getWeight } = box;
+const bigBox = { weight: 10 };
+console.log(bigBox::getWeight());
+
+// chaining도 가능합니다.
+function add(val) {
+  return this + val;
+}
+console.log(bigBox::getWeight()::add(5));
+
+// :: 전에 아무것도 없으면 객체 자신을 bind합니다.
+let getWeightBound = ::box.getWeight;
+console.log(getWeightBound());
+```
+
+## 더 읽어볼만한 것들
+
+현재 논의중인 proposal들:
+
+https://github.com/tc39/proposals
+
+Proposal stage별 차이가 궁금하시다면:
+
+https://tc39.es/process-document/
+
+Proposal된 기능 중 Babel이 지원하는 플러그인 목록:
+
+https://babeljs.io/docs/babel-plugin-proposal-decorators
+
+Proposal이 표준에 반영되기까지의 과정:
+
+https://ahnheejong.name/articles/ecmascript-tc39/
+
+Proposal 보다보니 공감되는 문제 상황이라서(...):
+
+https://github.com/tc39/proposal-string-dedent?tab=readme-ov-file
+
+```
+
+```

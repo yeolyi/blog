@@ -9,11 +9,7 @@ import {
   Copy,
   SectionHeadline,
 } from '@/components/common/Typography';
-import {
-  PostContainer,
-  PostTile,
-  PostTileProps,
-} from '@/components/common/Post';
+import { PostContainer, PostTile } from '@/components/common/PostTile';
 import { CserealBg } from '@/components/mainbg/CserealBg';
 import InstaBg from '@/components/mainbg/InstaBg';
 import { WideTile, WideTileProps } from '@/components/gallery/WideTile';
@@ -22,6 +18,7 @@ import Giscus from '@/components/common/Giscus';
 import Footer from '@/components/layout/Footer';
 import { jsTileProps } from '@/constants/jsTileProps';
 import { webTileProps } from '@/constants/webTileProps';
+import { postTileProps } from '@/constants/postTileProps';
 
 export default function Page() {
   return (
@@ -105,7 +102,7 @@ export default function Page() {
           </SectionHeadline>
 
           <PostContainer>
-            {postList.map((prop) => (
+            {postTileProps.map((prop) => (
               <PostTile key={prop.title} {...prop} />
             ))}
           </PostContainer>
@@ -165,12 +162,3 @@ let projectList: WideTileProps[] = [
 //     },
 //   },
 // ];
-
-let postList: PostTileProps[] = [
-  {
-    title: '준비중...',
-    dateStr: '2024.06.23',
-    href: '/',
-    src: '/cserealbg.png',
-  },
-];

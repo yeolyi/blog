@@ -43,6 +43,7 @@ export let babelPreset: Preset = {
     return wrapTemplateHTML(
       `<script>
         ${await fetchText('/babel.txt')}
+        ${await fetchText('/recordtuple.txt')}
         // 왜???
         Babel.availablePlugins["transform-class-properties"] = {};
         Babel.availablePlugins["transform-object-rest-spread"] = {};

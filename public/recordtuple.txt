@@ -1,0 +1,493 @@
+(function polyfill() {
+  const relList = document.createElement('link').relList;
+  if (relList && relList.supports && relList.supports('modulepreload')) {
+    return;
+  }
+  for (const link of document.querySelectorAll('link[rel="modulepreload"]')) {
+    processPreload(link);
+  }
+  new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type !== 'childList') {
+        continue;
+      }
+      for (const node of mutation.addedNodes) {
+        if (node.tagName === 'LINK' && node.rel === 'modulepreload')
+          processPreload(node);
+      }
+    }
+  }).observe(document, { childList: true, subtree: true });
+  function getFetchOpts(link) {
+    const fetchOpts = {};
+    if (link.integrity) fetchOpts.integrity = link.integrity;
+    if (link.referrerPolicy) fetchOpts.referrerPolicy = link.referrerPolicy;
+    if (link.crossOrigin === 'use-credentials')
+      fetchOpts.credentials = 'include';
+    else if (link.crossOrigin === 'anonymous') fetchOpts.credentials = 'omit';
+    else fetchOpts.credentials = 'same-origin';
+    return fetchOpts;
+  }
+  function processPreload(link) {
+    if (link.ep) return;
+    link.ep = true;
+    const fetchOpts = getFetchOpts(link);
+    fetch(link.href, fetchOpts);
+  }
+})();
+const ARRAY_KEYED_MAP_VALUE = Symbol('ArrayKeyedMap-value');
+class ArrayKeyedMap {
+  constructor(root) {
+    this._map = /* @__PURE__ */ new Map();
+    this._root = root ? root : this;
+    this._size = 0;
+  }
+  get size() {
+    return this._root._size;
+  }
+  _updateSize(diff) {
+    this._root._size += diff;
+  }
+  set(key, value) {
+    if (typeof key === 'symbol') {
+      return this._map.set(key, value);
+    } else if (Array.isArray(key)) {
+      if (key.length === 0) {
+        if (!this._map.has(ARRAY_KEYED_MAP_VALUE)) {
+          this._updateSize(1);
+        }
+        this._map.set(ARRAY_KEYED_MAP_VALUE, value);
+        return this;
+      }
+      const [first, ...rest] = key;
+      let next = this._map.get(first);
+      if (!next) {
+        next = new ArrayKeyedMap(this._root);
+        this._map.set(first, next);
+      }
+      next.set(rest, value);
+    } else {
+      throw new TypeError('key must be an Array or Symbol');
+    }
+  }
+  has(key) {
+    if (typeof key === 'symbol') {
+      return this._map.has(key);
+    } else if (Array.isArray(key)) {
+      if (key.length === 0) {
+        return this._map.has(ARRAY_KEYED_MAP_VALUE);
+      }
+      const [first, ...rest] = key;
+      const next = this._map.get(first);
+      return next ? next.has(rest) : false;
+    } else {
+      throw new TypeError('key must be an Array or Symbol');
+    }
+  }
+  get(key) {
+    if (typeof key === 'symbol') {
+      return this._map.get(key);
+    } else if (Array.isArray(key)) {
+      if (key.length === 0) {
+        return this._map.get(ARRAY_KEYED_MAP_VALUE);
+      }
+      const [first, ...rest] = key;
+      const next = this._map.get(first);
+      return next ? next.get(rest) : void 0;
+    } else {
+      throw new TypeError('key must be an Array or Symbol');
+    }
+  }
+  delete(key) {
+    if (typeof key === 'symbol') {
+      return this._map.delete(key);
+    } else if (Array.isArray(key)) {
+      if (key.length === 0) {
+        const didDelete = this._map.delete(ARRAY_KEYED_MAP_VALUE);
+        if (didDelete) {
+          this._updateSize(-1);
+        }
+        return didDelete;
+      }
+      const [first, ...rest] = key;
+      const next = this._map.get(first);
+      if (next) {
+        const didDelete = next.delete(rest);
+        if (this._root._size === 0) {
+          this._map.delete(first);
+        }
+        return didDelete;
+      }
+      return false;
+    } else {
+      throw new TypeError('key must be an Array or Symbol');
+    }
+  }
+}
+const originalWeakMapSet = WeakMap.prototype.set;
+const originalWeakSetAdd = WeakSet.prototype.add;
+const GRAPH_VALUE = Symbol('GRAPH_VALUE');
+const GRAPH_PARENT = Symbol('GRAPH_PARENT');
+const GRAPH_REFCOUNT = Symbol('GRAPH_REFCOUNT');
+class InternGraph {
+  constructor(creator) {
+    this._creator = creator;
+    this._map = new ArrayKeyedMap();
+    this._finalizers = /* @__PURE__ */ new WeakMap();
+  }
+  get size() {
+    return this._map.size;
+  }
+  clear() {
+    this._map = new ArrayKeyedMap();
+  }
+  get(values) {
+    let map = this._map;
+    const maps = [map];
+    for (const value2 of values) {
+      if (!map.has(value2)) {
+        const newMap = new ArrayKeyedMap();
+        newMap.set(GRAPH_PARENT, { parent: map, value: value2 });
+        map.set(value2, newMap);
+      }
+      map = map.get(value2);
+      maps.push(map);
+    }
+    let ref = map.get(GRAPH_VALUE);
+    if (ref && ref.deref()) {
+      return ref.deref();
+    }
+    for (const map2 of maps) {
+      const refcount = map2.get(GRAPH_REFCOUNT) || 0;
+      map2.set(GRAPH_REFCOUNT, refcount + 1);
+    }
+    const value = this._creator(values);
+    ref = new WeakRef(value);
+    map.set(GRAPH_VALUE, ref);
+    const group = new FinalizationRegistry(
+      function cleanup(heldValues) {
+        let map2 = Array.from(heldValues)[0];
+        while (map2 && map2 !== this._map) {
+          const mapParent = map2.get(GRAPH_PARENT);
+          const refcount = map2.get(GRAPH_REFCOUNT);
+          if (refcount - 1 === 0) {
+            mapParent.parent.delete(mapParent.value);
+          }
+          map2.set(GRAPH_REFCOUNT, refcount - 1);
+          map2 = mapParent.parent;
+        }
+      }.bind(this),
+    );
+    group.register(value, map);
+    originalWeakMapSet.call(this._finalizers, value, group);
+    return value;
+  }
+  getFinalizer(value) {
+    return this._finalizers.get(value);
+  }
+}
+function isObject(v) {
+  return typeof v === 'object' && v !== null;
+}
+function isFunction(v) {
+  return typeof v === 'function';
+}
+function isIterableObject(v) {
+  return isObject(v) && typeof v[Symbol.iterator] === 'function';
+}
+function fakeRecordFromEntries(iterable) {
+  const retVal = /* @__PURE__ */ Object.create(null);
+  for (const [key, value] of iterable) {
+    retVal[validateKey(key)] = validateProperty(value);
+  }
+  return retVal;
+}
+const RECORD_WEAKSET = /* @__PURE__ */ new WeakSet();
+const TUPLE_WEAKSET = /* @__PURE__ */ new WeakSet();
+function isRecord(value) {
+  return RECORD_WEAKSET.has(value);
+}
+function isTuple(value) {
+  return TUPLE_WEAKSET.has(value);
+}
+function markRecord(value) {
+  originalWeakSetAdd.call(RECORD_WEAKSET, value);
+}
+function markTuple(value) {
+  originalWeakSetAdd.call(TUPLE_WEAKSET, value);
+}
+function isRecordOrTuple(value) {
+  return isRecord(value) || isTuple(value);
+}
+function validateKey(key) {
+  if (typeof key === 'symbol') {
+    throw new TypeError(
+      'A Symbol cannot be used as a property key in a Record.',
+    );
+  }
+  return String(key);
+}
+function validateProperty(value) {
+  if (isObject(value) && !isRecordOrTuple(value)) {
+    throw new TypeError(
+      'TypeError: cannot use an object as a value in a record',
+    );
+  } else if (isFunction(value)) {
+    throw new TypeError(
+      'TypeError: cannot use a function as a value in a record',
+    );
+  }
+  return value;
+}
+function define(obj, props) {
+  for (const key of Reflect.ownKeys(props)) {
+    const { get, set, value } = Object.getOwnPropertyDescriptor(props, key);
+    let desc =
+      get || set
+        ? { get, set, configurable: true }
+        : { value, writable: true, configurable: true };
+    Object.defineProperty(obj, key, desc);
+  }
+}
+const _WeakMap = globalThis['WeakMap'];
+const _WeakRef = globalThis['WeakRef'];
+const _FinalizationRegistry =
+  globalThis['FinalizationRegistry'] || globalThis['FinalizationGroup'];
+function assertFeatures() {
+  if (!_WeakMap || !_WeakRef || !_FinalizationRegistry) {
+    throw new Error(
+      'WeakMap, WeakRef, and FinalizationRegistry are required for @bloomberg/record-tuple-polyfill',
+    );
+  }
+}
+function toIntegerOrInfinity(arg) {
+  const n = Number(arg);
+  if (Number.isNaN(n) || n === 0) {
+    return 0;
+  }
+  if (n === Number.POSITIVE_INFINITY) {
+    return Number.POSITIVE_INFINITY;
+  }
+  if (n === Number.NEGATIVE_INFINITY) {
+    return Number.NEGATIVE_INFINITY;
+  }
+  let i = Math.floor(Math.abs(n));
+  if (n < 0) {
+    i = -i;
+  }
+  return i;
+}
+function createFreshRecordFromProperties(properties) {
+  const record = Object.create(Record.prototype);
+  for (const [name, value] of properties) {
+    record[name] = validateProperty(value);
+  }
+  Object.freeze(record);
+  markRecord(record);
+  return record;
+}
+const RECORD_GRAPH = new InternGraph(createFreshRecordFromProperties);
+function createRecordFromObject(value) {
+  assertFeatures();
+  if (!isObject(value)) {
+    throw new Error('invalid value, expected object argument');
+  }
+  const properties = Reflect.ownKeys(value)
+    .flatMap((k) => {
+      const desc = Object.getOwnPropertyDescriptor(value, k);
+      if (!desc || !desc.enumerable) return [];
+      return [[validateKey(k), validateProperty(value[k])]];
+    })
+    .sort(function ([a], [b]) {
+      if (a < b) return -1;
+      else if (a > b) return 1;
+      return 0;
+    });
+  return RECORD_GRAPH.get(properties);
+}
+function Record(value) {
+  if (new.target) throw new TypeError('Record is not a constructor');
+  return createRecordFromObject(value);
+}
+if (Record.name !== 'Record') {
+  Object.defineProperty(Record, 'name', {
+    value: 'Record',
+    configurable: true,
+  });
+}
+define(Record, {
+  isRecord,
+  fromEntries(iterator) {
+    return createRecordFromObject(fakeRecordFromEntries(iterator));
+  },
+});
+Object.defineProperty(Record, 'prototype', {
+  configurable: false,
+  enumerable: false,
+  writable: false,
+  value: null,
+});
+function createFreshTupleFromIterableObject(value) {
+  if (!isIterableObject(value)) {
+    throw new Error(
+      'invalid value, expected an array or iterable as the argument.',
+    );
+  }
+  let length = 0;
+  const tuple = Object.create(Tuple.prototype);
+  for (const val of value) {
+    tuple[length] = validateProperty(val);
+    length++;
+  }
+  Object.defineProperty(tuple, 'length', {
+    value: length,
+  });
+  Object.freeze(tuple);
+  markTuple(tuple);
+  return tuple;
+}
+const TUPLE_GRAPH = new InternGraph(function (values) {
+  const elements = Array.from(values).map((v) => v[0]);
+  return createFreshTupleFromIterableObject(elements);
+});
+function createTupleFromIterableObject(value) {
+  assertFeatures();
+  if (!isIterableObject(value)) {
+    throw new Error(
+      'invalid value, expected an array or iterable as the argument.',
+    );
+  }
+  const validated = Array.from(value).map((v) => [validateProperty(v)]);
+  return TUPLE_GRAPH.get(validated);
+}
+function assertTuple(value, methodName) {
+  if (!isTuple(value)) {
+    throw new TypeError(
+      `'Tuple.prototype.${methodName}' called on incompatible receiver.`,
+    );
+  }
+}
+function Tuple(...values) {
+  return createTupleFromIterableObject(values);
+}
+if (Tuple.name !== 'Tuple') {
+  Object.defineProperty(Tuple, 'name', {
+    value: 'Tuple',
+    configurable: true,
+  });
+}
+define(Tuple, {
+  isTuple,
+  from(arrayLike, mapFn, thisArg) {
+    return createTupleFromIterableObject(Array.from(arrayLike, mapFn, thisArg));
+  },
+  of(...values) {
+    return createTupleFromIterableObject(Array.of(...values));
+  },
+});
+Tuple.prototype = /* @__PURE__ */ Object.create(null);
+Object.defineProperty(Tuple.prototype, Symbol.toStringTag, {
+  value: 'Tuple',
+  configurable: true,
+});
+define(Tuple.prototype, {
+  constructor: Tuple,
+  valueOf() {
+    assertTuple(this, 'valueOf');
+    return this;
+  },
+  concat(...values) {
+    assertTuple(this, 'concat');
+    let elements = Array.from(this);
+    do {
+      const value = values.shift();
+      if (Tuple.isTuple(value)) {
+        elements.push(...value);
+      } else {
+        elements.push(value);
+      }
+    } while (values.length > 0);
+    return Tuple.from(elements);
+  },
+  includes: arrayMethod('includes'),
+  indexOf: arrayMethod('indexOf'),
+  join: arrayMethod('join'),
+  lastIndexOf: arrayMethod('lastIndexOf'),
+  slice: arrayMethodReturningTuple('slice'),
+  entries: arrayMethod('entries'),
+  every: arrayMethod('every'),
+  filter: arrayMethodReturningTuple('filter'),
+  find: arrayMethod('find'),
+  findIndex: arrayMethod('findIndex'),
+  flat(depth) {
+    assertTuple(this, 'flat');
+    if (depth === void 0) {
+      depth = 1;
+    } else {
+      depth = Number(depth);
+    }
+    if (depth === 0) {
+      return Tuple.prototype.slice.call(this);
+    }
+    return this.reduce((acc, cur) => {
+      if (Tuple.isTuple(cur)) {
+        return acc.concat(this.flat.call(cur, depth - 1));
+      } else {
+        return acc.concat(Tuple(cur));
+      }
+    }, Tuple());
+  },
+  flatMap(...args) {
+    return Tuple.prototype.map.apply(this, args).flat();
+  },
+  forEach: arrayMethod('forEach'),
+  keys: arrayMethod('keys'),
+  map: arrayMethodReturningTuple('map'),
+  reduce: arrayMethod('reduce'),
+  reduceRight: arrayMethod('reduceRight'),
+  some: arrayMethod('some'),
+  values: arrayMethod('values'),
+  toString: arrayMethod('toString'),
+  toLocaleString: arrayMethod('toLocaleString'),
+  toReversed: arrayMethodUpdatingTuple('reverse', 'toReversed'),
+  toSorted: arrayMethodUpdatingTuple('sort', 'toSorted'),
+  toSpliced: arrayMethodUpdatingTuple('splice', 'toSpliced'),
+  with(index, value) {
+    assertTuple(this, 'with');
+    const length = this.length;
+    const relativeIndex = toIntegerOrInfinity(index);
+    const actualIndex =
+      relativeIndex >= 0 ? relativeIndex : length + relativeIndex;
+    if (actualIndex >= length || actualIndex < 0) {
+      throw new RangeError('.with index is out of bounds');
+    }
+    const array = Array.from(this);
+    array[actualIndex] = value;
+    return createTupleFromIterableObject(array);
+  },
+});
+define(Tuple.prototype, {
+  [Symbol.iterator]: Tuple.prototype.values,
+});
+function arrayMethod(name) {
+  const method = Array.prototype[name];
+  return function () {
+    assertTuple(this, name);
+    return method.apply(this, arguments);
+  };
+}
+function arrayMethodReturningTuple(name) {
+  const method = Array.prototype[name];
+  return function () {
+    assertTuple(this, name);
+    return createTupleFromIterableObject(method.apply(this, arguments));
+  };
+}
+function arrayMethodUpdatingTuple(name, newName) {
+  const method = Array.prototype[name];
+  return function () {
+    assertTuple(this, newName);
+    const arr = Array.from(this);
+    method.apply(arr, arguments);
+    return createTupleFromIterableObject(arr);
+  };
+}

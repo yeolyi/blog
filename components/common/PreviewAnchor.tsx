@@ -3,6 +3,7 @@
 import { DetailedHTMLProps, AnchorHTMLAttributes, Suspense } from 'react';
 import { JSDOM } from 'jsdom';
 import { getErrorMessage } from '@/util/error';
+import { HiGlobeAsiaAustralia } from 'react-icons/hi2';
 
 type Props = DetailedHTMLProps<
   AnchorHTMLAttributes<HTMLAnchorElement>,
@@ -23,15 +24,16 @@ const Content = async (props: Props) => {
   if (props.href.startsWith('http') === false) return <Fallback {...props} />;
 
   const { title, description } = await fetchMetadata(props.href);
-  const hostname = new URL(props.href).hostname;
 
   return (
     <a
-      className="not-prose flex flex-col border border-neutral-200 p-3 not-italic hover:bg-neutral-50"
+      className="not-prose flex flex-col border-l-[3px] border-slate-300 px-3 py-2 not-italic hover:bg-neutral-50"
       href={props.href}
     >
-      <span className="text-sm text-neutral-600 underline">{hostname}</span>
-      <span className="line-clamp-1 text-base font-semibold">{title}</span>
+      <span className="line-clamp-1 text-base font-semibold">
+        <HiGlobeAsiaAustralia className="mr-[2px] inline -translate-y-[1.6px]" />
+        {title}
+      </span>
       {description !== null && (
         <span className="line-clamp-1 text-sm">{description}</span>
       )}

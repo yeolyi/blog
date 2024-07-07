@@ -25,6 +25,7 @@ export let PostTile = ({ title, src, dateStr, href }: PostTileProps) => (
           className="transform object-cover transition-[400ms_cubic-bezier(0.4,0,0.25,1)_0ms,opacity_1s_cubic-bezier(0.4,0,0.25,1)_0ms] group-hover:scale-105"
           fill
           alt=""
+          quality={100}
         />
       </div>
       <div className="flex grow flex-col justify-between p-[24px] lg:p-[32px]">
