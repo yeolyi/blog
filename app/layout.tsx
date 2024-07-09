@@ -8,6 +8,7 @@ import './globals.css';
 export const metadata: Metadata = {
   title: '개발자 성열',
   description: '유익하고 바보같고 화가나는 개발자 일상',
+  metadataBase: new URL('https://yeolyi.com'),
 };
 
 // https://github.com/orioncactus/pretendard?tab=readme-ov-file
