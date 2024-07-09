@@ -6,11 +6,11 @@ export let metadata = {
 
 # 미래의 자바스크립트 미리 써보기
 
-## 시작에 앞서
+## 미리보기
 
 아래 코드를 수정하며 pipeline operator를 써보세요:
 
-```
+```js
 // @babel
 12 |> % + 1 |> % * 2 |> console.log(%);
 ```
@@ -114,6 +114,9 @@ using a = ..., b = ...;
 
 ```js
 // @babel
+// WebKit 예외처리
+Symbol.dispose ??= Symbol();
+
 let openFile = (name) => {
   // ...
   return {
