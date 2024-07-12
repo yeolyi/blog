@@ -19,7 +19,9 @@ export let useDebouncedSrcDoc = (
     if (!onScreen) return;
 
     resetLog();
+
     setSrcdoc('');
+    iframeKey.current++;
 
     let id = setTimeout(async () => {
       // https://velog.io/@younyikim/React에서-Iframe-사용시-뒤로가기가-되지-않는-버그
