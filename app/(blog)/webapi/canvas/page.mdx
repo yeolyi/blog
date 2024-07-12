@@ -1,0 +1,37 @@
+# Graphics in a \<canvas>
+
+SVG는 XML 요소로 그림을 그리지만 캔버스는 메서드를 호출해 그림을 그립니다.
+
+대부분의 캔버스 API는 캔버스 자체에 정의되어있지 않고 `getContext(string)`로
+얻을 수 있는 **drawing context**에 있습니다. 3D를 전달하면 WebGL context를
+반환하지만 그 내용이 너무 방대하고 보통 라이브러리를 활용하니 여기서는 2D
+context를 배워봅시다.
+
+```html
+<canvas width="100" height="100"></canvas>
+<script>
+  let canvas = document.querySelector('canvas');
+  let context = canvas.getContext('2d');
+
+  context.beginPath();
+  context.arc(50, 50, 50, 0, 2 * Math.PI, true);
+  context.fillStyle = '#00f';
+  context.fill();
+</script>
+```
+
+## Paths and Polygons
+
+재미없어서 다음에,,
+
+## Canvas Dimensions and Coordinates
+
+## Graphics Attributes
+
+## Canvas Drawing Operations
+
+## Coordinate System Transforms
+
+## Clippling
+
+## Pixel Manipulation

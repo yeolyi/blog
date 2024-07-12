@@ -1,0 +1,231 @@
+# Location, Navigation and History
+
+```js
+console.log(location);
+console.log(document.location);
+console.log(location === document.location);
+```
+
+Location 클래스의 객체인 `location` 프로퍼티는 현재 document의 URL을 가지고 있고
+새로운 document를 로드하는 방법을 제공합니다. URL 객체와 비슷한 구조를 가지지만
+`hash`나 `search`처럼 다른 부분도 있어요.
+
+https://developer.mozilla.org/en-US/docs/Web/API/Location
+
+현재 URL을 나타내는 `document.URL`도 있습니다:
+
+```js
+console.log(document.URL);
+console.log(typeof document.URL);
+```
+
+## Loading New Documents
+
+새 document를 로드해볼게요:
+
+```html
+<!-- @iframeHeight=300 -->
+<button>click me</button>
+<script>
+  document.querySelector('button').addEventListener('click', () => {
+    location = 'https://yeolyi.com';
+  });
+</script>
+```
+
+Window가 자식 window를 가진다면 두 윈도우의 히스토리는 interleaving됩니다.
+따라서 위에서 버튼을 눌러 새로운 윈도우를 iframe에서 불러온뒤, 부모 윈도우에서
+뒤로가기를 하면 iframe에서 뒤로가기가 될거에요.
+
+Fragment identifier나 path같이 `location`의 일부만 바꿀 수도 있습니다:
+
+```html
+<!-- @iframeHeight=100 -->
+<button>click me</button>
+<p>1</p>
+<p>2</p>
+<p>3</p>
+<p id="last">4</p>
+
+<script>
+  document.querySelector('button').addEventListener('click', () => {
+    location.hash = 'last';
+  });
+</script>
+```
+
+`location.replace()`로 페이지를 로드하면 히스토리 스택에 남지 않습니다. A에서
+B로 replace를 하면 B에서 뒤로가기를 할 때 A가 아닌 A의 이전 페이지로 이동합니다:
+
+```js
+// @noexec noedit
+if (!isBrowserSupported()) {
+  location.replace('staticpage.html');
+}
+```
+
+## Browsing History
+
+```js
+// 보안상의 이유로 방문된 URL의 목록을 볼 수는 없습니다.
+console.log(history);
+console.log(history.length);
+```
+
+History API가 제공하는 메서드들입니다:
+
+```js
+// @noexec noedit
+history.back();
+history.forward();
+history.go(-2); // 뒤로 두 번 가는 것과 같습니다.
+```
+
+새로운 document를 로드하지 않고 내용을 바꾸기도 하는 모던 웹에서는 반드시 직접
+히스토리 관리를 해야합니다. 이런 경우 `history.pushState()`와 같은 API를 활용할
+수 있습니다.
+
+## History Management with pushState()
+
+`history.pushState()`로 히스토리에 대응되는 객체인 `state`와 유저에게 보여줄
+`url`을 전달할 수 있습니다. 이때 state는 structured clone되기에
+`JSON.stringify`에서 지원되지 않는 `Map`, `ArrayBuffer`등을 사용할 수 있습니다.
+비슷한 역할의 `replaceState()`도 있어요.
+
+https://developer.mozilla.org/docs/Web/API/History/pushState
+
+브라우저에서 뒤로/앞으로 가기를 누르는 상황등에서 발생하는 `popstate` 이벤트에서
+이전에 등록한 객체를 전달받을 수 있습니다.
+
+유저가 URL을 북마크한 뒤 나중에 재방문하면 `popstate` 이벤트 없이 URL으로만
+컨텐츠를 복구해야함을 유념하세요.
+
+https://developer.mozilla.org/en-US/docs/Web/API/Window/popstate_event
+
+두 API를 사용해 상태를 백업/복구하는 과정을 아래의 간단한 숫자 맞추기 예제
+코드에서 확인해보세요:
+
+```html
+<p></p>
+<input type="text" />
+<button hidden onclick="location.reload()">다시시작</button>
+
+<script>
+  class GameState {
+    // 새로운 게임을 만드는 팩토리 메서드
+    static newGame() {
+      let s = new GameState();
+      s.secret = s.randomInt(0, 100);
+      s.low = 0;
+      s.high = 100;
+      s.numGuesses = 0;
+      s.guess = null;
+      return s;
+    }
+
+    // stateObject에서 불러오는 팩토리 메서드
+    static fromStateObject(stateObject) {
+      let s = new GameState();
+      for (let key of Object.keys(stateObject)) {
+        s[key] = stateObject[key];
+      }
+      return s;
+    }
+
+    // URL에서 불러오는 팩토리 메서드
+    static fromURL(url) {
+      let s = new GameState();
+      let params = new URL(url).searchParams;
+
+      s.low = parseInt(params.get('l'));
+      s.high = parseInt(params.get('h'));
+      s.numGuesses = parseInt(params.get('n'));
+      s.guess = parseInt(params.get('g'));
+      if (Object.values(s).some((x) => isNaN(x))) return null;
+
+      s.secret = s.randomInt(s.low, s.high);
+      return s;
+    }
+
+    // 게임 상태를 URL로 변환
+    // 정답은 유출되면 안되니 인코딩하지 않습니다.
+    // 대신 URL을 로드할 때 low와 high 사이의 랜덤 값을 다시 고릅니다.
+    toURL() {
+      let url = new URL(window.location);
+      url.searchParams.set('l', this.low);
+      url.searchParams.set('h', this.high);
+      url.searchParams.set('n', this.numGuesses);
+      url.searchParams.set('g', this.guess);
+      return url.href;
+    }
+
+    // min < return value < max
+    randomInt(min, max) {
+      return min + Math.ceil(Math.random() * (max - min - 1));
+    }
+
+    // 입력값에 기반해 게임 상태를 수정
+    update(guess) {
+      this.guess = guess;
+      this.numGuesses++;
+
+      if (this.low < guess && guess < this.high) {
+        if (guess < this.secret) {
+          this.low = guess;
+        } else if (guess > this.secret) {
+          this.high = guess;
+        }
+      }
+    }
+
+    // 게임 상태를 DOM에 반영
+    render(heading, input, playagain) {
+      if (this.guess === this.secret) {
+        heading.textContent = `${this.numGuesses}번 만에 맞추셨어요!`;
+        playagain.hidden = false;
+      } else {
+        heading.textContent =
+          document.title = `${this.low} < ? < ${this.high}.`;
+        input.value = '';
+        input.focus();
+      }
+    }
+  }
+
+  let heading = document.querySelector('p');
+  let input = document.querySelector('input');
+  let playagain = document.querySelector('button');
+
+  let gamestate = GameState.fromURL(window.location) || GameState.newGame();
+
+  history.replaceState(gamestate, '', gamestate.toURL());
+  gamestate.render(heading, input, playagain);
+
+  input.onchange = (event) => {
+    gamestate.update(parseInt(event.target.value));
+    history.pushState(gamestate, '', gamestate.toURL());
+    gamestate.render(heading, input, playagain);
+  };
+
+  window.onpopstate = (event) => {
+    console.log(event.state);
+    gamestate = GameState.fromStateObject(event.state);
+    gamestate.render(heading, input, playagain);
+  };
+</script>
+```
+
+## 추가 자료
+
+hashchange 이벤트를 통한 히스토리 관리는 hacky하다고 생각해 책에는 나왔지만
+생략했습니다. Hash(URI fragment)가 또 언제 활용되는지는 아래를 참고하세요:
+
+https://en.wikipedia.org/wiki/URI_fragment
+
+게임 코드 원본:
+
+https://github.com/davidflanagan/jstdg7/blob/master/ch15/guessinggame.html
+
+`pushState` vs `location`
+
+https://stackoverflow.com/a/47583989

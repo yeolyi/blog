@@ -85,6 +85,18 @@ let _webTileProps: TileProps[] = [
   </text>
 </svg>`,
   },
+  {
+    name: 'Navigation',
+    description:
+      '히스토리 관련된 API들과 함께 pushState()로 상태를 관리하는 방법을 공부했습니다.',
+    href: '/webapi/navigation',
+    code: `<button>click me</button>
+<script>
+  document.querySelector('button').addEventListener('click', () => {
+    location = 'https://yeolyi.com';
+  });
+</script>`,
+  },
 ].map((x) => ({
   ...x,
   children: (
