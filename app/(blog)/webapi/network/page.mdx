@@ -1,0 +1,255 @@
+# Networking
+
+JS로 직접 네트워크 요청을 보내봅시다.
+
+## fetch()
+
+### Status Code, Response Headers and Network Error
+
+응답에서 status code과 header 얻기:
+
+```js
+fetch('https://jsonplaceholder.typicode.com/todos/1')
+  .then((response) => {
+    // status code
+    console.log(response.status, response.statusText);
+    console.log(response.ok); // 200번대일 때 true
+
+    // headers
+    for (let [k, v] of response.headers) {
+      console.log(k, v);
+    }
+    console.log(response.headers.get('Content-Type'));
+
+    return response.json();
+  })
+  .then((json) => console.log(json));
+```
+
+`fetch()`는 status와 header만 클라이언트에 도착했고 body는 오는 중이더라도
+resolve됩니다.
+
+404나 500이 온다고 reject되지는 않고 서버에 도달이 불가능할때만 reject됩니다:
+
+```js
+fetch('https://jsonplaceholder.typicode.com/todos/123123')
+  .then((resp) => console.log('resolved 1', resp.status))
+  .catch(() => console.log('rejected 1'));
+
+fetch('https://aethcaxluhf.com')
+  .then(() => console.log('resolved 2'))
+  .catch(() => console.log('rejected 2'));
+```
+
+### Setting Request Parameters
+
+`fetch()`는 인자로 `URL` 객체도 받아 이것저것 설정해 건넬 수 있습니다:
+
+```js
+let url = new URL('https://jsonplaceholder.typicode.com');
+url.pathname = '/todos/1';
+fetch(url)
+  .then((resp) => resp.json())
+  .then((json) => console.log(json));
+```
+
+### Setting request Headers
+
+혹은 `fetch`의 두번째 인자로 request header와 같은 추가 옵션을 전달할 수
+있습니다:
+
+```js
+let url = 'https://jsonplaceholder.typicode.com/posts';
+let body = JSON.stringify({ title: 'foo', body: 'bar', userId: 1 });
+let headers = new Headers();
+headers.set('Content-type', 'application/json; charset=UTF-8');
+
+fetch(url, { method: 'POST', body, headers })
+  .then((response) => response.json())
+  .then((json) => console.log(json));
+
+// 이렇게도 돼요
+let request = new Request(url, { method: 'POST', body, headers });
+fetch(request)
+  .then((response) => response.json())
+  .then((json) => console.log(json));
+```
+
+### Parsing Response Bodies
+
+`.json()`, `.text()`외에도 `arrayBuffer`, `blob`, `formData`등도 있어요.
+
+`blob` 예제:
+
+```html
+<p>loading...</p>
+<img />
+
+<script>
+  let p = document.querySelector('p');
+  let img = document.querySelector('img');
+
+  fetch('https://picsum.photos/150')
+    .then((response) => response.blob())
+    .then((myBlob) => {
+      const objectURL = URL.createObjectURL(myBlob);
+      img.src = objectURL;
+      p.remove();
+    });
+</script>
+```
+
+`arrayBuffer` 예제:
+
+```js
+// @noexec
+// https://developer.mozilla.org/en-US/docs/Web/API/Response/arrayBuffer
+let getData = async () => {
+  let audioCtx = new AudioContext();
+
+  let response = await fetch('viper.ogg');
+  if (!response.ok) throw new Error();
+  let buffer = await response.arrayBuffer(); // ⭐
+
+  let decodedData = audioCtx.decodeAudioData(buffer);
+
+  let source = new AudioBufferSourceNode();
+  source.buffer = decodedData;
+  source.connect(audioCtx.destination);
+  return source;
+};
+```
+
+### Streaming Response Bodies
+
+body의 일부만 왔더라도 그에대해 작업할 수 있다면 **streaming**을 활용할 수
+있습니다.
+
+`body` 프로퍼티는 `ReadableStream` 객체이며 이를 활용해 스트림으로서 읽을 수
+있습니다.
+
+https://developer.mozilla.org/en-US/docs/Web/API/Streams_API/Using_readable_streams
+
+### Specifying the Request Method and Request Body
+
+Content-Length는 브라우저가 알아서 붙여줍니다.
+
+body가 문자열이면 Content-Type을 "text/plain;charset=UTF-8."으로 설정해줍니다.
+이를 덮어쓰려면 "text/html"이나 "application/json"으로 직접 넣어줍시다.
+
+POST에 body를 첨부하는데는 두가지 방법이 있습니다.
+
+URLSearchParams 객체를 body에 전달합니다. 이때 body는 query string과 유사한
+문자열로 설정되고 Content-Type은
+`application/x-www-form-urlencoded;charset=UTF8`로 설정됩니다.
+
+혹은 FormData 객체를 body에 전달합니다. 이때 Content-Type은
+`multipart/form-data;boundary=...`로 설정됩니다. 업로드할 양이 많고 파일 혹은
+블롭마다 별개의 Content-Type이 있을 때 유용합니다.
+
+### Cross-Origin Requests
+
+`fetch()`가 cross-origin URL에 사용되면 브라우저는 request header에 Origin을
+넣어 서버가 요청이 어디로부터 오는지 확인할 수 있도록 합니다. 서버가 적합한
+Access-Control-Allow-Origin으로 cross-origin 요청을 허용한다면 `fetch()`는
+성공합니다.
+
+### Aborting a Request
+
+`AbortController`와 `AbortSignal` 클래스를 활용합니다:
+
+```js
+let fetchWithTimeout = (url, timeout) => {
+  let controller = new AbortController();
+
+  setTimeout(() => {
+    controller.abort();
+  }, timeout);
+
+  return fetch(url, { signal: controller.signal });
+};
+
+// ✍️ 요청에 성공할 때까지 timeout을 늘려보세요
+fetchWithTimeout('https://jsonplaceholder.typicode.com/todos/1', 0)
+  .then((resp) => resp.json())
+  .then((json) => console.log(json))
+  .catch((e) => console.log(e));
+```
+
+### 기타 요청시 옵션들
+
+https://developer.mozilla.org/en-US/docs/Web/API/Request/cache
+
+https://developer.mozilla.org/en-US/docs/Web/API/Request/redirect
+
+https://developer.mozilla.org/ko/docs/Web/HTTP/Headers/Referer
+
+## Server-Sent Events
+
+전통적으로 클라이언트는 새로운 데이터를 받기 위해 서버로 요청을 보내야만 합니다.
+하지만 Server-Sent Events은 웹페이지의 요청 없이도 언제든지 서버가 새로운
+데이터를 보내는 것이 가능합니다
+
+이를 위해 서버는 HTTP 연결을 닫지 않고 계속 열어두어 원하는 시점에 응답을 보낼
+수 있게 합니다. 서버쪽에서는 모든 클라에 대해 연결을 유지해야되니 성능을
+잡아먹습니다.
+
+client-side JS에서는 이를 지원하기 위해 EventSource API를 제공합니다. 이벤트
+기반 인터페이스를 가져요:
+
+```js
+// @noexec noedit
+let chat = new EventSource('/chat');
+chat.addEventListener('chat', (event) => {
+  console.log(event.data);
+});
+```
+
+서버쪽 코드 예시:
+
+https://github.com/davidflanagan/jstdg7/blob/master/ch15/chatServer.js
+
+## WebSockets
+
+클라이언트와 서버간의 양방향 통신을 제공합니다. 위에서 본 SSE와 달리 이진
+메시지를 지원하고 서버->클라 뿐 아닌 양방향 전송이 지원됩니다.
+
+```html
+<button>send</button>
+
+<script>
+  let socket = new WebSocket('wss://echo.websocket.org');
+
+  socket.addEventListener('open', () => {
+    document.querySelector('button').addEventListener('click', () => {
+      let str = new Date().toLocaleTimeString();
+      console.log('Send: ' + str);
+      // 문자열, Blob, ArrayBuffer 등이 가능합니다.
+      socket.send(str);
+    });
+  });
+
+  socket.addEventListener('message', (e) => {
+    console.log('Recv: ' + e.data);
+  });
+
+  socket.addEventListener('error', () => {
+    console.log('error');
+  });
+</script>
+```
+
+WebSocket 생성자의 두 번째 인자로 클라이언트에서 처리할 수 있는
+프로토콜(웹소켓으로 주고 받는 데이터의 형식) 이름의 배열을 전달할 수 있습니다.
+서버에서는 여기서 하나를 선택해 제공할 수 있고 이는 `protocol` 프로퍼티로 확인할
+수 있습니다.
+
+## 추가 자료
+
+https://developer.mozilla.org/ko/docs/Web/API/Blob
+
+https://developer.mozilla.org/ko/docs/Web/API/URL/createObjectURL_static
+
+https://developer.mozilla.org/ko/docs/Web/API/HTMLMediaElement/srcObject
+
+https://websocket.org/guides/road-to-websockets/

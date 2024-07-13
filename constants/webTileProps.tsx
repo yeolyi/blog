@@ -97,6 +97,17 @@ let _webTileProps: TileProps[] = [
   });
 </script>`,
   },
+  {
+    name: 'Network',
+    description:
+      '자바스크립트로 직접 네트워크 요청을 보내는 방법을 공부했습니다.',
+    href: '/webapi/network',
+    code: `<script>
+  fetch('https://jsonplaceholder.typicode.com/todos/1')
+    .then(resp => resp.json())
+    .then(json => console.log(json.title))
+</script>`,
+  },
 ].map((x) => ({
   ...x,
   children: (
