@@ -29,6 +29,7 @@ const config: Config = {
             'code::before': { content: 'none' },
             'code::after': { content: 'none' },
             'li p': { margin: '0 !important' },
+            p: { 'word-break': 'break-all' },
           },
         },
       },
