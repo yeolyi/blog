@@ -1,7 +1,192 @@
 # Storage
 
+사용자의 컴퓨터에 데이터를 저장하는 방법을 알아봅시다.
+
+여기서 다루는 모든 저장 방법은 데이터를 암호화되지 않으니 비밀번호와 같은
+데이터는 저장할 수 없어요.
+
 ## localStorage and sessionStorage
+
+`localStorage`와 `sessionStorage`는 일반 객체와 사용법이 유사하지만 값으로
+문자열만 넣을 수 있고 넣은 값이 persistent하다는 차이점이 있습니다.
+
+```js
+// @noexec noedit
+localStorage.username = 'yeolyi';
+delete localStorage.username;
+
+// 초기화
+localStorage.clear();
+```
+
+### Storage Lifetime and Scope
+
+`localStorage`는 유저가 브라우저 설정을 통해 삭제하지 않는한 저장된 데이터가
+계속 유지됩니다. 저장된 데이터는 same-origin인 document에서 모두 접근
+가능합니다.
+
+`sessionStorage`는 현재 떠 있는 탭 내에서만 유지됩니다. 페이지를 새로 고침해도
+유지되지만 탭을 닫았다 다시 열면 사라집니다.
+
+### Storage Events
+
+`localStorage`에 저장된 데이터에 변경이 생기면 변경을 가한 window를 제외하고
+연관된 모든 window들에 `storage` 이벤트가 발생합니다. 이벤트 객체는 `key`,
+`newValue`, `oldValue`, `storageArea`, `url`의 프로퍼티를 가집니다.
+
+`storage` 이벤트를 다른 window를 향한 **브로드캐스팅** 매커니즘으로 활용할 수
+있습니다.
 
 ## Cookies
 
+Client-side JS에서 낡고 이상한 API를 통해 쿠키를 조작하는 방법을 알아봅시다.
+쿠키는 항상 서버로 전송되고, 적은 데이터만 저장할 수 있으니 클라이언트용 저장
+공간으로 쓰기는 애매하긴 합니다.
+
+### Reading Cookies
+
+쿠키는 세미콜론과 공백으로 구분된 키/값 쌍의 문자열입니다. 예를 들면 아래처럼
+파싱할 수 있어요. 다른 사이트의 개발자 콘솔에서 실행해보세요:
+
+```js
+// @noedit noexec
+document.cookie.split('; ').reduce((acc, cur) => {
+  let [key, value] = cur.split('=');
+  if (value) acc[key] = value;
+  return acc;
+}, {});
+```
+
+### Cookie Attributes: Lifetime and Scope
+
+쿠키는 기본적으로 브라우저 세션동안만 유지되지만 `max-age` 속성을 넣으면 그 이상
+유지될 수 있습니다.
+
+`path`와 `domain`으로 쿠키의 접근 가능 범위를 바꿀 수 있습니다. 기본적으로는
+쿠키를 만든 경로와 그 하위 경로입니다.
+
+`secure` 속성을 설정하면 HTTPS 연결로만 전달됩니다.
+
+### Storing Cookies
+
+쿠키 값에는 세미콜론, 쉼표, 공백이 들어갈 수 없기에 `encodeURIComponent`를
+활용할 수 있습니다.
+
+`document.cookie`에 문자열을 할당하면 관련된 쿠키만 갱신되고, 다른 쿠키의 값은
+변경되지 않습니다:
+
+```js
+// @noedit noexec
+let setCookie = (name, value, daysToLive = null) => {
+  let cookie = `${name}=${encodeURIComponent(value)}`;
+  if (daysToLive !== null) {
+    cookie += `; max-age=${daysToLive * 60 * 60 * 24}`;
+  }
+  document.cookie = cookie;
+};
+```
+
+기묘하지만 `max-age`를 0으로 설정해 쿠키를 삭제합니다.
+
 ## IndexedDB
+
+브라우저상에서도 간단한 데이터베이스를 사용할 수 있습니다. 관계형 DB가 아닌 객체
+지향 DB입니다.
+
+각 origin은 임의 개수의 **IndexedDB 데이터베이스**를 가질 수 있습니다. 각
+데이터베이스는 object store들의 집합입니다.
+
+**Object store**는 객체들을 저장합니다. 객체는 structured clone 알고리즘으로
+직렬화되기에 `Map`이나 `typed array`등도 저장할 수 있습니다. 각 객체는 유일한 키
+값을 가져야합니다. 넣고자 하는 객체에 키의 역할을 하는 프로퍼티가 이미 있다면
+**key path**로 이를 지정해 키로서 사용할 수 있습니다.
+
+키가 아닌 다른 프로퍼티로 검색을 하고 싶으면 object store에 **인덱스**를
+지정해줄 수 있습니다.
+
+아래 예제로 살펴볼게요:
+
+```js
+// @noexec noedit
+let STORE_NAME = 'zipcodes';
+let STORE_VERSION = 1;
+
+let getRawData = () =>
+  Promise.resolve([
+    { zipcode: '99553', city: 'Akutan', state: 'AK' },
+    { zipcode: '99571', city: 'Cold Bay', state: 'AK' },
+    { zipcode: '99583', city: 'False Pass', state: 'AK' },
+    { zipcode: '99612', city: 'King Cove', state: 'AK' },
+    { zipcode: '99661', city: 'Sand Point', state: 'AK' },
+  ]);
+
+// zipcodes DB를 callback에 전달합니다. DB가 없다면 초기화를 합니다.
+function withDB(callback) {
+  let request = indexedDB.open(STORE_NAME, STORE_VERSION);
+
+  request.onsuccess = () => callback(request.result);
+  request.onerror = console.error;
+
+  // DB가 없거나 버전이 달라진 경우를 처지합니다.
+  request.onupgradeneeded = (e) => initdb(e, callback);
+}
+
+// DB 초기 설정 후 데이터를 채웁니다.
+function initdb(event, callback) {
+  let db = event.target.result;
+  let transaction = event.target.transaction;
+  transaction.onerror = console.error;
+
+  // objectStore를 생성합니다.
+  // zipcode 프로퍼티를 키로서 사용합니다.
+  let store = db.createObjectStore(STORE_NAME, { keyPath: 'zipcode' });
+
+  // zipcode 프로퍼티 외에 city 프로퍼티로도 인덱스를 합니다.
+  store.createIndex('cities', 'city');
+
+  getRawData().then((zipcodes) => {
+    // transaction으로부터 object store를 얻습니다.
+    let store = transaction.objectStore(STORE_NAME);
+
+    // store에 데이터를 넣습니다.
+    zipcodes.forEach((record) => store.put(record));
+
+    transaction.oncomplete = () => callback(db);
+  });
+}
+
+function lookupCity(zip, callback) {
+  withDB((db) => {
+    let transaction = db.transaction([STORE_NAME]);
+    let zipcodes = transaction.objectStore(STORE_NAME);
+
+    let request = zipcodes.get(zip);
+
+    request.onerror = console.error;
+    request.onsuccess = () => {
+      let record = request.result;
+      callback(record ? `${record.city}, ${record.state}` : null);
+    };
+  });
+}
+
+function lookupZipcodes(city, callback) {
+  withDB((db) => {
+    let transaction = db.transaction([STORE_NAME]);
+    let store = transaction.objectStore(STORE_NAME);
+
+    let index = store.index('cities');
+    let request = index.getAll(city);
+
+    request.onerror = console.error;
+    request.onsuccess = () => callback(request.result);
+  });
+}
+
+lookupCity('99583', console.log);
+lookupZipcodes('Akutan', console.log);
+```
+
+## 추가 자료
+
+https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API

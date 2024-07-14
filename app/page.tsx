@@ -19,6 +19,7 @@ import Footer from '@/components/layout/Footer';
 import { jsTileProps } from '@/constants/jsTileProps';
 import { webTileProps } from '@/constants/webTileProps';
 import { postTileProps } from '@/constants/postTileProps';
+import Follower from '@/components/layout/Follower';
 
 export default function Page() {
   return (

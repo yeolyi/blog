@@ -108,9 +108,14 @@ let _webTileProps: TileProps[] = [
     .then(json => console.log(json.title))
 </script>`,
   },
+  {
+    name: 'Storage',
+    description: '브라우저상에 데이터를 저장하는 다양한 방법을 공부했습니다.',
+    href: '/webapi/storage',
+  },
 ].map((x) => ({
   ...x,
-  children: (
+  children: x.code && (
     <Sandbox presetName="html" code={x.code} norefresh iframeHeight={70} />
   ),
 }));
