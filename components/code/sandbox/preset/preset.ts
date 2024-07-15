@@ -1,4 +1,4 @@
-import { srcdocHead, srcdocTail } from './htmlTemplate';
+import { wrapBaseHTML } from './htmlTemplate';
 
 export let presetNameList = [
   'js',
@@ -18,11 +18,17 @@ export type Preset = {
   language: 'javascript' | 'xml';
 };
 
+let inlineScriptTag = async (urlList: string | string[]) => {
+  if (typeof urlList === 'string') urlList = [urlList];
+  let srcList = await Promise.all(urlList.map(fetchText));
+  return srcList.map((src) => `<script>${src}</script>`).join('\n');
+};
+
 export let jsPreset: Preset = {
   name: 'js',
   showConsole: () => true,
   showIframe: false,
-  createSrcDoc: async (code) => wrapTemplateHTML(`<script>${code}</script>`),
+  createSrcDoc: async (code) => wrapBaseHTML(`<script>${code}</script>`),
   language: 'javascript',
 };
 
@@ -30,7 +36,7 @@ export let htmlPreset: Preset = {
   name: 'html',
   showConsole: (len) => 0 < len,
   showIframe: true,
-  createSrcDoc: async (code) => wrapTemplateHTML(code),
+  createSrcDoc: async (code) => wrapBaseHTML(code),
   language: 'xml',
 };
 
@@ -40,7 +46,7 @@ export let babelPreset: Preset = {
   showIframe: false,
   createSrcDoc: async (code: string) => {
     // TODO: iframe에서 캐싱하는 방법은 없나?
-    return wrapTemplateHTML(
+    return wrapBaseHTML(
       // TODO: main 브랜치로 바꾸기
       `<script>${await fetchText('https://cdn.jsdelivr.net/gh/yeolyi/babel-proposals-standalone@dev/index.js')}</script>
       <script>
@@ -60,10 +66,9 @@ export let rxjsPreset: Preset = {
   showConsole: () => true,
   showIframe: true,
   createSrcDoc: async (code: string) => {
-    let src = await fetchText(
-      'https://unpkg.com/rxjs@^7/dist/bundles/rxjs.umd.min.js',
+    return wrapBaseHTML(
+      `${await inlineScriptTag('https://unpkg.com/rxjs@^7/dist/bundles/rxjs.umd.min.js')}<script>${code}</script>`,
     );
-    return wrapTemplateHTML(`<script>${src}</script><script>${code}</script>`);
   },
   language: 'javascript',
 };
@@ -73,17 +78,9 @@ export let reactPreset: Preset = {
   showConsole: () => true,
   showIframe: true,
   createSrcDoc: async (code: string) => {
-    let [react, reactDOM, babel] = await Promise.all([
-      fetchText('https://unpkg.com/react@18/umd/react.development.js'),
-      fetchText('https://unpkg.com/react-dom@18/umd/react-dom.development.js'),
-      fetchText('https://unpkg.com/@babel/standalone/babel.min.js'),
-    ]);
-
-    return wrapTemplateHTML(
+    return wrapBaseHTML(
       `<div id="root"></div>
-      <script>${react}</script>
-      <script>${reactDOM}</script>
-      <script>${babel}</script>
+      ${await inlineScriptTag(['https://unpkg.com/react@18/umd/react.development.js', 'https://unpkg.com/react-dom@18/umd/react-dom.development.js', 'https://unpkg.com/@babel/standalone/babel.min.js'])}
       <script type="text/babel">${code}</script>`,
     );
   },
@@ -95,15 +92,12 @@ export let jqueryPreset: Preset = {
   showConsole: () => true,
   showIframe: true,
   createSrcDoc: async (code) => {
-    let jquery = await fetchText(
-      'https://code.jquery.com/jquery-3.7.1.slim.min.js',
+    return wrapBaseHTML(
+      `${await inlineScriptTag('https://code.jquery.com/jquery-3.7.1.slim.min.js')}${code}`,
     );
-    return wrapTemplateHTML(`<script>${jquery}</script>${code}`);
   },
   language: 'xml',
 };
-
-let wrapTemplateHTML = (src: string) => `${srcdocHead}${src}${srcdocTail}`;
 
 let fetchText = async (src: string) => {
   let resp = await fetch(src);

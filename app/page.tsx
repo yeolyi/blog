@@ -19,7 +19,7 @@ import Footer from '@/components/layout/Footer';
 import { jsTileProps } from '@/constants/jsTileProps';
 import { webTileProps } from '@/constants/webTileProps';
 import { postTileProps } from '@/constants/postTileProps';
-import Follower from '@/components/layout/Follower';
+import { libraryTileProps } from '@/constants/libraryTileProps';
 
 export default function Page() {
   return (
@@ -51,6 +51,20 @@ export default function Page() {
             ))}
           </Gallery>
         </Section>
+
+        {/* <Section>
+          <div className="horizontal-pad">
+            <SectionHeadline>
+              넓고 얕은 프론트엔드 지식을 위한 <strong>라이브러리 찍먹</strong>
+            </SectionHeadline>
+          </div>
+
+          <Gallery>
+            {libraryTileProps.map((prop, idx) => (
+              <Tile key={idx} {...prop} />
+            ))}
+          </Gallery>
+        </Section> */}
 
         <Section>
           <div className="horizontal-pad">

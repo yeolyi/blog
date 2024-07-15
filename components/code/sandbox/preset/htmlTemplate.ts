@@ -1,6 +1,6 @@
 import { stringifySrc } from './stringify';
 
-export let srcdocHead = `<!doctype html>
+export let wrapBaseHTML = (src: string) => `<!doctype html>
 <html>
   <head>
     <style>
@@ -55,7 +55,7 @@ export let srcdocHead = `<!doctype html>
           data: e.reason.message
         }, "*");
       });
-    </script>`;
-
-export let srcdocTail = `</body>
+    </script>
+    ${src}
+  </body>
 </html>`;

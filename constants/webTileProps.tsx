@@ -113,6 +113,11 @@ let _webTileProps: TileProps[] = [
     description: '브라우저상에 데이터를 저장하는 다양한 방법을 공부했습니다.',
     href: '/webapi/storage',
   },
+  {
+    name: 'Worker',
+    description: '별개의 스레드로 JS 코드를 실행시키는 방법을 공부했습니다.',
+    href: '/webapi/storage',
+  },
 ].map((x) => ({
   ...x,
   children: x.code && (
