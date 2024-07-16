@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { CSSProperties, ReactNode } from 'react';
 import { FaChevronRight } from 'react-icons/fa6';
-import Sandbox from '../code/sandbox/Sandbox';
 
 export type TileProps = {
   name: string;
   description: string;
+  textColor: string;
   style?: CSSProperties;
   concepts?: string;
   href?: string;
@@ -19,12 +19,8 @@ export const Tile = ({
   href,
   style,
   children,
+  textColor,
 }: TileProps) => {
-  let textColor = 'text-textblack';
-  if (style?.backgroundColor && isColorDark(style.backgroundColor)) {
-    textColor = 'text-white';
-  }
-
   return (
     <TileContainer>
       <div
@@ -70,16 +66,3 @@ export const TileTitle = ({ children }: { children: ReactNode }) => (
     {children}
   </h3>
 );
-
-const isColorDark = (hex: string) => {
-  hex = hex.substring(1);
-
-  let rgb = parseInt(hex, 16);
-  let r = (rgb >> 16) & 0xff;
-  let g = (rgb >> 8) & 0xff;
-  let b = (rgb >> 0) & 0xff;
-
-  let luma = 0.2126 * r + 0.7152 * g + 0.0722 * b; // per ITU-R BT.709
-
-  return luma < 128;
-};

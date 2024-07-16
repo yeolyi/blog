@@ -144,4 +144,5 @@ console.log(Object.isFrozen(obj));`,
     hsl(48deg 86% 54%) 99%
   )`,
   },
+  textColor: 'text-textblack',
 }));

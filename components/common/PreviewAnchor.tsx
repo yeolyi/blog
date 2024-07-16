@@ -27,7 +27,7 @@ const Content = async (props: Props) => {
 
   return (
     <a
-      className="not-prose flex flex-col border-l-[3px] border-slate-300 px-3 py-2 not-italic hover:bg-neutral-50"
+      className="not-prose flex flex-col border-l-[3px] border-[#e2e8f0] px-3 py-2 not-italic hover:bg-neutral-50"
       href={props.href}
     >
       <span className="line-clamp-1 text-base font-semibold">

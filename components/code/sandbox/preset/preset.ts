@@ -1,14 +1,5 @@
 import { wrapBaseHTML } from './htmlTemplate';
-
-export let presetNameList = [
-  'js',
-  'html',
-  'rxjs',
-  'babel',
-  'react',
-  'jquery',
-] as const;
-export type PresetName = (typeof presetNameList)[number];
+import { PresetName } from './presetMap';
 
 export type Preset = {
   name: PresetName;
@@ -97,6 +88,18 @@ export let jqueryPreset: Preset = {
     );
   },
   language: 'xml',
+};
+
+export let lodashPreset: Preset = {
+  name: 'lodash',
+  showConsole: () => true,
+  showIframe: false,
+  createSrcDoc: async (code) => {
+    return wrapBaseHTML(
+      `${await inlineScriptTag('https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js')}<script>${code}</script>`,
+    );
+  },
+  language: 'javascript',
 };
 
 let fetchText = async (src: string) => {

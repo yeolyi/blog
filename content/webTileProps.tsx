@@ -123,11 +123,12 @@ let _webTileProps: TileProps[] = [
   children: x.code && (
     <Sandbox presetName="html" code={x.code} norefresh iframeHeight={70} />
   ),
+  textColor: 'text-white',
 }));
 
 export let webTileProps = _webTileProps.map((x) => ({
   ...x,
   style: {
-    backgroundColor: '#083e98',
+    background: `linear-gradient(to right, #232526, #414345)`,
   },
 }));

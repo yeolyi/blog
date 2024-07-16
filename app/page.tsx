@@ -13,13 +13,16 @@ import { PostContainer, PostTile } from '@/components/common/PostTile';
 import { CserealBg } from '@/components/mainbg/CserealBg';
 import InstaBg from '@/components/mainbg/InstaBg';
 import { WideTile, WideTileProps } from '@/components/gallery/WideTile';
-import JSBookTile from '@/components/gallery/JsBookTile';
 import Giscus from '@/components/common/Giscus';
 import Footer from '@/components/layout/Footer';
-import { jsTileProps } from '@/constants/jsTileProps';
-import { webTileProps } from '@/constants/webTileProps';
-import { postTileProps } from '@/constants/postTileProps';
-import { libraryTileProps } from '@/constants/libraryTileProps';
+
+import ESLintPlayground from '@/components/eslint';
+import CSSBookTile from '@/content/CSSBookTile';
+import { cssTileProps } from '@/content/cssTileProps';
+import JSBookTile from '@/content/JsBookTile';
+import { jsTileProps } from '@/content/jsTileProps';
+import { postTileProps } from '@/content/postTileProps';
+import { webTileProps } from '@/content/webTileProps';
 
 export default function Page() {
   return (
@@ -52,20 +55,6 @@ export default function Page() {
           </Gallery>
         </Section>
 
-        {/* <Section>
-          <div className="horizontal-pad">
-            <SectionHeadline>
-              넓고 얕은 프론트엔드 지식을 위한 <strong>라이브러리 찍먹</strong>
-            </SectionHeadline>
-          </div>
-
-          <Gallery>
-            {libraryTileProps.map((prop, idx) => (
-              <Tile key={idx} {...prop} />
-            ))}
-          </Gallery>
-        </Section> */}
-
         <Section>
           <div className="horizontal-pad">
             <SectionHeadline>
@@ -97,19 +86,20 @@ export default function Page() {
           </Gallery>
         </Section>
 
-        {/* <Section>
-        <div className="horizontal-pad">
-          <SectionHeadline>
-            <strong>프론트엔드 라이브러리 찍먹</strong>
-          </SectionHeadline>
-        </div>
+        <Section>
+          <div className="horizontal-pad">
+            <SectionHeadline>
+              <strong>CSS 공부 기록</strong>
+            </SectionHeadline>
+          </div>
 
-        <Gallery>
-          {libraryList.map((prop) => (
-            <Tile key={prop.href} {...prop} />
-          ))}
-        </Gallery>
-      </Section> */}
+          <Gallery>
+            <CSSBookTile />
+            {cssTileProps.map((prop, idx) => (
+              <Tile key={idx} {...prop} />
+            ))}
+          </Gallery>
+        </Section>
 
         <Section className="bg-lightgray">
           <SectionHeadline className="horizontal-pad">
@@ -130,6 +120,7 @@ export default function Page() {
           <Giscus />
         </Section>
       </main>
+      <ESLintPlayground />
       <Footer />
     </>
   );
@@ -163,17 +154,3 @@ let projectList: WideTileProps[] = [
     bg: <InstaBg />,
   },
 ];
-
-// let libraryList: TileProps[] = [
-//   {
-//     name: 'Prettier',
-//     description: 'opinionated code formatter',
-//     href: '/library/prettier',
-//     style: {
-//       backgroundColor: '#1b2b35',
-//       backgroundImage: 'url(/prettier.png)',
-//       backgroundPosition: 'center',
-//       backgroundRepeat: 'no-repeat',
-//     },
-//   },
-// ];

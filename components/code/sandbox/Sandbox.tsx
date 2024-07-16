@@ -6,8 +6,7 @@ import Console from '../console/Console';
 import RefreshButton from '../editor/RefreshButton';
 import { useIframeListener } from './useIframeListener';
 import { useDebouncedSrcDoc } from './useDebouncedSrcDoc';
-import { PresetName } from './preset/preset';
-import { presetMap } from './preset/presetMap';
+import { presetMap, PresetName } from './preset/presetMap';
 
 export type SandboxOptions = {
   noexec?: boolean;

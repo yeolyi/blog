@@ -28,7 +28,11 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/_page.mdx",
-    "app/(blog)/webapi/css/page.mdx"
-, "app/(blog)/library/react/page.mdx", "constants/webTileProps.tsx", "components/code/sandbox/preset/partialApplicationPlugin.js", "components/code/sandbox/preset/babelAsyncDo.js"  ],
+    "app/(blog)/webapi/css/page.mdx",
+    "app/(blog)/library/react/page.mdx",
+    "components/tiles/webTileProps.tsx",
+    "components/code/sandbox/preset/partialApplicationPlugin.js",
+    "components/code/sandbox/preset/babelAsyncDo.js"
+  ],
   "exclude": ["node_modules"]
 }
