@@ -107,18 +107,8 @@ let setCookie = (name, value, daysToLive = null) => {
 아래 예제로 살펴볼게요:
 
 ```js
-// @noexec noedit
 let STORE_NAME = 'zipcodes';
 let STORE_VERSION = 1;
-
-let getRawData = () =>
-  Promise.resolve([
-    { zipcode: '99553', city: 'Akutan', state: 'AK' },
-    { zipcode: '99571', city: 'Cold Bay', state: 'AK' },
-    { zipcode: '99583', city: 'False Pass', state: 'AK' },
-    { zipcode: '99612', city: 'King Cove', state: 'AK' },
-    { zipcode: '99661', city: 'Sand Point', state: 'AK' },
-  ]);
 
 // zipcodes DB를 callback에 전달합니다. DB가 없다면 초기화를 합니다.
 function withDB(callback) {
@@ -128,15 +118,11 @@ function withDB(callback) {
   request.onerror = console.error;
 
   // DB가 없거나 버전이 달라진 경우를 처지합니다.
-  request.onupgradeneeded = (e) => initdb(e, callback);
+  request.onupgradeneeded = (e) => initdb(request.result, callback);
 }
 
 // DB 초기 설정 후 데이터를 채웁니다.
-function initdb(event, callback) {
-  let db = event.target.result;
-  let transaction = event.target.transaction;
-  transaction.onerror = console.error;
-
+function initdb(db, callback) {
   // objectStore를 생성합니다.
   // zipcode 프로퍼티를 키로서 사용합니다.
   let store = db.createObjectStore(STORE_NAME, { keyPath: 'zipcode' });
@@ -144,15 +130,19 @@ function initdb(event, callback) {
   // zipcode 프로퍼티 외에 city 프로퍼티로도 인덱스를 합니다.
   store.createIndex('cities', 'city');
 
-  getRawData().then((zipcodes) => {
-    // transaction으로부터 object store를 얻습니다.
-    let store = transaction.objectStore(STORE_NAME);
+  fetch(parent.origin + '/webapi/cities.json')
+    .then((resp) => resp.json())
+    .then((zipcodes) => {
+      // transaction으로부터 object store를 얻습니다.
+      let transaction = db.transaction([STORE_NAME], 'readwrite');
+      transaction.onerror = console.error;
 
-    // store에 데이터를 넣습니다.
-    zipcodes.forEach((record) => store.put(record));
+      // store에 데이터를 넣습니다.
+      let store = transaction.objectStore(STORE_NAME);
+      zipcodes.forEach((record) => store.put(record));
 
-    transaction.oncomplete = () => callback(db);
-  });
+      transaction.oncomplete = () => callback(db);
+    });
 }
 
 function lookupCity(zip, callback) {
@@ -183,8 +173,8 @@ function lookupZipcodes(city, callback) {
   });
 }
 
-lookupCity('99583', console.log);
-lookupZipcodes('Akutan', console.log);
+lookupCity('99732', console.log);
+lookupZipcodes('Anchorage', console.log);
 ```
 
 ## 추가 자료

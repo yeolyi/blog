@@ -16,7 +16,8 @@ export default function Code(
   }
 
   let { presetName, code, ...props } = parseProps(content, className);
-  if (code === undefined || presetName === undefined) return null;
+  if (code === undefined || presetName === undefined)
+    return <code {...codeProps} />; // `code` 처리
 
   return <Sandbox presetName={presetName} code={code} {...props} />;
 }

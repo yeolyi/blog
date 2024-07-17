@@ -14,8 +14,7 @@ export let useIframeListener = (
 
     const handleMessage = (e: MessageEvent) => {
       if (iframe === null) return;
-      if (e.origin !== 'null' || e.source !== iframe.contentWindow) return;
-
+      if (e.source !== iframe.contentWindow) return;
       setLogList((list) => [...list, e.data]);
     };
 

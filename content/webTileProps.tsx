@@ -116,7 +116,7 @@ let _webTileProps: TileProps[] = [
   {
     name: 'Worker',
     description: '별개의 스레드로 JS 코드를 실행시키는 방법을 공부했습니다.',
-    href: '/webapi/storage',
+    href: '/webapi/worker',
   },
 ].map((x) => ({
   ...x,

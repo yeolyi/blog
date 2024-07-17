@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Preset } from './preset/preset';
+import { Preset } from './preset/presetMap';
 
 export let useDebouncedSrcDoc = (
   _code: string,
