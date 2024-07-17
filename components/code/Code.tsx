@@ -1,18 +1,22 @@
 import { DetailedHTMLProps, HTMLAttributes } from 'react';
 import Sandbox, { SandboxProps } from './sandbox/Sandbox';
 import { PresetName, presetNameList } from './sandbox/preset/presetMap';
+import HighlightedCode from './editor/HighlightedCode';
 
 export default function Code(
   codeProps: DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>,
 ) {
   let content = codeProps.children?.toString()?.trim();
   let className = codeProps.className;
-  if (content === undefined) return <code {...codeProps} />;
+  if (content === undefined) return null;
+
+  // TODO: 예쁘게 처리
+  if (className === 'language-css') {
+    return <HighlightedCode language="css">{content}</HighlightedCode>;
+  }
 
   let { presetName, code, ...props } = parseProps(content, className);
-
-  if (presetName === undefined || code === undefined)
-    return <code>{content}</code>;
+  if (code === undefined || presetName === undefined) return null;
 
   return <Sandbox presetName={presetName} code={code} {...props} />;
 }

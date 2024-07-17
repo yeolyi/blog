@@ -4,14 +4,18 @@ import { TileProps } from '@/components/gallery/Tile';
 export let cssTileProps: TileProps[] = [
   {
     name: 'CSS 기초',
-    description: '',
+    description:
+      'CSS가 크게 무엇으로 구성되는지, HTML과 어떻게 연결되는지 공부했습니다.',
     href: '/css/fundamentals',
-    code: ``,
+    code: `<p>
+  This p element is a block-level element. The strongly emphasized
+  text <strong>is an inline element</strong>.
+</p>`,
   },
 ].map((x) => ({
   ...x,
   children: x.code && (
-    <Sandbox presetName="html" code={x.code} norefresh iframeHeight={70} />
+    <Sandbox presetName="html" code={x.code} norefresh iframeHeight={100} />
   ),
   style: {
     backgroundImage: `linear-gradient(

@@ -11,7 +11,136 @@ export let metadata = {
 
 ## isEmpty
 
+> Objects are considered empty if they have no own enumerable string keyed
+> properties.
+
 ```js
 // @lodash
-console.log(_);
+// false
+log(_.isEmpty(new Set([1, 2, 3])));
+log(_.isEmpty({ x: 1 }));
+
+// true
+log(_.isEmpty(null));
+log(_.isEmpty([]));
+log(_.isEmpty(new Map()));
+```
+
+## map
+
+```js
+// @lodash
+log(_.map([4, 8], (n) => n * n));
+log(_.map({ a: 4, b: 8 }, (n) => n * n));
+
+let users = [{ user: 'barney' }, { user: 'fred' }];
+// The `_.property` iteratee shorthand.
+log(_.map(users, 'user'));
+```
+
+## forEach
+
+```js
+// @lodash
+_.forEach([1, 2], (n) => console.log(n));
+```
+
+## includes
+
+```js
+// @lodash
+log(_.includes([1, 2, 3], 1));
+log(_.includes([1, NaN, 3], NaN));
+log(_.includes('abcd', 'bc'));
+```
+
+## isEqual
+
+Object objects are compared by their own, not inherited, enumerable properties.
+
+```js
+// @lodash
+log({ a: 1 } === { a: 1 });
+log(_.isEqual({ a: 1 }, { a: 1 }));
+```
+
+## merge
+
+Recursively merges own and inherited enumerable string keyed properties of
+source objects into the destination object.
+
+```js
+// @lodash
+log(
+  _.merge(
+    {
+      a: [{ b: 2 }, { d: 4 }],
+    },
+    {
+      a: [{ c: 3 }, { e: 5 }],
+    },
+  ),
+);
+```
+
+## mergeWith
+
+```js
+// @lodash
+function customizer(objValue, srcValue) {
+  if (_.isArray(objValue)) {
+    return objValue.concat(srcValue);
+  }
+}
+
+var object = { a: [1], b: [2] };
+var other = { a: [3], b: [4] };
+
+log(_.mergeWith(object, other, customizer));
+```
+
+## cloneDeep
+
+```js
+// @lodash
+let obj1 = [{ a: 1 }, { b: 2 }];
+
+let obj2 = [...obj1];
+log(obj1[0] == obj2[0]);
+
+let obj3 = _.cloneDeep(obj1);
+log(obj1[0] == obj3[0]);
+```
+
+## compact
+
+Creates an array with all falsey values removed.
+
+```js
+// @lodash
+log(_.compact([0, 1, false, 2, '', '3']));
+```
+
+## has
+
+Checks if path is a **direct property** of object.
+
+```js
+// @lodash
+let obj1 = { a: { b: 2 } };
+let obj2 = Object.create({ a: 1 });
+
+log(_.has(obj1, 'a'));
+log(_.has(obj1, 'a.b'));
+log(_.has(obj1, ['a', 'b']));
+log(_.has(obj2, 'a'));
+```
+
+## camelCase
+
+```js
+// @lodash
+log(_.camelCase('Foo Bar'));
+log(_.camelCase('--foo-bar--'));
+log(_.camelCase('__FOO_BAR__'));
 ```

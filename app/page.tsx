@@ -120,7 +120,6 @@ export default function Page() {
           <Giscus />
         </Section>
       </main>
-      <ESLintPlayground />
       <Footer />
     </>
   );

@@ -96,7 +96,11 @@ export let lodashPreset: Preset = {
   showIframe: false,
   createSrcDoc: async (code) => {
     return wrapBaseHTML(
-      `${await inlineScriptTag('https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js')}<script>${code}</script>`,
+      `${await inlineScriptTag('https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js')}
+      <script>
+      let log = console.log;
+      ${code}
+      </script>`,
     );
   },
   language: 'javascript',
