@@ -12,6 +12,18 @@ export let cssTileProps: TileProps[] = [
   text <strong>is an inline element</strong>.
 </p>`,
   },
+  {
+    name: 'CSS 선택자',
+    description:
+      'HTML의 트리 구조를 활용해 구조적 상황에 따라 요소에 스타일을 적용해봅시다.',
+    href: '/css/selectors',
+    code: `<style>
+  a[href$='.pdf' i] { 
+    color: red; 
+  }
+</style>
+<a href="/sample.PDF">PDF</a>`,
+  },
 ].map((x) => ({
   ...x,
   children: x.code && (
