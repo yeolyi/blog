@@ -1,10 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Log } from '../type';
 
-export let useIframeListener = (
-  iframe: HTMLIFrameElement | null,
-  option: { listenResize: boolean },
-) => {
+export let useIframeListener = (iframe: HTMLIFrameElement | null) => {
   const [logList, setLogList] = useState<Log[]>([]);
 
   useEffect(() => {
@@ -20,7 +17,7 @@ export let useIframeListener = (
 
     addEventListener('message', handleMessage);
     return () => removeEventListener('message', handleMessage);
-  }, [iframe, option.listenResize]);
+  }, [iframe]);
 
   let reset = useCallback(() => {
     setLogList([]);

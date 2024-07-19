@@ -30,7 +30,6 @@ export default function Sandbox({
   noexec,
   noedit,
   norefresh,
-  logExpanded,
   noiframe,
   iframeHeight,
 }: SandboxProps) {
@@ -40,9 +39,7 @@ export default function Sandbox({
   let containerRef = useRef<HTMLDivElement>(null);
   let onscreen = useOnScreen(containerRef);
 
-  const { logList, reset } = useIframeListener(iframe, {
-    listenResize: preset.showIframe && iframeHeight === undefined,
-  });
+  const { logList, reset } = useIframeListener(iframe);
 
   const { code, setCode, srcdoc, iframeKey, refresh } = useDebouncedSrcDoc(
     _code,
@@ -78,9 +75,7 @@ export default function Sandbox({
             srcDoc={srcdoc}
           />
         )}
-        {showConsole && (
-          <Console logList={logList} expandedDefault={logExpanded} />
-        )}
+        {showConsole && <Console logList={logList} />}
       </div>
       {!showIframe && !noexec && (
         <iframe
