@@ -12,10 +12,10 @@ https://github.com/tc39/proposal-set-methods
 let s1 = new Set([1, 2, 3]);
 let s2 = new Set([2, 3, 4]);
 
-console.log(...s1.intersection(s2));
-console.log(...s1.union(s2));
-console.log(...s1.difference(s2));
-console.log(...s1.symmetricDifference(s2));
+console.log(s1.intersection(s2));
+console.log(s1.union(s2));
+console.log(s1.difference(s2));
+console.log(s1.symmetricDifference(s2));
 ```
 
 ### 부분집합, 포함집합
@@ -57,7 +57,7 @@ let b = new Map([
   [4, 'four'],
 ]);
 
-console.log(...a.union(b));
+console.log(a.union(b));
 ```
 
 ## Promise.withResolvers
@@ -135,7 +135,7 @@ let arr = [
 ];
 
 console.log(Object.groupBy(arr, ({ type }) => type));
-console.log(...Map.groupBy(arr, ({ type }) => type));
+console.log(Map.groupBy(arr, ({ type }) => type));
 
 let f = ({ value }) => (3 <= value ? 'group1' : 'group2');
 console.log(Object.groupBy(arr, f));

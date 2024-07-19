@@ -4,10 +4,10 @@ const T_NEWLINE_OR_SPACE = '@@__STRINGIFY_OBJECT_NEW_LINE_OR_SPACE__@@';
 
 const T_NEWLINE = '@@__STRINGIFY_OBJECT_NEW_LINE__@@';
 const T_PAD = '@@__STRINGIFY_OBJECT_PAD__@@';
-const T_INDENT = '@@__STRINGIFY_OBJECT_INDEND__@@';
+const T_PAD_INDENT = '@@__STRINGIFY_OBJECT_INDEND__@@';
 
 // TODO: 반응형
-const INLINE_CHARACTER_LIMIT = 50;
+const INLINE_CHARACTER_LIMIT = 60;
 
 class _Stringify {
   seen = [];
@@ -40,9 +40,13 @@ class _Stringify {
     // date
     if (input instanceof Date) return `[Date: ${input.toLocaleString()}]`;
 
-    // map, set
-    if (input instanceof Map) return `Map ${stringify([...input.entries()])}`;
-    if (input instanceof Set) return `Set ${stringify([...input])}`;
+    // map
+    if (input instanceof Map)
+      return `Map ${this.stringify(Object.fromEntries(input.entries()), pad + '    ')}`;
+
+    // set
+    if (input instanceof Set)
+      return `Set ${this.stringify([...input], pad + '    ')}`;
 
     // DOM
     if (input instanceof Node) return `[Node: ${input.nodeName}]`;
@@ -57,7 +61,7 @@ class _Stringify {
     return '[stringify failed]';
   }
 
-  stringifyArray(input, pad, seen) {
+  stringifyArray(input, pad) {
     if (input.length === 0) return '[]';
 
     this.seen.push(input);
@@ -67,12 +71,12 @@ class _Stringify {
     for (let i = 0; i < input.length; i++) {
       // handle sparse array
       let elementStr =
-        i in input ? stringify(input[i], pad + INDENT, seen) : '<empty>';
+        i in input ? this.stringify(input[i], pad + INDENT) : '<empty>';
       let isLast = input.length - 1 === i;
 
       content += isLast
-        ? `${T_INDENT}${elementStr}${T_NEWLINE}`
-        : `${T_INDENT}${elementStr},${T_NEWLINE_OR_SPACE}`;
+        ? `${T_PAD_INDENT}${elementStr}${T_NEWLINE}`
+        : `${T_PAD_INDENT}${elementStr},${T_NEWLINE_OR_SPACE}`;
     }
 
     this.seen.pop();
@@ -80,7 +84,7 @@ class _Stringify {
     return this.#expandWhiteSpace(`[${T_NEWLINE}${content}${T_PAD}]`, pad);
   }
 
-  stringifyObj(input, pad, seen) {
+  stringifyObj(input, pad) {
     let objectKeys = this.#getOwnEnumerableKeys(input);
     // Prototype이 null이면 constructor가 없을 수도 있다.
     let name = input.constructor?.name;
@@ -100,13 +104,10 @@ class _Stringify {
         const escapeKey =
           typeof element === 'symbol' || /^[a-z$_][$\w]*$/i.test(element);
 
-        let key = escapeKey
-          ? String(element)
-          : stringify(element, undefined, seen);
+        let key = escapeKey ? String(element) : this.stringify(element);
+        let value = this.stringify(input[element], pad + INDENT);
 
-        let value = stringify(input[element], pad + INDENT, seen);
-
-        return `${T_INDENT}${key}: ${value}${eol}`;
+        return `${T_PAD_INDENT}${key}: ${value}${eol}`;
       })
       .join('');
 
@@ -134,14 +135,14 @@ class _Stringify {
   #expandWhiteSpace(string, pad) {
     let oneLined = string
       .replace(new RegExp(`${T_NEWLINE_OR_SPACE}`, 'g'), ' ')
-      .replace(new RegExp(`${T_NEWLINE}|${T_INDENT}|${T_PAD}`, 'g'), '');
+      .replace(new RegExp(`${T_NEWLINE}|${T_PAD_INDENT}|${T_PAD}`, 'g'), '');
 
     if (oneLined.length <= INLINE_CHARACTER_LIMIT) return oneLined;
 
     return string
       .replace(new RegExp(`${T_NEWLINE}|${T_NEWLINE_OR_SPACE}`, 'g'), '\n')
       .replace(new RegExp(T_PAD, 'g'), pad)
-      .replace(new RegExp(T_INDENT, 'g'), pad + INDENT);
+      .replace(new RegExp(T_PAD_INDENT, 'g'), pad + INDENT);
   }
 
   #isNaiveString(input) {
