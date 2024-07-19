@@ -10,13 +10,6 @@ console.log('js');
 <script></script>
 ```
 
-## Babel
-
-```js
-// @babel
-console.log('babel');
-```
-
 ## console.log
 
 ```js
@@ -49,6 +42,7 @@ console.log();
 console.log({});
 console.log({ x: 1, y: 2 });
 console.log({ x: 1, y: { z: 'z', w: { a: 4 } } });
+console.log(new Promise(() => ''));
 
 console.log();
 
@@ -59,4 +53,26 @@ let a = new A();
 a.x = 1;
 a.y = 2;
 console.log(a);
+
+// DOM
+console.log(window);
+console.log(document);
+console.log(document.createElement('div'));
+
+// string escape
+console.log('\\');
+console.log('\\\\');
+console.log('\n');
+
+// date
+console.log(new Date());
+
+// sparse array
+let arr = [];
+arr.length = 5;
+arr[1] = 2;
+console.log(arr);
+
+// Regex
+console.log(/regex/);
 ```

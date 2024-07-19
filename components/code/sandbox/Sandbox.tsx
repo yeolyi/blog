@@ -51,7 +51,7 @@ export default function Sandbox({
     onscreen,
   );
 
-  let showConsole = !noexec && preset.showConsole(logList.length);
+  let showConsole = !noexec && preset.showConsole;
   let showRefresh = !noexec && !norefresh;
   let showIframe = !noiframe && preset.showIframe;
 

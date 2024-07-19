@@ -1,6 +1,7 @@
 import { PostTileProps } from '@/components/common/PostTile';
-import lodash from '@/public/lodash.svg';
+// import lodash from '@/public/lodash.svg';
 import es2024 from '@/public/post/preview/es2024.png';
+import jslogo from '@/public/post/preview/jslogo.svg';
 
 export let postTileProps: PostTileProps[] = [
   {
@@ -10,6 +11,13 @@ export let postTileProps: PostTileProps[] = [
     src: es2024,
     objectFit: 'cover',
   },
+  // {
+  //   title: 'ES2024 훑어보기',
+  //   dateStr: '2024.07.19',
+  //   href: '/post/es2024',
+  //   src: jslogo,
+  //   objectFit: 'contain',
+  // },
   // {
   //   title: '가볍게 살펴보는 Lodash',
   //   dateStr: '2024.07.17',

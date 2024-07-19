@@ -1,4 +1,7 @@
-import { stringifySrc } from './stringify';
+const stringifySrc =
+  process.env.NODE_ENV === 'production'
+    ? 'https://yeolyi.com/code/stringify.js'
+    : 'http://localhost:3000/code/stringify.js';
 
 export let wrapBaseHTML = (src: string) => `<!doctype html>
 <html>
@@ -26,9 +29,9 @@ export let wrapBaseHTML = (src: string) => `<!doctype html>
       document.addEventListener('touchstart', () => {});
     </script>
 
-    <script>
-      ${stringifySrc}
+    <script src=${stringifySrc}></script>
 
+    <script>
       console.log = (...data) => {
         window.parent.postMessage({
             type: 'log',

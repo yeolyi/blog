@@ -14,7 +14,7 @@ export type PresetName = (typeof presetNameList)[number];
 
 export type Preset = {
   name: PresetName;
-  showConsole: (len: number) => boolean;
+  showConsole: boolean;
   showIframe: boolean;
   createSrcDoc: (code: string) => Promise<string>;
   language: 'javascript' | 'xml';
@@ -23,21 +23,21 @@ export type Preset = {
 export let presetMap: { [key in PresetName]: Preset } = {
   js: {
     name: 'js',
-    showConsole: () => true,
+    showConsole: true,
     showIframe: false,
     createSrcDoc: async (code) => wrapBaseHTML(`<script>${code}</script>`),
     language: 'javascript',
   },
   html: {
     name: 'html',
-    showConsole: (len) => 0 < len,
+    showConsole: true,
     showIframe: true,
     createSrcDoc: async (code) => wrapBaseHTML(code),
     language: 'xml',
   },
   babel: {
     name: 'babel',
-    showConsole: () => true,
+    showConsole: true,
     showIframe: false,
     createSrcDoc: async (code: string) => {
       return wrapBaseHTML(
@@ -56,7 +56,7 @@ export let presetMap: { [key in PresetName]: Preset } = {
   },
   rxjs: {
     name: 'rxjs',
-    showConsole: () => true,
+    showConsole: true,
     showIframe: true,
     createSrcDoc: async (code: string) => {
       return wrapBaseHTML(
@@ -68,7 +68,7 @@ export let presetMap: { [key in PresetName]: Preset } = {
   },
   react: {
     name: 'react',
-    showConsole: () => true,
+    showConsole: true,
     showIframe: true,
     createSrcDoc: async (code: string) => {
       return wrapBaseHTML(
@@ -83,7 +83,7 @@ export let presetMap: { [key in PresetName]: Preset } = {
   },
   jquery: {
     name: 'jquery',
-    showConsole: () => true,
+    showConsole: true,
     showIframe: true,
     createSrcDoc: async (code) => {
       return wrapBaseHTML(
@@ -94,7 +94,7 @@ export let presetMap: { [key in PresetName]: Preset } = {
   },
   lodash: {
     name: 'lodash',
-    showConsole: () => true,
+    showConsole: true,
     showIframe: false,
     createSrcDoc: async (code) => {
       return wrapBaseHTML(

@@ -16,7 +16,6 @@ import { WideTile, WideTileProps } from '@/components/gallery/WideTile';
 import Giscus from '@/components/common/Giscus';
 import Footer from '@/components/layout/Footer';
 
-import ESLintPlayground from '@/components/eslint';
 import CSSBookTile from '@/content/CSSBookTile';
 import { cssTileProps } from '@/content/cssTileProps';
 import JSBookTile from '@/content/JsBookTile';

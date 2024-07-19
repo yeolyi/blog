@@ -1,12 +1,148 @@
-# ES2024
+# ES2024 구경해보기
 
 ## New Set methods
 
+https://github.com/tc39/proposal-set-methods
+
+집합 관련 메서드들을 추가합니다.
+
+### 교집합, 합집합, 차집합
+
+```js
+let s1 = new Set([1, 2, 3]);
+let s2 = new Set([2, 3, 4]);
+
+console.log(...s1.intersection(s2));
+console.log(...s1.union(s2));
+console.log(...s1.difference(s2));
+console.log(...s1.symmetricDifference(s2));
+```
+
+### 부분집합, 포함집합
+
+```js
+let s1 = new Set([1, 2, 3]);
+let s2 = new Set([2, 3]);
+
+console.log(s1.isSubsetOf(s2));
+console.log(s2.isSubsetOf(s1));
+console.log(s1.isSupersetOf(s2));
+console.log(s2.isSupersetOf(s1));
+```
+
+### 서로소 집합
+
+```js
+let s1 = new Set([1, 2, 3]);
+let s2 = new Set([4]);
+console.log(s1.isDisjointFrom(s2));
+```
+
+### 유사 집합
+
+유사 배열과 비슷한 유사 집합의 개념이 생겼습니다. 위 메서드들의 인자로 유사
+집합도 건넬 수 있습니다.
+
+유사 배열은 아래 조건을 만족해야합니다:
+
+- 숫자인 `size` 프로퍼티
+- 요소를 받아 불을 반환하는 `has()` 메서드
+- 요소들의 이터레이터를 반환하는 `keys()` 메서드
+
+```js
+let a = new Set([1, 2, 3]);
+let b = new Map([
+  [2, 'two'],
+  [3, 'three'],
+  [4, 'four'],
+]);
+
+console.log(...a.union(b));
+```
+
 ## Promise.withResolvers
+
+https://github.com/tc39/proposal-promise-with-resolvers
+
+프로미스 객체를 만든 후에 `resolve`와 `reject` 함수를 사용하고 싶을 수 있습니다.
+특히 두 함수를 여러 곳에서 사용해야한다면 이러한 패턴이 불가피합니다:
+
+```js
+// @noexec noedit
+let resolve = () => {};
+let reject = () => {};
+
+function request(type, message) {
+  if (socket) {
+    const promise = new Promise((res, rej) => {
+      resolve = res;
+      reject = rej;
+    });
+    socket.emit(type, message);
+    return promise;
+  }
+
+  return Promise.reject(new Error('Socket unavailable'));
+}
+
+socket.on('response', (response) => {
+  if (response.status === 200) {
+    resolve(response);
+  } else {
+    reject(new Error(response));
+  }
+});
+
+socket.on('error', (err) => {
+  reject(err);
+});
+```
+
+이러한 보일러플레이트 코드를 막기 위해 `Promise.withResolvers()`를 도입했습니다:
+
+```js
+const { promise, resolve, reject } = Promise.withResolvers();
+
+promise
+  .then(() => console.log('resolved!'))
+  .catch(() => console.log('rejected!'));
+
+resolve();
+```
+
+보일러플레이트가 반복되고 있음을 라이브러리 코드로 제시한게 인상깊었습니다:
+
+| Library    | Example                                                                                                                                                                  |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| React      | [inline example](https://github.com/facebook/react/blob/d9e0485c84b45055ba86629dc20870faca9b5973/packages/react-dom/src/__tests__/ReactDOMFizzStaticBrowser-test.js#L95) |
+| Vue        | [inline example](https://github.com/vuejs/core/blob/9c304bfe7942a20264235865b4bb5f6e53fdee0d/packages/runtime-core/src/compat/componentAsync.ts#L32)                     |
+| Axios      | [inline example](https://github.com/axios/axios/blob/bdf493cf8b84eb3e3440e72d5725ba0f138e0451/lib/cancel/CancelToken.js#L20)                                             |
+| TypeScript | [utility](https://github.com/microsoft/TypeScript/blob/1d96eb489e559f4f61522edb3c8b5987bbe948af/src/harness/util.ts#L121)                                                |
+| Vite       | [inline example](https://github.com/vitejs/vite/blob/134ce6817984bad0f5fb043481502531fee9b1db/playground/test-utils.ts#L225)                                             |
 
 ## Array Grouping
 
-## Well-Formed Unicode Strings
+https://github.com/tc39/proposal-array-grouping
+
+배열/Map의 요소를 그룹짓기 쉽게 해주는 `Object.groupBy`와 `Map.groupBy`를
+도입합니다.
+
+```js
+let arr = [
+  { type: 'a', value: 5 },
+  { type: 'a', value: 3 },
+  { type: 'b', value: 1 },
+];
+
+console.log(Object.groupBy(arr, ({ type }) => type));
+console.log(...Map.groupBy(arr, ({ type }) => type));
+
+let f = ({ value }) => (3 <= value ? 'group1' : 'group2');
+console.log(Object.groupBy(arr, f));
+```
+
+웹 호환성을 해치지 않으면서 메서드를 어디에 어떤 이름으로 추가할지 고민한 내용이
+인상깊었습니다.
 
 ## Change Array by Copy
 
