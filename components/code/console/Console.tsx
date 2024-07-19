@@ -13,7 +13,7 @@ export default function Console({
 
   return (
     <div
-      className={`flex flex-col overflow-scroll rounded bg-slate-50 p-4 text-sm`}
+      className={`flex flex-col overflow-y-scroll rounded bg-slate-50 p-4 text-sm`}
       style={{ height: fit ? undefined : '112px' }}
     >
       {logList.map((log, idx) => (
@@ -26,7 +26,7 @@ export default function Console({
 const Row = ({ log }: { log: Log }) => {
   return (
     <p
-      className="break-words font-firacode"
+      className="whitespace-pre-wrap break-words font-firacode"
       style={{ color: log.type === 'log' ? '#6a737d' : '#ff4040' }}
     >
       {/* 빈 문자열이어도 newline 반영 */}

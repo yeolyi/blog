@@ -11,13 +11,13 @@ export let postTileProps: PostTileProps[] = [
     src: es2024,
     objectFit: 'cover',
   },
-  {
-    title: 'ES2024 훑어보기',
-    dateStr: '2024.07.19',
-    href: '/post/es2024',
-    src: jslogo,
-    objectFit: 'contain',
-  },
+  // {
+  //   title: 'ES2024 훑어보기',
+  //   dateStr: '2024.07.19',
+  //   href: '/post/es2024',
+  //   src: jslogo,
+  //   objectFit: 'contain',
+  // },
   // {
   //   title: '가볍게 살펴보는 Lodash',
   //   dateStr: '2024.07.17',
