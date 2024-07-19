@@ -7,8 +7,6 @@ export let useIframeListener = (iframe: HTMLIFrameElement | null) => {
   useEffect(() => {
     if (iframe === null) return;
 
-    setLogList([]);
-
     const handleMessage = (e: MessageEvent) => {
       if (iframe === null) return;
       if (e.source !== iframe.contentWindow) return;

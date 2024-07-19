@@ -121,7 +121,13 @@ let _webTileProps: TileProps[] = [
 ].map((x) => ({
   ...x,
   children: x.code && (
-    <Sandbox presetName="html" code={x.code} norefresh iframeHeight={70} />
+    <Sandbox
+      presetName="html"
+      code={x.code}
+      norefresh
+      iframeHeight={70}
+      consoleFit
+    />
   ),
   textColor: 'text-white',
 }));

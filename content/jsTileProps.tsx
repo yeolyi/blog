@@ -133,7 +133,7 @@ console.log(Object.isFrozen(obj));`,
 ].map((x) => ({
   ...x,
   children: x.content ? (
-    <Sandbox presetName="js" code={x.content} norefresh />
+    <Sandbox presetName="js" code={x.content} norefresh consoleFit />
   ) : undefined,
   style: {
     backgroundImage: `linear-gradient(

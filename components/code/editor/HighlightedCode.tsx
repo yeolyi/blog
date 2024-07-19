@@ -11,7 +11,7 @@ export default function HighlightedCode({
   children: string;
 }) {
   return (
-    <div className={`relative overflow-x-scroll rounded bg-slate-50`}>
+    <div className={`relative w-full overflow-x-scroll rounded bg-slate-50`}>
       <div className="relative h-fit min-h-full w-fit min-w-full p-4 text-sm leading-[1.4rem]">
         <pre
           dangerouslySetInnerHTML={{

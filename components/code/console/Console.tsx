@@ -2,10 +2,19 @@
 
 import { Log } from '../type';
 
-export default function Console({ logList }: { logList: Log[] }) {
+export default function Console({
+  logList,
+  fit = false,
+}: {
+  logList: Log[];
+  fit?: boolean;
+}) {
+  if (fit && logList.length === 0) return null;
+
   return (
     <div
-      className={`flex h-[52px] resize-y flex-col overflow-y-hidden overflow-x-scroll rounded bg-slate-50 p-4 text-sm`}
+      className={`flex flex-col overflow-scroll rounded bg-slate-50 p-4 text-sm`}
+      style={{ height: fit ? undefined : '112px' }}
     >
       {logList.map((log, idx) => (
         <Row key={idx} log={log} />
@@ -17,10 +26,8 @@ export default function Console({ logList }: { logList: Log[] }) {
 const Row = ({ log }: { log: Log }) => {
   return (
     <p
-      className="break-words text-left font-firacode leading-[1.3rem]"
-      style={{
-        color: log.type === 'log' ? '#6a737d' : '#ff4040',
-      }}
+      className="break-words font-firacode"
+      style={{ color: log.type === 'log' ? '#6a737d' : '#ff4040' }}
     >
       {/* 빈 문자열이어도 newline 반영 */}
       {log.data === '' ? ' ' : log.data}

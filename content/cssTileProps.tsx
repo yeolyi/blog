@@ -27,7 +27,13 @@ export let cssTileProps: TileProps[] = [
 ].map((x) => ({
   ...x,
   children: x.code && (
-    <Sandbox presetName="html" code={x.code} norefresh iframeHeight={100} />
+    <Sandbox
+      presetName="html"
+      code={x.code}
+      norefresh
+      iframeHeight={100}
+      consoleFit
+    />
   ),
   style: {
     backgroundImage: `linear-gradient(

@@ -3,7 +3,6 @@
 import { RefObject, useEffect, useRef, useState } from 'react';
 import CodeEditor from '../editor/CodeEditor';
 import Console from '../console/Console';
-import RefreshButton from '../editor/RefreshButton';
 import { useIframeListener } from './useIframeListener';
 import { useDebouncedSrcDoc } from './useDebouncedSrcDoc';
 import { presetMap, PresetName } from './preset/presetMap';
@@ -14,6 +13,7 @@ export type SandboxOptions = {
   norefresh?: boolean;
   noiframe?: boolean;
 
+  consoleFit?: boolean;
   logExpanded?: boolean;
   iframeHeight?: number;
 };
@@ -27,6 +27,7 @@ export default function Sandbox({
   presetName,
   code: _code,
 
+  consoleFit,
   noexec,
   noedit,
   norefresh,
@@ -54,15 +55,26 @@ export default function Sandbox({
 
   return (
     <>
-      <div className={`relative flex flex-col gap-2`} ref={containerRef}>
+      <div className={`relative flex flex-col gap-1`} ref={containerRef}>
+        {/* TODO: 옵션 정리 */}
+        {!consoleFit && (
+          <div className="flex justify-end gap-3 px-1 font-firacode text-sm text-neutral-300">
+            <p className="text-black">{presetName.toLocaleUpperCase()}</p>
+            {showRefresh && (
+              <button className="hover:text-neutral-400" onClick={refresh}>
+                refresh
+              </button>
+            )}
+          </div>
+        )}
+
         <CodeEditor
           code={code}
           setCode={setCode}
           language={preset.language}
-          presetName={preset.name}
           noneditable={noedit}
-          toolbar={<>{showRefresh && <RefreshButton refresh={refresh} />}</>}
         />
+
         {showIframe && !noexec && (
           <iframe
             key={iframeKey}
@@ -75,7 +87,7 @@ export default function Sandbox({
             srcDoc={srcdoc}
           />
         )}
-        {showConsole && <Console logList={logList} />}
+        {showConsole && <Console logList={logList} fit={consoleFit} />}
       </div>
       {!showIframe && !noexec && (
         <iframe
@@ -93,9 +105,12 @@ export function useOnScreen(ref: RefObject<HTMLElement>) {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(([entry]) => {
-      setIsVisible(entry.isIntersecting);
-    });
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting);
+      },
+      { rootMargin: '1000px' },
+    );
 
     const currentElement = ref?.current;
 
