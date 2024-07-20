@@ -38,6 +38,7 @@ export let wrapBaseHTML = (src: string) => `<!doctype html>
             data: data.map((x) => stringify(x)).join(' '),
         }, "*");
       }
+      log = console.log.bind(console);
     </script>
 
     <script>

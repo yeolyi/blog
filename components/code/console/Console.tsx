@@ -13,7 +13,7 @@ export default function Console({
 
   return (
     <div
-      className={`flex flex-col overflow-y-scroll rounded bg-slate-50 p-4 text-sm`}
+      className={`flex resize-y flex-col overflow-y-scroll rounded bg-slate-50 p-4 text-sm`}
       style={{ height: fit ? undefined : '112px' }}
     >
       {logList.map((log, idx) => (

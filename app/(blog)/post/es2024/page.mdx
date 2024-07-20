@@ -73,29 +73,26 @@ let resolve = () => {};
 let reject = () => {};
 
 function request(type, message) {
-  if (socket) {
-    const promise = new Promise((res, rej) => {
-      resolve = res;
-      reject = rej;
-    });
-    socket.emit(type, message);
-    return promise;
+  if (!socket) {
+    return Promise.reject(new Error('Socket unavailable'));
   }
 
-  return Promise.reject(new Error('Socket unavailable'));
+  // ⭐
+  let promise = new Promise((res, rej) => {
+    resolve = res;
+    reject = rej;
+  });
+
+  socket.emit(type, message);
+  return promise;
 }
 
 socket.on('response', (response) => {
-  if (response.status === 200) {
-    resolve(response);
-  } else {
-    reject(new Error(response));
-  }
+  if (response.status === 200) resolve(response);
+  else reject(new Error(response));
 });
 
-socket.on('error', (err) => {
-  reject(err);
-});
+socket.on('error', (err) => reject(err));
 ```
 
 이러한 보일러플레이트 코드를 막기 위해 `Promise.withResolvers()`를 도입했습니다:
@@ -110,7 +107,7 @@ promise
 resolve();
 ```
 
-보일러플레이트가 반복되고 있음을 라이브러리 코드로 제시한게 인상깊었습니다:
+보일러플레이트 코드가 반복된다는 예시들이에요:
 
 | Library    | Example                                                                                                                                                                  |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -129,16 +126,14 @@ https://github.com/tc39/proposal-array-grouping
 
 ```js
 let arr = [
-  { type: 'a', value: 5 },
-  { type: 'a', value: 3 },
-  { type: 'b', value: 1 },
+  { key1: 'a', key2: 5 },
+  { key1: 'a', key2: 3 },
+  { key1: 'b', key2: 1 },
 ];
 
-console.log(Object.groupBy(arr, ({ type }) => type));
-console.log(Map.groupBy(arr, ({ type }) => type));
-
-let f = ({ value }) => (3 <= value ? 'group1' : 'group2');
-console.log(Object.groupBy(arr, f));
+log(Object.groupBy(arr, ({ key1 }) => key1));
+log(Object.groupBy(arr, ({ key2 }) => 3 <= key2));
+log(Map.groupBy(arr, ({ key1 }) => key1));
 ```
 
 웹 호환성을 해치지 않으면서 메서드를 어디에 어떤 이름으로 추가할지 고민한 내용이
@@ -146,12 +141,223 @@ console.log(Object.groupBy(arr, f));
 
 ## Change Array by Copy
 
+https://github.com/tc39/proposal-change-array-by-copy
+
+기존 배열을 수정하지 않고 새로운 배열을 반환하는 배열 관련 메서드를 `Array`와
+`TypedArray`에 추가합니다.
+
+```js
+// 기존 배열을 수정합니다.
+let arr = [1, 2, 3];
+let reversed = arr.reverse();
+console.log(arr, reversed, arr == reversed);
+
+// 기존 배열을 수정하지 않습니다.
+arr = [1, 2, 3];
+reversed = arr.toReversed();
+console.log(arr, reversed, arr == reversed);
+```
+
+`reverse`외에도 아래 매서드들이 추가되었어요:
+
+```js
+let arr = [3, 2, 1];
+
+// sort에 대응
+console.log(arr.toSorted());
+
+// splice에 대응
+console.log(arr.toSpliced(1, 2, 4, 5));
+
+// arr.with(index, value)
+// index의 값을 value로 바꾼 새로운 배열을 반환합니다.
+console.log(arr.with(1, 4));
+```
+
+`TypedArray`는 길이를 바꾸지 못해서인지 `toSpliced`는 없네요.
+
 ## Array find from last
+
+https://github.com/tc39/proposal-array-find-from-last
+
+배열의 뒤쪽부터 탐색하는 경우를 위한 메서드를 제공합니다:
+
+```js
+let arr = [{ value: 1 }, { value: 2 }, { value: 3 }, { value: 4 }];
+log(arr.findLast(({ value }) => value % 2 === 1));
+log(arr.findLastIndex(({ value }) => value % 2 === 0));
+```
 
 ## Error Cause
 
+https://github.com/tc39/proposal-error-cause
+
+깊게 중첩된 함수 내부에서 던진 에러를 멀리 외부에서 처리할 때 어떤 맥락에서
+발생한 에러인지 알기 어렵습니다. 따라서 에러 객체에 에러가 발생한 맥락을
+첨부하는 경우가 많은데 아래 코드처럼 여러가지 방법들이 있습니다:
+
+```js
+// @noexec noedit
+async function doJob() {
+  const rawResource = await fetch('//domain/resource-a').catch((err) => {
+    // How to wrap the error properly?
+    // 1. throw new Error('Download raw resource failed: ' + err.message);
+    // 2. const wrapErr = new Error('Download raw resource failed');
+    //    wrapErr.cause = err;
+    //    throw wrapErr;
+    // 3. class CustomError extends Error {
+    //      constructor(msg, cause) {
+    //        super(msg);
+    //        this.cause = cause;
+    //      }
+    //    }
+    //    throw new CustomError('Download raw resource failed', err);
+  });
+  const jobResult = doComputationalHeavyJob(rawResource);
+  await fetch('//domain/upload', { method: 'POST', body: jobResult });
+}
+```
+
+에러가 발생한 원인으로 체이닝이 되면 분석하기 용이해집니다. 다만 이를 위해서는
+위 코드처럼 별도의 노동이 필요한데, 언어 차원에서 이를 제공함으로서 코드를
+간결하게하고 통일성있게 개선할 수 있습니다:
+
+```js
+let f = () => {
+  throw new Error('error in f');
+};
+
+let g = () => {
+  try {
+    f();
+  } catch (e) {
+    throw new Error('error in g', { cause: e });
+  }
+};
+
+try {
+  g();
+} catch (e) {
+  log(e, e.cause);
+}
+```
+
 ## Class Static Block
 
-## hasOwnProperty()
+https://github.com/tc39/proposal-class-static-block
+
+필요성을 보여주는 예제 코드가 유용해서 가져왔습니다:
+
+```js
+// @noexec noedit
+// without static blocks:
+class C {
+  static x = ...;
+  static y;
+  static z;
+}
+
+try {
+  const obj = doSomethingWith(C.x);
+  C.y = obj.y
+  C.z = obj.z;
+}
+catch {
+  C.y = ...;
+  C.z = ...;
+}
+
+// with static blocks:
+class C {
+  static x = ...;
+  static y;
+  static z;
+  static {
+    try {
+      const obj = doSomethingWith(this.x);
+      this.y = obj.y;
+      this.z = obj.z;
+    }
+    catch {
+      this.y = ...;
+      this.z = ...;
+    }
+  }
+}
+```
+
+## Object.hasOwn()
+
+https://github.com/tc39/proposal-accessible-object-hasownproperty
+
+기존에도 `hasOwnProperty`로 프로퍼티의 존재 유무를 확인할 수 있었습니다:
+
+```js
+let obj = { a: 1, b: 2 };
+log(obj.hasOwnProperty('a'));
+```
+
+하지만 객체가 `Object.prototype`을 프로토타입으로 가지지 않거나
+`hasOwnProperty`가 유저에 의해 수정된 경우 위 코드는 동작하지 않으며, `call`을
+사용해야했습니다:
+
+```js
+// hasOwnProperty를 유저가 수정
+let obj1 = {
+  hasOwnProperty() {
+    return false;
+  },
+  a: 1,
+};
+log(Object.hasOwnProperty.call(obj1, 'a'));
+log(obj1.hasOwnProperty('a'));
+
+// Object.prototype이 프로토타입이 아님
+let obj2 = Object.create(null);
+obj2.a = 1;
+log(Object.hasOwnProperty.call(obj2, 'a'));
+log(obj2.hasOwnProperty('a'));
+```
+
+`Object.hasOwn(object, property)`를 도입해 위 과정을 단순하게 합니다:
+
+```js
+let object = { foo: false };
+log(Object.hasOwn(object, 'foo'));
+
+let object2 = Object.create({ foo: true });
+log(Object.hasOwn(object2, 'foo'));
+
+let object3 = Object.create(null);
+log(Object.hasOwn(object3, 'foo'));
+```
+
+`Object.hasOwnProperty`는 (`Object`가 `Object.prototype`을 상속하기에) 이미
+존재하는 메서드 이름이기 때문에 `hasOwn`으로 명명했습니다.
 
 ## .at()
+
+https://github.com/tc39/proposal-relative-indexing-method
+
+음수 인덱스로 배열 요소를 접근하는 방법을 제공합니다.
+
+기존 방법은 번거롭습니다:
+
+```js
+let arr = [1, 2, 3, 4];
+log(arr[arr.length - 2]);
+
+let foo = () => [1, 2, 3, 4];
+let tmp = foo(); // 배열이 함수 반환값이면 임시 변수가 필요합니다.
+log(tmp[tmp.length - 2]);
+```
+
+따라서 `.at()`메서드를 도입합니다:
+
+```js
+let arr = [1, 2, 3, 4];
+log(arr.at(-2));
+
+let foo = () => [1, 2, 3, 4];
+log(foo().at(-2));
+```

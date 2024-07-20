@@ -51,6 +51,9 @@ class _Stringify {
     // DOM
     if (input instanceof Node) return `[Node: ${input.nodeName}]`;
 
+    // Error
+    if (input instanceof Error) return `[Error: ${input.message}]`;
+
     // array
     if (Array.isArray(input)) return this.stringifyArray(input, pad);
 
