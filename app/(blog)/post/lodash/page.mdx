@@ -1,18 +1,40 @@
 export let metadata = {
   title: '가볍게 살펴보는 Lodash',
-  description: '',
   openGraph: {
     title: '가볍게 살펴보는 Lodash',
-    description: '',
   },
 };
 
-# Lodash 찍먹
+# 가볍게 살펴보는 Lodash
 
-## isEmpty
+동아리 프로젝트에서 es-toolkit을 쓰기 시작했는데 저는 lodash조차 제대로 써본적이
+없어 가볍게 구경해봤습니다. 함수들을 둘러보며 '나만 자주 쓰는게 아니구나!'를
+느끼며 **유틸화**에 대한 인사이트를 얻을 수 있었습니다.
 
-> Objects are considered empty if they have no own enumerable string keyed
-> properties.
+문서를 보니 함수 설명만 와장창 있어서 막막했는데, 이중에서 자주 쓰는게 어떤건지
+인스타 스토리에 질문을 올렸습니다. 이 글에서는 답변에 나온 함수들을 소개합니다.
+답변해주신 분들 모두 감사드립니다 🙇
+
+## 홈페이지 설명
+
+https://lodash.com/
+
+**A modern JavaScript utility library delivering modularity, performance &
+extras.**
+
+Lodash makes JavaScript easier by taking the hassle out of working with arrays,
+numbers, objects, strings, etc. Lodash’s modular methods are great for:
+
+- Iterating arrays, objects, & strings
+- Manipulating & testing values
+- Creating composite functions
+
+## 자주 쓰는 함수
+
+### isEmpty
+
+Objects are considered empty if they have no own enumerable string keyed
+properties.
 
 ```js
 // @lodash
@@ -26,7 +48,7 @@ log(_.isEmpty([]));
 log(_.isEmpty(new Map()));
 ```
 
-## map
+### map
 
 ```js
 // @lodash
@@ -38,14 +60,14 @@ let users = [{ user: 'barney' }, { user: 'fred' }];
 log(_.map(users, 'user'));
 ```
 
-## forEach
+### forEach
 
 ```js
 // @lodash
 _.forEach([1, 2], (n) => console.log(n));
 ```
 
-## includes
+### includes
 
 ```js
 // @lodash
@@ -54,17 +76,21 @@ log(_.includes([1, NaN, 3], NaN));
 log(_.includes('abcd', 'bc'));
 ```
 
-## isEqual
+### isEqual
 
-Object objects are compared by their own, not inherited, enumerable properties.
+Objects are compared by their own, not inherited, enumerable properties.
 
 ```js
 // @lodash
 log({ a: 1 } === { a: 1 });
 log(_.isEqual({ a: 1 }, { a: 1 }));
+
+let obj1 = { a: 1 };
+let obj2 = Object.create({ a: 1 });
+log(_.isEqual(obj1, obj2));
 ```
 
-## merge
+### merge
 
 Recursively merges own and inherited enumerable string keyed properties of
 source objects into the destination object.
@@ -83,7 +109,7 @@ log(
 );
 ```
 
-## mergeWith
+### mergeWith
 
 ```js
 // @lodash
@@ -99,7 +125,7 @@ var other = { a: [3], b: [4] };
 log(_.mergeWith(object, other, customizer));
 ```
 
-## cloneDeep
+### cloneDeep
 
 ```js
 // @lodash
@@ -112,7 +138,7 @@ let obj3 = _.cloneDeep(obj1);
 log(obj1[0] == obj3[0]);
 ```
 
-## compact
+### compact
 
 Creates an array with all falsey values removed.
 
@@ -121,7 +147,7 @@ Creates an array with all falsey values removed.
 log(_.compact([0, 1, false, 2, '', '3']));
 ```
 
-## has
+### has
 
 Checks if path is a **direct property** of object.
 
@@ -136,7 +162,7 @@ log(_.has(obj1, ['a', 'b']));
 log(_.has(obj2, 'a'));
 ```
 
-## camelCase
+### camelCase
 
 ```js
 // @lodash
@@ -145,7 +171,7 @@ log(_.camelCase('--foo-bar--'));
 log(_.camelCase('__FOO_BAR__'));
 ```
 
-## isNil
+### isNil
 
 ```js
 // @lodash

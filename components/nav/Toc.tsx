@@ -12,7 +12,7 @@ export default function Toc({
   close: () => void;
 }) {
   return (
-    <div className="flex flex-col items-start gap-2 p-8">
+    <div className="flex min-w-[300px] flex-col items-start gap-2 p-8">
       {headingList.map((heading) => {
         const handleClick = () => {
           close();

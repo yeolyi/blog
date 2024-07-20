@@ -99,10 +99,7 @@ export let presetMap: { [key in PresetName]: Preset } = {
     createSrcDoc: async (code) => {
       return wrapBaseHTML(
         `<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
-      <script>
-      let log = console.log;
-      ${code}
-      </script>`,
+         <script>${code}</script>`,
       );
     },
     language: 'javascript',

@@ -19,6 +19,7 @@ const config: Config = {
               fontWeight: null,
               'p:first-of-type::before': { content: 'none' },
               'p:first-of-type::after': { content: 'none' },
+              borderInlineStartWidth: '3px',
             },
             h2: {
               'scroll-margin': '100px',
