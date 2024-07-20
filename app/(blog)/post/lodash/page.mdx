@@ -31,6 +31,33 @@ numbers, objects, strings, etc. Lodash’s modular methods are great for:
 
 ## 자주 쓰는 함수
 
+### cloneDeep
+
+```js
+// @lodash
+let obj1 = [{ a: 1 }, { b: 2 }];
+
+let obj2 = [...obj1];
+log(obj1[0] == obj2[0]);
+
+let obj3 = _.cloneDeep(obj1);
+log(obj1[0] == obj3[0]);
+```
+
+### isEqual
+
+Objects are compared by their own, not inherited, enumerable properties.
+
+```js
+// @lodash
+log({ a: 1 } === { a: 1 });
+log(_.isEqual({ a: 1 }, { a: 1 }));
+
+let obj1 = { a: 1 };
+let obj2 = Object.create({ a: 1 });
+log(_.isEqual(obj1, obj2));
+```
+
 ### isEmpty
 
 Objects are considered empty if they have no own enumerable string keyed
@@ -46,48 +73,6 @@ log(_.isEmpty({ x: 1 }));
 log(_.isEmpty(null));
 log(_.isEmpty([]));
 log(_.isEmpty(new Map()));
-```
-
-### map
-
-```js
-// @lodash
-log(_.map([4, 8], (n) => n * n));
-log(_.map({ a: 4, b: 8 }, (n) => n * n));
-
-let users = [{ user: 'barney' }, { user: 'fred' }];
-// The `_.property` iteratee shorthand.
-log(_.map(users, 'user'));
-```
-
-### forEach
-
-```js
-// @lodash
-_.forEach([1, 2], (n) => console.log(n));
-```
-
-### includes
-
-```js
-// @lodash
-log(_.includes([1, 2, 3], 1));
-log(_.includes([1, NaN, 3], NaN));
-log(_.includes('abcd', 'bc'));
-```
-
-### isEqual
-
-Objects are compared by their own, not inherited, enumerable properties.
-
-```js
-// @lodash
-log({ a: 1 } === { a: 1 });
-log(_.isEqual({ a: 1 }, { a: 1 }));
-
-let obj1 = { a: 1 };
-let obj2 = Object.create({ a: 1 });
-log(_.isEqual(obj1, obj2));
 ```
 
 ### merge
@@ -123,19 +108,6 @@ var object = { a: [1], b: [2] };
 var other = { a: [3], b: [4] };
 
 log(_.mergeWith(object, other, customizer));
-```
-
-### cloneDeep
-
-```js
-// @lodash
-let obj1 = [{ a: 1 }, { b: 2 }];
-
-let obj2 = [...obj1];
-log(obj1[0] == obj2[0]);
-
-let obj3 = _.cloneDeep(obj1);
-log(obj1[0] == obj3[0]);
 ```
 
 ### compact
@@ -178,4 +150,25 @@ log(_.camelCase('__FOO_BAR__'));
 log(_.isNil(null));
 log(_.isNil(undefined));
 log(_.isNil(NaN));
+```
+
+### includes
+
+```js
+// @lodash
+log(_.includes([1, 2, 3], 1));
+log(_.includes([1, NaN, 3], NaN));
+log(_.includes('abcd', 'bc'));
+```
+
+### map
+
+```js
+// @lodash
+log(_.map([4, 8], (n) => n * n));
+log(_.map({ a: 4, b: 8 }, (n) => n * n));
+
+let users = [{ user: 'barney' }, { user: 'fred' }];
+// The `_.property` iteratee shorthand.
+log(_.map(users, 'user'));
 ```
