@@ -1,8 +1,22 @@
-# ES2024 구경해보기
+export let metadata = {
+  title: '책에는 없는 JS 기능 구경',
+  openGraph: {
+    title: '책에는 없는 JS 기능 구경',
+  },
+};
+
+# 책에는 없는 JS 기능 구경
+
+최근에 JS 책을 완독했는데 책이 나온 후로 JS에 여러 기능들이 추가됐음을 알게
+되었습니다. 그래서 ECMAScript 레포를 살펴보며 최근 몇 년간 언어에 어떤 변화가
+있었는지 둘러봤어요.
+
+너무 딥한 기능들은 제외하고 개인적으로 자주 쓸 법한 기능들을 최근 추가된 순으로
+모아봤습니다. 모든 목록이 궁금하시다면 아래 링크를 참고하세요:
+
+https://github.com/tc39/proposals/blob/main/finished-proposals.md
 
 ## New Set methods
-
-https://github.com/tc39/proposal-set-methods
 
 집합 관련 메서드들을 추가합니다.
 
@@ -62,8 +76,6 @@ console.log(a.union(b));
 
 ## Promise.withResolvers
 
-https://github.com/tc39/proposal-promise-with-resolvers
-
 프로미스 객체를 만든 후에 `resolve`와 `reject` 함수를 사용하고 싶을 수 있습니다.
 특히 두 함수를 여러 곳에서 사용해야한다면 이러한 패턴이 불가피합니다:
 
@@ -107,19 +119,13 @@ promise
 resolve();
 ```
 
-보일러플레이트 코드가 반복된다는 예시들이에요:
+`defer`와 같은 이름으로 유틸리티로 만들어 쓰고 있는 경우가 많았나봐요. `defer`가
+익숙하지 않은 사람들이 있어서 보다 직관적인 `withResolvers`로 네이밍을 했다고
+해요.
 
-| Library    | Example                                                                                                                                                                  |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| React      | [inline example](https://github.com/facebook/react/blob/d9e0485c84b45055ba86629dc20870faca9b5973/packages/react-dom/src/__tests__/ReactDOMFizzStaticBrowser-test.js#L95) |
-| Vue        | [inline example](https://github.com/vuejs/core/blob/9c304bfe7942a20264235865b4bb5f6e53fdee0d/packages/runtime-core/src/compat/componentAsync.ts#L32)                     |
-| Axios      | [inline example](https://github.com/axios/axios/blob/bdf493cf8b84eb3e3440e72d5725ba0f138e0451/lib/cancel/CancelToken.js#L20)                                             |
-| TypeScript | [utility](https://github.com/microsoft/TypeScript/blob/1d96eb489e559f4f61522edb3c8b5987bbe948af/src/harness/util.ts#L121)                                                |
-| Vite       | [inline example](https://github.com/vitejs/vite/blob/134ce6817984bad0f5fb043481502531fee9b1db/playground/test-utils.ts#L225)                                             |
+https://github.com/microsoft/TypeScript/blob/1d96eb489e559f4f61522edb3c8b5987bbe948af/src/harness/util.ts#L121
 
 ## Array Grouping
-
-https://github.com/tc39/proposal-array-grouping
 
 배열/Map의 요소를 그룹짓기 쉽게 해주는 `Object.groupBy`와 `Map.groupBy`를
 도입합니다.
@@ -139,9 +145,9 @@ log(Map.groupBy(arr, ({ key1 }) => key1));
 웹 호환성을 해치지 않으면서 메서드를 어디에 어떤 이름으로 추가할지 고민한 내용이
 인상깊었습니다.
 
-## Change Array by Copy
+https://github.com/tc39/proposal-array-grouping
 
-https://github.com/tc39/proposal-change-array-by-copy
+## Change Array by Copy
 
 기존 배열을 수정하지 않고 새로운 배열을 반환하는 배열 관련 메서드를 `Array`와
 `TypedArray`에 추가합니다.
@@ -178,8 +184,6 @@ console.log(arr.with(1, 4));
 
 ## Array find from last
 
-https://github.com/tc39/proposal-array-find-from-last
-
 배열의 뒤쪽부터 탐색하는 경우를 위한 메서드를 제공합니다:
 
 ```js
@@ -189,8 +193,6 @@ log(arr.findLastIndex(({ value }) => value % 2 === 0));
 ```
 
 ## Error Cause
-
-https://github.com/tc39/proposal-error-cause
 
 깊게 중첩된 함수 내부에서 던진 에러를 멀리 외부에서 처리할 때 어떤 맥락에서
 발생한 에러인지 알기 어렵습니다. 따라서 에러 객체에 에러가 발생한 맥락을
@@ -244,9 +246,7 @@ try {
 
 ## Class Static Block
 
-https://github.com/tc39/proposal-class-static-block
-
-필요성을 보여주는 예제 코드가 유용해서 가져왔습니다:
+문법의 필요성을 보여주는 예제 코드가 인상깊어서 가져왔습니다:
 
 ```js
 // @noexec noedit
@@ -287,8 +287,6 @@ class C {
 ```
 
 ## Object.hasOwn()
-
-https://github.com/tc39/proposal-accessible-object-hasownproperty
 
 기존에도 `hasOwnProperty`로 프로퍼티의 존재 유무를 확인할 수 있었습니다:
 
@@ -336,8 +334,6 @@ log(Object.hasOwn(object3, 'foo'));
 존재하는 메서드 이름이기 때문에 `hasOwn`으로 명명했습니다.
 
 ## .at()
-
-https://github.com/tc39/proposal-relative-indexing-method
 
 음수 인덱스로 배열 요소를 접근하는 방법을 제공합니다.
 

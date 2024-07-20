@@ -12,7 +12,7 @@ export let postTileProps: PostTileProps[] = [
     objectFit: 'cover',
   },
   {
-    title: 'ES2024 훑어보기',
+    title: '책에는 없는 JS 기능 구경',
     dateStr: '2024.07.19',
     href: '/post/es2024',
     src: jslogo,
