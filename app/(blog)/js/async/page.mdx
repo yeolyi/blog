@@ -47,21 +47,19 @@ console.log(3);
 마지막으로 **네트워크 이벤트**에요. 콜백을 사용하는 옛날 옛적 XMLHttpRequest를
 들고왔어요:
 
-```html
-<script>
-  let request = new XMLHttpRequest();
-  request.open(
-    'GET',
-    'https://cdn.jsdelivr.net/npm/is-sorted@1.0.5/index.min.js',
-  );
-  request.send();
+```js
+let request = new XMLHttpRequest();
+request.open(
+  'GET',
+  'https://cdn.jsdelivr.net/npm/is-sorted@1.0.5/index.min.js',
+);
+request.send();
 
-  request.onload = () => {
-    console.log(request.status, request.responseText);
-  };
+request.onload = () => {
+  console.log(request.status, request.responseText);
+};
 
-  request.onerror = (e) => console.log(e);
-</script>
+request.onerror = (e) => console.log(e);
 ```
 
 ## Promises

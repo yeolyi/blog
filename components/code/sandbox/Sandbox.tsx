@@ -55,7 +55,10 @@ export default function Sandbox({
 
   return (
     <>
-      <div className={`relative flex flex-col gap-1`} ref={containerRef}>
+      <div
+        className="not-prose relative flex flex-col gap-1"
+        ref={containerRef}
+      >
         {/* TODO: 옵션 정리 */}
         {!consoleFit && (
           <div className="flex justify-end gap-3 px-1 font-firacode text-sm text-neutral-300">

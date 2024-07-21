@@ -10,15 +10,15 @@ import {
   SectionHeadline,
 } from '@/components/common/Typography';
 import { PostContainer, PostTile } from '@/components/common/PostTile';
-import { CserealBg } from '@/components/mainbg/CserealBg';
-import InstaBg from '@/components/mainbg/InstaBg';
+import { CserealBg } from '@/components/main/CserealBg';
+import InstaBg from '@/components/main/InstaBg';
 import { WideTile, WideTileProps } from '@/components/gallery/WideTile';
 import Giscus from '@/components/common/Giscus';
 import Footer from '@/components/layout/Footer';
 
-import CSSBookTile from '@/content/CSSBookTile';
+import CSSBookTile from '@/components/main/CSSBookTile';
 import { cssTileProps } from '@/content/cssTileProps';
-import JSBookTile from '@/content/JsBookTile';
+import JSBookTile from '@/components/main/JsBookTile';
 import { jsTileProps } from '@/content/jsTileProps';
 import { postTileProps } from '@/content/postTileProps';
 import { webTileProps } from '@/content/webTileProps';

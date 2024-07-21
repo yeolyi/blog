@@ -1,0 +1,144 @@
+import { createPostMeta } from '@/util/post';
+import LastCommit from '@/components/common/CommitHistory';
+export let metadata = createPostMeta('가볍게 살펴보는 ESLint');
+
+# 가볍게 살펴보는 ESLint
+
+<LastCommit dir="app/(blog)/post/eslint/page.mdx" />
+
+블로그 개발하는데 여태 eslint가 next쪽에만 적용되고 있음을 깨달았습니다. 그래서
+공부 시작함.
+
+아래 문서를 참고했습니다 ESLint를 확장하거나 기여하는 방법은 다루지 않습니다.
+
+https://eslint.org/docs/latest/use/
+
+> This guide is intended for those who wish to use ESLint as an end-user.
+
+## Getting Started
+
+일단 냅다 설치해서 써보고 커스터마이징하는 방법을 배워봅시다.
+
+### Quick start
+
+> ESLint is a tool for identifying and reporting on patterns found in
+> ECMAScript/JavaScript code, with the goal of making code more consistent and
+> avoiding bugs.
+
+> ESLint is completely pluggable. Every single rule is a plugin and you can add
+> more at runtime. You can also add community plugins, configurations, and
+> parsers to extend the functionality of ESLint.
+
+```
+npm init @eslint/config@latest
+# shareable config 사용
+npm init @eslint/config@latest -- --config eslint-config-standard
+```
+
+```
+npx eslint yourfile.js
+npx eslint .
+```
+
+### Configuration
+
+Configuration file에서 설정을 관리합니다.
+
+```js
+// @noexec noedit
+// eslint.config.js
+import js from "@eslint/js";
+
+export default [
+  {
+    // https://eslint.org/docs/latest/rules
+    // 위에서 권장하는 모든 규칙이 켜집니다.
+    // npm에서 설치한 config도 적용할 수 있습니다.
+    js.configs.recommended,
+    rules: {
+      'no-unused-vars': 'error',
+      'no-undef': 'error',
+    },
+  },
+];
+```
+
+Config에 규칙을 추가해야 eslint가 이에 따라 린트합니다. off는 rule을 끄고,
+warn은 경고만 하며, error는 에러로 처리합니다.
+
+## Core Concepts
+
+> Understand the main components of ESLint and how to use them in your project.
+
+> ESLint is a configurable JavaScript linter. It helps you find and fix problems
+> in your JavaScript code. Problems can be anything from **potential runtime
+> bugs**, to **not following best practices**, to **styling issues**.
+
+룰은 코드가 조건에 맞는지 검사합니다. semi처럼 추가 설정이 가능할 수 있습니다.
+
+몇몇 룰은 안전하게 자동으로 문제를 고칠 수 있습니다.
+
+몇몇 룰은 수정을 제안할 수 있지만 코드 로직에 변화를 줄 수 있어 수정이 옳은지
+개발자가 검토해야합니다. 따라서 이러한 자동 수정은 CLI로는 사용할 수 없고 에디터
+integration을 통해서만 가능합니다.
+
+Configuration file에서는 어떤 빌트인 룰을 적용할지, 어떻게 적용할지,
+플러그인등을 관리합니다. 설정은 npm을 통해 공유가 가능하며 sharable
+configuration이라 합니다.
+
+플러그인은 (커스텀) 룰, 설정, 프로세서, 환경을 포함하는 npm 모듈입니다.
+타입스크립트같은 JS 확장을 지원하거나 프레임워크 등에서 best practice를 강제하기
+위해 자주 사용됩니다.
+
+파서는 언어에서 AST를 만들기 위해 사용됩니다. 커스텀 파서를 통해 비표준 JS
+문법을 지원할 수 있습니다. 보통 sharable configuration이나 플러그인에 포함되어
+직접 추가하지는 않습니다.
+
+프로세서는 마크다운같은 다른 종류의 파일에서 JS를 뽑아내거나 JS 파일을
+전처리합니다.
+
+Formatter는 린트 결과를 어떻게 보여줄지 결정합니다.
+
+ESLint CLI로 여러 옵션과 함께 린트할 수 있습니다. ESLint를 에디터에 통합하여
+CLI를 통하지 않고도 실행하고 결과보는 과정을 편리하게 할 수 있습니다.
+
+## Configure ESLint
+
+> Once you’ve got ESLint running, you’ll probably want to adjust the
+> configuration to better suit your project. This section explains all the
+> different ways you can configure ESLint.
+
+설정이 비었으면 ESLint는 바보가 됩니다.
+
+### Configuration Files
+
+### Configure Language Options
+
+### Configure Rules
+
+### Configure a Parser
+
+### Ignore Files
+
+## Command Line Interface Reference
+
+> There are a lot of command line flags for ESLint and this section explains
+> what they do.
+
+## Rules Reference
+
+> ESLint has a lot of rules that you can configure to fine-tune it to your
+> project. This section is an exhaustive list of every rule and link to each
+> rule’s documentation.
+
+## Formatters Reference
+
+> Control the appearance of the linting results with formatters. View all
+> built-in formatters on this page.
+
+## Integrations
+
+ESLint의 기능을 에디터를 통해 더 편하게(integration) 쓰는 방법입니다. Vim도
+있네요!
+
+https://eslint.org/docs/latest/use/integrations

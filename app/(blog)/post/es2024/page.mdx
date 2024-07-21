@@ -1,11 +1,10 @@
-export let metadata = {
-  title: '책에는 없는 JS 기능 구경',
-  openGraph: {
-    title: '책에는 없는 JS 기능 구경',
-  },
-};
+import { createPostMeta } from '@/util/post';
+import LastCommit from '@/components/common/CommitHistory';
+export let metadata = createPostMeta('책에는 없는 JS 기능 구경');
 
 # 책에는 없는 JS 기능 구경
+
+<LastCommit dir="app/(blog)/post/es2024/page.mdx" />
 
 최근에 JS 책을 완독했는데 책이 나온 후로 JS에 여러 기능들이 추가됐음을 알게
 되었습니다. 그래서 ECMAScript 레포를 살펴보며 최근 몇 년간 언어에 어떤 변화가

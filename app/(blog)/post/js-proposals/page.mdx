@@ -1,15 +1,13 @@
-export let metadata = {
-  title: '미래의 자바스크립트 미리 써보기',
-  description:
-    '어떤 기능들이 논의되고있는지 살펴보고 블로그에 준비된 babel로 직접 사용해봅시다',
-  openGraph: {
-    title: '미래의 자바스크립트 미리 써보기',
-    description:
-      '어떤 기능들이 논의되고있는지 살펴보고 블로그에 준비된 babel로 직접 사용해봅시다',
-  },
-};
+import { createPostMeta } from '@/util/post';
+import LastCommit from '@/components/common/CommitHistory';
+export let metadata = createPostMeta(
+  '미래의 자바스크립트 미리 써보기',
+  '어떤 기능들이 논의되고있는지 살펴보고 블로그에 준비된 babel로 직접 사용해봅시다',
+);
 
 # 미래의 자바스크립트 미리 써보기
+
+<LastCommit dir="app/(blog)/post/js-proposals/page.mdx" />
 
 ## 미리보기
 

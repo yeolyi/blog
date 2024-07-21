@@ -61,7 +61,7 @@ export let presetMap: { [key in PresetName]: Preset } = {
     createSrcDoc: async (code: string) => {
       return wrapBaseHTML(
         `<script src="https://unpkg.com/rxjs@^7/dist/bundles/rxjs.umd.min.js"></script>
-       <script>${code}</script>`,
+<script>${code}<script>`,
       );
     },
     language: 'javascript',

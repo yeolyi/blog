@@ -1,11 +1,10 @@
-export let metadata = {
-  title: '가볍게 살펴보는 Lodash',
-  openGraph: {
-    title: '가볍게 살펴보는 Lodash',
-  },
-};
+import { createPostMeta } from '@/util/post';
+import LastCommit from '@/components/common/CommitHistory';
+export let metadata = createPostMeta('가볍게 살펴보는 Lodash');
 
 # 가볍게 살펴보는 Lodash
+
+<LastCommit dir="app/(blog)/post/lodash/page.mdx" />
 
 동아리 프로젝트에서 es-toolkit을 쓰기 시작했는데 저는 lodash조차 제대로 써본적이
 없어 가볍게 구경해봤습니다. 함수들을 둘러보며 '나만 자주 쓰는게 아니구나!'를
