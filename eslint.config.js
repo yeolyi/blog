@@ -3,6 +3,7 @@ import { fileURLToPath } from 'node:url';
 
 import { includeIgnoreFile } from '@eslint/compat';
 import eslintConfigPrettier from 'eslint-config-prettier';
+import reactPlugin from 'eslint-plugin-react';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -20,6 +21,9 @@ export default tseslint.config(
     languageOptions: {
       globals: { ...globals.browser, ...globals.nodeBuiltin },
     },
+    linterOptions: {
+      reportUnusedDisableDirectives: 'error',
+    },
   },
 
   {
@@ -29,6 +33,14 @@ export default tseslint.config(
     rules: {
       'simple-import-sort/imports': 'error',
       'simple-import-sort/exports': 'error',
+    },
+  },
+
+  {
+    ...reactPlugin.configs.flat.recommended,
+    settings: { react: { version: 'detect' } },
+    rules: {
+      'react-in-jsx-scope': 'off',
     },
   },
 

@@ -7,165 +7,111 @@ export let metadata = createPostMeta('가볍게 살펴보는 ESLint');
 
 <LastCommit dir="app/(blog)/post/eslint/page.mdx" />
 
-블로그 개발하는데 여태 eslint가 next쪽에만 적용되고 있음을 깨달았습니다. 그래서
-공부 시작함.
-
-아래 문서를 참고했습니다 ESLint를 확장하거나 기여하는 방법은 다루지 않습니다.
+최근에 블로그를 개발하던 중 ESLint가 제대로 적용되어있지 않음을 깨달았습니다.
+config 복붙만 했었지 ESLint가 어떻게 동작하는지는 잘 몰랐어서 이 기회에 문서를
+훑어보았습니다.
 
 https://eslint.org/docs/latest/use/
 
-This guide is intended for those who wish to use ESLint as an end-user.
+홈페이지에서 위 문서를 참고했습니다. ESLint를 확장하거나 기여하는 방법은 다루지
+않고 쓰는 방법을 집중해서 돌아보았습니다.
 
 ## Getting Started
-
-일단 냅다 설치해서 써보고 커스터마이징하는 방법을 배워봅시다.
-
-### Quick start
-
-> ESLint is a tool for identifying and reporting on patterns found in
-> ECMAScript/JavaScript code, with the goal of making code more consistent and
-> avoiding bugs.
-
-> ESLint is completely pluggable. Every single rule is a plugin and you can add
-> more at runtime. You can also add community plugins, configurations, and
-> parsers to extend the functionality of ESLint.
-
-```shell
-npm init @eslint/config@latest
-# shareable config 사용
-npm init @eslint/config@latest -- --config eslint-config-standard
-```
-
-```shell
-npx eslint yourfile.js
-npx eslint .
-```
-
-### Configuration
-
-Configuration file에서 설정을 관리합니다.
-
-```js
-// @noexec noedit
-// eslint.config.js
-import js from "@eslint/js";
-
-export default [
-  {
-    // https://eslint.org/docs/latest/rules
-    // 위에서 권장하는 모든 규칙이 켜집니다.
-    // npm에서 설치한 config도 적용할 수 있습니다.
-    js.configs.recommended,
-    rules: {
-      'no-unused-vars': 'error',
-      'no-undef': 'error',
-    },
-  },
-];
-```
-
-Config에 규칙을 추가해야 eslint가 이에 따라 린트합니다.
-
-## Core Concepts
-
-> Understand the main components of ESLint and how to use them in your project.
 
 > ESLint is a configurable JavaScript linter. It helps you find and fix problems
 > in your JavaScript code. Problems can be anything from **potential runtime
 > bugs**, to **not following best practices**, to **styling issues**.
 
-룰은 코드가 조건에 맞는지 검사합니다. semi처럼 추가 설정이 가능할 수 있습니다.
+처음에 설치하는 방법입니다. CLI에서 선택한 선택지에 따라 **eslint.config.js**
+파일이 만들어집니다.
 
-몇몇 룰은 안전하게 자동으로 문제를 고칠 수 있습니다.
+```sh
+npm init @eslint/config@latest
+```
 
-몇몇 룰은 수정을 제안할 수 있지만 코드 로직에 변화를 줄 수 있어 수정이 옳은지
-개발자가 검토해야합니다. 따라서 이러한 자동 수정은 CLI로는 사용할 수 없고 에디터
-integration을 통해서만 가능합니다.
+설치를 마치고 린트하는 방법입니다:
 
-Configuration file에서는 어떤 빌트인 룰을 적용할지, 어떻게 적용할지,
-플러그인등을 관리합니다. 설정은 npm을 통해 공유가 가능하며 sharable
-configuration이라 합니다.
+```sh
+# 특정 파일 린트
+npx eslint yourfile.js
+# 모든 대상 파일 린트
+npx eslint
+```
 
-플러그인은 (커스텀) 룰, 설정, 프로세서, 환경을 포함하는 npm 모듈입니다.
-타입스크립트같은 JS 확장을 지원하거나 프레임워크 등에서 best practice를 강제하기
-위해 자주 사용됩니다.
+ESLint의 동작은 설정 파일을 기준으로 합니다. 어떤 규칙을 강제할지, 어떤 파일을
+무시할지 등등이 설정 파일에 모두 들어있습니다. 설정은 npm으로 공유가 가능하고
+npm으로부터 적용하는 것도 가능합니다.
 
-파서는 언어에서 AST를 만들기 위해 사용됩니다. 커스텀 파서를 통해 비표준 JS
-문법을 지원할 수 있습니다. 보통 sharable configuration이나 플러그인에 포함되어
-직접 추가하지는 않습니다.
+## Core Concepts
 
-프로세서는 마크다운같은 다른 종류의 파일에서 JS를 뽑아내거나 JS 파일을
+ESLint에서 나오는 개념들을 정리해봅시다.
+
+**규칙**(rule)은 코드가 조건에 부합하는지 검사하고 그렇지 않다면 어떻게할지
+정의합니다.
+
+https://eslint.org/docs/latest/rules/
+
+- Rule fixes: 몇몇 규칙은 안전하게 자동으로 문제를 고칠 수 있습니다.
+- Rule suggestion: 몇몇 규칙은 수정을 제안할 수 있지만 코드 로직에 변화를 줄 수
+  있어 수정이 옳은지 개발자가 검토해야합니다.
+  - 따라서 이러한 자동 수정은 **CLI로는 사용할 수 없고 에디터 integration을
+    통해서만 가능**합니다.
+
+**파서**는 코드에서 AST를 만들기 위해 사용됩니다. 커스텀 파서를 사용해 비표준 JS
+문법도 지원할 수 있습니다.
+
+**프로세서**는 마크다운같은 다른 종류의 파일에서 JS를 뽑아내거나 JS 파일을
 전처리합니다.
 
-Formatter는 린트 결과를 어떻게 보여줄지 결정합니다.
-
-ESLint CLI로 여러 옵션과 함께 린트할 수 있습니다. ESLint를 에디터에 통합하여
-CLI를 통하지 않고도 실행하고 결과보는 과정을 편리하게 할 수 있습니다.
+**플러그인**은 규칙, 프로세서, 기타 설정등을 포함하는 npm 모듈입니다.
+타입스크립트같은 JS 확장을 지원하거나 프레임워크에서 best practice를 강제하기
+위해 자주 사용됩니다.
 
 ## Configure ESLint
 
-> Once you’ve got ESLint running, you’ll probably want to adjust the
-> configuration to better suit your project. This section explains all the
-> different ways you can configure ESLint.
-
-설정이 비었으면 ESLint는 바보가 됩니다.
+설정이 비었으면 ESLint는 바보가 됩니다. 설정을 추가하고 수정하는 방법을
+배워봅시다.
 
 ### Configuration Files
 
-아래 파일 이름이 가능합니다:
-
-- eslint.config.js
-- eslint.config.mjs
-- eslint.config.cjs
-
-설정 파일은 설정 객체의 배열을 export합니다:
-
-https://github.com/eslint/eslint/blob/main/packages/js/src/configs/eslint-recommended.js
+설정 파일은 설정 객체의 **배열**을 export합니다. 객체에 어떤 키 값이 들어가는지
+코드로 살펴볼게요:
 
 ```js
 // @noexec noedit
-// eslint.config.js 파일
-
+// eslint.config.js
 import js from '@eslint/js';
 import example from 'eslint-plugin-example';
-import markdown from 'eslint-plugin-markdown';
 
 export default [
-  // ESLint가 추천하는 규칙들을 활성화합니다.
-  // js.configs.recommended,
-
-  // ESLint가 제공하는 모든 규칙들을 활성화합니다.
-  // js.configs.all,
-
-  // 기타 외부로부터 공유받은 설정을 이렇게 적용할 수 있습니다.
-  // exampleConfig,
+  // 외부에서 설정을 공유받았다면 이렇게 적용할 수 있습니다.
+  // 여기서는 ESLint가 추천하는 규칙들을 활성화합니다.
+  js.configs.recommended,
 
   {
-    // 설정이 적용될 파일들
+    // 설정이 적용될 파일들.
     // 기본값: 모든 js, cjs, mjs 파일
-    files: ['src/**/*.js', '**/*.ts'],
+    files: ['**/*.js'],
 
     // 설정을 적용하지 않을 파일들
-    // 본격적으로 쓰려면 내용이 길어져서 아래를 참고하세요
-    // https://eslint.org/docs/latest/use/configure/configuration-files
-    // https://eslint.org/docs/latest/use/configure/ignore
-    ignores: ['**/*.config.js', '!**/eslint.config.js'],
+    ignores: ['**/*.test.js'],
 
-    plugins: {
-      // 객체의 키는 플러그인의 네임스페이스를 의미합니다.
-      // 일반적으로 npm 패키지의 이름에서 eslint-plugin- 접두사를 빼서 사용합니다.
-      example,
-    },
+    // plugins 객체의 키 값는 플러그인의 네임스페이스를 의미합니다.
+    // 네임스페이스는 아래 rules에서 플러그인에 있는 규칙들을 참조할 때 사용합니다.
+    plugins: { example },
 
-    // off는 rule을 끄고, warn은 경고만 하며, error는 에러로 처리합니다.
-    // error는 CI 테스트나 커밋 전 체크나 PR 머지 전 체크 등에서 터트리기 위해 유용합니다.
-    // warning은 런타임/빌드타임 에러와 무관한 규칙이거나 위양성의 가능성이 있을 때 유용합니다.
     rules: {
-      // 배열이면 첫번째 요소는 severity, 그 다음부터는 옵션입니다.
-      semi: ['error', 'never'],
+      // ESLint에 내재된 규칙을 적용합니다.
+
+      // off는 rule을 끄고, warn은 경고만 하며, error는 에러로 처리합니다.
+      // error는 CI 테스트나 커밋 전 체크나 PR 머지 전 체크 등에서 터트리기 위해 유용합니다.
+      // warning은 런타임/빌드타임 에러와 무관한 규칙이거나 false-positive의 가능성이 있을 때 유용합니다.
       'prefer-const': 'error',
 
-      // 플러그인에서 정의된 규칙을 적용합니다.
+      // 배열이면 두번째 인자부터는 옵션입니다.
+      semi: ['error', 'never'],
+
+      // 위의 네임스페이스를 활용해 플러그인에서 정의된 규칙을 적용합니다.
       'example/rule1': 'warn',
     },
 
@@ -176,63 +122,89 @@ export default [
       reportUnusedDisableDirectives: 'error',
     },
   },
-
-  {
-    // 마크다운 파일 안에 있는 자바스크립트 파일에 적용됩니다.
-    files: ['**/*.md/*.js'],
-    rules: {
-      strict: 'off',
-    },
-    plugins: {
-      markdown,
-    },
-    // 플러그인에서 제공하는 프로세서를 사용할 수 있습니다.
-    // namespace/processor-name 형식의 문자열입니다.
-    processor: 'markdown/markdown',
-  },
-
-  // 여러 설정 객체가 같은 규칙을 명시한다면 나중 객체 우선으로 합쳐집니다.
-  // ...
 ];
 ```
 
+### processor
+
+프로세서를 사용한 마크다운 파일 내 JS 코드 블록 처리 예시입니다:
+
 ```js
 // @noexec noedit
+// eslint.config.js
+import markdown from 'eslint-plugin-markdown';
+
+export default [
+  // ...
+  {
+    // 마크다운 파일 안에 있는 자바스크립트 파일에 적용됩니다.
+    files: ['**/*.md/*.js'],
+    rules: { strict: 'off' },
+    plugins: { markdown },
+    // 플러그인에서 제공하는 프로세서를 사용할 수 있습니다.
+    processor: 'markdown/markdown',
+  },
+];
+```
+
+### globals
+
+`languageOptions.global`에 어떤 전역 변수들의 존재를 가정하고 린팅할지 설정할 수
+있습니다. 설정하지 않으면 `'window' is not defined`, `'document' is not defined`
+같은 에러가 발생합니다.
+
+```js
+// @noexec noedit
+// eslint.config.js
+import globals from 'globals';
+
 export default [
   {
     languageOptions: {
       globals: {
-        var1: 'writable',
-        var2: 'readonly',
+        ...globals.browser,
       },
+      sourceType: 'script', // 'module' | 'commonjs'| 'script'
+    },
+  },
+  // ...
+];
+```
+
+### Flat cascade
+
+이전 설정을 일부 덮어씌우고 싶을 때는 **flat cascade**를 활용합니다.
+
+> While we wanted to get rid of the directory-based config cascade, flat config
+> actually still has a flat cascade defined directly in your eslint.config.js
+> file. Inside of the array, ESLint finds all config objects that match the file
+> being linted and merges them together in much the same way that eslintrc did.
+> The only real difference is the merge happens from the top of the array down
+> to the bottom instead of using files in a directory structure.
+
+https://eslint.org/blog/2022/08/new-config-system-part-2/
+
+예를 들어 외부에서 import한 설정의 일부를 바꾸고 싶으면 아래와같이 할 수
+있습니다:
+
+```js
+// @noexec noedit
+// eslint.config.js
+import exampleConfigs from 'eslint-config-example';
+
+export default [
+  ...exampleConfigs,
+
+  // 수정 사항
+  {
+    rules: {
+      'no-unused-vars': 'warn',
     },
   },
 ];
 ```
 
-`'window' is not defined`, `'document' is not defined`
-
-아래 툴로 특정 파일에 규칙이 적용되는지 여부를 알 수 있습니다:
-
-```
-npx eslint --inspect-config
-```
-
-참고로 `package.json`에 `"type": "module"`이 명시되어있지 않다면 CJS 형태로
-작성해야합니다.
-
-### Configure Rules
-
-`/* eslint-disable */`같은 주석은 왠만하면 쓰지 않으며, 쓰더라도 이유를
-명시합니다.
-
-```js
-// @noedit noexec
-// eslint-disable-next-line no-console -- Here's a description about why this configuration is necessary.
-console.log('hello');
-```
-
-### Configure a Parser
+특정 파일에 대해 파서를 바꾸고 싶으면 아래와 같이 합니다:
 
 ```js
 // @noexec noedit
@@ -251,7 +223,7 @@ export default [
 ];
 ```
 
-### Ignore Files
+### gitignore
 
 .gitignore의 파일을 무시하려면 `@eslint/compat` 패키지를 활용합니다.
 
@@ -274,29 +246,10 @@ export default [
 ];
 ```
 
-아래처럼 합칩니다:
-
-```js
-// @noexec noedit
-// eslint.config.js
-import exampleConfigs from 'eslint-config-example';
-
-export default [
-  ...exampleConfigs,
-
-  // your modifications
-  {
-    rules: {
-      'no-unused-vars': 'warn',
-    },
-  },
-];
-```
-
 ## Command Line Interface Reference
 
-> There are a lot of command line flags for ESLint and this section explains
-> what they do.
+ESLint CLI로 여러 옵션과 함께 린트할 수 있습니다. 아래는 유용한 것들을 추린
+것이에요.
 
 `eslint [options] file.js [file.js] [dir]`
 
@@ -313,31 +266,3 @@ export default [
 | `-h, --help`                  | 도움말 표시                                                                                                                 |
 | `-v, --version`               | 버전 번호 출력                                                                                                              |
 | `--print-config path::String` | config 파일의 구성을 출력합니다.                                                                                            |
-
-## Rules Reference
-
-> ESLint has a lot of rules that you can configure to fine-tune it to your
-> project. This section is an exhaustive list of every rule and link to each
-> rule’s documentation.
-
-https://eslint.org/docs/latest/rules/
-
-## Integrations
-
-ESLint의 기능을 에디터를 통해 더 편하게(integration) 쓰는 방법입니다. Vim도
-있네요!
-
-https://eslint.org/docs/latest/use/integrations
-
-## 기타
-
-https://typescript-eslint.io/
-
-https://stackoverflow.com/questions/53189200/whats-the-difference-between-plugins-and-extends-in-eslint
-
-https://techblog.woowahan.com/15903/
-
-npm install --save-dev eslint-plugin-simple-import-sort
-
-https://github.com/import-js/eslint-plugin-import 이슈가 뭔 500개고 flat config
-없어서 걍 이거 씀
