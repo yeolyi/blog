@@ -25,12 +25,8 @@ export let Badge = ({ icon, title, cnt, href, className }: BadgeProps) => {
         href={href}
         className="bg-white px-[10px] py-[5px] text-[12px] font-semibold text-[#24292f]"
       >
-        {addCommas(cnt)}
+        {cnt.toLocaleString()}
       </Link>
     </div>
   );
-};
-
-let addCommas = (n: number) => {
-  return String(n).replace(/\d(?=(?<tmp>\d{3})+$)/g, '$1,');
 };
