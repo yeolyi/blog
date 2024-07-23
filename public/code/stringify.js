@@ -31,7 +31,7 @@ class _Stringify {
 
     // custom primitive
     if (type === 'function') return `[Function: ${input.name}]`;
-    if (type === 'bigint') return String(input) + 'n';
+    if (type === 'bigint') return `${String(input)}n`;
 
     // wrapper obj
     let wrapper = this.#getWrapperObj(input);
@@ -42,11 +42,11 @@ class _Stringify {
 
     // map
     if (input instanceof Map)
-      return `Map ${this.stringify(Object.fromEntries(input.entries()), pad + '    ')}`;
+      return `Map ${this.stringify(Object.fromEntries(input.entries()), `${pad}    `)}`;
 
     // set
     if (input instanceof Set)
-      return `Set ${this.stringify([...input], pad + '    ')}`;
+      return `Set ${this.stringify([...input], `${pad}    `)}`;
 
     // DOM
     if (input instanceof Node) return `[Node: ${input.nodeName}]`;
@@ -77,8 +77,9 @@ class _Stringify {
         i in input ? this.stringify(input[i], pad + INDENT) : '<empty>';
       let isLast = input.length - 1 === i;
 
-      content += isLast
-        ? `${T_PAD_INDENT}${elementStr}${T_NEWLINE}`
+      content +=
+        isLast ?
+          `${T_PAD_INDENT}${elementStr}${T_NEWLINE}`
         : `${T_PAD_INDENT}${elementStr},${T_NEWLINE_OR_SPACE}`;
     }
 
@@ -100,9 +101,9 @@ class _Stringify {
     let content = objectKeys
       .map((element, index) => {
         const eol =
-          objectKeys.length - 1 === index
-            ? T_NEWLINE
-            : ',' + T_NEWLINE_OR_SPACE;
+          objectKeys.length - 1 === index ?
+            T_NEWLINE
+          : `,${T_NEWLINE_OR_SPACE}`;
 
         const escapeKey =
           typeof element === 'symbol' || /^[a-z$_][$\w]*$/i.test(element);
@@ -116,8 +117,8 @@ class _Stringify {
 
     this.seen.pop();
 
-    return name && name !== 'Object'
-      ? this.#expandWhiteSpace(`${name} {${T_NEWLINE}${content}${T_PAD}}`, pad)
+    return name && name !== 'Object' ?
+        this.#expandWhiteSpace(`${name} {${T_NEWLINE}${content}${T_PAD}}`, pad)
       : this.#expandWhiteSpace(`{${T_NEWLINE}${content}${T_PAD}}`, pad);
   }
 
@@ -168,6 +169,6 @@ class _Stringify {
   }
 }
 
-let stringify = (input) => {
+let notUnusedStringify = (input) => {
   return new _Stringify().stringify(input);
 };

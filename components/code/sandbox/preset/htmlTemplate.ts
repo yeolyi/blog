@@ -1,7 +1,7 @@
 const stringifySrc =
-  process.env.NODE_ENV === 'production'
-    ? 'https://yeolyi.com/code/stringify.js'
-    : 'http://localhost:3000/code/stringify.js';
+  process.env.NODE_ENV === 'production' ?
+    'https://yeolyi.com/code/stringify.js'
+  : 'http://localhost:3000/code/stringify.js';
 
 export let wrapBaseHTML = (src: string) => `<!doctype html>
 <html>
@@ -35,7 +35,7 @@ export let wrapBaseHTML = (src: string) => `<!doctype html>
       console.log = (...data) => {
         window.parent.postMessage({
             type: 'log',
-            data: data.map((x) => stringify(x)).join(' '),
+            data: data.map((x) => notUnusedStringify(x)).join(' '),
         }, "*");
       }
       log = console.log.bind(console);

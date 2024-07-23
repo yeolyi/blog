@@ -1,11 +1,13 @@
 'use client';
 
-import { useClickOutside } from '@/util/hook';
-import { useRef, useState } from 'react';
-import useCurrentHeading from './useCurrentHeading';
-import Toc from './Toc';
 import Link from 'next/link';
+import { useRef, useState } from 'react';
 import { RiHomeLine } from 'react-icons/ri';
+
+import { useClickOutside } from '@/util/hook';
+
+import Toc from './Toc';
+import useCurrentHeading from './useCurrentHeading';
 
 export default function Navigation() {
   const { currentHeading, setCurrentHeading, headingList } =

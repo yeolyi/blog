@@ -1,9 +1,10 @@
 'use client';
 
+import gsap from 'gsap';
 import Image from 'next/image';
 import { MouseEventHandler, useCallback, useEffect, useRef } from 'react';
+
 import cserealbg from '@/public/cserealbg.png';
-import gsap from 'gsap';
 import { throttle } from '@/util/throttle';
 
 const ROW = 6;
@@ -23,7 +24,7 @@ let ripple = throttle((idx: number, elementList: Element[]) => {
 
   for (let i = -RADIUS; i <= RADIUS; i++) {
     for (let j = -RADIUS; j <= RADIUS; j++) {
-      if (i == 0 && j == 0) continue;
+      if (i === 0 && j === 0) continue;
 
       const m2 = m + i;
       const n2 = n + j;
@@ -88,7 +89,7 @@ export const CserealBg = () => {
 
   useEffect(() => {
     let id = setInterval(() => {
-      if (containerRef.current && 5000 < Date.now() - lastRippleRef.current)
+      if (containerRef.current && Date.now() - lastRippleRef.current > 5000)
         ripple(
           Math.floor(Math.random() * (COL * ROW - 1)),
           [...containerRef.current.children].map(
@@ -122,11 +123,10 @@ export const CserealBg = () => {
               style={{
                 transition: 'transform 0.2s',
                 transform:
-                  row === 1 || row === 4
-                    ? 'translateX(calc(var(--unit-size) * 2))'
-                    : row === 2
-                      ? 'translateX(calc(-1 * var(--unit-size) * 2))'
-                      : '',
+                  row === 1 || row === 4 ?
+                    'translateX(calc(var(--unit-size) * 2))'
+                  : row === 2 ? 'translateX(calc(-1 * var(--unit-size) * 2))'
+                  : '',
               }}
             >
               <svg
@@ -134,11 +134,9 @@ export const CserealBg = () => {
                 fill="none"
                 className="pointer-events-none h-[var(--unit-size)] w-[var(--unit-size)] will-change-transform"
               >
-                {x ? (
+                {x ?
                   <rect x="25%" width="50%" height="100%" fill="#EA751A" />
-                ) : (
-                  <circle cx="50%" cy="50%" r="40%" fill="#E75015" />
-                )}
+                : <circle cx="50%" cy="50%" r="40%" fill="#E75015" />}
               </svg>
             </div>
           );

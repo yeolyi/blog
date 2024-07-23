@@ -3,7 +3,7 @@ export const throttle = <R, A extends any[]>(
   delay: number,
 ): [(...args: A) => R | undefined, () => void] => {
   let wait = false;
-  let timeout: undefined | number;
+  let timeout: undefined | number = undefined;
   let cancelled = false;
 
   return [

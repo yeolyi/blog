@@ -1,6 +1,7 @@
 import Link from 'next/link';
-import Star from './Star';
+
 import Follower from './Follower';
+import Star from './Star';
 
 export default function Footer() {
   return (

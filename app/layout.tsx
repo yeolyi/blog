@@ -1,9 +1,9 @@
-import type { Metadata } from 'next';
-import { Analytics } from '@vercel/analytics/react';
-import localFont from 'next/font/local';
-import { Fira_Code } from 'next/font/google';
-
 import './globals.css';
+
+import { Analytics } from '@vercel/analytics/react';
+import type { Metadata } from 'next';
+import { Fira_Code } from 'next/font/google';
+import localFont from 'next/font/local';
 
 export const metadata: Metadata = {
   title: '개발자 성열',

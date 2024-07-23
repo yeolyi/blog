@@ -1,7 +1,8 @@
 import { ReactElement, ReactNode } from 'react';
-import Sandbox, { SandboxProps } from './sandbox/Sandbox';
-import { PresetName, presetNameList } from './sandbox/preset/presetMap';
+
 import HighlightedCode from './editor/HighlightedCode';
+import { PresetName, presetNameList } from './sandbox/preset/presetMap';
+import Sandbox, { SandboxProps } from './sandbox/Sandbox';
 
 export default function CodeBlock({ children }: { children?: ReactNode }) {
   let fallback = <pre>{children}</pre>;
@@ -13,13 +14,14 @@ export default function CodeBlock({ children }: { children?: ReactNode }) {
   let content = String(children.props.children).trim();
   let className = children.props.className;
 
-  // TODO: 예쁘게 처리
+  // 편집 불가능한 경우
   if (className === 'language-css') {
     return <HighlightedCode language="css">{content}</HighlightedCode>;
   } else if (className === 'langauge-shell') {
     return <HighlightedCode>{content}</HighlightedCode>;
   }
 
+  // 편집 가능한 경우
   let { presetName, code, ...props } = parseProps(content, className);
   if (code === undefined || presetName === undefined) {
     return <HighlightedCode>{content}</HighlightedCode>;
@@ -28,6 +30,10 @@ export default function CodeBlock({ children }: { children?: ReactNode }) {
   return <Sandbox presetName={presetName} code={code} {...props} />;
 }
 
+let isReactElement = (node: ReactNode): node is ReactElement => {
+  return typeof node === 'object' && node !== null && 'type' in node;
+};
+
 let parseProps = (
   src: string,
   className?: string,
@@ -35,7 +41,6 @@ let parseProps = (
   let { code, options } = parseFirstLine(src);
 
   let presetName = presetNameList.find((name) => name in options);
-
   if (presetName) return { presetName, code, ...options };
 
   // fallback
@@ -46,10 +51,6 @@ let parseProps = (
   } else {
     return {};
   }
-};
-
-let isReactElement = (node: ReactNode): node is ReactElement => {
-  return typeof node === 'object' && node !== null && 'type' in node;
 };
 
 let parseFirstLine = (src: string) => {

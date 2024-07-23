@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
 import { Preset } from './preset/presetMap';
 
 export let useDebouncedSrcDoc = (
@@ -24,8 +25,8 @@ export let useDebouncedSrcDoc = (
     iframeKey.current++;
 
     let id = setTimeout(async () => {
-      // https://velog.io/@younyikim/React에서-Iframe-사용시-뒤로가기가-되지-않는-버그
       setSrcdoc(await preset.createSrcDoc(code));
+      // https://velog.io/@younyikim/React에서-Iframe-사용시-뒤로가기가-되지-않는-버그
       iframeKey.current++;
     }, 800);
 

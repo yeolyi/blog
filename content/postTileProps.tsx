@@ -1,8 +1,8 @@
 import { PostTileProps } from '@/components/common/PostTile';
 import lodash from '@/public/lodash.svg';
 import es2024 from '@/public/post/preview/es2024.png';
+// import eslint from '@/public/post/preview/eslint.svg';
 import jslogo from '@/public/post/preview/jslogo.svg';
-import eslint from '@/public/post/preview/eslint.svg';
 
 export let postTileProps: PostTileProps[] = [
   // {

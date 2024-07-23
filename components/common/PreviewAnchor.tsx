@@ -1,9 +1,10 @@
 'use server';
 
-import { DetailedHTMLProps, AnchorHTMLAttributes, Suspense } from 'react';
 import { JSDOM } from 'jsdom';
-import { getErrorMessage } from '@/util/error';
+import { AnchorHTMLAttributes, DetailedHTMLProps, Suspense } from 'react';
 import { HiGlobeAsiaAustralia } from 'react-icons/hi2';
+
+import { getErrorMessage } from '@/util/error';
 
 type Props = DetailedHTMLProps<
   AnchorHTMLAttributes<HTMLAnchorElement>,
@@ -50,8 +51,8 @@ const fetchMetadata = async (href: string) => {
     // https://github.com/jsdom/jsdom/issues/2005#issuecomment-1758940894
     const dom = new JSDOM(
       data
-        .replace(/<style([\S\s]*?)>([\S\s]*?)<\/style>/gim, '')
-        ?.replace(/<script([\S\s]*?)>([\S\s]*?)<\/script>/gim, ''),
+        .replace(/<style[\S\s]*?>[\S\s]*?<\/style>/gim, '')
+        ?.replace(/<script[\S\s]*?>[\S\s]*?<\/script>/gim, ''),
     );
     const document = dom.window.document;
 

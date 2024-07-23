@@ -32,5 +32,5 @@ export let Badge = ({ icon, title, cnt, href, className }: BadgeProps) => {
 };
 
 let addCommas = (n: number) => {
-  return String(n).replace(/(\d)(?=(\d{3})+$)/g, '$1,');
+  return String(n).replace(/\d(?=(?<tmp>\d{3})+$)/g, '$1,');
 };

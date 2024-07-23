@@ -1,9 +1,10 @@
-import { ReactNode } from 'react';
+import 'highlight.js/styles/github.css';
+
 import hljs from 'highlight.js/lib/core';
+import css from 'highlight.js/lib/languages/css';
 import js from 'highlight.js/lib/languages/javascript';
 import xml from 'highlight.js/lib/languages/xml';
-import css from 'highlight.js/lib/languages/css';
-import 'highlight.js/styles/github.css';
+import { ReactNode } from 'react';
 
 hljs.registerLanguage('javascript', js);
 hljs.registerLanguage('xml', xml);

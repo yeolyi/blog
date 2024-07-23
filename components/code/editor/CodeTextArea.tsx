@@ -7,7 +7,7 @@ export default function CodeTextArea({
 }: {
   code: string;
   disabled: boolean;
-  setCode: (code: string) => void;
+  setCode?: (code: string) => void;
 }) {
   return (
     <textarea
@@ -19,18 +19,18 @@ export default function CodeTextArea({
       className="absolute bottom-4 left-4 right-4 top-4 resize-none whitespace-pre bg-transparent font-firacode text-transparent caret-sky-500 outline-none "
       value={code}
       disabled={disabled}
-      onChange={(e) => setCode(e.target.value)}
-      onKeyDown={(e) => handleKeyDown(e, setCode)}
+      onChange={(e) => setCode?.(e.target.value)}
+      onKeyDown={(e) => handleKeyDown(e)}
     />
   );
 }
 
 let getLineIndices = (str: string, idx: number) => {
   let lineStart = idx;
-  while (lineStart > 0 && str[lineStart - 1] != '\n') lineStart--;
+  while (lineStart > 0 && str[lineStart - 1] !== '\n') lineStart--;
 
   let wordStart = lineStart;
-  while (str[wordStart] == ' ' || str[wordStart] == '\t') wordStart++;
+  while (str[wordStart] === ' ' || str[wordStart] === '\t') wordStart++;
 
   return { wordStart, lineStart };
 };
@@ -48,19 +48,16 @@ let handleEnterKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
 
   // Insert carriage return and indented text
   // https://stackoverflow.com/questions/60581285/
-  document.execCommand('insertText', false, '\n' + ' '.repeat(blank));
+  document.execCommand('insertText', false, `\n${' '.repeat(blank)}`);
   e.preventDefault();
 };
 
 let TAB = '  ';
 
-let handleTabKeyDown = (
-  e: KeyboardEvent<HTMLTextAreaElement>,
-  setCode: (val: string) => void,
-) => {
+let handleTabKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
   let target = e.target as HTMLTextAreaElement;
 
-  if (target.selectionStart == target.selectionEnd) {
+  if (target.selectionStart === target.selectionEnd) {
     // undoable
     if (!e.shiftKey) {
       document.execCommand('insertText', false, TAB);
@@ -86,17 +83,14 @@ let handleTabKeyDown = (
 };
 
 // https://stackoverflow.com/questions/6637341/use-tab-to-indent-in-textarea
-function handleKeyDown(
-  e: KeyboardEvent<HTMLTextAreaElement>,
-  setCode: (val: string) => void,
-) {
+function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
   switch (e.key) {
     case 'Enter':
       handleEnterKeyDown(e);
       break;
     case 'Tab':
       e.preventDefault();
-      handleTabKeyDown(e, setCode);
+      handleTabKeyDown(e);
       break;
   }
 }

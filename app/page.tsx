@@ -1,27 +1,28 @@
 import Image from 'next/image';
-import { Gallery } from '../components/gallery/Gallery';
-import profile from '@/public/profile.jpg';
 import { ReactNode } from 'react';
-import { Tile } from '@/components/gallery/Tile';
-import {
-  TopSection,
-  Headline,
-  Copy,
-  SectionHeadline,
-} from '@/components/common/Typography';
-import { PostContainer, PostTile } from '@/components/common/PostTile';
-import { CserealBg } from '@/components/main/CserealBg';
-import InstaBg from '@/components/main/InstaBg';
-import { WideTile, WideTileProps } from '@/components/gallery/WideTile';
-import Giscus from '@/components/common/Giscus';
-import Footer from '@/components/layout/Footer';
 
+import Giscus from '@/components/common/Giscus';
+import { PostContainer, PostTile } from '@/components/common/PostTile';
+import {
+  Copy,
+  Headline,
+  SectionHeadline,
+  TopSection,
+} from '@/components/common/Typography';
+import { Tile } from '@/components/gallery/Tile';
+import { WideTile, WideTileProps } from '@/components/gallery/WideTile';
+import Footer from '@/components/layout/Footer';
+import { CserealBg } from '@/components/main/CserealBg';
 import CSSBookTile from '@/components/main/CSSBookTile';
-import { cssTileProps } from '@/content/cssTileProps';
+import InstaBg from '@/components/main/InstaBg';
 import JSBookTile from '@/components/main/JsBookTile';
+import { cssTileProps } from '@/content/cssTileProps';
 import { jsTileProps } from '@/content/jsTileProps';
 import { postTileProps } from '@/content/postTileProps';
 import { webTileProps } from '@/content/webTileProps';
+import profile from '@/public/profile.jpg';
+
+import { Gallery } from '../components/gallery/Gallery';
 
 export default function Page() {
   return (

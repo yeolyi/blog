@@ -1,26 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import cssbook from '@/public/cssbook.png';
-import { useEffect, useRef } from 'react';
-import UniversalTilt from '@/components/gallery/tilt';
+
 import { Tile } from '@/components/gallery/Tile';
+import cssbook from '@/public/cssbook.png';
 
 export default function CSSBookTile() {
-  let imageRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    let cur = imageRef.current;
-    if (cur === null) return;
-
-    UniversalTilt.init({
-      elements: cur,
-      settings: { shine: true, 'shine-opacity': 0.7, reverse: true },
-    });
-    // @ts-expect-error
-    return () => cur.universalTilt.destroy();
-  }, []);
-
   return (
     <Tile
       name="소개"
@@ -36,7 +21,7 @@ export default function CSSBookTile() {
       }}
       textColor="text-white"
     >
-      <div ref={imageRef} className="overflow-hidden rounded-[13px]">
+      <div className="overflow-hidden rounded-[13px]">
         <Image src={cssbook} alt="CSS 책 표지" />
       </div>
     </Tile>

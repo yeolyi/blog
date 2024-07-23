@@ -28,7 +28,7 @@ export let PostTile = ({
     <Link href={href} className="flex h-full w-full flex-col">
       <Image
         src={src}
-        className={`relative h-[187px] transform bg-center transition-[400ms_cubic-bezier(0.4,0,0.25,1)_0ms,opacity_1s_cubic-bezier(0.4,0,0.25,1)_0ms] group-hover:scale-105 lg:h-[266px] ${objectFit === 'cover' ? 'object-cover' : 'object-contain p-4'}`}
+        className={`relative h-[187px] w-full transform bg-center transition-[400ms_cubic-bezier(0.4,0,0.25,1)_0ms,opacity_1s_cubic-bezier(0.4,0,0.25,1)_0ms] group-hover:scale-105 lg:h-[266px] ${objectFit === 'cover' ? 'object-cover' : 'object-contain p-4'}`}
         alt=""
         quality={100}
       />

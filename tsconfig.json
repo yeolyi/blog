@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2015",
+    "target": "ES2021",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -32,7 +32,8 @@
     "app/(blog)/library/react/page.mdx",
     "components/tiles/webTileProps.tsx",
     "components/code/sandbox/preset/partialApplicationPlugin.js",
-    "components/code/sandbox/preset/babelAsyncDo.js"
+    "components/code/sandbox/preset/babelAsyncDo.js",
+    "eslint.config.js"
   ],
   "exclude": ["node_modules"]
 }

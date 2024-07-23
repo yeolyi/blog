@@ -1,5 +1,7 @@
 import { FaInstagram } from 'react-icons/fa6';
+
 import { getFollowerCnt } from '@/api/instagram';
+
 import { Badge } from './Badge';
 
 export default async function Follower({ className }: { className?: string }) {

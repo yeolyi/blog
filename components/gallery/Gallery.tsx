@@ -1,6 +1,7 @@
 'use client';
 
 import { ReactNode, useEffect, useMemo, useState } from 'react';
+
 import GalleryControl from './Control';
 
 export const Gallery = ({
@@ -61,9 +62,8 @@ export const Gallery = ({
         <ul
           className="mb-[10px] inline-grid w-fit grid-flow-col gap-[20px] px-[calc(50%-var(--viewport-content)/2)] sm:mb-[16px] md:mb-[18px] md:mr-[40px] lg:mb-[22px]"
           style={{
-            gridTemplateRows: wide
-              ? 'var(--wide-tile-height)'
-              : 'var(--tile-height)',
+            gridTemplateRows:
+              wide ? 'var(--wide-tile-height)' : 'var(--tile-height)',
           }}
         >
           {children}

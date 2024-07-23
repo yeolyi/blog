@@ -18,7 +18,7 @@ export let getFollowerCnt = async (): Promise<number> => {
     let json = await resp.json();
 
     return json.data.user.edge_followed_by.count;
-  } catch (e) {
+  } catch {
     return -1;
   }
 };

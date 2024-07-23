@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const useCurrentHeading = () => {
   const [headingList, setHeadingList] = useState<HTMLHeadingElement[]>([]);
@@ -24,7 +24,7 @@ const useCurrentHeading = () => {
     document.addEventListener('scroll', handleScroll);
     return () => {
       document.removeEventListener('scroll', handleScroll);
-      timeoutId && clearTimeout(timeoutId);
+      if (timeoutId !== null) clearTimeout(timeoutId);
     };
   }, []);
 
@@ -47,7 +47,7 @@ const getCurHeading = (headingList: HTMLHeadingElement[]) => {
           heading,
         ] as const,
     )
-    .filter(([offset]) => 0 <= offset)
+    .filter(([offset]) => offset >= 0)
     .sort((a, b) => a[0] - b[0]);
 
   if (offsetList.length) return offsetList[0][1];

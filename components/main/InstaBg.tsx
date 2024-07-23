@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
 import gsap from 'gsap';
+import { useEffect } from 'react';
 
 export default function InstaBg() {
   useEffect(() => {
@@ -38,7 +38,7 @@ export default function InstaBg() {
             suppressHydrationWarning
             className="heart absolute bottom-0 list-none blur-[1px]"
             key={i}
-            style={{ left: Math.random() * 100 + '%' }}
+            style={{ left: `${Math.random() * 100}%` }}
           />
         ))}
       </ul>

@@ -8,20 +8,11 @@ const octokit = new Octokit({
   request: { fetch: customFetch },
 });
 
-export let getStarGazers = async (): Promise<number> => {
+export let getStarGazers = async () => {
   let resp = await octokit.request('GET /repos/{owner}/{repo}/', {
     owner: 'yeolyi',
     repo: 'blog',
   });
 
-  return resp.data.stargazers_count;
-};
-
-export let logRateLimit = async () => {
-  console.log(
-    await octokit.request('GET /rate_limit', {
-      owner: 'yeolyi',
-      repo: 'blog',
-    }),
-  );
+  return resp.data.stargazers_count as number;
 };

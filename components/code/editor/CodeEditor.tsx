@@ -1,6 +1,5 @@
-import { ReactNode } from 'react';
-import HighlightedCode from './HighlightedCode';
 import CodeTextArea from './CodeTextArea';
+import HighlightedCode from './HighlightedCode';
 
 export default function CodeEditor({
   language,
@@ -10,7 +9,7 @@ export default function CodeEditor({
 }: {
   language: string;
   code: string;
-  setCode: (code: string) => void;
+  setCode?: (code: string) => void;
   noneditable?: boolean;
 }) {
   return (

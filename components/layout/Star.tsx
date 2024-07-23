@@ -1,4 +1,5 @@
 import { getStarGazers } from '@/api/github';
+
 import { Badge } from './Badge';
 
 export default async function Star() {
