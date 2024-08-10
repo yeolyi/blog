@@ -11,7 +11,7 @@ export let getFollowerCnt = async (): Promise<number> => {
       'https://i.instagram.com/api/v1/users/web_profile_info/?username=yeolyii',
       {
         headers,
-        next: { revalidate: 10 },
+        next: { revalidate: 60 },
       },
     );
 
