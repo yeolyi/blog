@@ -3,8 +3,9 @@ import './index.css';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom';
 
-import { mdxComponents } from './components/mdx';
-import Test from './test.mdx';
+import { mdxComponents } from '@/components/mdx';
+
+import Test from './markdown/test.mdx';
 
 const router = createBrowserRouter([
   {
