@@ -11,12 +11,14 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@types/mdx": "^2.0.13",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
+    "@mdx-js/rollup": "^3.0.1",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
