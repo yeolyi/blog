@@ -7,7 +7,7 @@ import { useClickOutside } from '@/util/hook';
 import useCurrentHeading from './useCurrentHeading';
 import Toc from './Toc';
 
-export default function Navigation() {
+export default function Island() {
   const { currentHeading, setCurrentHeading, headingList } =
     useCurrentHeading();
   const [expanded, setExpanded] = useState(false);

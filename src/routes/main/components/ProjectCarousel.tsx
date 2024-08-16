@@ -1,7 +1,7 @@
 import { Carousel } from './carousel/Carousel';
-import { WideTile, WideTileProps } from './tile/WideTile';
-import { CserealBg } from './interactiveBg/CserealBg';
-import InstaBg from './interactiveBg/InstaBg';
+import { WideTile, WideTileProps } from './carousel/WideTile';
+import { CserealBg } from './post/CserealBg';
+import InstaBg from './post/InstaBg';
 
 export let ProjectCarousel = () => {
   return (

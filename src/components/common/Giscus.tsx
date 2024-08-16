@@ -28,6 +28,7 @@ export default function Giscus({
     scriptElem.setAttribute('data-input-position', 'top');
     scriptElem.setAttribute('data-theme', 'noborder_light');
     scriptElem.setAttribute('data-lang', 'ko');
+    scriptElem.setAttribute('data-loading', 'lazy');
     scriptElem.crossOrigin = 'anonymous';
     scriptElem.async = true;
 

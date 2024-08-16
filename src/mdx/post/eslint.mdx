@@ -1,0 +1,261 @@
+# 가볍게 살펴보는 ESLint
+
+최근에 블로그를 개발하던 중 ESLint가 제대로 적용되어있지 않음을 깨달았습니다.
+config 복붙만 했었지 ESLint가 어떻게 동작하는지는 잘 몰랐어서 이 기회에 문서를
+훑어보았습니다.
+
+https://eslint.org/docs/latest/use/
+
+홈페이지에서 위 문서를 참고했습니다. ESLint를 확장하거나 기여하는 방법은 다루지
+않고 쓰는 방법을 집중해서 돌아보았습니다.
+
+## Getting Started
+
+> ESLint is a configurable JavaScript linter. It helps you find and fix problems
+> in your JavaScript code. Problems can be anything from **potential runtime
+> bugs**, to **not following best practices**, to **styling issues**.
+
+처음에 설치하는 방법입니다. CLI에서 선택한 선택지에 따라 **eslint.config.js**
+파일이 만들어집니다.
+
+```sh
+npm init @eslint/config@latest
+```
+
+설치를 마치고 린트하는 방법입니다:
+
+```sh
+# 특정 파일 린트
+npx eslint yourfile.js
+# 모든 대상 파일 린트
+npx eslint
+```
+
+ESLint의 동작은 설정 파일을 기준으로 합니다. 어떤 규칙을 강제할지, 어떤 파일을
+무시할지 등등이 설정 파일에 모두 들어있습니다. 설정은 npm으로 공유가 가능하고
+npm으로부터 적용하는 것도 가능합니다.
+
+## Core Concepts
+
+ESLint에서 나오는 개념들을 정리해봅시다.
+
+**규칙**(rule)은 코드가 조건에 부합하는지 검사하고 그렇지 않다면 어떻게할지
+정의합니다.
+
+https://eslint.org/docs/latest/rules/
+
+- Rule fixes: 몇몇 규칙은 안전하게 자동으로 문제를 고칠 수 있습니다.
+- Rule suggestion: 몇몇 규칙은 수정을 제안할 수 있지만 코드 로직에 변화를 줄 수
+  있어 수정이 옳은지 개발자가 검토해야합니다.
+  - 따라서 이러한 자동 수정은 **CLI로는 사용할 수 없고 에디터 integration을
+    통해서만 가능**합니다.
+
+**파서**는 코드에서 AST를 만들기 위해 사용됩니다. 커스텀 파서를 사용해 비표준 JS
+문법도 지원할 수 있습니다.
+
+**프로세서**는 마크다운같은 다른 종류의 파일에서 JS를 뽑아내거나 JS 파일을
+전처리합니다.
+
+**플러그인**은 규칙, 프로세서, 기타 설정등을 포함하는 npm 모듈입니다.
+타입스크립트같은 JS 확장을 지원하거나 프레임워크에서 best practice를 강제하기
+위해 자주 사용됩니다.
+
+## Configure ESLint
+
+설정이 비었으면 ESLint는 바보가 됩니다. 설정을 추가하고 수정하는 방법을
+배워봅시다.
+
+### Configuration Files
+
+설정 파일은 설정 객체의 **배열**을 export합니다. 객체에 어떤 키 값이 들어가는지
+코드로 살펴볼게요:
+
+```js
+// @noexec noedit
+// eslint.config.js
+import js from '@eslint/js';
+import example from 'eslint-plugin-example';
+
+export default [
+  // 외부에서 설정을 공유받았다면 이렇게 적용할 수 있습니다.
+  // 여기서는 ESLint가 추천하는 규칙들을 활성화합니다.
+  js.configs.recommended,
+
+  {
+    // 설정이 적용될 파일들.
+    // 기본값: 모든 js, cjs, mjs 파일
+    files: ['**/*.js'],
+
+    // 설정을 적용하지 않을 파일들
+    ignores: ['**/*.test.js'],
+
+    // plugins 객체의 키 값는 플러그인의 네임스페이스를 의미합니다.
+    // 네임스페이스는 아래 rules에서 플러그인에 있는 규칙들을 참조할 때 사용합니다.
+    plugins: { example },
+
+    rules: {
+      // ESLint에 내재된 규칙을 적용합니다.
+
+      // off는 rule을 끄고, warn은 경고만 하며, error는 에러로 처리합니다.
+      // error는 CI 테스트나 커밋 전 체크나 PR 머지 전 체크 등에서 터트리기 위해 유용합니다.
+      // warning은 런타임/빌드타임 에러와 무관한 규칙이거나 false-positive의 가능성이 있을 때 유용합니다.
+      'prefer-const': 'error',
+
+      // 배열이면 두번째 인자부터는 옵션입니다.
+      semi: ['error', 'never'],
+
+      // 위의 네임스페이스를 활용해 플러그인에서 정의된 규칙을 적용합니다.
+      'example/rule1': 'warn',
+    },
+
+    linterOptions: {
+      // eslint-disabled 주석을 무시합니다.
+      noInlineConfig: true,
+      // 있으나 마나한 eslint-disable 주석을 경고 혹은 에러로 처리합니다.
+      reportUnusedDisableDirectives: 'error',
+    },
+  },
+];
+```
+
+### processor
+
+프로세서를 사용한 마크다운 파일 내 JS 코드 블록 처리 예시입니다:
+
+```js
+// @noexec noedit
+// eslint.config.js
+import markdown from 'eslint-plugin-markdown';
+
+export default [
+  // ...
+  {
+    // 마크다운 파일 안에 있는 자바스크립트 파일에 적용됩니다.
+    files: ['**/*.md/*.js'],
+    rules: { strict: 'off' },
+    plugins: { markdown },
+    // 플러그인에서 제공하는 프로세서를 사용할 수 있습니다.
+    processor: 'markdown/markdown',
+  },
+];
+```
+
+### globals
+
+`languageOptions.global`에 어떤 전역 변수들의 존재를 가정하고 린팅할지 설정할 수
+있습니다. 설정하지 않으면 `'window' is not defined`, `'document' is not defined`
+같은 에러가 발생합니다.
+
+```js
+// @noexec noedit
+// eslint.config.js
+import globals from 'globals';
+
+export default [
+  {
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+      },
+      sourceType: 'script', // 'module' | 'commonjs'| 'script'
+    },
+  },
+  // ...
+];
+```
+
+### Flat cascade
+
+이전 설정을 일부 덮어씌우고 싶을 때는 **flat cascade**를 활용합니다.
+
+> While we wanted to get rid of the directory-based config cascade, flat config
+> actually still has a flat cascade defined directly in your eslint.config.js
+> file. Inside of the array, ESLint finds all config objects that match the file
+> being linted and merges them together in much the same way that eslintrc did.
+> The only real difference is the merge happens from the top of the array down
+> to the bottom instead of using files in a directory structure.
+
+https://eslint.org/blog/2022/08/new-config-system-part-2/
+
+예를 들어 외부에서 import한 설정의 일부를 바꾸고 싶으면 아래와같이 할 수
+있습니다:
+
+```js
+// @noexec noedit
+// eslint.config.js
+import exampleConfigs from 'eslint-config-example';
+
+export default [
+  ...exampleConfigs,
+
+  // 수정 사항
+  {
+    rules: {
+      'no-unused-vars': 'warn',
+    },
+  },
+];
+```
+
+특정 파일에 대해 파서를 바꾸고 싶으면 아래와 같이 합니다:
+
+```js
+// @noexec noedit
+// eslint.config.js
+
+// TS 파일을 ESTree-호환되는 형태로 수정합니다.
+import babelParser from '@typescript-eslint/parser';
+
+export default [
+  {
+    files: ['**/*.js', '**/*.mjs'],
+    languageOptions: {
+      parser: babelParser,
+    },
+  },
+];
+```
+
+### gitignore
+
+.gitignore의 파일을 무시하려면 `@eslint/compat` 패키지를 활용합니다.
+
+```js
+// @noexec noedit
+// eslint.config.js
+import { includeIgnoreFile } from '@eslint/compat';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const gitignorePath = path.resolve(__dirname, '.gitignore');
+
+export default [
+  includeIgnoreFile(gitignorePath),
+  {
+    // your overrides
+  },
+];
+```
+
+## Command Line Interface Reference
+
+ESLint CLI로 여러 옵션과 함께 린트할 수 있습니다. 아래는 유용한 것들을 추린
+것이에요.
+
+`eslint [options] file.js [file.js] [dir]`
+
+| Option                        | Description                                                                                                                 |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `--inspect-config`            | config 파일의 분석 결과를 봅니다                                                                                            |
+| `--fix`                       | 자동으로 고칠 수 있는 모든 문제를 고칩니다. 고쳐진 문제는 결과에서 제외됩니다. 프로세서를 사용하면 효과가 없을 수 있습니다. |
+| `--quiet`                     | warning이 아닌 error만 결과에 보여줍니다.                                                                                   |
+| `--max-warnings Int`          | warning threshold를 설정합니다. warning의 개수가 threshold를 넘으면 에러와 함께 린팅이 종료됩니다.                          |
+| `--cache`                     | 수정된 파일만 린팅합니다. 성능이 비약적으로 향상될 수 있습니다. 기본적으로 .eslintcache에 캐시가 저장됩니다.                |
+| `--env-info`                  | Output execution environment information                                                                                    |
+| `--no-warn-ignored`           | 파일 목록에 무시된 파일이 포함되어 있을 때 경고를 표시하지 않습니다.                                                        |
+| `--debug`                     | 디버깅 정보 출력                                                                                                            |
+| `-h, --help`                  | 도움말 표시                                                                                                                 |
+| `-v, --version`               | 버전 번호 출력                                                                                                              |
+| `--print-config path::String` | config 파일의 구성을 출력합니다.                                                                                            |

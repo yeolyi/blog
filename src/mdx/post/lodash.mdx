@@ -1,0 +1,167 @@
+# 가볍게 살펴보는 Lodash
+
+동아리 프로젝트에서 es-toolkit을 쓰기 시작했는데 저는 lodash조차 제대로 써본적이
+없어 가볍게 구경해봤습니다. 함수들을 둘러보며 '나만 자주 쓰는게 아니구나!'를
+느끼며 **유틸화**에 대한 인사이트를 얻을 수 있었습니다.
+
+문서를 보니 함수 설명만 와장창 있어서 막막했는데, 이중에서 자주 쓰는게 어떤건지
+인스타 스토리에 질문을 올렸습니다. 이 글에서는 답변에 나온 함수들을 소개합니다.
+답변해주신 분들 모두 감사드립니다 🙇
+
+## 홈페이지 설명
+
+https://lodash.com/
+
+**A modern JavaScript utility library delivering modularity, performance &
+extras.**
+
+Lodash makes JavaScript easier by taking the hassle out of working with arrays,
+numbers, objects, strings, etc. Lodash’s modular methods are great for:
+
+- Iterating arrays, objects, & strings
+- Manipulating & testing values
+- Creating composite functions
+
+## 자주 쓰는 함수
+
+### cloneDeep
+
+```js
+// @lodash
+let obj1 = [{ a: 1 }, { b: 2 }];
+
+let obj2 = [...obj1];
+log(obj1[0] == obj2[0]);
+
+let obj3 = _.cloneDeep(obj1);
+log(obj1[0] == obj3[0]);
+```
+
+### isEqual
+
+Objects are compared by their own, not inherited, enumerable properties.
+
+```js
+// @lodash
+log({ a: 1 } === { a: 1 });
+log(_.isEqual({ a: 1 }, { a: 1 }));
+
+let obj1 = { a: 1 };
+let obj2 = Object.create({ a: 1 });
+log(_.isEqual(obj1, obj2));
+```
+
+### isEmpty
+
+Objects are considered empty if they have no own enumerable string keyed
+properties.
+
+```js
+// @lodash
+// false
+log(_.isEmpty(new Set([1, 2, 3])));
+log(_.isEmpty({ x: 1 }));
+
+// true
+log(_.isEmpty(null));
+log(_.isEmpty([]));
+log(_.isEmpty(new Map()));
+```
+
+### merge
+
+Recursively merges own and inherited enumerable string keyed properties of
+source objects into the destination object.
+
+```js
+// @lodash
+log(
+  _.merge(
+    {
+      a: [{ b: 2 }, { d: 4 }],
+    },
+    {
+      a: [{ c: 3 }, { e: 5 }],
+    },
+  ),
+);
+```
+
+### mergeWith
+
+```js
+// @lodash
+function customizer(objValue, srcValue) {
+  if (_.isArray(objValue)) {
+    return objValue.concat(srcValue);
+  }
+}
+
+var object = { a: [1], b: [2] };
+var other = { a: [3], b: [4] };
+
+log(_.mergeWith(object, other, customizer));
+```
+
+### compact
+
+Creates an array with all falsey values removed.
+
+```js
+// @lodash
+log(_.compact([0, 1, false, 2, '', '3']));
+```
+
+### has
+
+Checks if path is a **direct property** of object.
+
+```js
+// @lodash
+let obj1 = { a: { b: 2 } };
+let obj2 = Object.create({ a: 1 });
+
+log(_.has(obj1, 'a'));
+log(_.has(obj1, 'a.b'));
+log(_.has(obj1, ['a', 'b']));
+log(_.has(obj2, 'a'));
+```
+
+### camelCase
+
+```js
+// @lodash
+log(_.camelCase('Foo Bar'));
+log(_.camelCase('--foo-bar--'));
+log(_.camelCase('__FOO_BAR__'));
+```
+
+### isNil
+
+```js
+// @lodash
+log(_.isNil(null));
+log(_.isNil(undefined));
+log(_.isNil(NaN));
+```
+
+### includes
+
+```js
+// @lodash
+log(_.includes([1, 2, 3], 1));
+log(_.includes([1, NaN, 3], NaN));
+log(_.includes('abcd', 'bc'));
+```
+
+### map
+
+```js
+// @lodash
+log(_.map([4, 8], (n) => n * n));
+log(_.map({ a: 4, b: 8 }, (n) => n * n));
+
+let users = [{ user: 'barney' }, { user: 'fred' }];
+// The `_.property` iteratee shorthand.
+log(_.map(users, 'user'));
+```

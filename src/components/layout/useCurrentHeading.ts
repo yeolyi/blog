@@ -5,12 +5,14 @@ const useCurrentHeading = () => {
   const [currentHeading, setCurrentHeading] = useState<HTMLHeadingElement>();
 
   useEffect(() => {
-    const headingList = [
-      ...document.querySelectorAll('h2,h3'),
-    ] as HTMLHeadingElement[];
+    const handleChange = () => {
+      const headingList = [
+        ...document.querySelectorAll('h2,h3'),
+      ] as HTMLHeadingElement[];
 
-    setHeadingList(headingList);
-    setCurrentHeading(getCurHeading(headingList));
+      setHeadingList(headingList);
+      setCurrentHeading(getCurHeading(headingList));
+    };
 
     let timeoutId: number | null = null;
     const handleScroll = () => {
@@ -21,8 +23,12 @@ const useCurrentHeading = () => {
       }, 250);
     };
 
+    // TODO: 최적화 or 과정 이해
+    const observer = new MutationObserver(handleChange);
+    observer.observe(document.body, { subtree: true, childList: true });
     document.addEventListener('scroll', handleScroll);
     return () => {
+      observer.disconnect();
       document.removeEventListener('scroll', handleScroll);
       if (timeoutId !== null) clearTimeout(timeoutId);
     };

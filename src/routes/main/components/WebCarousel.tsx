@@ -1,6 +1,6 @@
 import Sandbox from '@/components/code/sandbox/Sandbox';
 import { Carousel } from './carousel/Carousel';
-import { Tile, TileProps } from './tile/Tile';
+import { Tile, TileProps } from './carousel/Tile';
 
 export let WebCarousel = () => {
   return (

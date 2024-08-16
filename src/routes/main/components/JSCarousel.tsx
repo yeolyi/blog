@@ -1,9 +1,9 @@
 import Sandbox from '@/components/code/sandbox/Sandbox';
-import { Tile, TileProps } from '@/routers/main/components/tile/Tile';
+import { Tile, TileProps } from '@/routes/main/components/carousel/Tile';
 import jsbook from '../assets/jsbook.png';
 
-import { Carousel } from '@/routers/main/components/carousel/Carousel';
-import { jsPostPreview } from '@/mdx/js/jsPostPreview';
+import { Carousel } from '@/routes/main/components/carousel/Carousel';
+import { jsPostPreview } from '@/mdx/js/preview';
 
 export let JSCarousel = () => (
   <Carousel>

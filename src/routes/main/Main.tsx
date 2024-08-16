@@ -5,13 +5,13 @@ import {
   Section,
   SectionHeadline,
   TopSection,
-} from '@/routers/main/components/Typography';
+} from '@/routes/main/components/Typography';
 
 import Footer from '@/components/layout/Footer';
-import { JSCarousel } from '@/routers/main/components/JSCarousel';
+import { JSCarousel } from '@/routes/main/components/JSCarousel';
 import profile from './profile.jpg';
 
-import { PostCarousel } from './components/PostCarousel';
+import { PostGrid } from './components/PostGrid';
 import { WebCarousel } from './components/WebCarousel';
 import { ProjectCarousel } from './components/ProjectCarousel';
 
@@ -64,7 +64,7 @@ export let MainPage = () => {
           <SectionHeadline className="horizontal-pad">
             <strong>게시글</strong>
           </SectionHeadline>
-          <PostCarousel />
+          <PostGrid />
         </Section>
 
         <Section className="horizontal-pad pb-[64px]">

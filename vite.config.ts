@@ -3,10 +3,19 @@ import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import path from 'path';
+import rehypeSlug from 'rehype-slug';
+import remarkGfm from 'remark-gfm';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [{ enforce: 'pre', ...mdx() }, react(), tsconfigPaths()],
+  plugins: [
+    {
+      enforce: 'pre',
+      ...mdx({ remarkPlugins: [remarkGfm], rehypePlugins: [rehypeSlug] }),
+    },
+    react(),
+    tsconfigPaths(),
+  ],
   resolve: {
     alias: [{ find: '@', replacement: path.resolve(__dirname, 'src') }],
   },
