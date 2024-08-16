@@ -1,0 +1,138 @@
+# Worker Threads and Messaging
+
+JS는 기본적으로 싱글 스레드입니다. 다수의 이벤트 핸들러가 동시에 실행될 수
+없습니다. Client-side 개발자는 동시성을 고려할 필요가 없지만 이벤트 핸들러
+함수가 너무 오래 실행되면 안됩니다.
+
+브라우저는 이러한 제약을 **Worker** 클래스로 완화시켰습니다. Worker 객체는 메인
+스레드 및 이벤트 루프와 동시에 독립된 환경에서 실행되며.
+
+Worker는 메인 스레드와 메시지를 통해서만 통신할 수 있기에 여전히 DOM을
+concurrent하게 수정할 수는 없습니다. 그래도 오랫동안 실행되는 함수를 실행시킬 수
+있습니다.
+
+Worker는 이미지 처리와 같은 계산 집약적인 작업을 할 때 유용합니다.
+
+## Worker Objects
+
+Worker 객체의 API는 간단해요:
+
+```js
+// @noexec noedit
+// worker가 실행할 JS 파일을 생성자에 전달합니다.
+let worker = new Worker('/worker.js');
+
+// worker에 데이터를 전달합니다.
+worker.postMessage(data);
+
+// worker로부터 데이터를 받습니다.
+worker.addEventListener('message', (e) => {
+  console.log(e.data);
+});
+
+// worker를 강제 종료합니다.
+worker.terminate();
+```
+
+## The Global Object in Workers
+
+**WorkerGlobalScope**는 Worker가 실행되는 독립된 환경을 나타내며 worker의 **전역
+객체** 역할을 합니다.
+
+> A WorkerGlobalScope is something more than the core JavaScript global object,
+> but less than a full-blown client-side Window object.
+
+WorkerGlobalScope의 프로퍼티인 `postMessage()`와 `onmessage`를 통해 worker
+바깥과 소통할 수 있습니다. `close()`로 스스로를 종료할 수 있습니다.
+
+이외에도 스스로를 참조하는 `self`, Worker 생성자에 전달된 URL인 `location`,
+`navigator` 등을 지원합니다.
+
+## Importing Code into a Worker
+
+Worker는 ESM 이전에 생겼기에 추가 스크립트를 불러오기 위한 별도의 시스템이
+있습니다.
+
+```js
+// @noexec noedit
+// 인자 순서대로 스크립트를 불러와 실행합니다.
+importScripts('utils/Histogram.js', 'utils/BitSet.js');
+```
+
+`importScripts`는 동기적으로 동작합니다. 어차피 worker가 메인 스레드에서
+동작하지 않기 때문에 blocking이어도 괜찮습니다.
+
+Worker 생성자의 두 번째 인자로 `{ type: "module" }`을 전달해 ESM을 사용할 수
+있습니다. 이떄 `importScripts`는 사라집니다.
+
+## Worker Execution Model
+
+Worker는 message 이벤트 핸들러를 등록했다면 바깥으로부터 이벤트가 올 수 있으므로
+절대 종료되지 않고, message 핸들러가 없다면 비동기 콜백이 모두 실행된 이후
+자동으로 종료됩니다.
+
+Worker의 종료 여부를 알 방법은 없으므로 worker는 스스로를 종료할 때 부모
+스레드에게 적당히 알려야합니다.
+
+Worker에서 잡히지 않은 에러는 worker의 전역 객체, worker 객체, window 객체
+순으로 전파됩니다.
+
+## postMessage(), MessagePorts, and MessageChannels
+
+메시지를 주고받을 수 있는 `MessagePort` 객체를 직접 만들 수 있습니다:
+
+```js
+// @noexec noedit
+let channel = new MessageChannel();
+let myPort = channel.port1;
+let yourPort = channel.port2;
+myPort.postMessage('Hello, world!');
+yourPort.onmessage = (e) => console.log(e.data); // Hello, world!
+```
+
+Port를 통해 보내진 메시지는 `onmessage`가 정의되거나 `start()` 메서드가 불릴
+때까지 큐에 쌓입니다. 따라서 `addEventListener`를 사용했다면 `start()`를 직접
+호출합니다.
+
+`postMessage`의 두번째 인자로 복사본이 아닌 원본 그대로 전송할 값들을 전달할 수
+있습니다. 이를 활용해 `MessagePort`를 전송하면 Worker와 여러 채널로 통신할 수
+있습니다:
+
+```js
+// @noexec noedit
+let worker = new Worker('worker.js');
+let urgentChannel = new MessageChannel();
+let urgentPort = urgentChannel.port1;
+worker.postMessage({ command: 'setUrgentPort', value: urgentChannel.port2 }, [
+  urgentChannel.port2,
+]);
+
+urgentPort.addEventListener('message', handleUrgentMessage);
+urgentPort.start();
+
+urgentPort.postMessage('test');
+```
+
+두번째 인자로 `ArrayBuffer`를 전송하면 복사로 인한 성능 저하를 막을 수 있습니다.
+다른 worker로 보내진 `ArrayBuffer`는 원래 있었던 곳에서 사용할 수 없게 되며
+따라서 concurrent한 접근도 일어날 수 없습니다.
+
+## Cross-Origin Messaging with postMessage()
+
+`iframe`은 독립된 window를 가지고 `postMessage()`를 통해 window끼리 통신할 수
+있습니다.
+
+iframe 요소의 `contentWindow`는 하위 window 객체이며, iframe 내부 스크립트에서
+`window.parent`는 상위 window 객체입니다. 하지만 문서가 다른 origin이면 접근할
+수 없습니다.
+
+origin이 다르더라고 `postMessage`로 안전하게 정보를 주고받을 수 있습니다. 이때
+두번째 인자로 허용할 origin을 전달합니다.
+
+Worker에서와 마찬가지로 message 이벤트를 활용하는데, `source`와
+`origin`프로퍼티가 추가로 있습니다. 전자는 메시지를 보낸 window 객체, 후자는
+해당 window 객체의 origin을 나타냅니다.
+
+## 추가 자료
+
+https://stackoverflow.com/questions/34409254/are-messages-sent-via-worker-postmessage-queued

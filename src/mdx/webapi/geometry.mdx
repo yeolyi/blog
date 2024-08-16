@@ -1,0 +1,273 @@
+# Document Geometry and Scrolling
+
+지금까지는 document를 트리 형태로 순회만 했지만, 노드가 화면에서 가지는 정확한
+크기와 위치를 알고싶을 수 있습니다.
+
+abstract, tree-based model에서 벗어나 geometrical, coordinate-based **view**로
+document를 보는 방법을 공부해봅시다.
+
+## Document Coordinates and Viewport Coordinates
+
+Element의 위치는 픽셀 단위로 측정됩니다.
+
+**뷰포트**(viewport, 혹은 window)는 현재 창에서 문서를 볼 수 있는
+부분(전체화면이라면 화면 전체)을 말합니다. 뷰포트 바깥의 콘텐츠는 스크롤 하기
+전엔 보이지 않습니다. 웹사이트에서는 스크롤이 가능하기에 document가 뷰포트보다
+클 수 있습니다.
+
+스크롤되는 document 안에 다시 스크롤되는 element가 있는 경우를 생각해보면,
+document에서 요소의 위치를 단순 (x, y) 좌표로 나타내는 것이 유용하지(?) 않음을
+알 수 있습니다. 따라서 client-side JS는 보통 뷰포트 기준 좌표를 사용합니다.
+
+예를 들어 아래 에제에서 스크롤 위치에 상관 없이 `clientX`와 `clientY`는 뷰포트
+기준 좌표를 알려줍니다:
+
+```html
+<div style="height: 100px; overflow: scroll">
+  <div style="height: 1000px"></div>
+</div>
+<script>
+  addEventListener('click', (e) => {
+    console.log(e.clientX, e.clientY);
+  });
+</script>
+```
+
+Document coordinate와 viewport coordinate외에도 부모 요소의 위치에 상대적인
+**container coordinate**가 있습니다:
+
+```html
+<style>
+  div {
+    width: 100px;
+    height: 100px;
+  }
+</style>
+<div style="position: relative; background: red">
+  <div
+    style="position: absolute; background: blue; top: 30px; left: 30px"
+  ></div>
+</div>
+```
+
+## Querying the Geometry of an Element
+
+`getBoundingClientRect()` 혹은 `getClientRects()`를 활용합니다. 후자는 element가
+여러 줄에 걸쳐있을 수 있을 때 사용돼요:
+
+```html
+<div style="width: 150px">
+  이 법은
+  <strong>
+    도로에서 일어나는 교통상의 모든 위험과 장해를 방지하고 제거하여 안전하고
+  </strong>
+  원활한 교통을 확보함을 목적으로 한다.
+</div>
+
+<script>
+  let div = document.querySelector('div');
+  let strong = document.querySelector('strong');
+
+  let rect = div.getBoundingClientRect();
+  console.log(rect.left, rect.right, rect.width);
+  console.log(rect.top, rect.bottom, rect.height);
+
+  rect = strong.getClientRects();
+  console.log(...rect);
+</script>
+```
+
+## Determining the Element at a Point
+
+`elementFromPoint()`를 사용해 반대로 좌표에서 요소를 얻을 수도 있습니다. 가장
+위에 있는 요소를 반환해요:
+
+```html
+<div style="width: 150px">Hello, <em>World!</em></div>
+
+<script>
+  addEventListener('click', (e) => {
+    let element = document.elementFromPoint(e.clientX, e.clientY);
+    console.log(element.tagName);
+  });
+</script>
+```
+
+## Scrolling
+
+`scrollTo()`는 뷰포트의 좌상단을 전달받은 좌표로 설정합니다:
+
+```html
+// @iframeHeight=250
+<style>
+  .container {
+    width: 200px;
+    height: 200px;
+    border: 1px solid red;
+    overflow: scroll;
+  }
+  .content {
+    width: 400px;
+    height: 400px;
+    position: relative;
+  }
+  .object {
+    width: 20px;
+    height: 20px;
+    background: red;
+    position: absolute;
+    top: 190px;
+    left: 190px;
+  }
+</style>
+
+<button>scrollBy</button>
+<button>scrollTo</button>
+<button>scrollIntoView</button>
+
+<div class="container">
+  <div class="content">
+    <div class="object"></div>
+  </div>
+
+  <script>
+    let scrollByButton = document.querySelector('button:nth-of-type(1)');
+    let scrollToButton = document.querySelector('button:nth-of-type(2)');
+    let scrollIntoViewButton = document.querySelector('button:nth-of-type(3)');
+    let container = document.querySelector('.container');
+    let object = document.querySelector('.object');
+
+    scrollToButton.addEventListener('click', () => {
+      container.scrollTo({ left: 200, top: 200, behavior: 'smooth' });
+    });
+    scrollByButton.addEventListener('click', () => {
+      container.scrollBy({ left: 20, top: 20, behavior: 'smooth' });
+    });
+
+    // smooth를 넣으면 크롬에서 한 번밖에 동작하지 않는 것 같아요
+    // https://stackoverflow.com/questions/62150827/
+    scrollIntoViewButton.addEventListener('click', () => {
+      object.scrollIntoView({
+        block: 'center',
+        inline: 'start',
+      });
+    });
+  </script>
+</div>
+```
+
+## Viewport Size, Content Size, and Scroll Position
+
+Viewport size, content size:
+
+```html
+<h1>Hello, World!</h1>
+<script>
+  // 뷰포트 크기 얻기
+  console.log(window.innerWidth, window.innerHeight);
+
+  // document 크기 얻기(= <html> 요소의 크기)
+  let element = document.documentElement;
+  console.log(element.offsetWidth, element.offsetHeight);
+
+  let { width, height } = element.getBoundingClientRect();
+  console.log(width, height);
+</script>
+```
+
+Scroll position:
+
+```html
+<style>
+  html {
+    width: 1000px;
+    height: 1000px;
+  }
+  button {
+    position: fixed;
+  }
+</style>
+
+<script>
+  addEventListener('click', () => {
+    // 아래 값들은 읽기 전용입니다.
+    console.log(window.scrollX, window.scrollY);
+  });
+</script>
+```
+
+요소의 크기/좌표를 알아내는 방법들입니다:
+
+```html
+<style>
+  div {
+    width: 100px;
+    height: 100px;
+  }
+  #parent {
+    border: 1px solid red;
+  }
+  #child {
+    border: 1px solid blue;
+    margin: 10px;
+  }
+</style>
+
+<div id="parent">
+  <div id="child"></div>
+</div>
+
+<script>
+  let child = document.querySelector('#child');
+  // 마진을 제외한 요소의 크기/좌표를 반환합니다.
+  console.log(child.offsetWidth, child.offsetHeight);
+  console.log(child.offsetLeft, child.offsetTop);
+
+  // 보더도 제외한 값을 반환합니다.
+  console.log(child.clientWidth, child.clientHeight);
+  // 패딩 바깥과 보더 바깥의 거리를 반환합니다.
+  // 대부분 그냥 보더 두께라서 그리 유용하지는 않습니다.
+  console.log(child.clientLeft, child.clientTop);
+</script>
+```
+
+요소의 스크롤 위치를 알아내는 방법입니다:
+
+```html
+<style>
+  div {
+    width: 200px;
+    height: 100%;
+    overflow: scroll;
+    border: 1px solid red;
+  }
+</style>
+
+<div>
+  “중앙선”이란 차마의 통행 방향을 명확하게 구분하기 위하여 도로에 황색
+  실선(實線)이나 황색 점선 등의 안전표지로 표시한 선 또는 중앙분리대나 울타리
+  등으로 설치한 시설물을 말한다. 다만, 제14조제1항 후단에 따라
+  가변차로(可變車路)가 설치된 경우에는 신호기가 지시하는 진행방향의 가장 왼쪽에
+  있는 황색 점선을 말한다.
+</div>
+
+<script>
+  let div = document.querySelector('div');
+  // 요소의 content area + padding + overflowing content
+  console.log(div.scrollWidth, div.scrollHeight);
+
+  addEventListener('click', () => {
+    // 이전 프로퍼티와 다르게 아래 두 개는 쓰기가 가능합니다.
+    console.log(div.scrollTop, div.scrollLeft);
+    div.scrollTop += 10;
+
+    // 위에서 배운 scrollTo, scrollBy도 element에서 사용 가능합니다.
+  });
+</script>
+```
+
+## 읽어볼만한 것들
+
+https://developer.mozilla.org/ko/docs/Web/API/Window/devicePixelRatio
+
+https://developer.mozilla.org/en-US/docs/Web/CSS/CSSOM_view/Coordinate_systems
