@@ -1,5 +1,3 @@
-// TODO: core import로 바꾸고 vite visualizer한거 차이 보기
-
 import { MouseEventHandler, useCallback, useEffect, useRef } from 'react';
 
 import cserealbg from '../../assets/bg.png';
@@ -101,7 +99,10 @@ export const CserealBg = () => {
 
   return (
     <div className="relative h-full w-full">
-      <img src={cserealbg} className="object-cover" alt="" />
+      <img
+        src={cserealbg}
+        className="absolute bottom-0 left-0 right-0 top-0 h-full w-full object-cover"
+      />
       <div
         className="csereal-tile-graphic relative mx-auto grid w-fit select-none grid-cols-8 pt-[120px] sm:pt-[90px] md:pt-[60px]"
         ref={containerRef}
