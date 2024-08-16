@@ -1,3 +1,105 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: firacode;
+  src: url(@/assets/firacode.woff2);
+}
+
+@font-face {
+  font-family: pretendard;
+  src: url(@/assets/pretendard.woff2);
+}
+
+/*
+    https://github.com/tailwindlabs/tailwindcss/discussions/2394
+    https://github.com/tailwindlabs/tailwindcss/pull/5732
+*/
+@layer utilities {
+  /* Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
+:root {
+  --viewport-content: calc(100% - 180px);
+
+  --tile-width: 372px;
+  --tile-height: 680px;
+
+  --wide-tile-width: 955px;
+  --wide-tile-height: 600px;
+
+  --unit-size: 24px;
+}
+
+@media (max-width: 1068px) {
+  :root {
+    --viewport-content: calc(100% - 134px);
+
+    --tile-width: 344px;
+    --tile-height: 628px;
+
+    --wide-tile-width: 642px;
+    --wide-tile-height: 555px;
+
+    --unit-size: 24px;
+  }
+}
+
+@media (max-width: 734px) {
+  :root {
+    --viewport-content: 87.5%;
+
+    --tile-width: 304px;
+    --tile-height: 562px;
+
+    --wide-tile-width: 421px;
+
+    --unit-size: 18px;
+  }
+}
+@media (max-width: 480px) {
+  :root {
+    --viewport-content: calc(100% - 44px);
+
+    --tile-width: 280px;
+    --tile-height: 510px;
+
+    --wide-tile-width: 330px;
+
+    --unit-size: 14px;
+  }
+}
+
+.horizontal-pad {
+  margin-inline: auto;
+  width: var(--viewport-content);
+}
+
+.heart:before,
+.heart:after {
+  position: absolute;
+  content: '';
+  left: 24px;
+  top: 0;
+  width: 24px;
+  height: 36px;
+  background: red;
+  border-radius: 16px 16px 0 0;
+  transform: rotate(-45deg);
+  transform-origin: 0 100%;
+}
+
+.heart:after {
+  left: 0;
+  transform: rotate(45deg);
+  transform-origin: 100% 100%;
+}

@@ -1,25 +1,35 @@
 import './index.css';
 
 import { createRoot } from 'react-dom/client';
-import { createBrowserRouter, Link, RouterProvider } from 'react-router-dom';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import { mdxComponents } from '@/components/mdx';
+import { MainPage } from './routers/main/Main';
+import { jsPostPreview } from './mdx/js/jsPostPreview';
+import PostLayout from './components/layout/PostLayout';
+import { lazy, Suspense } from 'react';
+import CodeBlock from './components/code/CodeBlock';
 
-import Test from './markdown/test.mdx';
+const JSPost = ({ fileName }: { fileName: string }) => {
+  const Mdx = lazy(() => import(`./mdx/js/${fileName}.mdx`));
+  return (
+    <Suspense>
+      <Mdx components={{ pre: CodeBlock }} />
+    </Suspense>
+  );
+};
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: (
-      <div>
-        <h1>Hello World</h1>
-        <Link to="about">About Us</Link>
-      </div>
-    ),
+    element: <MainPage />,
   },
   {
-    path: 'about',
-    element: <Test components={mdxComponents} />,
+    path: '/js',
+    element: <PostLayout discussionNumber={2} />,
+    children: jsPostPreview.map(({ fileName }) => ({
+      path: fileName,
+      element: <JSPost fileName={fileName} />,
+    })),
   },
 ]);
 

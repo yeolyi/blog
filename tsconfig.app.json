@@ -21,8 +21,8 @@
     "noFallthroughCasesInSwitch": true,
 
     "paths": {
-      "@/*": ["./src/*"] // enables us to use @components/MyComponent
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "types/"]
+  "include": ["src", "types/", "src/components/mdx.tsx"]
 }
