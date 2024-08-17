@@ -2,7 +2,7 @@ import { MouseEventHandler, useCallback, useEffect, useRef } from 'react';
 
 import cserealbg from '../../assets/bg.png';
 import { throttle } from '@/util/throttle';
-import { gsap } from 'gsap/gsap-core';
+import gsap from 'gsap';
 
 const ROW = 6;
 const COL = 8;
