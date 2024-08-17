@@ -13,7 +13,7 @@ import { webapiPreview } from '@/mdx/webapi/preview';
 let Post = ({ type, fileName }: { type: string; fileName: string }) => {
   const Mdx = lazy(() => import(`./mdx/${type}/${fileName}.mdx`));
   return (
-    <Suspense>
+    <Suspense fallback={<div className="h-full w-full">ASD</div>}>
       <Mdx components={{ pre: CodeBlock }} />
     </Suspense>
   );
