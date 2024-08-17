@@ -10,4 +10,9 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
-          script: whoami
+          script: |
+            cd blog 
+            git pull 
+            pnpm install 
+            pnpm build 
+            pm2 restart server
