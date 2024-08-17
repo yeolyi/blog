@@ -1,20 +1,22 @@
 import React from 'react';
-import ReactDOMServer from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom/server';
 import { App } from '@/App';
+import {
+  renderToPipeableStream,
+  RenderToPipeableStreamOptions,
+} from 'react-dom/server';
 
-export const render = (location: string) => {
-  const html = renderHTML(location);
-
-  return { html };
-};
-
-export const renderHTML = (location: string) => {
-  return ReactDOMServer.renderToString(
+export const render = (
+  url: string,
+  _ssrManifest?: string,
+  options?: RenderToPipeableStreamOptions,
+) => {
+  return renderToPipeableStream(
     <React.StrictMode>
-      <StaticRouter location={location}>
+      <StaticRouter location={url}>
         <App />
       </StaticRouter>
     </React.StrictMode>,
+    options,
   );
 };

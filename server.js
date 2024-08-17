@@ -1,10 +1,12 @@
 import express from 'express';
 import fs from 'fs/promises';
+import { Transform } from 'node:stream';
 
 // Constants
 const isProduction = process.env.NODE_ENV === 'production';
 const port = process.env.PORT || 5173;
 const base = process.env.BASE || '/';
+const ABORT_DELAY = 10000;
 
 // Cached production assets
 const templateHtml =
@@ -48,13 +50,44 @@ app.use('*', async (req, res) => {
       render = (await import('./dist/server/entry-server.js')).render;
     }
 
-    const rendered = await render(url);
+    let didError = false;
 
-    const html = template
-      .replace(`<!--app-head-->`, rendered.head ?? '')
-      .replace(`<!--app-html-->`, rendered.html ?? '');
+    const { pipe, abort } = render(url, undefined, {
+      onShellError() {
+        res.status(500);
+        res.set({ 'Content-Type': 'text/html' });
+        res.send('<h1>Something went wrong</h1>');
+      },
+      onShellReady() {
+        res.status(didError ? 500 : 200);
+        res.set({ 'Content-Type': 'text/html' });
 
-    res.status(200).set({ 'Content-Type': 'text/html' }).send(html);
+        const transformStream = new Transform({
+          transform(chunk, encoding, callback) {
+            res.write(chunk, encoding);
+            callback();
+          },
+        });
+
+        const [htmlStart, htmlEnd] = template.split(`<!--app-html-->`);
+
+        res.write(htmlStart);
+
+        transformStream.on('finish', () => {
+          res.end(htmlEnd);
+        });
+
+        pipe(transformStream);
+      },
+      onError(error) {
+        didError = true;
+        console.error(error);
+      },
+    });
+
+    setTimeout(() => {
+      abort();
+    }, ABORT_DELAY);
   } catch (e) {
     vite?.ssrFixStacktrace(e);
     console.log(e.stack);
