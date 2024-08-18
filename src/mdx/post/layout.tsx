@@ -3,7 +3,7 @@ import { mdxComponents } from '@/components/mdxComponents';
 import { HTMLTemplate } from '@/HTMLTemplate';
 import { Page } from '@/mdx/page';
 
-export let PostLayout = (props: Page) => {
+export let PostLayout = (props: Page & { cssPath: string }) => {
   return (
     <HTMLTemplate {...props}>
       <MdxLayout>

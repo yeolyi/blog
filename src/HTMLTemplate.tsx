@@ -2,19 +2,15 @@ import './index.css';
 
 import { Page } from '@/mdx/page';
 import { ReactNode } from 'react';
-import manifest from '../dist/client/.vite/manifest.json';
-
-const cssPath =
-  import.meta.env.PROD ?
-    '/' + manifest['src/entry-client.tsx'].css?.[0]
-  : '/src/index.css';
 
 export const HTMLTemplate = ({
+  cssPath,
   title,
   description,
   imageSrc,
   children,
 }: {
+  cssPath: string;
   children: ReactNode;
 } & Pick<Page, 'title' | 'description' | 'imageSrc'>) => {
   return (

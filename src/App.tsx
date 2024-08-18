@@ -9,16 +9,16 @@ import { JSLayout } from '@/mdx/js/layout';
 import { PostLayout } from '@/mdx/post/layout';
 import { WebAPILayout } from '@/mdx/webapi/layout';
 
-export let App = () => {
+export let App = ({ cssPath }: { cssPath: string }) => {
   return (
     <Routes>
-      <Route path="/" element={<MainPage />} />
+      <Route path="/" element={<MainPage cssPath={cssPath} />} />
 
       {jsPageList.map((page) => (
         <Route
           key={page.path}
           path={page.path}
-          element={<JSLayout {...page} />}
+          element={<JSLayout {...page} cssPath={cssPath} />}
         />
       ))}
 
@@ -26,7 +26,7 @@ export let App = () => {
         <Route
           key={page.path}
           path={page.path}
-          element={<WebAPILayout {...page} />}
+          element={<WebAPILayout {...page} cssPath={cssPath} />}
         />
       ))}
 
@@ -34,7 +34,7 @@ export let App = () => {
         <Route
           key={page.path}
           path={page.path}
-          element={<PostLayout {...page} />}
+          element={<PostLayout {...page} cssPath={cssPath} />}
         />
       ))}
 
