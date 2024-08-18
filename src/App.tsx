@@ -8,8 +8,11 @@ import { NotFound } from '@/routes/notfound/NotFound';
 import { JSLayout } from '@/mdx/js/layout';
 import { PostLayout } from '@/mdx/post/layout';
 import { WebAPILayout } from '@/mdx/webapi/layout';
+import { useScrollTop } from '@/util/useScrollTop';
 
 export let App = ({ cssPath }: { cssPath: string }) => {
+  useScrollTop();
+
   return (
     <Routes>
       <Route path="/" element={<MainPage cssPath={cssPath} />} />

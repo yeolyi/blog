@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { RiHomeLine } from 'react-icons/ri';
 import { Link } from 'react-router-dom';
 
-import { useClickOutside } from '@/util/hook';
+import { useClickOutside } from '@/util/useClickOutside';
 
 import useCurrentHeading from './useCurrentHeading';
 import Toc from './Toc';
