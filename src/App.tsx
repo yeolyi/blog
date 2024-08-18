@@ -73,14 +73,12 @@ const HTMLTemplate = ({
     <head>
       <meta charSet="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <link
-        rel="stylesheet"
-        href={
-          import.meta.env.DEV ?
-            './styles.css'
-          : manifest['src/entry-client.tsx'].css?.[0]
-        }
-      ></link>
+      {import.meta.env.PROD && (
+        <link
+          rel="stylesheet"
+          href={'/' + manifest['src/entry-client.tsx'].css?.[0]}
+        />
+      )}
       <title>{title}</title>
       <meta name="description" content={description} />
       {import.meta.env.DEV && (
