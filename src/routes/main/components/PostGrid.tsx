@@ -1,11 +1,11 @@
-import { postRoutePreview } from '@/mdx/post/preview';
+import { postPageList } from '@/mdx/post/page';
 import { PostCell } from './post/PostCell';
 import { PostGridContainer } from '@/routes/main/components/post/PostGridContainer';
 
 export let PostGrid = () => {
   return (
     <PostGridContainer>
-      {postRoutePreview.map(({ title, dateStr, imageSrc, path }) => (
+      {postPageList.map(({ title, dateStr, imageSrc, path }) => (
         <PostCell
           key={title}
           title={title}

@@ -3,7 +3,7 @@ import { Tile, TileProps } from '@/routes/main/components/carousel/Tile';
 import jsbook from '../assets/jsbook.png';
 
 import { Carousel } from '@/routes/main/components/carousel/Carousel';
-import { jsRoutePreview } from '@/mdx/js/preview';
+import { jsPageList } from '@/mdx/js/page';
 
 export let JSCarousel = () => (
   <Carousel>
@@ -26,7 +26,7 @@ let firstTile = {
 
 let tileList: TileProps[] = [
   firstTile,
-  ...jsRoutePreview.map((x) => ({
+  ...jsPageList.map((x) => ({
     ...x,
     url: x.path,
     children: (

@@ -1,7 +1,7 @@
 import { MDXProps } from 'mdx/types';
 import { ReactNode } from 'react';
 
-export type RoutePreview = {
+export type Page = {
   title: string;
   description: string;
   path: string;

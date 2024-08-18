@@ -2,10 +2,10 @@ import lodash from './assets/lodash.svg';
 import es2024 from './assets/es2024.png';
 import eslint from './assets/eslint.svg';
 import jslogo from './assets/jslogo.svg';
-import { RoutePreview } from '../routePreview';
+import { Page } from '../page';
 import { lazy } from 'react';
 
-export let postRoutePreview: RoutePreview[] = [
+export let postPageList: Page[] = [
   {
     title: '가볍게 살펴보는 ESLint',
     description: '',

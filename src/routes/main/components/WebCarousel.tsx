@@ -1,7 +1,7 @@
 import Sandbox from '@/components/code/sandbox/Sandbox';
 import { Carousel } from './carousel/Carousel';
 import { Tile, TileProps } from './carousel/Tile';
-import { webapiPreview } from '@/mdx/webapi/preview';
+import { webapiPageList } from '@/mdx/webapi/page';
 
 export let WebCarousel = () => {
   return (
@@ -13,7 +13,7 @@ export let WebCarousel = () => {
   );
 };
 
-let webTileProps: TileProps[] = webapiPreview.map((x) => ({
+let webTileProps: TileProps[] = webapiPageList.map((x) => ({
   ...x,
   url: x.path,
   children: x.exampleCode && (

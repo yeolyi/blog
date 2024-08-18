@@ -1,7 +1,7 @@
 import { lazy } from 'react';
-import { RoutePreview } from '../routePreview';
+import { Page } from '../page';
 
-export let webapiPreview: RoutePreview[] = [
+export let webapiPageList: Page[] = [
   {
     title: 'Web API 기초',
     description: '브라우저에서 JS가 어떤 과정으로 실행되는지 배웠습니다',
@@ -67,7 +67,7 @@ export let webapiPreview: RoutePreview[] = [
   {
     title: '컴포넌트',
     description: '네이티브로 컴포넌트를 구현하는 방법을 공부했습니다',
-    path: 'webapi/component',
+    path: 'webapi/Mdx',
     Mdx: lazy(() => import('./component.mdx')),
     exampleCode: `<div>light DOM</div>
 <script>

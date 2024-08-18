@@ -1,7 +1,7 @@
 import { lazy } from 'react';
-import { RoutePreview } from '../routePreview';
+import { Page } from '../page';
 
-export let jsRoutePreview: RoutePreview[] = [
+export let jsPageList: Page[] = [
   {
     title: '값',
     description:
