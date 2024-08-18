@@ -9,6 +9,7 @@ import CodeBlock from './components/code/CodeBlock';
 import PostLayout from '@/components/layout/PostLayout';
 import { postCellProps } from '@/mdx/post/preview';
 import { webapiPreview } from '@/mdx/webapi/preview';
+import { NotFound } from '@/routes/notfound/NotFound';
 
 let Post = ({ type, fileName }: { type: string; fileName: string }) => {
   const Mdx = lazy(() => import(`./mdx/${type}/${fileName}.mdx`));
@@ -55,6 +56,9 @@ export let App = () => {
             />
           ))}
         </Route>
+      </Route>
+      <Route element={<PostLayout />}>
+        <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
   );
