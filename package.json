@@ -4,11 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "start": "NODE_ENV=production node server.js",
     "dev": "nodemon --watch server.js --delay 2.5 server",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build --outDir dist/client",
     "build:server": "vite build --ssr src/entry-server.tsx --outDir dist/server",
-    "preview": "NODE_ENV=production node server.js",
     "prepare": "husky"
   },
   "dependencies": {

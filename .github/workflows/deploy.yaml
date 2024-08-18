@@ -14,4 +14,4 @@ jobs:
             git pull 
             pnpm install 
             pnpm build 
-            pm2 restart server
+            pm2 restart blog
