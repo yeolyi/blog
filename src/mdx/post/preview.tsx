@@ -2,7 +2,7 @@ import lodash from './assets/lodash.svg';
 import es2024 from './assets/es2024.png';
 import eslint from './assets/eslint.svg';
 import jslogo from './assets/jslogo.svg';
-import { RoutePreview } from '../../post';
+import { RoutePreview } from '../routePreview';
 import { lazy } from 'react';
 
 export let postRoutePreview: RoutePreview[] = [

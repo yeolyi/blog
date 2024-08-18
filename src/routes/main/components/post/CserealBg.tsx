@@ -1,8 +1,9 @@
 import { MouseEventHandler, useCallback, useEffect, useRef } from 'react';
 
 import cserealbg from '../../assets/bg.png';
-import { throttle } from '@/util/throttle';
+
 import gsap from 'gsap';
+import { throttle } from 'es-toolkit';
 
 const ROW = 6;
 const COL = 8;
@@ -54,7 +55,7 @@ let ripple = throttle((idx: number, elementList: Element[]) => {
     duration: DURATION,
     delay: 0.2,
   });
-}, 500)[0];
+}, 500);
 
 export const CserealBg = () => {
   let containerRef = useRef<HTMLDivElement | null>(null);

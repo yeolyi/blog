@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { RoutePreview } from '../../post';
+import { RoutePreview } from '../routePreview';
 
 export let jsRoutePreview: RoutePreview[] = [
   {

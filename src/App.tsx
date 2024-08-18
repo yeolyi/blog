@@ -8,7 +8,7 @@ import MdxLayout from '@/components/layout/MdxLayout';
 import { ReactNode, useEffect } from 'react';
 import CodeBlock from '@/components/code/CodeBlock';
 import { webapiPreview } from '@/mdx/webapi/preview';
-import { RoutePreview } from '@/post';
+import { RoutePreview } from '@/mdx/routePreview';
 import { postRoutePreview } from '@/mdx/post/preview';
 import manifest from '../dist/client/.vite/manifest.json';
 import { NotFound } from '@/routes/notfound/NotFound';
