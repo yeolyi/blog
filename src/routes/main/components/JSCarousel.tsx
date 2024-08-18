@@ -3,7 +3,7 @@ import { Tile, TileProps } from '@/routes/main/components/carousel/Tile';
 import jsbook from '../assets/jsbook.png';
 
 import { Carousel } from '@/routes/main/components/carousel/Carousel';
-import { jsPostPreview } from '@/mdx/js/preview';
+import { jsRoutePreview } from '@/mdx/js/preview';
 
 export let JSCarousel = () => (
   <Carousel>
@@ -26,9 +26,9 @@ let firstTile = {
 
 let tileList: TileProps[] = [
   firstTile,
-  ...jsPostPreview.map((x) => ({
+  ...jsRoutePreview.map((x) => ({
     ...x,
-    url: `/js/${x.fileName}`,
+    url: x.path,
     children: (
       <Sandbox
         presetName="js"

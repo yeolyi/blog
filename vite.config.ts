@@ -8,6 +8,13 @@ import remarkGfm from 'remark-gfm';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  build: {
+    manifest: true,
+    rollupOptions: {
+      // overwrite default .html entry
+      input: './src/entry-client.tsx',
+    },
+  },
   plugins: [
     {
       enforce: 'pre',

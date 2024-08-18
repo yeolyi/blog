@@ -1,11 +1,13 @@
-import { PostPreview } from '../../../types/post';
+import { lazy } from 'react';
+import { RoutePreview } from '../../post';
 
-export let jsPostPreview: PostPreview[] = [
+export let jsRoutePreview: RoutePreview[] = [
   {
     title: '값',
     description:
       '자바스크립트에 있는 값들의 종류와 형변환 과정을 공부했습니다.',
-    fileName: 'value',
+    path: '/js/value',
+    Mdx: lazy(() => import('./value.mdx')),
     exampleCode: `let n = 123.4567;
 console.log(n.toFixed(5));`,
   },
@@ -13,7 +15,8 @@ console.log(n.toFixed(5));`,
     title: '연산자',
     description:
       '값들을 연산자로 조합해 새로운 값을 만드는 방법을 공부했습니다.',
-    fileName: 'expression',
+    path: '/js/expression',
+    Mdx: lazy(() => import('./expression.mdx')),
     exampleCode: `console.log(2 + 2);
 console.log('2' + '2');
 console.log(2 + 2 - 1);
@@ -22,7 +25,8 @@ console.log('2' + '2' - '2');`,
   {
     title: '구문',
     description: '여러 구문을 모아 프로그램을 만드는 방법을 공부했습니다.',
-    fileName: 'statement',
+    path: '/js/statement',
+    Mdx: lazy(() => import('./statement.mdx')),
     exampleCode: `for (let i = 1; i < 5; i++) {
     console.log('x'.repeat(i));
 }`,
@@ -30,7 +34,8 @@ console.log('2' + '2' - '2');`,
   {
     title: '객체',
     description: '자바스크립트의 가장 중요한 주제인 객체를 공부했습니다.',
-    fileName: 'object',
+    path: '/js/object',
+    Mdx: lazy(() => import('./object.mdx')),
     exampleCode: `let obj2 = Object.create(null);
 console.log(String(obj2));`,
   },
@@ -38,7 +43,8 @@ console.log(String(obj2));`,
     title: '배열',
     description:
       '다른 언어들과 미묘하게 다른 자바스크립트의 배열을 공부했습니다.',
-    fileName: 'array',
+    path: '/js/array',
+    Mdx: lazy(() => import('./array.mdx')),
     exampleCode: `let a = [1, 2, 3];
   delete a[2];
   console.log(2 in a);
@@ -49,7 +55,8 @@ console.log(String(obj2));`,
     title: '함수',
     description:
       '맥락에 따라 다르게 동작하는 자바스크립트의 함수와 this 키워드를 공부했습니다.',
-    fileName: 'function',
+    path: '/js/function',
+    Mdx: lazy(() => import('./function.mdx')),
     exampleCode: `function f() {
   console.log(this);
 }
@@ -61,7 +68,8 @@ f.call({ x: 123 }, 1, 2);`,
     title: '클래스',
     description:
       '클래스의 성질이 자바스크립트에서 어떻게 구현되는지 공부했습니다.',
-    fileName: 'class',
+    path: '/js/class',
+    Mdx: lazy(() => import('./class.mdx')),
     exampleCode: `class A {
   static foo() {
     console.log('foo');
@@ -74,13 +82,15 @@ console.log('foo' in A.prototype)`,
     title: '모듈',
     description:
       '모듈이 왜 필요한지, 자바스크립트에 어떤 종류의 모듈 시스템이 있는지 공부했습니다.',
-    fileName: 'module',
+    path: '/js/module',
+    Mdx: lazy(() => import('./module.mdx')),
   },
   {
     title: '라이브러리',
     description:
       '자바스크립트 표준 라이브러리에 어떤 것들이 있는지 공부했습니다.',
-    fileName: 'library',
+    path: '/js/library',
+    Mdx: lazy(() => import('./library.mdx')),
     exampleCode: `let a = new Uint8Array(1);
 a[0] = -1;
 console.log(a[0]);`,
@@ -89,7 +99,8 @@ console.log(a[0]);`,
     title: '이터레이터',
     description:
       '데이터에 순서대로 접근하는 과정을 어떻게 추상화했는지 공부했습니다.',
-    fileName: 'iterator',
+    path: '/js/iterator',
+    Mdx: lazy(() => import('./iterator.mdx')),
     exampleCode: `function* foo() {
   yield* [1, 2];
 }
@@ -102,7 +113,8 @@ console.log(...bar());`,
     title: '비동기 프로그래밍',
     description:
       '자바스크립트가 비동기 작업을 어떻게 표현하며 어떻게 처리하도록하는지 공부했습니다.',
-    fileName: 'async',
+    path: '/js/async',
+    Mdx: lazy(() => import('./async.mdx')),
     exampleCode: `Promise.resolve()
   .then(() => console.log(1))
   .then(() => console.log(2))
@@ -112,7 +124,8 @@ console.log(...bar());`,
     title: '메타 프로그래밍',
     description:
       '코드를 수정하는 코드인 메타 프로그래밍에 관련된 API들을 공부했습니다.',
-    fileName: 'meta',
+    path: '/js/meta',
+    Mdx: lazy(() => import('./meta.mdx')),
     exampleCode: `let obj = { x: 1 };
 Object.freeze(obj);
 console.log(Object.isFrozen(obj));`,

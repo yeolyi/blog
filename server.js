@@ -1,16 +1,9 @@
 import express from 'express';
-import fs from 'fs/promises';
-import { Transform } from 'node:stream';
 
 // Constants
 const isProduction = process.env.NODE_ENV === 'production';
 const port = process.env.PORT || 5173;
 const base = process.env.BASE || '/';
-const ABORT_DELAY = 10000;
-
-// Cached production assets
-const templateHtml =
-  isProduction ? await fs.readFile('./dist/client/index.html', 'utf-8') : '';
 
 // Create http server
 const app = express();
@@ -36,58 +29,14 @@ if (!isProduction) {
 app.use('*', async (req, res) => {
   try {
     const url = '/' + req.originalUrl.replace(base, '');
-    let render, template;
+    let serverScript;
 
     if (!isProduction) {
-      // Always read fresh template in development
-      template = await fs.readFile('./index.html', 'utf-8');
-      template = await vite.transformIndexHtml(url, template);
-
-      render = (await vite.ssrLoadModule('/src/entry-server.tsx')).render;
+      serverScript = await vite.ssrLoadModule('/src/entry-server.tsx');
     } else {
-      template = templateHtml;
-
-      render = (await import('./dist/server/entry-server.js')).render;
+      serverScript = await import('./dist/server/entry-server.js');
     }
-
-    let didError = false;
-
-    const { pipe, abort } = render(url, undefined, {
-      onShellError() {
-        res.status(500);
-        res.set({ 'Content-Type': 'text/html' });
-        res.send('<h1>Something went wrong</h1>');
-      },
-      onShellReady() {
-        res.status(didError ? 500 : 200);
-        res.set({ 'Content-Type': 'text/html' });
-
-        const transformStream = new Transform({
-          transform(chunk, encoding, callback) {
-            res.write(chunk, encoding);
-            callback();
-          },
-        });
-
-        const [htmlStart, htmlEnd] = template.split(`<!--app-html-->`);
-
-        res.write(htmlStart);
-
-        transformStream.on('finish', () => {
-          res.end(htmlEnd);
-        });
-
-        pipe(transformStream);
-      },
-      onError(error) {
-        didError = true;
-        console.error(error);
-      },
-    });
-
-    setTimeout(() => {
-      abort();
-    }, ABORT_DELAY);
+    serverScript.render(url, res);
   } catch (e) {
     vite?.ssrFixStacktrace(e);
     console.log(e.stack);

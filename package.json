@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node server",
+    "dev": "nodemon --watch server.js --delay 2.5 server",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build --outDir dist/client",
     "build:server": "vite build --ssr src/entry-server.tsx --outDir dist/server",
@@ -42,6 +42,7 @@
     "globals": "^15.9.0",
     "husky": "^9.1.4",
     "lint-staged": "^15.2.8",
+    "nodemon": "^3.1.4",
     "postcss": "^8.4.41",
     "prettier": "3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.6",

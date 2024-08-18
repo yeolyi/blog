@@ -15,7 +15,7 @@ export let WebCarousel = () => {
 
 let webTileProps: TileProps[] = webapiPreview.map((x) => ({
   ...x,
-  url: `/webapi/${x.fileName}`,
+  url: x.path,
   children: x.exampleCode && (
     <Sandbox
       presetName="html"
