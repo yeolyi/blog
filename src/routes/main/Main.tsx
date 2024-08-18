@@ -14,15 +14,10 @@ import profile from './profile.jpg';
 import { PostGrid } from './components/PostGrid';
 import { WebCarousel } from './components/WebCarousel';
 import { ProjectCarousel } from './components/ProjectCarousel';
-import { HTMLTemplate } from '@/HTMLTemplate';
 
-export let MainPage = ({ cssPath }: { cssPath: string }) => {
+export let MainPage = () => {
   return (
-    <HTMLTemplate
-      title="개발자 성열"
-      description="유익하고 바보같고 화가나는 개발자 일상"
-      cssPath={cssPath}
-    >
+    <>
       <main>
         <img
           src={profile}
@@ -81,6 +76,6 @@ export let MainPage = ({ cssPath }: { cssPath: string }) => {
       </main>
 
       <Footer />
-    </HTMLTemplate>
+    </>
   );
 };
