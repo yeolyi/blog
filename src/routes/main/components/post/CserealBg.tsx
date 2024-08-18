@@ -120,7 +120,7 @@ export const CserealBg = () => {
                   row === 1 || row === 4 ?
                     'translateX(calc(var(--unit-size) * 2))'
                   : row === 2 ? 'translateX(calc(-1 * var(--unit-size) * 2))'
-                  : '',
+                  : 'translateX()', // mismatch 막기 위해 뭐라도 넣음
               }}
             >
               <svg

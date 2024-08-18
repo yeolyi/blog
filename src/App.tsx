@@ -1,11 +1,11 @@
 import './index.css';
 
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 
 import { MainPage } from './routes/main/Main';
 import { jsRoutePreview } from './mdx/js/preview';
 import MdxLayout from '@/components/layout/MdxLayout';
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import CodeBlock from '@/components/code/CodeBlock';
 import { webapiPreview } from '@/mdx/webapi/preview';
 import { RoutePreview } from '@/post';
@@ -19,14 +19,14 @@ const getMdxRouteList = (
 ) => {
   return (
     <>
-      {previewList.map(({ title, description, path, Mdx }) => (
+      {previewList.map((routePreview) => (
         <Route
-          key={path}
-          path={path}
+          key={routePreview.path}
+          path={routePreview.path}
           element={
-            <HTMLTemplate title={title} description={description}>
+            <HTMLTemplate {...routePreview}>
               <MdxLayout discussionNumber={discussionNumber}>
-                <Mdx components={{ pre: CodeBlock }} />
+                <routePreview.Mdx components={{ pre: CodeBlock }} />
               </MdxLayout>
             </HTMLTemplate>
           }
@@ -37,6 +37,12 @@ const getMdxRouteList = (
 };
 
 export let App = () => {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    scrollTo(0, 0);
+  }, [pathname]);
+
   return (
     <Routes>
       <Route
@@ -63,24 +69,29 @@ export let App = () => {
 const HTMLTemplate = ({
   title,
   description,
+  imageSrc,
   children,
 }: {
-  title: string;
-  description: string;
   children: ReactNode;
-}) => (
+} & Pick<RoutePreview, 'title' | 'description' | 'imageSrc'>) => (
   <html>
     <head>
       <meta charSet="utf-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
       {import.meta.env.PROD && (
         <link
           rel="stylesheet"
           href={'/' + manifest['src/entry-client.tsx'].css?.[0]}
         />
       )}
+
       <title>{title}</title>
       <meta name="description" content={description} />
+      <meta name="og:title" content={title} />
+      <meta name="og:description" content={description} />
+      <meta name="og:image" content={imageSrc} />
+
       {import.meta.env.DEV && (
         <script
           type="module"
@@ -97,20 +108,3 @@ window.__vite_plugin_react_preamble_installed__ = true;`,
     <body>{children}</body>
   </html>
 );
-
-/*
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!--app-head-->
-  </head>
-  <body>
-    <div id="root"><!--app-html--></div>
-    <script type="module" src="/src/entry-client.tsx"></script>
-  </body>
-</html>
-
-*/
