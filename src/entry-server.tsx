@@ -20,7 +20,7 @@ export const render = (url: string, res: Response) => {
           'http://localhost:5173/@vite/client',
           'http://localhost:5173/src/entry-client.tsx',
         ]
-      : [manifest['src/entry-client.tsx'].file],
+      : ['/' + manifest['src/entry-client.tsx'].file],
     onShellError() {
       res.status(500);
       res.set({ 'Content-Type': 'text/html' });
