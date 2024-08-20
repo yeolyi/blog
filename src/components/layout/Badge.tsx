@@ -78,7 +78,7 @@ let useNumber = (url: string) => {
         // TODO
       }
     })();
-  });
+  }, []);
 
   return val;
 };
