@@ -1,0 +1,94 @@
+import ImageViewer from '@/components/common/ImageViewer';
+import rule from '../assets/rule.png';
+
+# CSS Fundamentals
+
+https://github.com/meyerweb/csstdg5figs/blob/main/01-css-fundamentals/block-and-inline-level-elements.html
+
+## Stylesheet Contents
+
+<ImageViewer src={rule} widthPercentage="80%" />
+
+**Vendor prefix**는 프로퍼티가 실험적이거나 브라우저 벤더만의 것임을 나타냅니다.
+최근에는 거의 사용되지 않고 브라우저 구현에서도 사라지고있지만 레거시 코드에서
+종종 볼 수 있습니다:
+
+```css
+div {
+  webkit-transform-origin: 0 0;
+  -moz-transform-origin: 0 0;
+  -o-transform-origin: 0 0;
+  transform-origin: 0 0;
+}
+```
+
+## Elements
+
+HTML 요소를 **replaced**와 **nonreplaced**로 나눌 수 있습니다. 전자는
+document에서 직접 표현할 수 없는 무언가로 변환되는 요소(img, input 등)이며,
+후자는 써진 대로 렌더링되는 요소로 대부분의 HTML 요소가 속합니다.
+
+CSS의 display role은 기본적으로 **block formatting context**와 **inline
+formatting context**로 나뉩니다.
+
+- **Block-level**인 요소는 부모 요소를 채우는 박스를 만들고 이전과 이후에 있는
+  요소를 단절시킵니다. **Block formatting context**를 만듭니다.
+- **Inline-level**인 요소는 텍스트 줄 안에 박스를 만들고 이전과 이후 요소를
+  단절시키지 않습니다. **Inline formatting context**를 만듭니다.
+
+```html
+<h1>h1 (block)</h1>
+<p>
+  This paragraph (p) element is a block-level element. The strongly emphasized
+  text <strong>is an inline element, and will line-wrap when necessary</strong>.
+  The content outside of inline elements is actually part of the block element.
+  The content inside inline elements <em>such as this one</em> belong to the
+  inline element.
+</p>
+```
+
+각 context는 서로가 서로 안에 중첩될 수 있고 CSS에서 중첩에 대한 제한 사항은
+없습니다:
+
+```html
+<p style="display: inline">
+  This is a inline paragraph with
+  <em style="display: block">an block em element</em> within it.
+</p>
+```
+
+## Bringing CSS and HTML together
+
+HTML 문서는 내부적인 계층 구조를 가지고 있고, 이 구조덕분에 HTML과 CSS를
+연결시킬 수 있습니다.
+
+link 태그와 @import로 외부의 스타일시트를 html과 연결시킬 수 있습니다. rel
+속성으로 로드할 데이터가 스타일시트임을 알리고 media 속성은 어떤 매체에 스타일을
+적용시킬지 명시합니다. 명시하지 않으면 기본값이 "all"입니다:
+
+```html
+<!-- @noexec noedit -->
+<link rel="stylesheet" href="sheet1.css" media="screen, print" />
+<style>
+  @import url(sheet2.css);
+  h1 {
+    color: silver;
+  }
+</style>
+```
+
+@import는 external stylesheet가 또다른 external stylesheet를 필요로할 때
+유용합니다. 스타일 시트 내부에서 link 태그를 사용할 수 없기 때문에 @import를
+사용해야합니다.
+
+@import에서는 나중에 배울 cascade layer로 스타일을 불러올 수 있습니다:
+
+```css
+/* basic-text.css를 basic cascase layer에 할당합니다 */
+@import url(basic-text.css) screen layer(basic);
+```
+
+## Summary
+
+스타일시트를 HTML 외부에 두는 것은 사이트의 스타일을 한 곳에서 관리할 수 있어
+유지보수 측면에서 좋습니다.
