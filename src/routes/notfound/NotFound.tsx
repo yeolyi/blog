@@ -1,6 +1,8 @@
+import MdxLayout from '@/components/layout/MdxLayout';
+
 export let NotFound = () => {
   return (
-    <>
+    <MdxLayout>
       <h1>404 Not Found</h1>
       <p>
         <a href="https://www.rfc-editor.org/rfc/rfc9110#status.404">
@@ -35,6 +37,6 @@ export let NotFound = () => {
         </span>
         ).
       </p>
-    </>
+    </MdxLayout>
   );
 };
