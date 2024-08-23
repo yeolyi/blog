@@ -5,10 +5,10 @@ import {
   Section,
   SectionHeadline,
   TopSection,
-} from '@/routes/main/components/Typography';
+} from '@/page/main/components/Typography';
 
 import Footer from '@/components/layout/Footer';
-import { JSCarousel } from '@/routes/main/components/JSCarousel';
+import { JSCarousel } from '@/page/main/components/JSCarousel';
 import profile from './profile.jpg';
 
 import { PostGrid } from './components/PostGrid';

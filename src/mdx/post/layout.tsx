@@ -1,11 +1,6 @@
-import MdxLayout from '@/components/layout/MdxLayout';
-import { mdxComponents } from '@/components/mdxComponents';
-import { Page } from '@/mdx/page';
+import MdxLayout from '@/page/mdx/MdxLayout';
+import { MdxPage } from '@/mdx/MdxPage';
 
-export let PostLayout = (props: Page) => {
-  return (
-    <MdxLayout>
-      <props.Mdx components={mdxComponents} />
-    </MdxLayout>
-  );
+export let PostLayout = (props: MdxPage) => {
+  return <MdxLayout mdx={props.mdx} />;
 };

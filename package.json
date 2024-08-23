@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "NODE_ENV=production node server.js",
-    "dev": "nodemon --watch server.js --delay 2.5 server",
+    "start": "NODE_ENV=production tsx server.js",
+    "dev": "tsx watch --ignore \"!(server.ts)\" server.ts",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build --outDir dist/client",
     "build:server": "vite build --ssr src/entry-server.tsx --outDir dist/server",
@@ -26,7 +26,8 @@
     "react-dom": "^18.3.1",
     "react-icons": "^5.2.1",
     "react-router-dom": "^6.26.0",
-    "sirv": "^2.0.4"
+    "sirv": "^2.0.4",
+    "tsx": "^4.17.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",
@@ -45,7 +46,6 @@
     "globals": "^15.9.0",
     "husky": "^9.1.4",
     "lint-staged": "^15.2.8",
-    "nodemon": "^3.1.4",
     "postcss": "^8.4.41",
     "prettier": "3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.6",

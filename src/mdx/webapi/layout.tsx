@@ -1,12 +1,6 @@
-import MdxLayout from '@/components/layout/MdxLayout';
-import { mdxComponents } from '@/components/mdxComponents';
+import MdxLayout from '@/page/mdx/MdxLayout';
+import { MdxPage } from '@/mdx/MdxPage';
 
-import { Page } from '@/mdx/page';
-
-export let WebAPILayout = (props: Page) => {
-  return (
-    <MdxLayout discussionNumber={10}>
-      <props.Mdx components={mdxComponents} />
-    </MdxLayout>
-  );
+export let WebAPILayout = (props: MdxPage) => {
+  return <MdxLayout discussionNumber={10} mdx={props.mdx} />;
 };

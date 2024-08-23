@@ -1,15 +1,17 @@
 import Giscus from '@/components/common/Giscus';
 import Footer from '@/components/layout/Footer';
 import Island from '@/components/layout/Island';
-import { ReactNode, Suspense } from 'react';
+import { mdxComponents } from '@/page/mdx/mdxComponents';
+import { lazy, Suspense } from 'react';
 
 export default function MdxLayout({
   discussionNumber,
-  children,
+  mdx,
 }: {
   discussionNumber?: number;
-  children: ReactNode;
+  mdx: Promise<typeof import('*.mdx')>;
 }) {
+  let Mdx = lazy(() => mdx);
   return (
     <>
       <main className="grow">
@@ -23,7 +25,7 @@ export default function MdxLayout({
                 </div>
               }
             >
-              {children}
+              <Mdx components={mdxComponents} />
             </Suspense>
             <div className="my-16 h-[1px] w-full bg-neutral-300" />
             <Giscus discussionNumber={discussionNumber} />

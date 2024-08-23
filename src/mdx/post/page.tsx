@@ -2,16 +2,15 @@ import lodash from './assets/lodash.svg';
 import es2024 from './assets/es2024.png';
 import eslint from './assets/eslint.svg';
 import jslogo from './assets/jslogo.svg';
-import { Page } from '../page';
-import { lazy } from 'react';
+import { MdxPage } from '../MdxPage';
 
-export let postPageList: Page[] = [
+export let postPageList: MdxPage[] = [
   {
     title: '가볍게 살펴보는 ESLint',
     description: '',
     dateStr: '2024.07.21',
     path: '/post/eslint',
-    Mdx: lazy(() => import('./eslint.mdx')),
+    mdx: import('./eslint.mdx'),
     imageSrc: eslint,
   },
   {
@@ -19,7 +18,7 @@ export let postPageList: Page[] = [
     description: '',
     dateStr: '2024.07.20',
     path: '/post/lodash',
-    Mdx: lazy(() => import('./lodash.mdx')),
+    mdx: import('./lodash.mdx'),
     imageSrc: lodash,
   },
   {
@@ -27,7 +26,7 @@ export let postPageList: Page[] = [
     description: '',
     dateStr: '2024.07.19',
     path: '/post/es2024',
-    Mdx: lazy(() => import('./es2024.mdx')),
+    mdx: import('./es2024.mdx'),
     imageSrc: jslogo,
   },
   {
@@ -35,7 +34,7 @@ export let postPageList: Page[] = [
     description: '',
     dateStr: '2024.07.07',
     path: '/post/js-proposals',
-    Mdx: lazy(() => import('./js-proposals.mdx')),
+    mdx: import('./js-proposals.mdx'),
     imageSrc: es2024,
   },
 ];

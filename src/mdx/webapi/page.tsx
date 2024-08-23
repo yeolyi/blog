@@ -1,12 +1,11 @@
-import { lazy } from 'react';
-import { Page } from '../page';
+import { MdxPage } from '../MdxPage';
 
-export let webapiPageList: Page[] = [
+export let webapiPageList: MdxPage[] = [
   {
     title: 'Web API 기초',
     description: '브라우저에서 JS가 어떤 과정으로 실행되는지 배웠습니다',
     path: 'webapi/basic',
-    Mdx: lazy(() => import('./basic.mdx')),
+    mdx: import('./basic.mdx'),
     exampleCode: `<script>
   setInterval(() => {
     let str = new Date().toLocaleTimeString();
@@ -19,7 +18,7 @@ export let webapiPageList: Page[] = [
     description:
       '브라우저에서 이벤트가 어떻게 발생되고 전파되는지 공부했습니다.',
     path: 'webapi/event',
-    Mdx: lazy(() => import('./event.mdx')),
+    mdx: import('./event.mdx'),
     exampleCode: `<p></p>
 <script>
   let p = document.querySelector('p');
@@ -33,7 +32,7 @@ export let webapiPageList: Page[] = [
     title: 'Document 조작',
     description: 'JS로 웹페이지의 내용을 바꾸는 방법을 공부했습니다.',
     path: 'webapi/document',
-    Mdx: lazy(() => import('./document.mdx')),
+    mdx: import('./document.mdx'),
     exampleCode: `<p></p>
 <script>
   let p = document.querySelector('p');
@@ -44,7 +43,7 @@ export let webapiPageList: Page[] = [
     title: 'CSS 조작',
     description: 'JS로 CSS 스타일을 바꾸는 방법을 공부했습니다',
     path: 'webapi/css',
-    Mdx: lazy(() => import('./css.mdx')),
+    mdx: import('./css.mdx'),
     exampleCode: `<p>Hello!</p>
 <script>
   let p = document.querySelector('p');
@@ -56,7 +55,7 @@ export let webapiPageList: Page[] = [
     description:
       '요소의 크기와 위치, 스크롤을 알고 조작하는 법을 공부했습니다.',
     path: 'webapi/geometry',
-    Mdx: lazy(() => import('./geometry.mdx')),
+    mdx: import('./geometry.mdx'),
     exampleCode: `<script>
   addEventListener("click", (e) => {
     console.log(e.offsetX, e.offsetY);
@@ -67,8 +66,8 @@ export let webapiPageList: Page[] = [
   {
     title: '컴포넌트',
     description: '네이티브로 컴포넌트를 구현하는 방법을 공부했습니다',
-    path: 'webapi/Mdx',
-    Mdx: lazy(() => import('./component.mdx')),
+    path: 'webapi/mdx',
+    mdx: import('./component.mdx'),
     exampleCode: `<div>light DOM</div>
 <script>
   let shadowHost = document.querySelector('div');
@@ -81,7 +80,7 @@ export let webapiPageList: Page[] = [
     description:
       '해상도 상관없이 깔끔하게 렌더링되는 이미지 포맷을 공부했습니다',
     path: 'webapi/svg',
-    Mdx: lazy(() => import('./svg.mdx')),
+    mdx: import('./svg.mdx'),
     exampleCode: `<svg version="1.1" width="50" height="50" xmlns="http://www.w3.org/2000/svg">
   <circle cx="25" cy="25" r="25" fill="black" />
   <text x="25" y="32" font-size="18" text-anchor="middle" fill="white">
@@ -94,7 +93,7 @@ export let webapiPageList: Page[] = [
     description:
       '히스토리 관련된 API들과 함께 pushState()로 상태를 관리하는 방법을 공부했습니다.',
     path: 'webapi/navigation',
-    Mdx: lazy(() => import('./navigation.mdx')),
+    mdx: import('./navigation.mdx'),
     exampleCode: `<button>click me</button>
 <script>
   document.querySelector('button').addEventListener('click', () => {
@@ -107,7 +106,7 @@ export let webapiPageList: Page[] = [
     description:
       '자바스크립트로 직접 네트워크 요청을 보내는 방법을 공부했습니다.',
     path: 'webapi/network',
-    Mdx: lazy(() => import('./network.mdx')),
+    mdx: import('./network.mdx'),
     exampleCode: `<script>
   fetch('https://jsonplaceholder.typiexampleCode.com/todos/1')
     .then(resp => resp.json())
@@ -118,12 +117,12 @@ export let webapiPageList: Page[] = [
     title: 'Storage',
     description: '브라우저상에 데이터를 저장하는 다양한 방법을 공부했습니다.',
     path: 'webapi/storage',
-    Mdx: lazy(() => import('./storage.mdx')),
+    mdx: import('./storage.mdx'),
   },
   {
     title: 'Worker',
     description: '별개의 스레드로 JS 코드를 실행시키는 방법을 공부했습니다.',
     path: 'webapi/worker',
-    Mdx: lazy(() => import('./worker.mdx')),
+    mdx: import('./worker.mdx'),
   },
 ];
