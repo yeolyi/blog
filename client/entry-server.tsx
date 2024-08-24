@@ -52,7 +52,7 @@ let feed = new RSS({
   description: '배우고 익히는 재미로 사는 프론트엔드 개발자 이성열입니다.',
   feed_url: `${BASE_URL}/rss.xml`,
   site_url: BASE_URL,
-  image_url: `${BASE_URL}/favicon.ico`,
+  image_url: `${BASE_URL}/me.jpg`,
 });
 
 for (let page of postPageList) {

@@ -37,4 +37,12 @@ export let postPageList: MdxPage[] = [
     mdx: import('./js-proposals.mdx'),
     imageSrc: es2024,
   },
+  {
+    title: 'RSS 테스트',
+    description: '',
+    dateStr: '2024.08.25',
+    path: '/post/test',
+    mdx: import('./test.mdx'),
+    imageSrc: es2024,
+  },
 ];
