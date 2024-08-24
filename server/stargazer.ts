@@ -12,7 +12,8 @@ export let stargazerCache = new Cache(async () => {
       repo: 'blog',
     });
     return resp.data.stargazers_count;
-  } catch {
+  } catch (e) {
+    console.error(e);
     return -1;
   }
 }, 60 * 1000);

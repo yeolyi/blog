@@ -15,7 +15,8 @@ export let instagramCache = new Cache(async () => {
     );
     let json = await resp.json();
     return json.data.user.edge_followed_by.count;
-  } catch {
+  } catch (e) {
+    console.error(e);
     return -1;
   }
 }, 60 * 1000);

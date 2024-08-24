@@ -23,7 +23,7 @@ export class Cache<T> {
     }
 
     if (this.#promise) {
-      return await this.#promise;
+      return (await this.#promise).value;
     }
 
     this.#promise = (async () => {
@@ -31,6 +31,6 @@ export class Cache<T> {
       return { value, timestamp: Date.now() };
     })();
 
-    return await this.#promise;
+    return (await this.#promise).value;
   }
 }
