@@ -1,14 +1,14 @@
-import Giscus from '@/components/common/Giscus';
+import Giscus from '@/client/components/common/Giscus';
 import {
   Copy,
   Headline,
   Section,
   SectionHeadline,
   TopSection,
-} from '@/page/main/components/Typography';
+} from '@/client/page/main/components/Typography';
 
-import Footer from '@/components/layout/Footer';
-import { JSCarousel } from '@/page/main/components/JSCarousel';
+import Footer from '@/client/components/layout/Footer';
+import { JSCarousel } from '@/client/page/main/components/JSCarousel';
 import profile from './profile.jpg';
 
 import { PostGrid } from './components/PostGrid';

@@ -1,7 +1,7 @@
-import Giscus from '@/components/common/Giscus';
-import Footer from '@/components/layout/Footer';
-import Island from '@/components/layout/Island';
-import { mdxComponents } from '@/page/mdx/mdxComponents';
+import Giscus from '@/client/components/common/Giscus';
+import Footer from '@/client/components/layout/Footer';
+import Island from '@/client/components/layout/Island';
+import { mdxComponents } from '@/client/page/mdx/mdxComponents';
 import { lazy, Suspense } from 'react';
 
 export default function MdxLayout({

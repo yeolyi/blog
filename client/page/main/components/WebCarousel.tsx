@@ -1,7 +1,7 @@
-import Sandbox from '@/components/code/sandbox/Sandbox';
+import Sandbox from '@/client/components/code/sandbox/Sandbox';
 import { Carousel } from './carousel/Carousel';
 import { Tile, TileProps } from './carousel/Tile';
-import { webapiPageList } from '@/mdx/webapi/page';
+import { webapiPageList } from '../../../..//mdx/webapi/page';
 
 export let WebCarousel = () => {
   return (

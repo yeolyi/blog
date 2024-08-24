@@ -24,6 +24,6 @@ export default defineConfig({
     tsconfigPaths(),
   ],
   resolve: {
-    alias: [{ find: '@', replacement: path.resolve(__dirname, 'client') }],
+    alias: [{ find: '@', replacement: __dirname }],
   },
 });

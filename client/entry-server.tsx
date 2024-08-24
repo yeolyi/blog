@@ -1,6 +1,6 @@
 import React from 'react';
 import { StaticRouter } from 'react-router-dom/server';
-import { App } from '@/App';
+import { App } from '@/client/App';
 import { renderToPipeableStream } from 'react-dom/server';
 import { Response } from 'express';
 import manifest from '../dist/client/.vite/manifest.json';

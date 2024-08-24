@@ -33,13 +33,13 @@ if (IS_PRODUCTION) {
 // API
 config();
 
-app.get('/stargazer', async (req, res) => {
+app.get('/stargazer', async (_req, res) => {
   res.status(200);
   res.set({ 'Content-Type': 'text/html' });
   res.send(String(await stargazerCache.get()));
 });
 
-app.get('/instagram-follower', async (req, res) => {
+app.get('/instagram-follower', async (_req, res) => {
   res.status(200);
   res.set({ 'Content-Type': 'text/html' });
   res.send(String(await instagramCache.get()));
@@ -52,14 +52,19 @@ app.use('*', async (req, res) => {
 
     const render = (
       IS_PRODUCTION ?
+        // @ts-expect-error
         await import('./dist/server/entry-server.js')
       : await vite.ssrLoadModule('/client/entry-server.tsx')).render;
 
     render(url, res);
   } catch (e) {
-    vite?.ssrFixStacktrace(e);
-    console.log(e.stack);
-    res.status(500).end(e.stack);
+    if (e instanceof Error) {
+      vite?.ssrFixStacktrace(e);
+      console.log(e.stack);
+      res.status(500).end(e.stack);
+    } else {
+      throw e;
+    }
   }
 });
 

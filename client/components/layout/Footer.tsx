@@ -1,4 +1,4 @@
-import { Follower, Star } from '@/components/layout/Badge';
+import { Follower, Star } from '@/client/components/layout/Badge';
 
 export default function Footer() {
   return (

@@ -1,4 +1,4 @@
-import MdxLayout from '@/page/mdx/MdxLayout';
+import MdxLayout from '@/client/page/mdx/MdxLayout';
 import { MdxPage } from '@/mdx/MdxPage';
 
 export let WebAPILayout = (props: MdxPage) => {

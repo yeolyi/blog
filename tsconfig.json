@@ -21,9 +21,10 @@
     "noFallthroughCasesInSwitch": true,
 
     "paths": {
-      "@/*": ["./client/*"]
+      "@/*": ["./*"]
     }
   },
-  "include": ["./client"],
+  "include": ["."],
+  "exclude": ["vite.config.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
