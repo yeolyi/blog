@@ -1,86 +1,46 @@
 import express from 'express';
 import { config } from 'dotenv';
-import { stargazerCache } from './server/stargazer.js';
-import { instagramCache } from './server/instagram.js';
-import { ViteDevServer } from 'vite';
+import { BASE, IS_PRODUCTION, PORT } from '@/constants/server.js';
+import { prepareServerWithModule } from '@/server/prepareServerWithModule.js';
+import { Express } from 'express';
 
-// Constants
-const IS_PRODUCTION = process.env.NODE_ENV === 'production';
-const PORT = 5173;
-const BASE = '/';
+config();
 
-// Create http server
-const app = express();
-
-// Add Vite or respective production middlewares
-let vite: ViteDevServer;
-
-if (IS_PRODUCTION) {
+const setupProduction = async (app: Express) => {
   const compression = (await import('compression')).default;
   const sirv = (await import('sirv')).default;
 
   app.use(compression());
   app.use(BASE, sirv('./dist/client', { extensions: [] }));
-} else {
+
+  // @ts-expect-error
+  const module = await import('./dist/server/entry-server.js');
+  prepareServerWithModule(app, module);
+};
+
+const setupDev = async (app: Express) => {
   const { createServer } = await import('vite');
-  vite = await createServer({
+  let vite = await createServer({
     server: { middlewareMode: true },
     appType: 'custom',
     base: BASE,
   });
   app.use(vite.middlewares);
+
+  const module = await vite.ssrLoadModule('/client/entry-server.tsx');
+  const onError = (e: Error) => vite.ssrFixStacktrace(e);
+  // @ts-expect-error
+  prepareServerWithModule(app, module, onError);
+};
+
+const app = express();
+
+if (IS_PRODUCTION) {
+  setupProduction(app);
+} else {
+  setupDev(app);
 }
 
-// API
-config();
-
-app.get('/stargazer', async (_req, res) => {
-  res.status(200);
-  res.set({ 'Content-Type': 'text/html' });
-  res.send(String(await stargazerCache.get()));
-});
-
-app.get('/instagram-follower', async (_req, res) => {
-  res.status(200);
-  res.set({ 'Content-Type': 'text/html' });
-  res.send(String(await instagramCache.get()));
-});
-
-let { render, xml, sitemap } =
-  IS_PRODUCTION ?
-    // @ts-expect-error
-    await import('./dist/server/entry-server.js')
-  : await vite!.ssrLoadModule('/client/entry-server.tsx');
-
-app.get('/rss.xml', async (_req, res) => {
-  res.status(200);
-  res.set({ 'Content-Type': 'text/xml' });
-  res.send(xml);
-});
-
-app.get('/sitemap.xml', async (_req, res) => {
-  res.status(200);
-  res.set({ 'Content-Type': 'text/xml' });
-  res.send(sitemap);
-});
-
-// SSR
-app.use('*', async (req, res) => {
-  try {
-    const url = '/' + req.originalUrl.replace(BASE, '');
-    render(url, res);
-  } catch (e) {
-    if (e instanceof Error) {
-      vite?.ssrFixStacktrace(e);
-      console.log(e.stack);
-      res.status(500).end(e.stack);
-    } else {
-      throw e;
-    }
-  }
-});
-
-// Start http server
 app.listen(PORT, () => {
   console.log(`Server started at http://localhost:${PORT}`);
 });
