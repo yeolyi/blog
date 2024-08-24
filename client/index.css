@@ -4,12 +4,12 @@
 
 @font-face {
   font-family: firacode;
-  src: url(@/assets/firacode.woff2);
+  src: url(@/client/assets/firacode.woff2);
 }
 
 @font-face {
   font-family: pretendard;
-  src: url(@/assets/pretendard.woff2);
+  src: url(@/client/assets/pretendard.woff2);
 }
 
 * {

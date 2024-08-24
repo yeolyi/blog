@@ -1,4 +1,4 @@
-import { postPageList } from '../../../../mdx/post/page';
+import { postPageList } from '../../../mdx/post/page';
 import { PostCell } from './post/PostCell';
 import { PostGridContainer } from '@/client/page/main/components/post/PostGridContainer';
 

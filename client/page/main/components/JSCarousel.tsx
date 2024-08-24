@@ -3,7 +3,7 @@ import { Tile, TileProps } from '@/client/page/main/components/carousel/Tile';
 import jsbook from '../assets/jsbook.png';
 
 import { Carousel } from '@/client/page/main/components/carousel/Carousel';
-import { jsPageList } from '../../../../mdx/js/page';
+import { jsPageList } from '../../../mdx/js/page';
 
 export let JSCarousel = () => (
   <Carousel>

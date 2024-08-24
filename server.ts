@@ -14,6 +14,7 @@ const app = express();
 
 // Add Vite or respective production middlewares
 let vite: ViteDevServer;
+
 if (IS_PRODUCTION) {
   const compression = (await import('compression')).default;
   const sirv = (await import('sirv')).default;
@@ -45,17 +46,22 @@ app.get('/instagram-follower', async (_req, res) => {
   res.send(String(await instagramCache.get()));
 });
 
+let { render, xml } =
+  IS_PRODUCTION ?
+    // @ts-expect-error
+    await import('./dist/server/entry-server.js')
+  : await vite!.ssrLoadModule('/client/entry-server.tsx');
+
+app.get('/rss.xml', async (_req, res) => {
+  res.status(200);
+  res.set({ 'Content-Type': 'text/xml' });
+  res.send(xml);
+});
+
 // SSR
 app.use('*', async (req, res) => {
   try {
     const url = '/' + req.originalUrl.replace(BASE, '');
-
-    const render = (
-      IS_PRODUCTION ?
-        // @ts-expect-error
-        await import('./dist/server/entry-server.js')
-      : await vite.ssrLoadModule('/client/entry-server.tsx')).render;
-
     render(url, res);
   } catch (e) {
     if (e instanceof Error) {

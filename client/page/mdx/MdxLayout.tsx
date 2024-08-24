@@ -12,6 +12,7 @@ export default function MdxLayout({
   mdx: Promise<typeof import('*.mdx')>;
 }) {
   let Mdx = lazy(() => mdx);
+
   return (
     <>
       <main className="grow">

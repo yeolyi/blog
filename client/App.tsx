@@ -2,13 +2,13 @@ import './index.css';
 
 import { Route, Routes, useLocation } from 'react-router-dom';
 
-import { jsPageList } from '../mdx/js/page';
-import { webapiPageList } from '../mdx/webapi/page';
-import { postPageList } from '../mdx/post/page';
+import { jsPageList } from './mdx/js/page';
+import { webapiPageList } from './mdx/webapi/page';
+import { postPageList } from './mdx/post/page';
 import { NotFound } from '@/client/page/notfound/NotFound';
-import { JSLayout } from '../mdx/js/layout';
-import { PostLayout } from '../mdx/post/layout';
-import { WebAPILayout } from '../mdx/webapi/layout';
+import { JSLayout } from './mdx/js/layout';
+import { PostLayout } from './mdx/post/layout';
+import { WebAPILayout } from './mdx/webapi/layout';
 import { useScrollTop } from '@/client/util/useScrollTop';
 import { MainPage } from '@/client/page/main/Main';
 
