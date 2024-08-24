@@ -46,7 +46,7 @@ app.get('/instagram-follower', async (_req, res) => {
   res.send(String(await instagramCache.get()));
 });
 
-let { render, xml } =
+let { render, xml, sitemap } =
   IS_PRODUCTION ?
     // @ts-expect-error
     await import('./dist/server/entry-server.js')
@@ -56,6 +56,12 @@ app.get('/rss.xml', async (_req, res) => {
   res.status(200);
   res.set({ 'Content-Type': 'text/xml' });
   res.send(xml);
+});
+
+app.get('/sitemap.xml', async (_req, res) => {
+  res.status(200);
+  res.set({ 'Content-Type': 'text/xml' });
+  res.send(sitemap);
 });
 
 // SSR

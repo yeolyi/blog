@@ -11,7 +11,7 @@ export let stargazerCache = new Cache(async () => {
       owner: 'yeolyi',
       repo: 'blog',
     });
-    return resp.data.stargazers_count;
+    return resp.data.stargazers_count as number;
   } catch (e) {
     console.error(e);
     return -1;

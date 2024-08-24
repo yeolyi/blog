@@ -2,6 +2,7 @@ import lodash from './assets/lodash.svg';
 import es2024 from './assets/es2024.png';
 import eslint from './assets/eslint.svg';
 import jslogo from './assets/jslogo.svg';
+import yellowEslint from './assets/yellowEslint.svg';
 import { MdxPage } from '../MdxPage';
 
 export let postPageList: MdxPage[] = [
@@ -38,11 +39,11 @@ export let postPageList: MdxPage[] = [
     imageSrc: es2024,
   },
   {
-    title: 'RSS 테스트',
+    title: 'ESLint 규칙으로 배우는 자바스크립트',
     description: '',
     dateStr: '2024.08.25',
-    path: '/post/test',
-    mdx: import('./test.mdx'),
-    imageSrc: es2024,
+    path: '/post/eslint-rules',
+    mdx: import('./eslint-rules.mdx'),
+    imageSrc: yellowEslint,
   },
 ];

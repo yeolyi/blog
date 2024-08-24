@@ -6,6 +6,9 @@ import { Response } from 'express';
 import manifest from '../dist/client/.vite/manifest.json';
 import { postPageList } from '@/client/mdx/post/page';
 import RSS from 'rss';
+import { allMdxPosts } from '@/client/mdx/allMdxPosts';
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 const ABORT_DELAY = 10000;
 let bootstrapModuleUrl = '/' + manifest['client/entry-client.tsx'].file;
@@ -62,8 +65,25 @@ for (let page of postPageList) {
     title: page.title,
     description: renderToString(<Mdx />),
     url: `${BASE_URL}${page.path}`,
-    date: new Date(page.dateStr ?? '1970.01.01').toISOString(),
+    date: new Date(page.dateStr ?? Date.now()).toISOString(),
   });
 }
 
 export let xml = feed.xml();
+
+dayjs.extend(customParseFormat);
+
+export let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${allMdxPosts.map((post) => {
+  let lastmod = dayjs(post.dateStr ?? '1970.01.01', 'YYYY.MM.DD');
+  let lastmodStr = lastmod.format('YYYY-MM-DD');
+
+  return `<url>
+    <loc>${BASE_URL}${post.path}</loc>
+    <lastmod>${lastmodStr}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.5</priority>
+  </url>`;
+})}
+</urlset> `;
