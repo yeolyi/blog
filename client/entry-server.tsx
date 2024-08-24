@@ -6,12 +6,12 @@ import { Response } from 'express';
 import manifest from '../dist/client/.vite/manifest.json';
 
 const ABORT_DELAY = 10000;
-let bootstrapModuleUrl = '/' + manifest['src/entry-client.tsx'].file;
+let bootstrapModuleUrl = '/' + manifest['client/entry-client.tsx'].file;
 
 const cssPath =
   import.meta.env.DEV ?
-    '/src/index.css'
-  : '/' + manifest['src/entry-client.tsx'].css[0];
+    '/client/index.css'
+  : '/' + manifest['client/entry-client.tsx'].css[0];
 
 export const render = (url: string, res: Response) => {
   const { pipe, abort } = renderToPipeableStream(

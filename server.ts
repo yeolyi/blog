@@ -1,7 +1,5 @@
 import express from 'express';
-import { Octokit } from 'octokit';
 import { config } from 'dotenv';
-import { Cache } from './server/cache.js';
 import { stargazerCache } from './server/stargazer.js';
 import { instagramCache } from './server/instagram.js';
 import { ViteDevServer } from 'vite';
@@ -55,7 +53,7 @@ app.use('*', async (req, res) => {
     const render = (
       IS_PRODUCTION ?
         await import('./dist/server/entry-server.js')
-      : await vite.ssrLoadModule('/src/entry-server.tsx')).render;
+      : await vite.ssrLoadModule('/client/entry-server.tsx')).render;
 
     render(url, res);
   } catch (e) {

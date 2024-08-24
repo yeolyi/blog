@@ -12,7 +12,7 @@ export default defineConfig({
     manifest: true,
     rollupOptions: {
       // overwrite default .html entry
-      input: './src/entry-client.tsx',
+      input: './client/entry-client.tsx',
     },
   },
   plugins: [
@@ -24,6 +24,6 @@ export default defineConfig({
     tsconfigPaths(),
   ],
   resolve: {
-    alias: [{ find: '@', replacement: path.resolve(__dirname, 'src') }],
+    alias: [{ find: '@', replacement: path.resolve(__dirname, 'client') }],
   },
 });

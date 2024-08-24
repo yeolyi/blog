@@ -80,7 +80,7 @@ window.__vite_plugin_react_preamble_installed__ = true;`,
       }}
     />
     <script type="module" src="http://localhost:5173/@vite/client" />
-    <script type="module" src="http://localhost:5173/src/entry-client.tsx" />
+    <script type="module" src="http://localhost:5173/client/entry-client.tsx" />
   </>
 );
 
