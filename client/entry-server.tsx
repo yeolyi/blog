@@ -61,8 +61,8 @@ for (let page of postPageList) {
   feed.item({
     title: page.title,
     description: renderToString(<Mdx />),
-    url: page.path,
-    date: page.dateStr ?? '1970.01.01',
+    url: `${BASE_URL}${page.path}`,
+    date: new Date(page.dateStr ?? '1970.01.01').toISOString(),
   });
 }
 
