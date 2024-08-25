@@ -10,7 +10,7 @@ export let postPageList: MdxPage[] = [
     description: '',
     dateStr: '2024.07.21',
     path: '/post/eslint',
-    mdx: import('./eslint.mdx'),
+    mdx: () => import('./eslint.mdx'),
     imageSrc: eslint,
   },
   {
@@ -18,7 +18,7 @@ export let postPageList: MdxPage[] = [
     description: '',
     dateStr: '2024.07.20',
     path: '/post/lodash',
-    mdx: import('./lodash.mdx'),
+    mdx: () => import('./lodash.mdx'),
     imageSrc: lodash,
   },
   {
@@ -26,7 +26,7 @@ export let postPageList: MdxPage[] = [
     description: '',
     dateStr: '2024.07.19',
     path: '/post/es2024',
-    mdx: import('./es2024.mdx'),
+    mdx: () => import('./es2024.mdx'),
     imageSrc: jslogo,
   },
   {
@@ -34,7 +34,7 @@ export let postPageList: MdxPage[] = [
     description: '',
     dateStr: '2024.07.07',
     path: '/post/js-proposals',
-    mdx: import('./js-proposals.mdx'),
+    mdx: () => import('./js-proposals.mdx'),
     imageSrc: es2024,
   },
   {
@@ -42,7 +42,7 @@ export let postPageList: MdxPage[] = [
     description: '',
     dateStr: '2024.08.25',
     path: '/post/test',
-    mdx: import('./test.mdx'),
+    mdx: () => import('./test.mdx'),
     imageSrc: es2024,
   },
 ];

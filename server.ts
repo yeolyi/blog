@@ -36,9 +36,9 @@ const setupDev = async (app: Express) => {
 const app = express();
 
 if (IS_PRODUCTION) {
-  setupProduction(app);
+  await setupProduction(app);
 } else {
-  setupDev(app);
+  await setupDev(app);
 }
 
 app.listen(PORT, () => {
