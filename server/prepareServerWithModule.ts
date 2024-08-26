@@ -1,6 +1,7 @@
 type Module = typeof import('../client/entry-server.js');
 import { BASE } from '@/constants/server.js';
 import { instagramCache } from '@/server/instagram.js';
+import { fetchCache } from '@/server/instagramComment.js';
 import { stargazerCache } from '@/server/stargazer.js';
 import { Express } from 'express';
 
@@ -31,6 +32,13 @@ export function prepareServerWithModule(
     res.status(200);
     res.set({ 'Content-Type': 'text/xml' });
     res.send(sitemap);
+  });
+
+  app.get('/comment', async (_req, res) => {
+    let users = await fetchCache.get();
+    res.status(200);
+    res.set({ 'Content-Type': 'application/json' });
+    res.send(JSON.stringify(users));
   });
 
   // SSR

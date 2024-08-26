@@ -59,7 +59,7 @@ let feed = new RSS({
 });
 
 for (let page of postPageList) {
-  const Mdx = (await page.mdx()).default;
+  const Mdx = (await page.importMdx()).default;
 
   feed.item({
     title: page.title,
