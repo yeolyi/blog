@@ -33,6 +33,13 @@ export let App = ({ cssPath }: { cssPath: string }) => {
         <meta property="og:description" content={page.description} />
         <meta property="og:site_name" content="yeolyi.com" />
 
+        {import.meta.env.PROD && (
+          <script
+            defer
+            data-domain="yeolyi.com"
+            src="https://plausible.io/js/script.js"
+          />
+        )}
         {import.meta.env.DEV && <DevScripts />}
       </head>
       <body>
