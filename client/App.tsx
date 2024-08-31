@@ -26,9 +26,12 @@ export let App = ({ cssPath }: { cssPath: string }) => {
 
         <title>{page.title}</title>
         <meta name="description" content={page.description} />
-        <meta name="og:title" content={page.title} />
-        <meta name="og:description" content={page.description} />
-        <meta name="og:image" content={page.imageSrc} />
+
+        <meta property="og:title" content={page.title} />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content={page.imageSrc} />
+        <meta property="og:description" content={page.description} />
+        <meta property="og:site_name" content="yeolyi.com" />
 
         {import.meta.env.DEV && <DevScripts />}
       </head>

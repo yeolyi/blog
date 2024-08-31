@@ -1,8 +1,8 @@
-import lodash from './assets/lodash.svg';
-import es2024 from './assets/es2024.png';
-import eslint from './assets/eslint.svg';
-import jslogo from './assets/jslogo.svg';
-import eslintJS from './assets/eslintJS.svg';
+import lodash from './assets/lodash.svg?url';
+import es2024 from './assets/es2024.png?url';
+import eslint from './assets/eslint.svg?url';
+import jslogo from './assets/jslogo.svg?url';
+import eslintJS from './assets/eslintJS.svg?url';
 import { MdxPage } from '../MdxPage';
 
 export let postPageList: MdxPage[] = [
