@@ -14,6 +14,8 @@ export default defineConfig({
       input: './client/entry-client.tsx',
     },
     target: 'esnext',
+    // 카톡에서 inline svg를 보여주지 않는 것 같아 비활성화
+    assetsInlineLimit: 0,
   },
   plugins: [
     {
