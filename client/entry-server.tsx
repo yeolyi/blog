@@ -1,7 +1,7 @@
 import React from 'react';
 import { StaticRouter } from 'react-router-dom/server';
 import { App } from '@/client/App';
-import { renderToPipeableStream, renderToString } from 'react-dom/server';
+import { renderToPipeableStream } from 'react-dom/server';
 import { Response } from 'express';
 import manifest from '../dist/client/.vite/manifest.json';
 import { postPageList } from '@/client/mdx/post/page';
@@ -59,11 +59,9 @@ let feed = new RSS({
 });
 
 for (let page of postPageList) {
-  const Mdx = (await page.importMdx()).default;
-
   feed.item({
     title: page.title,
-    description: renderToString(<Mdx />),
+    description: page.description,
     url: `${BASE_URL}${page.path}`,
     date: new Date(page.dateStr ?? Date.now()).toISOString(),
   });
