@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "NODE_ENV=production tsx server.ts",
-    "dev": "tsx watch --ignore \"!(server.ts)\" server.ts",
+    "dev": "tsx watch --ignore \"*.js\" --ignore \"*.mjs\" server.ts",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build --outDir dist/client",
     "build:server": "vite build --ssr client/entry-server.tsx --outDir dist/server",

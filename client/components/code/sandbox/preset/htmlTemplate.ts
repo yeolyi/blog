@@ -57,6 +57,7 @@ export let wrapBaseHTML = (src: string) => `<!doctype html>
         }, "*");
       });
     </script>
+    
     ${src}
   </body>
 </html>`;

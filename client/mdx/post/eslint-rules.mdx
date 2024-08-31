@@ -1,78 +1,90 @@
-인턴할 때 지적당한거 몇 개 eslint에 있더라...
+# ESLint로 배우는 JS
 
-https://eslint.org/docs/latest/rules/no-async-promise-executor
+## 서론
 
-The executor function can also be an async function. However, this is usually a
-mistake. If an async executor function throws an error, the error will be lost
-and won’t cause the newly-constructed Promise to reject.
+인턴 시절에 `className`값을 만들 때 + 연산자와 template literal를 번갈아가면서
+사용했는데 통일성있게 쓰는건 어떻겠냐는 리뷰를 받은 적이 있었습니다. 그때는
+의식적으로 템플릿 리터럴로 통일을 시켰는데 나중에 보니 ESLint에
+[prefer-template](https://eslint.org/docs/latest/rules/prefer-template)이라는
+규칙이 있더라고요. 그때 알았으면 좀 더 인상깊은 인턴이 되지 않았을까라는 생각이
+들었습니다 😛
 
-https://eslint.org/docs/latest/rules/no-await-in-loop
+도구도 아는만큼 써먹는것이니 이참에 ESLint에 어떤 규칙들이 있는지
+정독해보았습니다. JS에서 실수하기 쉬운 부분을 잡아내기 위한 규칙들이 많더라고요.
+문서를 보면서 JS에 대해 몰랐던 사실들을 정리해보았습니다.
 
-In many cases the iterations of a loop are not actually independent of
-each-other. For example, the output of one iteration might be used as the input
-to another. Or, loops may be used to retry asynchronous operations that were
-unsuccessful. Or, loops may be used to prevent your code from sending an
-excessive amount of requests in parallel.
+## 본론
 
-https://eslint.org/docs/latest/rules/no-compare-neg-zero
+[no-prototype-builtins](https://eslint.org/docs/latest/rules/no-prototype-builtins)
+
+모든 객체는 `Object.prototype`으로부터 상속받은 메서드들을 가집니다.
 
 ```js
-console.log(0 === -0);
-console.log(Object.is(0, -0));
+let obj = {};
+console.log(obj.toString === Object.prototype.toString);
 ```
 
-https://eslint.org/docs/latest/rules/no-constant-binary-expression
+하지만 이들을 객체를 통해 바로 호출하는 것은 오버라이딩의 가능성이 있어 좋지
+않습니다. 예를 들어 악의적인 클라이언트가 서버로 `{ "hasOwnProperty": 1 }`같은
+JSON을 보내 공격할 수 있습니다.
 
 ```js
-console.log(1 + null ?? 2);
-console.log([] === []);
+let a = {
+  hasOwnProperty() {
+    return true;
+  },
+
+  // ✍️ 아래 주석을 해제해보세요.
+  // hasOwnProperty: 1,
+};
+
+console.log(a.hasOwnProperty('x'));
+console.log(Object.prototype.hasOwnProperty.call(a, 'x'));
+// 혹은
+console.log(Object.hasOwn(a, 'x'));
 ```
 
-https://eslint.org/docs/latest/rules/no-misleading-character-class
+[no-new-wrappers](https://eslint.org/docs/latest/rules/no-new-wrappers)
 
-Unicode includes characters which are made by multiple code points. RegExp
-character class syntax (/[abc]/) cannot handle characters which are made by
-multiple code points as a character; those characters will be dissolved to each
-code point. For example, ❇️ is made by ❇ (U+2747) and VARIATION SELECTOR-16
-(U+FE0F). If this character is in a RegExp character class, it will match either
-❇ (U+2747) or VARIATION SELECTOR-16 (U+FE0F) rather than ❇️.
-
-https://eslint.org/docs/latest/rules/no-prototype-builtins
-
-Additionally, objects can have properties that shadow the builtins on
-Object.prototype, potentially causing unintended behavior or denial-of-service
-security vulnerabilities. For example, it would be unsafe for a webserver to
-parse JSON input from a client and call hasOwnProperty directly on the resulting
-object, because a malicious client could send a JSON value like
-`{"hasOwnProperty": 1}` and cause the server to crash.
-
-https://eslint.org/docs/latest/rules/no-self-compare
-
-The only time you would compare a variable against itself is when you are
-testing for NaN. However, it is far more appropriate to use typeof x ===
-'number' && isNaN(x) or the Number.isNaN ES2015 function for that use case
-rather than leaving the reader of the code to determine the intent of self
-comparison.
+원시값의 래퍼 객체를 `new`와 함께 호출할 이유는 거의 없습니다.
 
 ```js
-let f = (x) => x === x;
+let booleanObj = new Boolean(false);
+console.log(typeof booleanObj);
+if (booleanObj) console.log('truthy');
+```
+
+[no-array-constructor](https://eslint.org/docs/latest/rules/no-array-constructor)
+
+배열 생성자로 배열을 만드는 것은 권장되지 않습니다. 예를 들면 인자가 하나일 때의
+동작이 일관적이지 않습니다.
+
+```js
+console.log([3], Array(3));
+console.log(['3'], Array('3'));
+console.log([1.2]);
+console.log(Array(1.2));
+```
+
+[no-self-compare](https://eslint.org/docs/latest/rules/no-self-compare)
+
+아래는 NaN을 판별하는 다양한 방법들입니다.
+
+```js
+let f = (x) => x !== x;
 let g = (x) => typeof x === 'number' && isNaN(x);
 let h = (x) => Number.isNaN(x);
+
+console.log(f(NaN), g(NaN), h(NaN));
 ```
 
-Instance fields of a subclass are only added to the instance after super().
+[require-atomic-updates](https://eslint.org/docs/latest/rules/require-atomic-updates)
 
-https://eslint.org/docs/latest/rules/no-useless-backreference
-
-Regex 잘 모름 ㅎㅎ;
-
-https://eslint.org/docs/latest/rules/require-atomic-updates
+비동기 코드를 짤 때 (JS에서도!!) race condition이 발생할 수 있습니다.
 
 ```js
 let total = 0;
-
 let identity = async (x) => x;
-
 let addVal = async (x) => {
   total += await identity(x);
 };
@@ -82,6 +94,8 @@ Promise.all([addVal(1), addVal(2), addVal(3)]).then(() => {
 });
 ```
 
+아래 코드에서도 await 전후로 `obj.done`의 값이 다를 수 있습니다.
+
 ```js
 async function foo(obj) {
   if (!obj.done) {
@@ -90,82 +104,9 @@ async function foo(obj) {
 }
 ```
 
-https://eslint.org/docs/latest/rules/func-style
+[object-shorthand](https://eslint.org/docs/latest/rules/object-shorthand)
 
-The primary difference between function declarations and function expressions is
-that declarations are hoisted to the top of the scope in which they are defined,
-which allows you to write code that uses the function before its declaration.
-
-https://eslint.org/docs/latest/rules/no-array-constructor
-
-Use of the Array constructor to construct a new array is generally discouraged
-in favor of array literal notation because of the single-argument pitfall and
-because the Array global may be redefined. The exception is when the Array
-constructor is used to intentionally create sparse arrays of a specified size by
-giving the constructor a single numeric argument.
-
-https://eslint.org/docs/latest/rules/no-implicit-coercion
-
-이런 것도 있네..
-
-https://eslint.org/docs/latest/rules/no-invalid-this
-
-Under the strict mode, this keywords outside of classes or class-like objects
-might be undefined and raise a TypeError.
-
-https://eslint.org/docs/latest/rules/no-loop-func
-
-```js
-let foo = 0;
-for (let i = 0; i < 10; ++i) {
-  //Bad, `foo` is not in the loop-block's scope and `foo` is modified in/after the loop
-  setTimeout(() => console.log(foo));
-  foo += 1;
-}
-```
-
-```js
-for (let i = 0; i < 10; ++i) {
-  //Bad, `foo` is not in the loop-block's scope and `foo` is modified in/after the loop
-  setTimeout(() => console.log(foo));
-}
-foo = 100;
-```
-
-https://eslint.org/docs/latest/rules/no-new-wrappers
-
-```js
-var booleanObject = new Boolean(false);
-if (booleanObject) {
-  // all objects are truthy!
-  console.log('This executes');
-}
-```
-
-https://eslint.org/docs/latest/rules/no-param-reassign
-
-Strict mode code doesn’t sync indices of the arguments object with each
-parameter binding. Therefore, this rule is not necessary to protect against
-arguments object mutation in ESM modules or other strict mode functions.
-
-https://johnresig.com/blog/objectgetprototypeof/
-
-특정 문법, 프로퍼티, 전역 변수 등에 대한 접근도 막을 수 있습니다:
-
-https://eslint.org/docs/latest/rules/no-sequences
-
-https://eslint.org/docs/latest/rules/no-undef-init
-
-```js
-for (i = 0; i < 4; i++) {
-  // ✍️ var x;로 바꿔보세요.
-  var x = undefined;
-  console.log(x);
-  x = i;
-}
-```
-
-https://eslint.org/docs/latest/rules/object-shorthand
+클래스의 프로퍼티를 만드는 아래 두 방법에는 차이가 있습니다.
 
 ```js
 class A {
@@ -178,15 +119,122 @@ console.log(Object.hasOwn(a, 'foo'));
 console.log(Object.hasOwn(a, 'bar'));
 ```
 
-https://eslint.org/docs/latest/rules/radix
+[no-compare-neg-zero](https://eslint.org/docs/latest/rules/no-compare-neg-zero)
+
+-0을 정확히 다뤄야한다면 `Object.is`를 사용합니다.
 
 ```js
-console.log(parseInt('0x71'));
+console.log(0 === -0);
+console.log(Object.is(0, -0));
 ```
 
-https://github.com/eslint/eslint/issues/11542
+[no-misleading-character-class](https://eslint.org/docs/latest/rules/no-misleading-character-class)
 
-npm install --save-dev eslint-plugin-simple-import-sort
+몇몇 유니코드 문자는 여러 개의 **code point**로 구성되며 정규표현식이 보이는
+것과 다르게 동작할 수 있습니다.
 
-https://github.com/import-js/eslint-plugin-import 이슈가 뭔 500개고 flat config
-없어서 걍 이거 씀
+```js
+// ❇️은 ❇ (U+2747)과 VARIATION SELECTOR-16 (U+FE0F)로 구성됩니다.
+console.log('❇️' === '\u{2747}\u{FE0F}');
+
+// 따라서 아래 정규표현식은 ❇ '또는' VARIATION SELECTOR-16에 매칭됩니다.
+let regex = /^[❇️]$/u;
+
+console.log(regex.test('\u{2747}'));
+console.log(regex.test('\u{FE0F}'));
+
+console.log(regex.test('❇️'));
+```
+
+[no-invalid-this](https://eslint.org/docs/latest/rules/no-invalid-this)
+
+- Top-level this in scripts is always considered valid because it refers to the
+  global object regardless of the strict mode.
+- Top-level this in ECMAScript modules is always considered invalid because its
+  value is undefined.
+- For this inside functions, this rule basically checks whether or not the
+  function containing this keyword is a constructor or a method. Note that arrow
+  functions have lexical this, and that therefore this rule checks their
+  enclosing contexts.
+
+[no-param-reassign](https://eslint.org/docs/latest/rules/no-param-reassign)
+
+Strict mode가 아닐 떄는 `argument` 객체와 함수 인자가 연결되어 있습니다.
+
+```js
+// ✍️ 아래 주석을 해제해보세요.
+// 'use strict';
+
+function foo(a, b) {
+  console.log(arguments);
+  a = 'changed';
+  console.log(arguments);
+}
+
+foo(1, 2);
+```
+
+[no-undef-init](https://eslint.org/docs/latest/rules/no-undef-init)
+
+```js
+// ✍️ var x로 수정하고 결과가 어떨지 예상해보세요.
+for (i = 0; i < 4; i++) {
+  var x = undefined;
+  console.log(x);
+  x = i;
+}
+```
+
+[no-constant-binary-expression](https://eslint.org/docs/latest/rules/no-constant-binary-expression)
+
+아래에서 연산자 우선순위는 `1 + (null ?? 2)`가 아닌 `(1+ null) ?? 2`입니다.
+
+```js
+console.log(1 + null ?? 2);
+```
+
+[no-async-promise-executor](https://eslint.org/docs/latest/rules/no-async-promise-executor)
+
+Promise 생성자에 전달되는 함수를 **executor 함수**라 합니다. executor 함수가
+비동기 함수면 실수일 가능성이 높습니다. 우선 함수 내부의 에러가 유실됩니다.
+
+```js
+// ✍️ async를 지워보세요.
+new Promise(async (res, rej) => {
+  throw new Error('some error');
+}).catch(() => console.log('caught'));
+```
+
+또한 애초에 async-await 문법을 사용했다면 Promise 생성자를 사용할 이유가
+없습니다.
+
+## 여담
+
+### sort-import
+
+ESLint의 **sort-import** 규칙을 auto fix를 제공하지 않습니다.
+[관련 이슈](https://github.com/eslint/eslint/issues/11542)를 보면 다음 이유
+때문이라고 하네요.
+
+> However, I don't think it would be safe for sort-imports to autofix code
+> because it could change the evaluation order of the imported modules, which
+> could unexpectedly affect how the code works.
+
+따라서 auto-fix를 원한다면 **eslint-plugin-import**나
+**eslint-plugin-simple-import-sort**를 사용할 수 있는데 전자는 설정이 복잡하고
+ESLint flat config를 지원 안해 전 후자를 사용하는 중입니다.
+
+### 기타 신기했던 규칙들
+
+- 함수 종류를 강제하는
+  [func-style](https://eslint.org/docs/latest/rules/func-style)
+- 암시적 형변환을 막는
+  [no-implicit-coercion](https://eslint.org/docs/latest/rules/no-implicit-coercion)
+
+### 규칙 직접 만들기
+
+- [kakaotech - ESLint 조금 더 잘 활용하기](https://tech.kakao.com/posts/375)
+- [나만의 eslint 룰 만들어보기 ](https://yceffort.kr/2022/06/how-to-write-my-own-eslint-rules)
+
+{/* https://johnresig.com/blog/objectgetprototypeof/ */}
+{/* [no-useless-backreference](https://eslint.org/docs/latest/rules/no-useless-backreference)는 흥미로워보이는데 정규표현식을 잘 몰라서(보기 싫어서 ㅎ,,,) 건너뛰었습니다. */}

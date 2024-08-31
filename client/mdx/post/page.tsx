@@ -2,9 +2,19 @@ import lodash from './assets/lodash.svg';
 import es2024 from './assets/es2024.png';
 import eslint from './assets/eslint.svg';
 import jslogo from './assets/jslogo.svg';
+import eslintJS from './assets/eslintJS.svg';
 import { MdxPage } from '../MdxPage';
 
 export let postPageList: MdxPage[] = [
+  {
+    title: 'ESLint로 배우는 JS',
+    description:
+      'ESLint에는 JS에서 실수하기 쉬운 부분을 잡아내기 위한 규칙들이 많습니다. ESLint 규칙들을 훑어보며 JS의 미묘한 부분들을 정리해보았습니다.',
+    dateStr: '2024.08.31',
+    path: '/post/eslint-rules',
+    importMdx: () => import('./eslint-rules.mdx'),
+    imageSrc: eslintJS,
+  },
   {
     title: '가볍게 살펴보는 ESLint',
     description: '',
@@ -35,14 +45,6 @@ export let postPageList: MdxPage[] = [
     dateStr: '2024.07.07',
     path: '/post/js-proposals',
     importMdx: () => import('./js-proposals.mdx'),
-    imageSrc: es2024,
-  },
-  {
-    title: 'RSS 테스트',
-    description: '',
-    dateStr: '2024.08.25',
-    path: '/post/test',
-    importMdx: () => import('./test.mdx'),
     imageSrc: es2024,
   },
 ];
