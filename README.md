@@ -2,7 +2,7 @@
 
 이곳에 공부한 것들을 기록하고 배운 것들을 적용하고 흥미로운 기술을 써먹어봅니다.
 
-## 실행 방법
+## 🚀 실행 방법
 
 우선 레포를 클론받은 뒤 패키지를 설치합니다.
 
@@ -21,7 +21,7 @@ pnpm run build
 pnpm start
 ```
 
-## 주요 사용 기술
+## 🛠️ 주요 사용 기술
 
 Express 서버에서 react를 사용해 SSR을 합니다.
 
@@ -37,7 +37,7 @@ Express 서버에서 react를 사용해 SSR을 합니다.
 
 ### Next.js to React
 
-기존에는 Next.js를 사용했는데 다음과 같은 이유로 **react로 전환**했어요.
+기존에는 Next.js를 사용했는데 다음과 같은 이유로 react로 전환했어요.
 
 - 블로그 글이 길수록 VSCode에 쓴 MDX 글이 브라우저에 반영되는
   속도([fast refresh](https://nextjs.org/docs/architecture/fast-refresh))가 많이
@@ -69,7 +69,7 @@ reload를 수행합니다.
 
 도커도 함 써보고싶은데,,,
 
-## 폴더 구조
+## 📁 폴더 구조
 
 크게 vite가 책임지는 부분과 vite 무관하게 서버에서 바로 실행되는 부분으로 나눌
 수 있을 것 같습니다. ~~vite에 express를 우겨넣어 구조가 개판입니다.~~
