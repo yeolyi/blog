@@ -11,11 +11,11 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 
 const ABORT_DELAY = 10000;
-let bootstrapModuleUrl = '/' + manifest['client/entry-client.tsx'].file;
 
 const cssPath =
   import.meta.env.DEV ?
     '/client/index.css'
+    // @ts-expect-error
   : '/' + manifest['client/entry-client.tsx'].css[0];
 
 export const render = (url: string, res: Response) => {
@@ -27,7 +27,11 @@ export const render = (url: string, res: Response) => {
     </React.StrictMode>,
     {
       bootstrapScriptContent: `window.cssPath = '${cssPath}'`,
-      bootstrapModules: import.meta.env.DEV ? undefined : [bootstrapModuleUrl],
+      bootstrapModules:
+        import.meta.env.DEV ?
+          undefined
+          // @ts-expect-error
+        : ['/' + manifest['client/entry-client.tsx'].file],
 
       onShellError() {
         res.status(500);
