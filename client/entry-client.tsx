@@ -9,8 +9,10 @@ ReactDOM.hydrateRoot(
   document,
   <React.StrictMode>
     <BrowserRouter>
-      {/* @ts-ignore */}
-      <App path={location.pathname} cssPath={window.cssPath} />
+      <App
+        // @ts-ignore
+        cssPath={window.cssPath}
+      />
     </BrowserRouter>
   </React.StrictMode>,
 );

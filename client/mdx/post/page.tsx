@@ -3,9 +3,19 @@ import es2024 from './assets/es2024.png';
 import eslint from './assets/eslint.svg';
 import jslogo from './assets/jslogo.svg';
 import eslintJS from './assets/eslintJS.svg';
+import blog from './assets/blog.png';
 import { MdxPage } from '../MdxPage';
 
 export let postPageList: MdxPage[] = [
+  {
+    title: 'Next.js는 싫은데 SSR은 쓰고 싶었던 블로그 개발기',
+    description:
+      '어떤 목적으로 블로그를 직접 개발했는지를 설명하고 그 결과물을 소개합니다. 왜 Next.js가 싫었는지와 리액트로 SSR을 어떻게 구현했는지를 소개합니다.',
+    dateStr: '2024.08.31',
+    path: '/post/blog-ssr',
+    importMdx: () => import('./blog-ssr.mdx'),
+    imageSrc: blog,
+  },
   {
     title: 'ESLint로 배우는 JS',
     description:
