@@ -11,7 +11,7 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             cd blog 
-            git pull 
+            git pull --rebase
             pnpm install 
             pnpm build 
             pm2 restart blog

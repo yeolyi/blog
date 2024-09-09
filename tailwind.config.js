@@ -17,6 +17,7 @@ export default {
               'p:first-of-type::before': { content: 'none' },
               'p:first-of-type::after': { content: 'none' },
               borderInlineStartWidth: '3px',
+              color: '#999',
             },
             h2: {
               'scroll-margin': '100px',

@@ -3,10 +3,20 @@ import es2024 from './assets/es2024.png';
 import eslint from './assets/eslint.svg';
 import jslogo from './assets/jslogo.svg';
 import eslintJS from './assets/eslintJS.svg';
+import kakaoIntern from './assets/kakao_intern.png';
 import blog from './assets/blog.png';
 import { MdxPage } from '../MdxPage';
 
 export let postPageList: MdxPage[] = [
+  {
+    title: '2024 카카오 채용 연계형 겨울 인턴십 합격 및 전환 후기',
+    description:
+      '인턴십에 합격하기까지 어떤 준비를 했는지, 인턴십 두 달간 어떤 경험을 하고 전환되었는지 공유합니다.',
+    dateStr: '2024.09.11',
+    path: '/post/kakao-intern',
+    importMdx: () => import('./kakao-intern.mdx'),
+    imageSrc: kakaoIntern,
+  },
   {
     title: 'Next.js는 싫은데 SSR은 쓰고 싶었던 블로그 개발기',
     description:

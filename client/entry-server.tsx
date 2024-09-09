@@ -15,7 +15,7 @@ const ABORT_DELAY = 10000;
 const cssPath =
   import.meta.env.DEV ?
     '/client/index.css'
-    // @ts-expect-error
+    // @ts-ignore
   : '/' + manifest['client/entry-client.tsx'].css[0];
 
 export const render = (url: string, res: Response) => {
@@ -30,7 +30,7 @@ export const render = (url: string, res: Response) => {
       bootstrapModules:
         import.meta.env.DEV ?
           undefined
-          // @ts-expect-error
+          // @ts-ignore
         : ['/' + manifest['client/entry-client.tsx'].file],
 
       onShellError() {
