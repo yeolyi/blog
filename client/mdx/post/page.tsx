@@ -9,9 +9,8 @@ import { MdxPage } from '../MdxPage';
 
 export let postPageList: MdxPage[] = [
   {
-    title: '2024 카카오 채용 연계형 겨울 인턴십 합격 및 전환 후기',
-    description:
-      '인턴십에 합격하고 전환되기까지 한 준비들과 두 달간 배우고 익힌 것들과 공유합니다.',
+    title: '2024 카카오 겨울 인턴십 전환 후기',
+    description: '지원서부터 최종 면접까지 배운 것들을 공유합니다.',
     dateStr: '2024.09.11',
     path: '/post/kakao-intern',
     importMdx: () => import('./kakao-intern.mdx'),
