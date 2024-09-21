@@ -1,8 +1,8 @@
 import { App } from '@/client/App';
-import { pageList, mainPage } from '@/client/page';
+import { pageList, mainPage } from '@/client/constants/page';
 import { useLocation } from 'react-router-dom';
 
-export let HTML = ({ cssPath }: { cssPath: string }) => {
+export const HTML = ({ cssPath }: { cssPath: string }) => {
   const { pathname } = useLocation();
 
   // 존재하지 않는 페이지에 대해서는 mainPage의 메타데이터 사용

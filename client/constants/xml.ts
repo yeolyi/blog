@@ -1,9 +1,9 @@
 import { postPageList } from '@/client/mdx/post';
 import RSS from 'rss';
 
-let BASE_URL = 'https://yeolyi.com';
+const BASE_URL = 'https://yeolyi.com';
 
-let feed = new RSS({
+const feed = new RSS({
   title: '개발자 성열',
   description: '배우고 익히는 재미로 사는 프론트엔드 개발자 이성열입니다.',
   feed_url: `${BASE_URL}/rss.xml`,
@@ -11,7 +11,7 @@ let feed = new RSS({
   image_url: `${BASE_URL}/me.jpg`,
 });
 
-for (let page of postPageList) {
+for (const page of postPageList) {
   feed.item({
     title: page.title,
     description: page.description,
@@ -20,4 +20,4 @@ for (let page of postPageList) {
   });
 }
 
-export let xml = feed.xml();
+export const xml = feed.xml();

@@ -22,7 +22,9 @@
 
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+
+    "esModuleInterop": true
   },
   "include": ["."],
   "exclude": ["vite.config.ts"],

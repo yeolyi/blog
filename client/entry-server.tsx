@@ -3,19 +3,18 @@ import { StaticRouter } from 'react-router-dom/server';
 import { renderToPipeableStream } from 'react-dom/server';
 import { Response } from 'express';
 import manifest from '../dist/client/.vite/manifest.json';
-import { HTML } from '@/client/HTML';
-import { sitemap as _sitemap } from '@/client/sitemap';
-import { xml as _xml } from '@/client/xml';
+import { HTML } from '@/client';
+import { sitemap as _sitemap } from '@/client/constants/sitemap';
+import { xml as _xml } from '@/client/constants/xml';
 
-export let sitemap = _sitemap;
-export let xml = _xml;
+export const sitemap = _sitemap;
+export const xml = _xml;
 
 const ABORT_DELAY = 10000;
 
 const cssPath =
   import.meta.env.DEV ?
     '/client/index.css'
-    // @ts-ignore
   : '/' + manifest['client/entry-client.tsx'].css[0];
 
 export const render = (url: string, res: Response) => {
@@ -30,7 +29,6 @@ export const render = (url: string, res: Response) => {
       bootstrapModules:
         import.meta.env.DEV ?
           undefined
-          // @ts-ignore
         : ['/' + manifest['client/entry-client.tsx'].file],
 
       onShellError() {

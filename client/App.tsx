@@ -7,10 +7,10 @@ import { webapiPageList } from './mdx/webapi';
 import { postPageList } from './mdx/post';
 import { useScrollTop } from '@/client/util/useScrollTop';
 import MdxLayout from '@/client/components/layout/MdxLayout';
-import { mainPage } from '@/client/page';
+import { mainPage } from '@/client/constants/page';
 import { MainPage } from '@/client/components/main/Main';
 
-export let App = () => {
+export const App = () => {
   useScrollTop();
 
   return (
