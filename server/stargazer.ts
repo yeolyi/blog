@@ -1,11 +1,10 @@
 import { Octokit } from 'octokit';
-import { Cache } from './cache';
 
 const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
 });
 
-export let stargazerCache = new Cache(async () => {
+export let fetchStargazer = async () => {
   try {
     let resp = await octokit.request('GET /repos/{owner}/{repo}/', {
       owner: 'yeolyi',
@@ -16,4 +15,4 @@ export let stargazerCache = new Cache(async () => {
     console.error(e);
     return -1;
   }
-}, 60 * 1000);
+};

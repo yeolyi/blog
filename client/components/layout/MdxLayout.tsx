@@ -1,17 +1,19 @@
+import CodeBlock from '@/client/components/code/CodeBlock';
 import Giscus from '@/client/components/common/Giscus';
 import Footer from '@/client/components/layout/Footer';
 import Island from '@/client/components/layout/Island';
-import { mdxComponents } from '@/client/page/mdx/mdxComponents';
+import { MdxPage } from '@/client/types/page';
+import { MDXComponents } from 'mdx/types';
 import { lazy, Suspense } from 'react';
 
 export default function MdxLayout({
   discussionNumber,
-  mdx,
+  mdxPage,
 }: {
   discussionNumber?: number;
-  mdx: Promise<typeof import('*.mdx')>;
+  mdxPage: MdxPage;
 }) {
-  let Mdx = lazy(() => mdx);
+  let Mdx = lazy(mdxPage.importMdx);
 
   return (
     <>
@@ -37,3 +39,7 @@ export default function MdxLayout({
     </>
   );
 }
+
+let mdxComponents: MDXComponents = {
+  pre: CodeBlock,
+};

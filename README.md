@@ -32,10 +32,7 @@ pnpm start
 
 ## 📁 폴더 구조
 
-크게 vite가 책임지는 부분과 vite 무관하게 서버에서 바로 실행되는 부분으로 나눌
-수 있을 것 같습니다. ~~vite에 express를 우겨넣어 구조가 개판입니다.~~
-
-주요 폴더/파일들에 대한 설명입니다:
+index.ts를 실행해 블로그 express 서버를 띄웁니다.
 
 - /client: vite가 책임지는 부분입니다. 따라서 \*.mdx 파일 import가 가능하고 빌드
   시점에 code minify 등등 여러 최적화가 수행됩니다.
@@ -44,7 +41,7 @@ pnpm start
     거쳐서 얻어야하는 데이터들(sitemap, rss 등)을 export합니다.
   - App.tsx: Route를 포함한 html 문서 전체를 렌더링합니다.
 - /server: 서버에서만 실행되는 부분입니다. NextJS 시절에 server component에 있던
-  코드를 옮겨왔습니다.
+  fetch 코드를 옮겨왔습니다.
 - /public: 정적 serving되는 파일들입니다. 대부분의 경우 vite의
   [Static Asset Handling](https://vitejs.dev/guide/assets)을 사용하므로 이곳에
   파일을 추가할 일은 크게 없습니다.

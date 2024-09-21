@@ -1,14 +1,14 @@
 import React from 'react';
 import { StaticRouter } from 'react-router-dom/server';
-import { App } from '@/client/App';
 import { renderToPipeableStream } from 'react-dom/server';
 import { Response } from 'express';
 import manifest from '../dist/client/.vite/manifest.json';
-import { postPageList } from '@/client/mdx/post/page';
-import RSS from 'rss';
-import { allMdxPosts } from '@/client/mdx/allMdxPosts';
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { HTML } from '@/client/HTML';
+import { sitemap as _sitemap } from '@/client/sitemap';
+import { xml as _xml } from '@/client/xml';
+
+export let sitemap = _sitemap;
+export let xml = _xml;
 
 const ABORT_DELAY = 10000;
 
@@ -22,7 +22,7 @@ export const render = (url: string, res: Response) => {
   const { pipe, abort } = renderToPipeableStream(
     <React.StrictMode>
       <StaticRouter location={url}>
-        <App cssPath={cssPath} />
+        <HTML cssPath={cssPath} />
       </StaticRouter>
     </React.StrictMode>,
     {
@@ -51,41 +51,3 @@ export const render = (url: string, res: Response) => {
     abort();
   }, ABORT_DELAY);
 };
-
-let BASE_URL = 'https://yeolyi.com';
-
-let feed = new RSS({
-  title: '개발자 성열',
-  description: '배우고 익히는 재미로 사는 프론트엔드 개발자 이성열입니다.',
-  feed_url: `${BASE_URL}/rss.xml`,
-  site_url: BASE_URL,
-  image_url: `${BASE_URL}/me.jpg`,
-});
-
-for (let page of postPageList) {
-  feed.item({
-    title: page.title,
-    description: page.description,
-    url: `${BASE_URL}${page.path}`,
-    date: new Date(page.dateStr ?? Date.now()).toISOString(),
-  });
-}
-
-export let xml = feed.xml();
-
-dayjs.extend(customParseFormat);
-
-export let sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${allMdxPosts.map((post) => {
-  let lastmod = dayjs(post.dateStr ?? '1970.01.01', 'YYYY.MM.DD');
-  let lastmodStr = lastmod.format('YYYY-MM-DD');
-
-  return `<url>
-    <loc>${BASE_URL}${post.path}</loc>
-    <lastmod>${lastmodStr}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.5</priority>
-  </url>`;
-})}
-</urlset> `;

@@ -1,107 +1,60 @@
 import './index.css';
 
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
-import { jsPageList } from './mdx/js/page';
-import { webapiPageList } from './mdx/webapi/page';
-import { postPageList } from './mdx/post/page';
-import { NotFound } from '@/client/page/notfound/NotFound';
-import { JSLayout } from './mdx/js/layout';
-import { PostLayout } from './mdx/post/layout';
-import { WebAPILayout } from './mdx/webapi/layout';
+import { jsPageList } from './mdx/js';
+import { webapiPageList } from './mdx/webapi';
+import { postPageList } from './mdx/post';
 import { useScrollTop } from '@/client/util/useScrollTop';
-import { MainPage } from '@/client/page/main/Main';
+import MdxLayout from '@/client/components/layout/MdxLayout';
+import { mainPage } from '@/client/page';
+import { MainPage } from '@/client/components/main/Main';
 
-export let App = ({ cssPath }: { cssPath: string }) => {
-  const page = usePage();
+export let App = () => {
   useScrollTop();
 
   return (
-    <html lang="ko">
-      <head>
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
-        <link rel="stylesheet" href={cssPath} />
+    <Routes>
+      <Route path="/" element={<MainPage />} />
 
-        <title>{page.title}</title>
-        <meta name="description" content={page.description} />
+      {jsPageList.map((page) => {
+        return (
+          <Route
+            key={page.path}
+            path={page.path}
+            element={<MdxLayout discussionNumber={2} mdxPage={page} />}
+          />
+        );
+      })}
 
-        <meta property="og:title" content={page.title} />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content={page.imageSrc} />
-        <meta property="og:description" content={page.description} />
-        <meta property="og:site_name" content="yeolyi.com" />
-
-        <script
-          defer
-          data-domain="yeolyi.com"
-          src="https://plausible.io/js/script.js"
+      {webapiPageList.map((page) => (
+        <Route
+          key={page.path}
+          path={page.path}
+          element={<MdxLayout discussionNumber={10} mdxPage={page} />}
         />
-        {import.meta.env.DEV && <DevScripts />}
-      </head>
-      <body>
-        <Routes>
-          <Route path="/" element={<MainPage />} />
+      ))}
 
-          {jsPageList.map((page) => (
-            <Route
-              key={page.path}
-              path={page.path}
-              element={<JSLayout {...page} />}
-            />
-          ))}
+      {postPageList.map((page) => (
+        <Route
+          key={page.path}
+          path={page.path}
+          element={<MdxLayout mdxPage={page} />}
+        />
+      ))}
 
-          {webapiPageList.map((page) => (
-            <Route
-              key={page.path}
-              path={page.path}
-              element={<WebAPILayout {...page} />}
-            />
-          ))}
-
-          {postPageList.map((page) => (
-            <Route
-              key={page.path}
-              path={page.path}
-              element={<PostLayout {...page} />}
-            />
-          ))}
-
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </body>
-    </html>
+      <Route
+        path="*"
+        element={
+          <MdxLayout
+            mdxPage={{
+              // TODO: 404 페이지 메타데이터 추가
+              ...mainPage,
+              importMdx: () => import('./mdx/etc/notFound.mdx'),
+            }}
+          />
+        }
+      />
+    </Routes>
   );
-};
-
-const DevScripts = () => (
-  <>
-    <script
-      type="module"
-      dangerouslySetInnerHTML={{
-        __html: `import RefreshRuntime from 'http://localhost:5173/@react-refresh';
-RefreshRuntime.injectIntoGlobalHook(window);
-window.$RefreshReg$ = () => {};
-window.$RefreshSig$ = () => (type) => type;
-window.__vite_plugin_react_preamble_installed__ = true;`,
-      }}
-    />
-    <script type="module" src="http://localhost:5173/@vite/client" />
-    <script type="module" src="http://localhost:5173/client/entry-client.tsx" />
-  </>
-);
-
-const mainPage = {
-  title: '개발자 성열',
-  description: '유익하고 바보같고 화가나는 개발자 일상',
-  imageSrc: undefined,
-};
-
-const pageList = [...jsPageList, ...postPageList, ...webapiPageList];
-
-const usePage = () => {
-  const { pathname } = useLocation();
-  const page = pageList.find((x) => x.path === pathname);
-  return page ?? mainPage;
 };

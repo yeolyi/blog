@@ -2,14 +2,14 @@ import 'vite/modulepreload-polyfill';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { App } from '@/client/App';
 import { BrowserRouter } from 'react-router-dom';
+import { HTML } from '@/client/HTML';
 
 ReactDOM.hydrateRoot(
   document,
   <React.StrictMode>
     <BrowserRouter>
-      <App
+      <HTML
         // @ts-ignore
         cssPath={window.cssPath}
       />

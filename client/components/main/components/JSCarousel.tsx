@@ -1,9 +1,11 @@
 import Sandbox from '@/client/components/code/sandbox/Sandbox';
-import { Tile, TileProps } from '@/client/page/main/components/carousel/Tile';
 import jsbook from '../assets/jsbook.png';
-
-import { Carousel } from '@/client/page/main/components/carousel/Carousel';
-import { jsPageList } from '../../../mdx/js/page';
+import { jsPageList } from '../../../mdx/js';
+import { Carousel } from '@/client/components/main/components/carousel/Carousel';
+import {
+  Tile,
+  TileProps,
+} from '@/client/components/main/components/carousel/Tile';
 
 export let JSCarousel = () => (
   <Carousel>

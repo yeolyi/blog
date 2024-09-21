@@ -1,9 +1,12 @@
 import 'dotenv/config';
 
 import express from 'express';
-import { BASE, IS_PRODUCTION, PORT } from '@/constants/server.js';
-import { prepareServerWithModule } from '@/server/prepareServerWithModule.js';
+import { prepareServerWithModule } from '@/server';
 import { Express } from 'express';
+
+export const BASE = '/';
+export const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+export const PORT = 5173;
 
 const setupProduction = async (app: Express) => {
   const compression = (await import('compression')).default;

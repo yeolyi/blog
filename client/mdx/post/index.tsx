@@ -5,7 +5,7 @@ import jslogo from './assets/jslogo.svg';
 import eslintJS from './assets/eslintJS.svg';
 import kakaoIntern from './assets/kakao_intern.png';
 import blog from './assets/blog.png';
-import { MdxPage } from '../MdxPage';
+import { MdxPage } from '@/client/types/page';
 
 export let postPageList: MdxPage[] = [
   {

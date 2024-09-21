@@ -1,19 +1,19 @@
 import Giscus from '@/client/components/common/Giscus';
-import {
-  Copy,
-  Headline,
-  Section,
-  SectionHeadline,
-  TopSection,
-} from '@/client/page/main/components/Typography';
 
 import Footer from '@/client/components/layout/Footer';
-import { JSCarousel } from '@/client/page/main/components/JSCarousel';
+import { JSCarousel } from '@/client/components/main/components/JSCarousel';
 import profile from './profile.jpg';
 
 import { PostGrid } from './components/PostGrid';
 import { WebCarousel } from './components/WebCarousel';
 import { ProjectCarousel } from './components/ProjectCarousel';
+import {
+  TopSection,
+  Headline,
+  Copy,
+  Section,
+  SectionHeadline,
+} from '@/client/components/main/components/Typography';
 
 export let MainPage = () => {
   return (

@@ -1,4 +1,4 @@
-import { MdxPage } from '../MdxPage';
+import { MdxPage } from '@/client/types/page';
 
 export let webapiPageList: MdxPage[] = [
   {
