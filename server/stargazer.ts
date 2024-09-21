@@ -4,9 +4,9 @@ const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
 });
 
-export let fetchStargazer = async () => {
+export const fetchStargazer = async () => {
   try {
-    let resp = await octokit.request('GET /repos/{owner}/{repo}/', {
+    const resp = await octokit.request('GET /repos/{owner}/{repo}/', {
       owner: 'yeolyi',
       repo: 'blog',
     });

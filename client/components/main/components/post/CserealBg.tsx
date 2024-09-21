@@ -12,11 +12,11 @@ const CENTER_SCALE = 1.5;
 const ROW_OFFSET = [0, 1, -1, 0, 1, 0];
 const DURATION = 0.15;
 
-let getDist = (m1: number, n1: number, m2: number, n2: number) => {
+const getDist = (m1: number, n1: number, m2: number, n2: number) => {
   return (m1 - m2) ** 2 + (n1 + ROW_OFFSET[m1] - (n2 + ROW_OFFSET[m2])) ** 2;
 };
 
-let ripple = throttle((idx: number, elementList: Element[]) => {
+const ripple = throttle((idx: number, elementList: Element[]) => {
   const m = Math.floor(idx / COL);
   const n = idx % COL;
 
@@ -58,10 +58,10 @@ let ripple = throttle((idx: number, elementList: Element[]) => {
 }, 500);
 
 export const CserealBg = () => {
-  let containerRef = useRef<HTMLDivElement | null>(null);
-  let lastRippleRef = useRef(0);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const lastRippleRef = useRef(0);
 
-  let code = [...'SNUCSE']
+  const code = [...'SNUCSE']
     .map((x) =>
       [...x.charCodeAt(0).toString(2).padStart(8, '0')].map((x) => x === '1'),
     )
@@ -74,7 +74,7 @@ export const CserealBg = () => {
       e.stopPropagation();
 
       const childList = [...containerRef.current.children];
-      let idx = childList.indexOf(e.target);
+      const idx = childList.indexOf(e.target);
 
       lastRippleRef.current = Date.now();
       ripple(
@@ -86,7 +86,7 @@ export const CserealBg = () => {
   );
 
   useEffect(() => {
-    let id = setInterval(() => {
+    const id = setInterval(() => {
       if (containerRef.current && Date.now() - lastRippleRef.current > 5000)
         ripple(
           Math.floor(Math.random() * (COL * ROW - 1)),
@@ -109,7 +109,7 @@ export const CserealBg = () => {
         ref={containerRef}
       >
         {code.map((x, idx) => {
-          let row = Math.floor(idx / COL);
+          const row = Math.floor(idx / COL);
           return (
             <div
               onClick={handleMouseOver}

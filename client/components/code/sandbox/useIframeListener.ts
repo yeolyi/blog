@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Log } from '../type';
 
-export let useIframeListener = (iframe: HTMLIFrameElement | null) => {
+export const useIframeListener = (iframe: HTMLIFrameElement | null) => {
   const [logList, setLogList] = useState<Log[]>([]);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ export let useIframeListener = (iframe: HTMLIFrameElement | null) => {
     return () => removeEventListener('message', handleMessage);
   }, [iframe]);
 
-  let reset = useCallback(() => {
+  const reset = useCallback(() => {
     setLogList([]);
   }, []);
 

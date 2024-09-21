@@ -25,7 +25,7 @@ export default function CodeTextArea({
   );
 }
 
-let getLineIndices = (str: string, idx: number) => {
+const getLineIndices = (str: string, idx: number) => {
   let lineStart = idx;
   while (lineStart > 0 && str[lineStart - 1] !== '\n') lineStart--;
 
@@ -35,15 +35,15 @@ let getLineIndices = (str: string, idx: number) => {
   return { wordStart, lineStart };
 };
 
-let handleEnterKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-  let target = e.target as HTMLTextAreaElement;
+const handleEnterKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  const target = e.target as HTMLTextAreaElement;
   if (target.selectionStart !== target.selectionEnd) return;
 
-  let selection = target.selectionStart;
-  let lastLetter = target.value[selection - 1];
+  const selection = target.selectionStart;
+  const lastLetter = target.value[selection - 1];
 
-  let { wordStart, lineStart } = getLineIndices(target.value, selection);
-  let blank = wordStart - lineStart + (lastLetter === '{' ? TAB.length : 0);
+  const { wordStart, lineStart } = getLineIndices(target.value, selection);
+  const blank = wordStart - lineStart + (lastLetter === '{' ? TAB.length : 0);
   if (blank === 0) return;
 
   // Insert carriage return and indented text
@@ -52,26 +52,26 @@ let handleEnterKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
   e.preventDefault();
 };
 
-let TAB = '  ';
+const TAB = '  ';
 
-let handleTabKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-  let target = e.target as HTMLTextAreaElement;
+const handleTabKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  const target = e.target as HTMLTextAreaElement;
 
   if (target.selectionStart === target.selectionEnd) {
     // undoable
     if (!e.shiftKey) {
       document.execCommand('insertText', false, TAB);
     } else {
-      let { wordStart, lineStart } = getLineIndices(
+      const { wordStart, lineStart } = getLineIndices(
         target.value,
         target.selectionStart,
       );
 
-      let blank = wordStart - lineStart;
+      const blank = wordStart - lineStart;
       if (blank < TAB.length) return;
 
       // TODO: undo 이후 selection 남는거 없애기
-      let tmp = target.selectionStart;
+      const tmp = target.selectionStart;
       target.selectionStart = wordStart - TAB.length;
       target.selectionEnd = wordStart;
       document.execCommand('delete');

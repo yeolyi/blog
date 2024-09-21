@@ -2,7 +2,7 @@ import { PostGridContainer } from '@/client/components/main/components/post/Post
 import { postPageList } from '../../../mdx/post';
 import { PostCell } from './post/PostCell';
 
-export let PostGrid = () => {
+export const PostGrid = () => {
   return (
     <PostGridContainer>
       {postPageList.map(({ title, dateStr, imageSrc, path }) => (

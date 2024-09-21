@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export let SecretImage = ({
+export const SecretImage = ({
   children,
   src,
 }: {

@@ -1,6 +1,6 @@
 import { MdxPage } from '@/client/types/page';
 
-export let jsPageList: MdxPage[] = [
+export const jsPageList: MdxPage[] = [
   {
     title: '값',
     description:

@@ -1,6 +1,6 @@
 import { MdxPage } from '@/client/types/page';
 
-export let webapiPageList: MdxPage[] = [
+export const webapiPageList: MdxPage[] = [
   {
     title: 'Web API 기초',
     description: '브라우저에서 JS가 어떤 과정으로 실행되는지 배웠습니다',

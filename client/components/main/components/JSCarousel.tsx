@@ -7,7 +7,7 @@ import {
   TileProps,
 } from '@/client/components/main/components/carousel/Tile';
 
-export let JSCarousel = () => (
+export const JSCarousel = () => (
   <Carousel>
     {tileList.map((prop, idx) => (
       <Tile key={idx} {...prop} />
@@ -15,7 +15,7 @@ export let JSCarousel = () => (
   </Carousel>
 );
 
-let firstTile = {
+const firstTile = {
   title: '소개',
   description:
     'JS를 복습하며 몰랐었고 흥미로웠던 내용 위주로 기록했습니다. 아래 책으로 공부했어요.',
@@ -26,7 +26,7 @@ let firstTile = {
   ),
 };
 
-let tileList: TileProps[] = [
+const tileList: TileProps[] = [
   firstTile,
   ...jsPageList.map((x) => ({
     ...x,

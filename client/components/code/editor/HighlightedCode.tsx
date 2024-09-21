@@ -37,7 +37,7 @@ export default function HighlightedCode({
 }
 
 // TODO: newline 처리 더 깔끔하게
-let highlightCode = (code: string, language: string) => {
+const highlightCode = (code: string, language: string) => {
   let highlightedCode = hljs.highlight(code, { language }).value;
 
   if (highlightedCode === '') highlightedCode = ' ';

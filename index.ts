@@ -15,14 +15,14 @@ const setupProduction = async (app: Express) => {
   app.use(compression());
   app.use(BASE, sirv('./dist/client', { extensions: [] }));
 
-  // @ts-expect-error
+  // @ts-expect-error dist 폴더가 없을 수 있음
   const module = await import('./dist/server/entry-server.js');
   prepareServerWithModule(app, module);
 };
 
 const setupDev = async (app: Express) => {
   const { createServer } = await import('vite');
-  let vite = await createServer({
+  const vite = await createServer({
     server: { middlewareMode: true },
     appType: 'custom',
     base: BASE,
@@ -31,7 +31,7 @@ const setupDev = async (app: Express) => {
 
   const module = await vite.ssrLoadModule('/client/entry-server.tsx');
   const onError = (e: Error) => vite.ssrFixStacktrace(e);
-  // @ts-expect-error
+  // @ts-expect-error dist 폴더가 없을 수 있음
   prepareServerWithModule(app, module, onError);
 };
 

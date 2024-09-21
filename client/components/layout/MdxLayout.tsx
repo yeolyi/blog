@@ -13,7 +13,7 @@ export default function MdxLayout({
   discussionNumber?: number;
   mdxPage: MdxPage;
 }) {
-  let Mdx = lazy(mdxPage.importMdx);
+  const Mdx = lazy(mdxPage.importMdx);
 
   return (
     <>
@@ -40,6 +40,6 @@ export default function MdxLayout({
   );
 }
 
-let mdxComponents: MDXComponents = {
+const mdxComponents: MDXComponents = {
   pre: CodeBlock,
 };

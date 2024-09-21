@@ -3,7 +3,7 @@ import { Carousel } from './carousel/Carousel';
 import { Tile, TileProps } from './carousel/Tile';
 import { webapiPageList } from '../../../mdx/webapi';
 
-export let WebCarousel = () => {
+export const WebCarousel = () => {
   return (
     <Carousel>
       {webTileProps.map((prop, idx) => (
@@ -13,7 +13,7 @@ export let WebCarousel = () => {
   );
 };
 
-let webTileProps: TileProps[] = webapiPageList.map((x) => ({
+const webTileProps: TileProps[] = webapiPageList.map((x) => ({
   ...x,
   url: x.path,
   children: x.exampleCode && (

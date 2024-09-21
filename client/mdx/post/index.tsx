@@ -7,7 +7,7 @@ import kakaoIntern from './assets/kakao_intern.png';
 import blog from './assets/blog.png';
 import { MdxPage } from '@/client/types/page';
 
-export let postPageList: MdxPage[] = [
+export const postPageList: MdxPage[] = [
   {
     title: '2024 카카오 겨울 인턴십 전환 후기',
     description: '지원서부터 최종 면접까지 배운 것들을 공유합니다.',

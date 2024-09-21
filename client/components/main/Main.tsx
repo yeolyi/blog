@@ -15,7 +15,7 @@ import {
   SectionHeadline,
 } from '@/client/components/main/components/Typography';
 
-export let MainPage = () => {
+export const MainPage = () => {
   return (
     <>
       <main>

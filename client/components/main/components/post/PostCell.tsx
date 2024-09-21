@@ -7,7 +7,7 @@ export type PostCellProps = {
   dateStr?: string;
 };
 
-export let PostCell = ({ title, src, dateStr, path }: PostCellProps) => (
+export const PostCell = ({ title, src, dateStr, path }: PostCellProps) => (
   <li className="group relative mt-[24px] flex w-full list-none flex-col overflow-hidden rounded-[16px] bg-white md:w-[333px] lg:mt-[36px] lg:w-[303px]">
     <Link to={path} className="flex h-full w-full flex-col">
       <img

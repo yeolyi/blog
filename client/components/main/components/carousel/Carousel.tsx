@@ -14,7 +14,7 @@ export const Carousel = ({
     'prev',
   );
 
-  let unit = useMemo(() => {
+  const unit = useMemo(() => {
     if (container === null) return null;
     return parseInt(
       getComputedStyle(container).getPropertyValue(
@@ -23,7 +23,7 @@ export const Carousel = ({
     );
   }, [container, wide]);
 
-  let scroll = (mode: 'prev' | 'next') => {
+  const scroll = (mode: 'prev' | 'next') => {
     if (container === null || unit === null) return;
     container.scrollBy({
       left: mode === 'prev' ? -unit : unit,

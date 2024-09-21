@@ -1,6 +1,6 @@
 import { wrapBaseHTML } from './htmlTemplate';
 
-export let presetNameList = [
+export const presetNameList = [
   'js',
   'html',
   'rxjs',
@@ -20,7 +20,7 @@ export type Preset = {
   language: 'javascript' | 'xml';
 };
 
-export let presetMap: { [key in PresetName]: Preset } = {
+export const presetMap: { [key in PresetName]: Preset } = {
   js: {
     name: 'js',
     showConsole: true,

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Preset } from './preset/presetMap';
 
-export let useDebouncedSrcDoc = (
+export const useDebouncedSrcDoc = (
   _code: string,
   preset: Preset,
   resetLog: () => void,
@@ -24,7 +24,7 @@ export let useDebouncedSrcDoc = (
     setSrcdoc('');
     iframeKey.current++;
 
-    let id = setTimeout(async () => {
+    const id = setTimeout(async () => {
       setSrcdoc(await preset.createSrcDoc(code));
       // https://velog.io/@younyikim/React에서-Iframe-사용시-뒤로가기가-되지-않는-버그
       iframeKey.current++;
@@ -33,7 +33,7 @@ export let useDebouncedSrcDoc = (
     return () => clearTimeout(id);
   }, [code, onScreen, preset, resetLog]);
 
-  let refresh = useCallback(() => {
+  const refresh = useCallback(() => {
     resetLog();
     iframeKey.current++;
   }, [resetLog]);

@@ -1,4 +1,4 @@
-export let Dday = ({
+export const Dday = ({
   year,
   month,
   date,
@@ -7,8 +7,8 @@ export let Dday = ({
   month: number;
   date: number;
 }) => {
-  let startDate = new Date(year, month - 1, date);
-  let today = new Date();
+  const startDate = new Date(year, month - 1, date);
+  const today = new Date();
   return Math.floor(
     (today.getTime() - startDate.getTime()) / 1000 / 60 / 60 / 24,
   );

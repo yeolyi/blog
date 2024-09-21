@@ -169,6 +169,7 @@ class _Stringify {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let notUnusedStringify = (input) => {
   return new _Stringify().stringify(input);
 };

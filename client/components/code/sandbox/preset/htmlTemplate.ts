@@ -1,6 +1,6 @@
 import stringifySrc from './stringify.js?raw';
 
-export let wrapBaseHTML = (src: string) => `<!doctype html>
+export const wrapBaseHTML = (src: string) => `<!doctype html>
 <html>
   <head>
     <style>

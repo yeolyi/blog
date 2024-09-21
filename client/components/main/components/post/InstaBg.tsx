@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 
 export default function InstaBg() {
   useEffect(() => {
-    let heartList = [...document.querySelectorAll('.heart')];
+    const heartList = [...document.querySelectorAll('.heart')];
     heartList.forEach((heart) => {
       gsap.to(heart, {
         y: -600,

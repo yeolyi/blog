@@ -10,9 +10,9 @@ type BadgeProps = {
   className?: string;
 };
 
-export let Follower = ({ className }: { className?: string }) => {
-  let cnt = useNumber('/instagram-follower');
-  let href = 'https://instagram.com/yeolyii';
+export const Follower = ({ className }: { className?: string }) => {
+  const cnt = useNumber('/instagram-follower');
+  const href = 'https://instagram.com/yeolyii';
 
   return (
     <Badge
@@ -25,13 +25,13 @@ export let Follower = ({ className }: { className?: string }) => {
   );
 };
 
-export let Star = () => {
-  let cnt = useNumber('/stargazer');
-  let href = 'https://github.com/yeolyi/blog';
+export const Star = () => {
+  const cnt = useNumber('/stargazer');
+  const href = 'https://github.com/yeolyi/blog';
   return <Badge title="star" icon={<StarSVG />} cnt={cnt} href={href} />;
 };
 
-let StarSVG = () => (
+const StarSVG = () => (
   <svg
     viewBox="0 0 16 16"
     width="16"
@@ -43,7 +43,7 @@ let StarSVG = () => (
   </svg>
 );
 
-let Badge = ({ icon, title, cnt, href, className }: BadgeProps) => {
+const Badge = ({ icon, title, cnt, href, className }: BadgeProps) => {
   return (
     <div
       className={`flex items-center overflow-hidden whitespace-nowrap rounded-[.25em] border border-solid border-[#d0d7de] ${className}`}
@@ -65,14 +65,14 @@ let Badge = ({ icon, title, cnt, href, className }: BadgeProps) => {
   );
 };
 
-let useNumber = (url: string) => {
-  let [val, setVal] = useState(-1);
+const useNumber = (url: string) => {
+  const [val, setVal] = useState(-1);
 
   useEffect(() => {
     (async () => {
       try {
-        let resp = await fetch(url);
-        let cnt = await resp.text();
+        const resp = await fetch(url);
+        const cnt = await resp.text();
         setVal(parseInt(cnt));
       } catch {
         // TODO

@@ -3,7 +3,7 @@ import { WideTile, WideTileProps } from './carousel/WideTile';
 import { CserealBg } from './post/CserealBg';
 import InstaBg from './post/InstaBg';
 
-export let ProjectCarousel = () => {
+export const ProjectCarousel = () => {
   return (
     <Carousel wide>
       {projectList.map((prop) => (
@@ -13,7 +13,7 @@ export let ProjectCarousel = () => {
   );
 };
 
-let projectList: WideTileProps[] = [
+const projectList: WideTileProps[] = [
   {
     name: 'cse.snu.ac.kr',
     copy: '서울대학교 컴퓨터공학부 홈페이지 리뉴얼에 프론트엔드 개발자로 참여했어요.',

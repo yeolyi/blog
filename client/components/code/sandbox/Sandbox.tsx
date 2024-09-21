@@ -33,11 +33,11 @@ export default function Sandbox({
   noiframe,
   iframeHeight,
 }: SandboxProps) {
-  let preset = presetMap[presetName];
+  const preset = presetMap[presetName];
 
   const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null);
-  let containerRef = useRef<HTMLDivElement>(null);
-  let onscreen = useOnScreen(containerRef);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const onscreen = useOnScreen(containerRef);
 
   const { logList, reset } = useIframeListener(iframe);
 
@@ -48,9 +48,9 @@ export default function Sandbox({
     onscreen,
   );
 
-  let showConsole = !noexec && preset.showConsole;
-  let showRefresh = !noexec && !norefresh;
-  let showIframe = !noiframe && preset.showIframe;
+  const showConsole = !noexec && preset.showConsole;
+  const showRefresh = !noexec && !norefresh;
+  const showIframe = !noiframe && preset.showIframe;
 
   return (
     <>
