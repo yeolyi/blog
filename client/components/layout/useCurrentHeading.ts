@@ -5,12 +5,15 @@ const useCurrentHeading = () => {
   const [currentHeading, setCurrentHeading] = useState<HTMLHeadingElement>();
 
   useEffect(() => {
-    const headingList = [
-      ...document.querySelectorAll('h2,h3'),
-    ] as HTMLHeadingElement[];
+    // TODO: 고치기
+    setTimeout(() => {
+      const headingList = [
+        ...document.querySelectorAll('h2,h3'),
+      ] as HTMLHeadingElement[];
 
-    setHeadingList(headingList);
-    setCurrentHeading(getCurHeading(headingList));
+      setHeadingList(headingList);
+      setCurrentHeading(getCurHeading(headingList));
+    }, 1000);
 
     let timeoutId: number | null = null;
     const handleScroll = () => {

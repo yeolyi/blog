@@ -66,7 +66,7 @@ const JS = ({
   return (
     <li className="relative flex w-[var(--tile-width)] snap-start overflow-clip rounded-[28px] bg-lightgray">
       <p
-        className="absolute left-0 top-0 text-[300px] leading-[300px] text-gray-200 opacity-40"
+        className="absolute left-0 top-0 text-[300px] leading-[300px] text-gray-200 opacity-30"
         style={{ transform: `rotate(${angle}deg)` }}
         suppressHydrationWarning
       >
