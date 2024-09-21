@@ -15,10 +15,8 @@ export type TileProps = {
 export const Tile = ({
   title,
   description,
-  concepts,
   url,
   style,
-  children,
   textColor,
 }: TileProps) => {
   return (
@@ -38,17 +36,6 @@ export const Tile = ({
           >
             보러가기 <FaChevronRight className="h-[10px] w-[10px]" />
           </Link>
-        )}
-
-        <div className="mb-auto mt-[20px] w-full text-textblack">
-          {children}
-        </div>
-
-        {concepts !== undefined && (
-          <div className="text-[14px] font-normal leading-[1.429] tracking-[0em]">
-            <h4 className="font-semibold">배운 것들</h4>
-            <p>{concepts}</p>
-          </div>
         )}
       </div>
     </TileContainer>

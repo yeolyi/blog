@@ -47,8 +47,8 @@ body,
 :root {
   --viewport-content: calc(100% - 180px);
 
-  --tile-width: 372px;
-  --tile-height: 680px;
+  --tile-width: 340px;
+  --tile-height: 186px;
 
   --wide-tile-width: 955px;
   --wide-tile-height: 600px;
@@ -60,8 +60,8 @@ body,
   :root {
     --viewport-content: calc(100% - 134px);
 
-    --tile-width: 344px;
-    --tile-height: 628px;
+    --tile-width: 314px;
+    --tile-height: 172px;
 
     --wide-tile-width: 642px;
     --wide-tile-height: 555px;
@@ -74,8 +74,8 @@ body,
   :root {
     --viewport-content: 87.5%;
 
-    --tile-width: 304px;
-    --tile-height: 562px;
+    --tile-width: 281px;
+    --tile-height: 152px;
 
     --wide-tile-width: 421px;
 
@@ -86,8 +86,8 @@ body,
   :root {
     --viewport-content: calc(100% - 44px);
 
-    --tile-width: 280px;
-    --tile-height: 510px;
+    --tile-width: 255px;
+    --tile-height: 140px;
 
     --wide-tile-width: 330px;
 

@@ -3,7 +3,7 @@ import { StaticRouter } from 'react-router-dom/server';
 import { renderToPipeableStream } from 'react-dom/server';
 import { Response } from 'express';
 import manifest from '../dist/client/.vite/manifest.json';
-import { HTML } from '@/client';
+import { HTML } from '@/client/HTML';
 import { sitemap as _sitemap } from '@/client/constants/sitemap';
 import { xml as _xml } from '@/client/constants/xml';
 

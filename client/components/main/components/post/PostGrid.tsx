@@ -1,6 +1,6 @@
 import { PostGridContainer } from '@/client/components/main/components/post/PostGridContainer';
-import { postPageList } from '../../../mdx/post';
-import { PostCell } from './post/PostCell';
+import { postPageList } from '../../../../mdx/post';
+import { PostCell } from './PostCell';
 
 export const PostGrid = () => {
   return (

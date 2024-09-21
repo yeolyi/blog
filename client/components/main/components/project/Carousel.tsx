@@ -2,13 +2,7 @@ import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import GalleryControl from './Control';
 
-export const Carousel = ({
-  wide = false,
-  children,
-}: {
-  wide?: boolean;
-  children: ReactNode;
-}) => {
+export const Carousel = ({ children }: { children: ReactNode }) => {
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   const [disabledDir, setDisabledDir] = useState<'none' | 'prev' | 'next'>(
     'prev',
@@ -17,11 +11,9 @@ export const Carousel = ({
   const unit = useMemo(() => {
     if (container === null) return null;
     return parseInt(
-      getComputedStyle(container).getPropertyValue(
-        wide ? '--wide-tile-width' : '--tile-width',
-      ),
+      getComputedStyle(container).getPropertyValue('--wide-tile-width'),
     );
-  }, [container, wide]);
+  }, [container]);
 
   const scroll = (mode: 'prev' | 'next') => {
     if (container === null || unit === null) return;
@@ -51,7 +43,7 @@ export const Carousel = ({
 
   return (
     <div
-      className={`pb-[118px] sm:pb-[124px] md:pb-[134px] lg:pb-[150px] ${wide ? 'wide' : ''}`}
+      className={`wide pb-[118px] sm:pb-[124px] md:pb-[134px] lg:pb-[150px]`}
     >
       <div
         className="no-scrollbar snap-x snap-mandatory scroll-p-[calc(50%-var(--viewport-content)/2)] overflow-scroll"
@@ -60,8 +52,7 @@ export const Carousel = ({
         <ul
           className="mb-[10px] inline-grid w-fit grid-flow-col gap-[20px] px-[calc(50%-var(--viewport-content)/2)] sm:mb-[16px] md:mb-[18px] md:mr-[40px] lg:mb-[22px]"
           style={{
-            gridTemplateRows:
-              wide ? 'var(--wide-tile-height)' : 'var(--tile-height)',
+            gridTemplateRows: 'var(--wide-tile-height)',
           }}
         >
           {children}
