@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-export const Section = ({
+const Section = ({
   className,
   children,
 }: {
@@ -14,25 +14,13 @@ export const Section = ({
   </section>
 );
 
-export const TopSection = ({ children }: { children: ReactNode }) => (
+const Top = ({ children }: { children: ReactNode }) => (
   <section className="horizontal-pad flex flex-col items-start justify-between pt-[56px] sm:pt-[64px] md:pt-[72px] lg:flex-row lg:items-center lg:pt-[80px]">
     {children}
   </section>
 );
 
-export const Headline = ({ children }: { children: ReactNode }) => (
-  <h1 className="mr-[30px] text-[40px] font-semibold leading-[1.2] text-textblack sm:text-[48px] sm:leading-[1.1875] md:text-[64px] md:leading-[1.171875] lg:text-[80px] lg:leading-[1.15]">
-    {children}
-  </h1>
-);
-
-export const Copy = ({ children }: { children: ReactNode }) => (
-  <p className="mt-[10px] w-auto max-w-[430px] text-[19px] font-semibold leading-[1.32] tracking-[0.012em] text-textblack min-[590px]:max-w-[535px] lg:w-[390px] lg:text-[21px]">
-    {children}
-  </p>
-);
-
-export const SectionHeadline = ({
+const Headline = ({
   className,
   children,
 }: {
@@ -45,3 +33,5 @@ export const SectionHeadline = ({
     {children}
   </h2>
 );
+
+export default Object.assign(Section, { Headline, Top });

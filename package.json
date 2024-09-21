@@ -15,6 +15,7 @@
     "@eslint/compat": "^1.1.1",
     "@tailwindcss/typography": "^0.5.14",
     "@types/mdx": "^2.0.13",
+    "color.js": "^1.2.0",
     "compression": "^1.7.4",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.5",

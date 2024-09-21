@@ -2,14 +2,14 @@ import { ReactNode } from 'react';
 import { FaChevronRight } from 'react-icons/fa6';
 import { Link } from 'react-router-dom';
 
-export type WideTileProps = {
+export type TileProps = {
   name: string;
   copy: string;
   href: string;
   bg: ReactNode;
 };
 
-export const WideTile = ({ name, copy, href, bg }: WideTileProps) => (
+export const Tile = ({ name, copy, href, bg }: TileProps) => (
   <li className="relative flex w-[var(--wide-tile-width)] snap-start flex-col items-center justify-end overflow-hidden rounded-[28px] px-[20px] py-[60px] lg:px-[40px]">
     <div className="absolute bottom-0 left-0 right-0 top-0">{bg}</div>
     <div className="relative z-10 flex flex-col items-center">

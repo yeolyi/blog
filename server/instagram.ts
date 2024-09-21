@@ -13,8 +13,8 @@ export const fetchFollowerCnt = async () => {
     );
     const json = await resp.json();
     return json.data.user.edge_followed_by.count as number;
-  } catch (e) {
-    console.error('인스타그램 fetch 실패: ', e);
+  } catch {
+    console.error('인스타그램 fetch 실패');
     return -1;
   }
 };
