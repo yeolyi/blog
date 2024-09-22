@@ -1,14 +1,6 @@
 import ImageViewer from '@/client/components/common/ImageViewer';
 import pythonArg from './assets/python_default_arg.png';
 
-export let metadata = {
-  title: '자바스크립트 공부 기록 - 함수',
-  description:
-    '맥락에 따라 다르게 동작하는 자바스크립트의 함수와 this 키워드를 공부했습니다.',
-};
-
-# Functions
-
 호출된 함수는 전달받은 인자 외에도 **invocation context**라는 값을 별도로 가지고
 `this` 키워드로 참조할 수 있어요. 함수가 객체를 통해(객체의 메서드로서) 호출되면
 해당 객체가 invocation context가 됩니다.
