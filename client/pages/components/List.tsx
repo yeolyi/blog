@@ -55,7 +55,7 @@ const HighlightedTitle = ({
 const JS = ({ title, description, path }: MdxPage) => {
   return (
     <li className="relative flex w-[var(--tile-width)] snap-start overflow-clip rounded-[28px] bg-lightgray">
-      <p className="absolute -top-1/2 left-0 origin-top-left text-[600px] font-black leading-[100%] text-gray-200 opacity-40">
+      <p className="absolute -top-1/2 left-0 origin-top-left text-[600px] font-black leading-[100%] text-gray-200 opacity-50">
         {title[0]}
       </p>
       <a

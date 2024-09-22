@@ -6,9 +6,9 @@ import { jsPageList } from './mdx/js';
 import { webapiPageList } from './mdx/webapi';
 import { postPageList } from './mdx/post';
 import { useScrollTop } from '@/client/util/useScrollTop';
-import MdxLayout from '@/client/pages/[mdx]/MdxLayout';
+import MdxLayout from '@/client/pages/[mdx]';
 import { notFoundPage } from '@/client/constants/page';
-import { MainPage } from '@/client/pages/Main';
+import { MainPage } from '@/client/pages';
 
 export const App = () => {
   useScrollTop();
