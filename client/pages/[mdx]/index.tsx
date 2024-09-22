@@ -4,7 +4,8 @@ import Footer from '@/client/components/layout/Footer';
 import Island from '@/client/components/layout/Island';
 import { MdxPage } from '@/client/types/page';
 import { MDXComponents } from 'mdx/types';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useLayoutEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 export default function MdxLayout({
   discussionNumber,
@@ -14,6 +15,11 @@ export default function MdxLayout({
   mdxPage: MdxPage;
 }) {
   const Mdx = lazy(mdxPage.importMdx);
+
+  const { pathname } = useLocation();
+  useLayoutEffect(() => {
+    scrollTo(0, 0);
+  }, [pathname]);
 
   return (
     <>

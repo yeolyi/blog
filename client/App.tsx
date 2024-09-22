@@ -14,15 +14,13 @@ export const App = () => {
     <Routes>
       <Route path="/" element={<MainPage />} />
 
-      {jsPageList.map((page) => {
-        return (
-          <Route
-            key={page.path}
-            path={page.path}
-            element={<MdxLayout discussionNumber={2} mdxPage={page} />}
-          />
-        );
-      })}
+      {jsPageList.map((page) => (
+        <Route
+          key={page.path}
+          path={page.path}
+          element={<MdxLayout discussionNumber={2} mdxPage={page} />}
+        />
+      ))}
 
       {webapiPageList.map((page) => (
         <Route
