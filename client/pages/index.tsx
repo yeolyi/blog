@@ -41,6 +41,9 @@ export const MainPage = () => {
         </Section>
 
         <Section className="bg-lightgray">
+          <Section.Headline className="horizontal-pad">
+            <strong>게시물</strong>
+          </Section.Headline>
           <List>
             {postPageList.map((mdxPage, idx) => (
               <List.Post key={idx} mdxPage={mdxPage} />
@@ -50,7 +53,7 @@ export const MainPage = () => {
 
         <Section>
           <Section.Headline className="horizontal-pad">
-            <strong>자바스크립트</strong>
+            <strong>자바스크립트</strong> 공부 기록
           </Section.Headline>
           <List>
             {jsPageList.map((prop, idx) => (
@@ -61,7 +64,7 @@ export const MainPage = () => {
 
         <Section className="bg-lightgray">
           <Section.Headline className="horizontal-pad">
-            <strong>Web API</strong>
+            <strong>Web API</strong> 공부 기록
           </Section.Headline>
           <List>
             {webapiPageList.map((prop, idx) => (
