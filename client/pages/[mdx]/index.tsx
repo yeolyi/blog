@@ -47,6 +47,7 @@ export default function MdxLayout({
                 </div>
               }
             >
+              <h1 className="w-2/3 leading-tight">{mdxPage.title}</h1>
               <Mdx components={mdxComponents} />
             </Suspense>
             <div className="my-16 h-[1px] w-full bg-neutral-300" />
