@@ -18,7 +18,7 @@ export const postPageList: MdxPage[] = [
     objectFit: 'cover',
   },
   {
-    title: 'Next.js는 싫은데 SSR은 쓰고 싶었던 블로그 개발기',
+    title: 'Next.js가 싫은 사람의 블로그 개발기',
     description:
       '어떤 목적으로 블로그를 직접 개발했는지를 설명하고 그 결과물을 소개합니다. 왜 Next.js가 싫었는지와 리액트로 SSR을 어떻게 구현했는지를 소개합니다.',
     dateStr: '2024.09.07',
@@ -28,7 +28,7 @@ export const postPageList: MdxPage[] = [
     objectFit: 'contain',
   },
   {
-    title: 'ESLint로 배우는 JS',
+    title: 'ESLint 규칙들 정독하며 배우는 JS',
     description:
       'ESLint에는 JS에서 실수하기 쉬운 부분을 잡아내기 위한 규칙들이 많습니다. ESLint 규칙들을 훑어보며 JS의 미묘한 부분들을 정리해보았습니다.',
     dateStr: '2024.08.31',
@@ -56,7 +56,7 @@ export const postPageList: MdxPage[] = [
     objectFit: 'contain',
   },
   {
-    title: '책에는 없는 JS 기능 구경',
+    title: '책으로 공부할 땐 몰랐던 최신 JS 기능 공부',
     description: '',
     dateStr: '2024.07.19',
     path: '/post/es2024',
@@ -65,7 +65,7 @@ export const postPageList: MdxPage[] = [
     objectFit: 'contain',
   },
   {
-    title: '미래의 자바스크립트 미리 써보기',
+    title: '바벨 플러그인으로 미래의 JS 기능들 미리 써보기',
     description: '',
     dateStr: '2024.07.07',
     path: '/post/js-proposals',

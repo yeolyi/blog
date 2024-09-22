@@ -27,8 +27,8 @@ export const MainPage = () => {
             이성열 yeolyi
           </h1>
           <Copy>
-            프론트엔드 개발자 이성열입니다. 제가 배우고 경험한 것들을 다듬어
-            이곳에 공유해요.
+            배우고 경험한 것들을 다듬어 여기에 공유해요. 카카오에서 프론트엔드
+            개발을 하고 있어요. 서울대학교 컴퓨터공학부 복수전공 중입니다.
           </Copy>
         </Section.Top>
 
@@ -83,7 +83,7 @@ export const MainPage = () => {
 const projectList = [
   {
     name: 'cse.snu.ac.kr',
-    copy: '서울대학교 컴퓨터공학부 홈페이지 리뉴얼에 참여했어요.',
+    copy: '서울대학교 컴퓨터공학부 홈페이지 리뉴얼에 프론트엔드 개발자로 참여중입니다.',
     href: 'https://cse.snu.ac.kr',
     bg: <CserealBg />,
   },
