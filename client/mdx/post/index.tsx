@@ -14,7 +14,8 @@ export const postPageList: MdxPage[] = [
     dateStr: '2024.09.11',
     path: '/post/kakao-intern',
     importMdx: () => import('./kakao-intern.mdx'),
-    imageSrc: kakaoIntern,
+    src: kakaoIntern,
+    objectFit: 'cover',
   },
   {
     title: 'Next.js는 싫은데 SSR은 쓰고 싶었던 블로그 개발기',
@@ -23,7 +24,8 @@ export const postPageList: MdxPage[] = [
     dateStr: '2024.09.07',
     path: '/post/blog-ssr',
     importMdx: () => import('./blog-ssr.mdx'),
-    imageSrc: blog,
+    src: blog,
+    objectFit: 'contain',
   },
   {
     title: 'ESLint로 배우는 JS',
@@ -32,7 +34,8 @@ export const postPageList: MdxPage[] = [
     dateStr: '2024.08.31',
     path: '/post/eslint-rules',
     importMdx: () => import('./eslint-rules.mdx'),
-    imageSrc: eslintJS,
+    src: eslintJS,
+    objectFit: 'contain',
   },
   {
     title: '가볍게 살펴보는 ESLint',
@@ -40,7 +43,8 @@ export const postPageList: MdxPage[] = [
     dateStr: '2024.07.21',
     path: '/post/eslint',
     importMdx: () => import('./eslint.mdx'),
-    imageSrc: eslint,
+    src: eslint,
+    objectFit: 'contain',
   },
   {
     title: '가볍게 살펴보는 Lodash',
@@ -48,7 +52,8 @@ export const postPageList: MdxPage[] = [
     dateStr: '2024.07.20',
     path: '/post/lodash',
     importMdx: () => import('./lodash.mdx'),
-    imageSrc: lodash,
+    src: lodash,
+    objectFit: 'contain',
   },
   {
     title: '책에는 없는 JS 기능 구경',
@@ -56,7 +61,8 @@ export const postPageList: MdxPage[] = [
     dateStr: '2024.07.19',
     path: '/post/es2024',
     importMdx: () => import('./es2024.mdx'),
-    imageSrc: jslogo,
+    src: jslogo,
+    objectFit: 'contain',
   },
   {
     title: '미래의 자바스크립트 미리 써보기',
@@ -64,6 +70,7 @@ export const postPageList: MdxPage[] = [
     dateStr: '2024.07.07',
     path: '/post/js-proposals',
     importMdx: () => import('./js-proposals.mdx'),
-    imageSrc: es2024,
+    src: es2024,
+    objectFit: 'cover',
   },
 ];

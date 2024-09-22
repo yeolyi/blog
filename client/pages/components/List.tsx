@@ -10,7 +10,7 @@ const List = ({ children }: { children: ReactNode }) => (
 );
 
 const Post = ({
-  mdxPage: { path, imageSrc, title, dateStr },
+  mdxPage: { path, src: imageSrc, title, dateStr },
 }: {
   mdxPage: MdxPage;
 }) => {
@@ -52,29 +52,15 @@ const HighlightedTitle = ({
   );
 };
 
-const JS = ({
-  title,
-  description,
-  url,
-}: {
-  title: string;
-  description: string;
-  url: string;
-}) => {
-  const angle = ((Math.random() * 123123123) % 90) - 45;
-
+const JS = ({ title, description, path }: MdxPage) => {
   return (
     <li className="relative flex w-[var(--tile-width)] snap-start overflow-clip rounded-[28px] bg-lightgray">
-      <p
-        className="absolute left-0 top-0 text-[300px] leading-[300px] text-gray-200 opacity-30"
-        style={{ transform: `rotate(${angle}deg)` }}
-        suppressHydrationWarning
-      >
-        {title.split(' ')[0]}
+      <p className="absolute -top-1/2 left-0 origin-top-left text-[600px] font-black leading-[100%] text-gray-200 opacity-40">
+        {title[0]}
       </p>
       <a
         className={`z-10 flex w-full flex-col items-start gap-[10px] p-[20px] md:p-[25px]`}
-        href={url}
+        href={path}
       >
         <h3 className="font-semibold" style={{ fontSize: 'var(--tile-title)' }}>
           {title}
@@ -87,20 +73,12 @@ const JS = ({
   );
 };
 
-const WebAPI = ({
-  title,
-  description,
-  url,
-}: {
-  title: string;
-  description: string;
-  url: string;
-}) => {
+const WebAPI = ({ title, description, path }: MdxPage) => {
   return (
     <li className="relative flex w-[var(--tile-width)] snap-start overflow-clip rounded-[28px] bg-white">
       <a
         className={`z-10 flex w-full flex-col items-start gap-[10px] p-[20px] md:p-[25px]`}
-        href={url}
+        href={path}
       >
         <h3
           className="block font-semibold"

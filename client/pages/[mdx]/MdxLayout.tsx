@@ -18,7 +18,18 @@ export default function MdxLayout({
   return (
     <>
       <main className="grow">
-        <div className="w-full bg-white py-[100px] md:py-[120px]">
+        {mdxPage.src && (
+          <img
+            src={mdxPage.src}
+            alt="어렸을 때 사진"
+            className="block h-[calc(100vh-350px)] max-h-[calc(((100vw*9)/16))] min-h-[calc(((100vw*9)/16)*0.57)] w-full object-cover"
+            style={{
+              objectFit: mdxPage.objectFit,
+              padding: mdxPage.objectFit === 'cover' ? '' : '50px',
+            }}
+          />
+        )}
+        <div className="w-full bg-white pb-[100px] pt-[50px] md:pb-[120px] md:pt-[60px]">
           <article className="prose prose-slate mx-auto w-[87.5%] lg:prose-lg prose-h1:text-[32px] max-md:max-w-[414px] md:w-[83.33%] md:prose-h1:text-[40px] lg:w-[80%] lg:prose-h1:text-[48px]">
             <Island />
             <Suspense

@@ -1,6 +1,6 @@
 import { MouseEventHandler, useCallback, useEffect, useRef } from 'react';
 
-import cserealbg from '../../assets/bg.png';
+import cserealbg from '../assets/bg.png';
 
 import gsap from 'gsap';
 import { throttle } from 'es-toolkit';

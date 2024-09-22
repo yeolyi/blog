@@ -21,7 +21,7 @@ export const HTML = ({ cssPath }: { cssPath: string }) => {
 
         <meta property="og:title" content={page.title} />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content={page.imageSrc} />
+        <meta property="og:image" content={page.src} />
         <meta property="og:description" content={page.description} />
         <meta property="og:site_name" content="yeolyi.com" />
 

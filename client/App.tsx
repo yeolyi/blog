@@ -6,9 +6,9 @@ import { jsPageList } from './mdx/js';
 import { webapiPageList } from './mdx/webapi';
 import { postPageList } from './mdx/post';
 import { useScrollTop } from '@/client/util/useScrollTop';
-import MdxLayout from '@/client/components/layout/MdxLayout';
-import { mainPage } from '@/client/constants/page';
-import { MainPage } from '@/client/components/main/Main';
+import MdxLayout from '@/client/pages/[mdx]/MdxLayout';
+import { notFoundPage } from '@/client/constants/page';
+import { MainPage } from '@/client/pages/Main';
 
 export const App = () => {
   useScrollTop();
@@ -43,18 +43,7 @@ export const App = () => {
         />
       ))}
 
-      <Route
-        path="*"
-        element={
-          <MdxLayout
-            mdxPage={{
-              // TODO: 404 페이지 메타데이터 추가
-              ...mainPage,
-              importMdx: () => import('./mdx/etc/notFound.mdx'),
-            }}
-          />
-        }
-      />
+      <Route path="*" element={<MdxLayout mdxPage={notFoundPage} />} />
     </Routes>
   );
 };
