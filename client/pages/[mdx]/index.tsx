@@ -27,7 +27,6 @@ export default function MdxLayout({
         {mdxPage.src && (
           <img
             src={mdxPage.src}
-            alt="어렸을 때 사진"
             className={`block h-[calc(100vh-350px)] max-h-[calc(((100vw*9)/16))] min-h-[calc(((100vw*9)/16)*0.57)] w-full object-cover ${mdxPage.objectFit === 'cover' ? '' : 'p-[10px] sm:p-[50px]'}`}
             style={{ objectFit: mdxPage.objectFit }}
           />
