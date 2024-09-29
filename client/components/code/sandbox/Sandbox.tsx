@@ -60,10 +60,15 @@ export default function Sandbox({
       >
         {/* TODO: 옵션 정리 */}
         {!consoleFit && (
-          <div className="flex justify-end gap-3 px-1 font-firacode text-sm text-neutral-300">
-            <p className="text-black">{presetName.toLocaleUpperCase()}</p>
+          <div className="flex justify-end gap-3 px-1 font-firacode text-sm">
+            <p className="text-black dark:text-white">
+              {presetName.toLocaleUpperCase()}
+            </p>
             {showRefresh && (
-              <button className="hover:text-neutral-400" onClick={refresh}>
+              <button
+                className="text-neutral-300 hover:text-neutral-400"
+                onClick={refresh}
+              >
                 refresh
               </button>
             )}

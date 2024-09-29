@@ -26,14 +26,48 @@ export default function Giscus({
     scriptElem.setAttribute('data-reactions-enabled', '1');
     scriptElem.setAttribute('data-emit-metadata', '0');
     scriptElem.setAttribute('data-input-position', 'top');
-    scriptElem.setAttribute('data-theme', 'noborder_light');
+    scriptElem.setAttribute(
+      'data-theme',
+      matchMedia('(prefers-color-scheme: dark)').matches ? 'noborder_dark' : (
+        'noborder_light'
+      ),
+    );
     scriptElem.setAttribute('data-lang', 'ko');
     scriptElem.setAttribute('data-loading', 'lazy');
     scriptElem.crossOrigin = 'anonymous';
     scriptElem.async = true;
 
     ref.current.appendChild(scriptElem);
+
+    return () => {
+      ref.current?.removeChild(scriptElem);
+    };
   }, [discussionNumber]);
 
+  useEffect(() => {
+    const handleThemeChange = ({ matches }: MediaQueryListEvent) => {
+      changeGiscusTheme(matches ? 'dark' : 'light');
+    };
+
+    const mediaQueryList = matchMedia('(prefers-color-scheme: dark)');
+    mediaQueryList.addEventListener('change', handleThemeChange);
+
+    return () => {
+      mediaQueryList.removeEventListener('change', handleThemeChange);
+    };
+  }, []);
+
   return <div className="giscus" ref={ref} />;
+}
+
+function changeGiscusTheme(theme: 'light' | 'dark') {
+  const iframe = document.querySelector(
+    'iframe.giscus-frame',
+  ) as HTMLIFrameElement;
+  if (!iframe) return;
+
+  iframe.contentWindow?.postMessage(
+    { giscus: { setConfig: { theme } } },
+    'https://giscus.app',
+  );
 }

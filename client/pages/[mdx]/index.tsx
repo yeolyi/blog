@@ -25,7 +25,7 @@ export default function MdxLayout({
 
   return (
     <>
-      <main className="grow">
+      <main className="dark:bg-black">
         {mdxPage.src && (
           <img
             src={mdxPage.src}
@@ -34,9 +34,9 @@ export default function MdxLayout({
           />
         )}
         <div
-          className={`w-full pb-[100px] ${mdxPage.src ? 'pt-[50px] md:pt-[60px]' : 'pt-[100px] md:pt-[120px]'}`}
+          className={`pb-[100px] ${mdxPage.src ? 'pt-[50px] md:pt-[60px]' : 'pt-[100px] md:pt-[120px]'}`}
         >
-          <article className="prose prose-sm mx-auto max-w-[70ch] px-4 sm:prose-base lg:prose-lg sm:px-12">
+          <article className="prose prose-base mx-auto max-w-[70ch] px-4 lg:prose-lg dark:prose-invert sm:px-8">
             <Island />
             <Suspense
               fallback={

@@ -22,10 +22,10 @@ export const MainPage = () => {
           className="block h-[calc(100vh-350px)] max-h-[calc(((100vw*9)/16))] min-h-[calc(((100vw*9)/16)*0.57)] w-full object-cover"
         />
         <Section.Top>
-          <h1 className="mr-[30px] text-[40px] font-semibold leading-[1.2] text-textblack sm:text-[48px] sm:leading-[1.1875] md:text-[64px] md:leading-[1.171875] lg:text-[80px] lg:leading-[1.15]">
+          <h1 className="mr-[30px] text-[40px] font-semibold leading-[1.2] text-textblack sm:text-[48px] sm:leading-[1.1875] md:text-[64px] md:leading-[1.171875] lg:text-[80px] lg:leading-[1.15] dark:text-white">
             이성열 yeolyi
           </h1>
-          <p className="mt-[10px] w-auto max-w-[430px] text-[19px] font-semibold leading-[1.32] tracking-[0.012em] text-textblack min-[590px]:max-w-[535px] lg:w-[390px] lg:text-[21px]">
+          <p className="mt-[10px] w-auto max-w-[430px] text-[19px] font-semibold leading-[1.32] tracking-[0.012em] text-textblack min-[590px]:max-w-[535px] lg:w-[390px] lg:text-[21px] dark:text-white">
             배우고 경험한 것들을 다듬어 여기에 공유해요. 카카오에서 프론트엔드
             개발을 하고 있어요. 서울대학교 컴퓨터공학부 복수전공 중입니다.
           </p>
@@ -39,7 +39,7 @@ export const MainPage = () => {
           </Project>
         </Section>
 
-        <Section className="bg-lightgray">
+        <Section className="bg-lightgray dark:bg-gray-900">
           <Section.Headline className="horizontal-pad">
             <strong>게시물</strong>
           </Section.Headline>
@@ -61,7 +61,7 @@ export const MainPage = () => {
           </List>
         </Section>
 
-        <Section className="bg-lightgray">
+        <Section className="bg-lightgray dark:bg-gray-900">
           <Section.Headline className="horizontal-pad">
             <strong>Web API</strong> 공부 기록
           </Section.Headline>

@@ -1,4 +1,4 @@
-import 'highlight.js/styles/github.css';
+import './index.css';
 
 import hljs from 'highlight.js/lib/core';
 import css from 'highlight.js/lib/languages/css';
@@ -21,7 +21,7 @@ export default function HighlightedCode({
 }) {
   return (
     <div
-      className={`not-prose relative w-full overflow-x-scroll rounded bg-slate-50`}
+      className={`not-prose relative w-full overflow-x-scroll rounded bg-slate-50 dark:bg-neutral-800`}
     >
       <div className="relative h-fit min-h-full w-fit min-w-full p-4 text-sm leading-[1.4rem]">
         <div

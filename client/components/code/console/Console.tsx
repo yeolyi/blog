@@ -11,7 +11,7 @@ export default function Console({
 
   return (
     <div
-      className={`flex resize-y flex-col overflow-y-scroll rounded bg-slate-50 p-4 text-sm`}
+      className={`flex resize-y flex-col overflow-y-scroll rounded bg-slate-50 p-4 text-sm dark:bg-neutral-800`}
       style={{ height: fit ? undefined : '112px' }}
     >
       {logList.map((log, idx) => (
@@ -24,8 +24,8 @@ export default function Console({
 const Row = ({ log }: { log: Log }) => {
   return (
     <p
-      className="whitespace-pre-wrap break-words font-firacode"
-      style={{ color: log.type === 'log' ? '#6a737d' : '#ff4040' }}
+      className="whitespace-pre-wrap break-words font-firacode text-[#6a737d] dark:text-neutral-300"
+      style={{ color: log.type === 'exception' ? '#ff4040' : '' }}
     >
       {/* 빈 문자열이어도 newline 반영 */}
       {log.data === '' ? ' ' : log.data}
