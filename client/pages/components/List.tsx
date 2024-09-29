@@ -18,7 +18,7 @@ const Post = ({
 
   return (
     <li
-      className="group relative mt-[9px] flex w-[var(--tile-width)] list-none flex-col overflow-hidden rounded-[16px] lg:mt-[13.5px]"
+      className="group relative flex w-[var(--tile-width)] list-none flex-col overflow-hidden rounded-[16px]"
       style={{ backgroundColor: 'white' }}
     >
       <Link to={path} className="flex h-full w-full flex-col">

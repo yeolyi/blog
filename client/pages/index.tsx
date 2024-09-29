@@ -3,7 +3,6 @@ import Giscus from '@/client/components/common/Giscus';
 import Footer from '@/client/components/layout/Footer';
 import profile from './assets/profile.jpg';
 
-import { Copy } from '@/client/pages/components/Copy';
 import { jsPageList } from '@/client/mdx/js';
 import { webapiPageList } from '@/client/mdx/webapi';
 import { CserealBg } from '@/client/pages/components/CserealBg';
@@ -26,10 +25,10 @@ export const MainPage = () => {
           <h1 className="mr-[30px] text-[40px] font-semibold leading-[1.2] text-textblack sm:text-[48px] sm:leading-[1.1875] md:text-[64px] md:leading-[1.171875] lg:text-[80px] lg:leading-[1.15]">
             이성열 yeolyi
           </h1>
-          <Copy>
+          <p className="mt-[10px] w-auto max-w-[430px] text-[19px] font-semibold leading-[1.32] tracking-[0.012em] text-textblack min-[590px]:max-w-[535px] lg:w-[390px] lg:text-[21px]">
             배우고 경험한 것들을 다듬어 여기에 공유해요. 카카오에서 프론트엔드
             개발을 하고 있어요. 서울대학교 컴퓨터공학부 복수전공 중입니다.
-          </Copy>
+          </p>
         </Section.Top>
 
         <Section>
