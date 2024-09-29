@@ -29,10 +29,21 @@ const setupDev = async (app: Express) => {
   });
   app.use(vite.middlewares);
 
-  const module = await vite.ssrLoadModule('/client/entry-server.tsx');
-  const onError = (e: Error) => vite.ssrFixStacktrace(e);
-  // @ts-expect-error dist 폴더가 없을 수 있음
-  prepareServerWithModule(app, module, onError);
+  // SSR
+  app.use('*', async (req, res) => {
+    try {
+      const module = await vite.ssrLoadModule('/client/entry-server.tsx');
+      module.render(req.baseUrl, res);
+    } catch (e) {
+      if (e instanceof Error) {
+        vite.ssrFixStacktrace(e);
+        console.log(e.stack);
+        res.sendStatus(500);
+      } else {
+        throw e;
+      }
+    }
+  });
 };
 
 const app = express();

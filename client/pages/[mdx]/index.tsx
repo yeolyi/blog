@@ -4,7 +4,7 @@ import Footer from '@/client/components/layout/Footer';
 import Island from '@/client/components/layout/Island';
 import { MdxPage } from '@/client/types/page';
 import { MDXComponents } from 'mdx/types';
-import { lazy, Suspense, useLayoutEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 export default function MdxLayout({
@@ -17,7 +17,9 @@ export default function MdxLayout({
   const Mdx = lazy(mdxPage.importMdx);
 
   const { pathname } = useLocation();
-  useLayoutEffect(() => {
+  // https://gist.github.com/gaearon/e7d97cdf38a2907924ea12e4ebdf3c85
+  // TODO: useLayoutEffect를 사용할 방법?
+  useEffect(() => {
     scrollTo(0, 0);
   }, [pathname]);
 
@@ -32,9 +34,9 @@ export default function MdxLayout({
           />
         )}
         <div
-          className={`w-full bg-white pb-[100px] ${mdxPage.src ? 'pt-[50px] md:pt-[60px]' : 'pt-[100px] md:pt-[120px]'}`}
+          className={`w-full pb-[100px] ${mdxPage.src ? 'pt-[50px] md:pt-[60px]' : 'pt-[100px] md:pt-[120px]'}`}
         >
-          <article className="prose prose-slate mx-auto w-[87.5%] lg:prose-lg prose-h1:text-[32px] max-md:max-w-[414px] md:w-[83.33%] md:prose-h1:text-[40px] lg:w-[80%] lg:prose-h1:text-[48px]">
+          <article className="prose prose-sm mx-auto max-w-[70ch] px-4 sm:prose-base lg:prose-lg sm:px-12">
             <Island />
             <Suspense
               fallback={
@@ -43,7 +45,7 @@ export default function MdxLayout({
                 </div>
               }
             >
-              <h1 className="w-2/3 leading-tight">{mdxPage.title}</h1>
+              <h1>{mdxPage.title}</h1>
               <Mdx components={mdxComponents} />
             </Suspense>
             <div className="my-16 h-[1px] w-full bg-neutral-300" />
