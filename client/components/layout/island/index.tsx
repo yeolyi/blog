@@ -17,10 +17,10 @@ export default function Island() {
 
   return (
     <nav
-      className={`not-prose fixed left-1/2 top-6 z-50 flex h-fit max-h-[50%] -translate-x-1/2 gap-2`}
+      className={`not-prose fixed left-1/2 top-6 z-50 flex h-fit max-h-[300px] -translate-x-1/2 gap-2`}
     >
       <div
-        className={`overflow-y-scroll overscroll-contain bg-white shadow-xl shadow-slate-700/10 ${expanded ? 'rounded-xl' : 'rounded-full'} no-scrollbar ring-1 ring-gray-900/5 dark:border dark:border-neutral-600 dark:bg-black`}
+        className={`overflow-y-scroll overscroll-contain bg-white shadow-xl shadow-slate-700/10 ${expanded ? 'rounded-xl' : 'rounded-full'} no-scrollbar ring-1 ring-gray-900/5 dark:border-2 dark:border-stone-600 dark:bg-black`}
         onMouseEnter={() => setExpanded(true)}
         onMouseLeave={() => setExpanded(false)}
       >
@@ -37,7 +37,7 @@ export default function Island() {
       {!expanded && (
         <Link
           to="/"
-          className="flex w-[40px] items-center justify-center rounded-full bg-white shadow-xl shadow-slate-700/10 ring-1 ring-gray-900/5 dark:border dark:border-neutral-600 dark:bg-black"
+          className="flex w-[40px] items-center justify-center rounded-full bg-white shadow-xl shadow-slate-700/10 ring-1 ring-gray-900/5 dark:border-2 dark:border-stone-600 dark:bg-black"
         >
           <RiHomeLine className="h-5 w-5" />
         </Link>

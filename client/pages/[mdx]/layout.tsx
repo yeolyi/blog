@@ -1,7 +1,7 @@
 import CodeBlock from '@/client/components/code/CodeBlock';
 import Giscus from '@/client/components/common/Giscus';
 import Footer from '@/client/components/layout/Footer';
-import Island from '@/client/components/layout/Island';
+import Island from '@/client/components/layout/island';
 import { Fallback } from '@/client/pages/[mdx]/Fallback';
 import { MdxPage } from '@/client/types/page';
 import { MDXComponents } from 'mdx/types';

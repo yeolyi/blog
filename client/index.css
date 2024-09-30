@@ -12,8 +12,18 @@
   src: url(@/client/assets/pretendard.woff2);
 }
 
+@font-face {
+  font-family: tossface;
+  src: url(@/client/assets/tossface.otf);
+  unicode-range: U+1F600-1F64F;
+}
+
 * {
   word-break: keep-all;
+}
+
+body {
+  font-family: pretendard;
 }
 
 html,

@@ -6,7 +6,6 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        pretendard: ['pretendard'],
         firacode: ['firacode'],
       },
       typography: {
