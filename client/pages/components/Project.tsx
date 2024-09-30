@@ -53,9 +53,7 @@ const Project = ({ children }: { children: ReactNode }) => {
       >
         <ul
           className="mb-[10px] inline-grid w-fit grid-flow-col gap-[20px] px-[calc(50%-var(--viewport-content)/2)] sm:mb-[16px] md:mb-[18px] md:mr-[40px] lg:mb-[22px]"
-          style={{
-            gridTemplateRows: 'var(--wide-tile-height)',
-          }}
+          style={{ gridTemplateRows: 'var(--wide-tile-height)' }}
         >
           {children}
         </ul>

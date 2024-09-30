@@ -1,6 +1,5 @@
 import Giscus from '@/client/components/common/Giscus';
 
-import Footer from '@/client/components/layout/Footer';
 import profile from './assets/profile.jpg';
 
 import { jsPageList } from '@/client/mdx/js';
@@ -11,6 +10,7 @@ import { postPageList } from '@/client/mdx/post';
 import List from '@/client/pages/components/List';
 import Section from '@/client/pages/components/Section';
 import Project from '@/client/pages/components/Project';
+import Footer from '@/client/components/layout/Footer';
 
 export const MainPage = () => {
   return (
@@ -25,9 +25,12 @@ export const MainPage = () => {
           <h1 className="mr-[30px] text-[40px] font-semibold leading-[1.2] text-textblack sm:text-[48px] sm:leading-[1.1875] md:text-[64px] md:leading-[1.171875] lg:text-[80px] lg:leading-[1.15] dark:text-white">
             이성열 yeolyi
           </h1>
-          <p className="mt-[10px] w-auto max-w-[430px] text-[19px] font-semibold leading-[1.32] tracking-[0.012em] text-textblack min-[590px]:max-w-[535px] lg:w-[390px] lg:text-[21px] dark:text-white">
-            배우고 경험한 것들을 다듬어 여기에 공유해요. 카카오에서 프론트엔드
-            개발을 하고 있어요. 서울대학교 컴퓨터공학부 복수전공 중입니다.
+          <p className="mt-[10px] w-auto max-w-[430px] text-[19px] font-semibold leading-[1.32] tracking-[0.012em] text-textblack min-[590px]:max-w-[535px] lg:w-[390px] lg:text-[21px] dark:font-medium dark:text-white">
+            배우고 경험한 것들을 다듬어 여기에 공유해요.
+            <br />
+            카카오에서 프론트엔드 개발을 합니다.
+            <br />
+            서울대학교에서 컴퓨터공학을 복수전공합니다.
           </p>
         </Section.Top>
 
@@ -39,10 +42,8 @@ export const MainPage = () => {
           </Project>
         </Section>
 
-        <Section className="bg-lightgray dark:bg-gray-900">
-          <Section.Headline className="horizontal-pad">
-            <strong>게시물</strong>
-          </Section.Headline>
+        <Section className="bg-lightgray dark:bg-stone-900">
+          <Section.Headline className="horizontal-pad">게시물</Section.Headline>
           <List>
             {postPageList.map((mdxPage, idx) => (
               <List.Post key={idx} mdxPage={mdxPage} />
@@ -52,7 +53,7 @@ export const MainPage = () => {
 
         <Section>
           <Section.Headline className="horizontal-pad">
-            <strong>자바스크립트</strong> 공부 기록
+            자바스크립트 <Section.Light>공부 기록</Section.Light>
           </Section.Headline>
           <List>
             {jsPageList.map((prop, idx) => (
@@ -61,9 +62,9 @@ export const MainPage = () => {
           </List>
         </Section>
 
-        <Section className="bg-lightgray dark:bg-gray-900">
+        <Section className="bg-lightgray dark:bg-stone-900">
           <Section.Headline className="horizontal-pad">
-            <strong>Web API</strong> 공부 기록
+            Web API <Section.Light>공부 기록</Section.Light>
           </Section.Headline>
           <List>
             {webapiPageList.map((prop, idx) => (

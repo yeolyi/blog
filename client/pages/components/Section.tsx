@@ -28,10 +28,16 @@ const Headline = ({
   children: ReactNode;
 }) => (
   <h2
-    className={`mb-[28px] text-[28px] font-semibold leading-[1.25] tracking-[0] text-[#86868b] sm:mb-[32px] sm:text-[32px] md:mb-[36px] md:text-[40px] lg:mb-[40px] lg:text-[48px] dark:text-gray-300 [&>strong]:font-semibold [&>strong]:text-textblack dark:[&>strong]:text-white ${className}`}
+    className={`mb-[28px] text-[28px] font-semibold leading-[1.25] tracking-[0] sm:mb-[32px] sm:text-[32px] md:mb-[36px] md:text-[40px] lg:mb-[40px] lg:text-[48px] dark:text-white ${className}`}
   >
     {children}
   </h2>
 );
 
-export default Object.assign(Section, { Headline, Top });
+const Light = ({ children }: { children: ReactNode }) => (
+  <span className="font-medium text-[#86868b] dark:text-stone-300">
+    {children}
+  </span>
+);
+
+export default Object.assign(Section, { Headline, Top, Light });

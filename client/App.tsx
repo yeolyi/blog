@@ -5,7 +5,7 @@ import { Route, Routes } from 'react-router-dom';
 import { jsPageList } from './mdx/js';
 import { webapiPageList } from './mdx/webapi';
 import { postPageList } from './mdx/post';
-import MdxLayout from '@/client/pages/[mdx]';
+import MdxLayout from '@/client/pages/[mdx]/layout';
 import { notFoundPage } from '@/client/constants/page';
 import { MainPage } from '@/client/pages';
 

@@ -33,7 +33,7 @@ export const HTML = ({ cssPath }: { cssPath: string }) => {
 
         {import.meta.env.DEV && <DevScripts />}
       </head>
-      <body className="dark:bg-black">
+      <body className="bg-white dark:bg-black">
         <App />
       </body>
     </html>

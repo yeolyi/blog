@@ -7,20 +7,18 @@ type BadgeProps = {
   title: string;
   cnt: number;
   href: string;
-  className?: string;
 };
 
-export const Follower = ({ className }: { className?: string }) => {
+export const Follower = () => {
   const cnt = useNumber('/instagram-follower');
   const href = 'https://instagram.com/yeolyii';
 
   return (
     <Badge
-      title="follower"
+      title="Follower"
       icon={<FaInstagram className="text-[16px]" />}
       cnt={cnt}
       href={href}
-      className={className}
     />
   );
 };
@@ -28,7 +26,7 @@ export const Follower = ({ className }: { className?: string }) => {
 export const Star = () => {
   const cnt = useNumber('/stargazer');
   const href = 'https://github.com/yeolyi/blog';
-  return <Badge title="star" icon={<StarSVG />} cnt={cnt} href={href} />;
+  return <Badge title="Star" icon={<StarSVG />} cnt={cnt} href={href} />;
 };
 
 const StarSVG = () => (
@@ -43,25 +41,20 @@ const StarSVG = () => (
   </svg>
 );
 
-const Badge = ({ icon, title, cnt, href, className }: BadgeProps) => {
+const Badge = ({ icon, title, cnt, href }: BadgeProps) => {
   return (
-    <div
-      className={`flex items-center overflow-hidden whitespace-nowrap rounded-[.25em] border border-solid border-[#d0d7de] ${className}`}
+    <Link
+      className="flex items-center overflow-hidden whitespace-nowrap rounded-[.25em] border border-solid border-[#d0d7de] dark:border-stone-700"
+      to={href}
     >
-      <Link
-        to={href}
-        className="flex items-center gap-[2px] bg-[#ebf0f4] px-[10px] py-[5px] text-[12px] font-semibold text-[#24292f]"
-      >
+      <span className="flex items-center gap-[4px] bg-[#ebf0f4] px-[10px] py-[5px] text-[12px] font-semibold text-[#24292f] dark:bg-stone-700 dark:fill-white dark:font-medium dark:text-white">
         {icon}
         {title}
-      </Link>
-      <Link
-        to={href}
-        className="bg-white px-[10px] py-[5px] text-[12px] font-semibold text-[#24292f]"
-      >
+      </span>
+      <span className="bg-white px-[10px] py-[5px] text-[12px] font-semibold text-[#24292f] dark:bg-black dark:font-medium dark:text-white">
         {cnt.toLocaleString()}
-      </Link>
-    </div>
+      </span>
+    </Link>
   );
 };
 
@@ -73,7 +66,9 @@ const useNumber = (url: string) => {
       try {
         const resp = await fetch(url);
         const cnt = await resp.text();
-        setVal(parseInt(cnt));
+        const val = parseInt(cnt);
+        if (Number.isNaN(val)) return;
+        setVal(val);
       } catch {
         // TODO
       }

@@ -2,6 +2,7 @@ import CodeBlock from '@/client/components/code/CodeBlock';
 import Giscus from '@/client/components/common/Giscus';
 import Footer from '@/client/components/layout/Footer';
 import Island from '@/client/components/layout/Island';
+import { Fallback } from '@/client/pages/[mdx]/Fallback';
 import { MdxPage } from '@/client/types/page';
 import { MDXComponents } from 'mdx/types';
 import { lazy, Suspense, useEffect } from 'react';
@@ -25,7 +26,7 @@ export default function MdxLayout({
 
   return (
     <>
-      <main className="dark:bg-black">
+      <main>
         {mdxPage.src && (
           <img
             src={mdxPage.src}
@@ -36,15 +37,9 @@ export default function MdxLayout({
         <div
           className={`pb-[100px] ${mdxPage.src ? 'pt-[50px] md:pt-[60px]' : 'pt-[100px] md:pt-[120px]'}`}
         >
-          <article className="prose prose-base mx-auto max-w-[70ch] px-4 lg:prose-lg dark:prose-invert sm:px-8">
+          <article className="prose prose-base prose-stone mx-auto max-w-[70ch] px-4 lg:prose-lg dark:prose-invert sm:px-8">
             <Island />
-            <Suspense
-              fallback={
-                <div className="h-[100vh] w-full">
-                  <h1 className="text-neutral-400">불러오는 중...</h1>
-                </div>
-              }
-            >
+            <Suspense fallback={<Fallback />}>
               <h1>{mdxPage.title}</h1>
               <Mdx components={mdxComponents} />
             </Suspense>
