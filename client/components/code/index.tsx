@@ -1,15 +1,13 @@
-import { ReactElement, ReactNode } from 'react';
+import { isValidElement, ReactNode } from 'react';
 
-import HighlightedCode from './editor/HighlightedCode';
+import HighlightedCode from './highlighter';
 import { PresetName, presetNameList } from './sandbox/preset/presetMap';
-import Sandbox, { SandboxProps } from './sandbox/Sandbox';
+import Sandbox, { SandboxProps } from './sandbox';
 
 export default function CodeBlock({ children }: { children?: ReactNode }) {
-  const fallback = <pre>{children}</pre>;
-
   // fallback
-  if (!isReactElement(children)) return fallback;
-  if (!children || children.type !== 'code') return fallback;
+  if (!isValidElement(children) || children.type !== 'code')
+    return <pre>{children}</pre>;
 
   const content = String(children.props.children).trim();
   const className = children.props.className;
@@ -29,10 +27,6 @@ export default function CodeBlock({ children }: { children?: ReactNode }) {
 
   return <Sandbox presetName={presetName} code={code} {...props} />;
 }
-
-const isReactElement = (node: ReactNode): node is ReactElement => {
-  return typeof node === 'object' && node !== null && 'type' in node;
-};
 
 const parseProps = (
   src: string,

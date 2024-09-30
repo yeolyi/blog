@@ -10,24 +10,26 @@ hljs.registerLanguage('javascript', js);
 hljs.registerLanguage('xml', xml);
 hljs.registerLanguage('css', css);
 
+type Props = {
+  overlay?: ReactNode;
+  language?: string;
+  children: string;
+};
+
 export default function HighlightedCode({
   overlay,
   language,
   children,
-}: {
-  overlay?: ReactNode;
-  language?: string;
-  children: string;
-}) {
+}: Props) {
+  const __html = language ? highlightCode(children, language) : children;
+
   return (
     <div
-      className={`not-prose relative w-full overflow-x-scroll rounded bg-slate-50 dark:bg-neutral-800`}
+      className={`not-prose relative w-full overflow-x-scroll rounded bg-slate-50 dark:bg-stone-800`}
     >
       <div className="relative h-fit min-h-full w-fit min-w-full p-4 text-sm leading-[1.4rem]">
         <div
-          dangerouslySetInnerHTML={{
-            __html: language ? highlightCode(children, language) : children,
-          }}
+          dangerouslySetInnerHTML={{ __html }}
           className="h-full w-full whitespace-pre text-nowrap font-firacode not-italic"
         />
         {overlay}

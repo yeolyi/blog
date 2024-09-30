@@ -1,5 +1,5 @@
 import CodeTextArea from './CodeTextArea';
-import HighlightedCode from './HighlightedCode';
+import HighlightedCode from '../highlighter';
 
 export default function CodeEditor({
   language,

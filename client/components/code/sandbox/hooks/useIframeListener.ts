@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-
-import { Log } from '../type';
+import { Log } from '../../type';
 
 export const useIframeListener = (iframe: HTMLIFrameElement | null) => {
   const [logList, setLogList] = useState<Log[]>([]);

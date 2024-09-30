@@ -1,19 +1,20 @@
-import { RefObject, useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
-import Console from '../console/Console';
-import CodeEditor from '../editor/CodeEditor';
+import CodeEditor from '../editor';
 import { presetMap, PresetName } from './preset/presetMap';
-import { useDebouncedSrcDoc } from './useDebouncedSrcDoc';
-import { useIframeListener } from './useIframeListener';
 
+import Console from '@/client/components/code/sandbox/Console';
+import { Toolbar } from '@/client/components/code/sandbox/Toolbar';
+import { useIframeListener } from '@/client/components/code/sandbox/hooks/useIframeListener';
+import { useOnScreen } from '@/client/components/code/sandbox/hooks/useOnScreen';
+import { useDebouncedSrcDoc } from '@/client/components/code/sandbox/hooks/useDebouncedSrcDoc';
+
+// TODO: 옵션 정리...
 export type SandboxOptions = {
   noexec?: boolean;
   noedit?: boolean;
   norefresh?: boolean;
   noiframe?: boolean;
-
-  consoleFit?: boolean;
-  logExpanded?: boolean;
   iframeHeight?: number;
 };
 
@@ -26,7 +27,6 @@ export default function Sandbox({
   presetName,
   code: _code,
 
-  consoleFit,
   noexec,
   noedit,
   norefresh,
@@ -35,12 +35,15 @@ export default function Sandbox({
 }: SandboxProps) {
   const preset = presetMap[presetName];
 
+  // iframe의 메시지 수신
   const [iframe, setIframe] = useState<HTMLIFrameElement | null>(null);
+  const { logList, reset } = useIframeListener(iframe);
+
+  // 화면에 보이는지 감지
   const containerRef = useRef<HTMLDivElement>(null);
   const onscreen = useOnScreen(containerRef);
 
-  const { logList, reset } = useIframeListener(iframe);
-
+  // 화면이 보이면 iframe으로 메시지 송신
   const { code, setCode, srcdoc, iframeKey, refresh } = useDebouncedSrcDoc(
     _code,
     preset,
@@ -48,6 +51,7 @@ export default function Sandbox({
     onscreen,
   );
 
+  // 옵션에 따라 UI 표시
   const showConsole = !noexec && preset.showConsole;
   const showRefresh = !noexec && !norefresh;
   const showIframe = !noiframe && preset.showIframe;
@@ -58,43 +62,29 @@ export default function Sandbox({
         className="not-prose relative flex flex-col gap-1"
         ref={containerRef}
       >
-        {/* TODO: 옵션 정리 */}
-        {!consoleFit && (
-          <div className="flex justify-end gap-3 px-1 font-firacode text-sm">
-            <p className="text-black dark:text-white">
-              {presetName.toLocaleUpperCase()}
-            </p>
-            {showRefresh && (
-              <button
-                className="text-neutral-300 hover:text-neutral-400"
-                onClick={refresh}
-              >
-                refresh
-              </button>
-            )}
-          </div>
-        )}
-
+        <Toolbar
+          refresh={showRefresh ? refresh : undefined}
+          presetName={presetName}
+        />
         <CodeEditor
           code={code}
           setCode={setCode}
           language={preset.language}
           noneditable={noedit}
         />
-
         {showIframe && !noexec && (
           <iframe
             key={iframeKey}
             className="bg-white shadow"
             style={{
-              height: iframeHeight ? `${iframeHeight}px` : 0,
-              minHeight: iframeHeight ? undefined : '200px',
+              height: iframeHeight && `${iframeHeight}px`,
+              minHeight: iframeHeight ?? '200px',
             }}
             ref={(ref) => setIframe(ref)}
             srcDoc={srcdoc}
           />
         )}
-        {showConsole && <Console logList={logList} fit={consoleFit} />}
+        {showConsole && <Console logList={logList} />}
       </div>
       {!showIframe && !noexec && (
         <iframe
@@ -106,27 +96,4 @@ export default function Sandbox({
       )}
     </>
   );
-}
-
-export function useOnScreen(ref: RefObject<HTMLElement>) {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting);
-      },
-      { rootMargin: '1000px' },
-    );
-
-    const currentElement = ref?.current;
-
-    if (currentElement) observer.observe(currentElement);
-
-    return () => {
-      if (currentElement) observer.unobserve(currentElement);
-    };
-  }, [ref]);
-
-  return isVisible;
 }

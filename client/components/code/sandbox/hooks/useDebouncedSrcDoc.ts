@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Preset } from './preset/presetMap';
+import { Preset } from '../preset/presetMap';
 
 export const useDebouncedSrcDoc = (
   _code: string,

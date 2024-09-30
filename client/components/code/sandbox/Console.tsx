@@ -1,18 +1,14 @@
-import { Log } from '../type';
+import { Log } from '@/client/components/code/type';
 
-export default function Console({
-  logList,
-  fit = false,
-}: {
+type Props = {
   logList: Log[];
-  fit?: boolean;
-}) {
-  if (fit && logList.length === 0) return null;
+};
 
+export default function Console({ logList }: Props) {
   return (
     <div
-      className={`flex resize-y flex-col overflow-y-scroll rounded bg-slate-50 p-4 text-sm dark:bg-neutral-800`}
-      style={{ height: fit ? undefined : '112px' }}
+      className={`flex resize-y flex-col overflow-y-scroll rounded bg-slate-50 p-4 text-sm dark:bg-stone-800`}
+      style={{ height: '112px' }}
     >
       {logList.map((log, idx) => (
         <Row key={idx} log={log} />

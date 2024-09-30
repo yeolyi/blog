@@ -1,4 +1,4 @@
-import CodeBlock from '@/client/components/code/CodeBlock';
+import CodeBlock from '@/client/components/code';
 import Giscus from '@/client/components/common/Giscus';
 import Footer from '@/client/components/layout/Footer';
 import Island from '@/client/components/layout/island';
