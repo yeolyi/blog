@@ -1,3 +1,4 @@
+import { debounce } from 'es-toolkit';
 import { useEffect, useState } from 'react';
 
 const useCurrentHeading = () => {
@@ -5,30 +6,35 @@ const useCurrentHeading = () => {
   const [currentHeading, setCurrentHeading] = useState<HTMLHeadingElement>();
 
   useEffect(() => {
-    // TODO: 고치기
-    setTimeout(() => {
+    // TODO: 이게 맞나?
+    if (0 < headingList.length) return;
+
+    const handleMutation = () => {
       const headingList = [
         ...document.querySelectorAll('h2,h3'),
       ] as HTMLHeadingElement[];
 
       setHeadingList(headingList);
       setCurrentHeading(getCurHeading(headingList));
-    }, 1000);
-
-    let timeoutId: number | null = null;
-    const handleScroll = () => {
-      if (timeoutId) return;
-      timeoutId = window.setTimeout(() => {
-        setCurrentHeading(getCurHeading(headingList));
-        timeoutId = null;
-      }, 250);
     };
 
-    // TODO: 최적화 or 과정 이해
+    const observer = new MutationObserver(handleMutation);
+    observer.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = debounce(() => {
+      setCurrentHeading(getCurHeading(headingList));
+    }, 250);
+
     document.addEventListener('scroll', handleScroll);
+
     return () => {
       document.removeEventListener('scroll', handleScroll);
-      if (timeoutId !== null) clearTimeout(timeoutId);
     };
   }, []);
 
