@@ -1,34 +1,27 @@
+import { useLoad } from '@/client/util/useLoad';
 import { debounce } from 'es-toolkit';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const useCurrentHeading = () => {
   const [headingList, setHeadingList] = useState<HTMLHeadingElement[]>([]);
   const [currentHeading, setCurrentHeading] = useState<HTMLHeadingElement>();
 
-  useEffect(() => {
-    // TODO: 이게 맞나?
-    if (0 < headingList.length) return;
+  const handleMutation = useCallback(() => {
+    const headingList = [
+      ...document.querySelectorAll('h2,h3'),
+    ] as HTMLHeadingElement[];
 
-    const handleMutation = () => {
-      const headingList = [
-        ...document.querySelectorAll('h2,h3'),
-      ] as HTMLHeadingElement[];
-
-      setHeadingList(headingList);
-      setCurrentHeading(getCurHeading(headingList));
-    };
-
-    const observer = new MutationObserver(handleMutation);
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    return () => {
-      observer.disconnect();
-    };
+    setHeadingList(headingList);
+    setCurrentHeading(getCurHeading(headingList));
   }, []);
+
+  useLoad(handleMutation);
 
   useEffect(() => {
     const handleScroll = debounce(() => {
-      setCurrentHeading(getCurHeading(headingList));
+      const heading = getCurHeading(headingList);
+      console.log(heading);
+      setCurrentHeading(heading);
     }, 250);
 
     document.addEventListener('scroll', handleScroll);
@@ -36,7 +29,7 @@ const useCurrentHeading = () => {
     return () => {
       document.removeEventListener('scroll', handleScroll);
     };
-  }, []);
+  }, [headingList]);
 
   return {
     currentHeading: currentHeading ?? headingList[0],

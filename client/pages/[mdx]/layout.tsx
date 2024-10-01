@@ -5,8 +5,9 @@ import Footer from '@/client/components/layout/Footer';
 import Island from '@/client/components/layout/island';
 import { Fallback } from '@/client/pages/[mdx]/Fallback';
 import { MdxPage } from '@/client/types/page';
+import { useLoad } from '@/client/util/useLoad';
 import { MDXComponents } from 'mdx/types';
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useCallback, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 export default function MdxLayout({
@@ -25,23 +26,14 @@ export default function MdxLayout({
     scrollTo(0, 0);
   }, [pathname]);
 
-  useEffect(() => {
-    let clear = () => {};
-    let done = false;
-
-    setTimeout(() => {
-      if (done) return;
-      const imgList = [
-        ...document.querySelectorAll('article img'),
-      ] as HTMLImageElement[];
-      clear = mediumZoom(imgList);
-    }, 1000);
-
-    return () => {
-      done = true;
-      clear();
-    };
+  const setupMediumZoom = useCallback(() => {
+    const imgList = [
+      ...document.querySelectorAll('article img'),
+    ] as HTMLImageElement[];
+    return mediumZoom(imgList);
   }, []);
+
+  useLoad(setupMediumZoom);
 
   return (
     <>
