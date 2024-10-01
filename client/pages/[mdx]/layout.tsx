@@ -1,5 +1,6 @@
 import CodeBlock from '@/client/components/code';
 import Giscus from '@/client/components/common/Giscus';
+import mediumZoom from '@/client/components/image/medium-zoom';
 import Footer from '@/client/components/layout/Footer';
 import Island from '@/client/components/layout/island';
 import { Fallback } from '@/client/pages/[mdx]/Fallback';
@@ -23,6 +24,24 @@ export default function MdxLayout({
   useEffect(() => {
     scrollTo(0, 0);
   }, [pathname]);
+
+  useEffect(() => {
+    let clear = () => {};
+    let done = false;
+
+    setTimeout(() => {
+      if (done) return;
+      const imgList = [
+        ...document.querySelectorAll('article img'),
+      ] as HTMLImageElement[];
+      clear = mediumZoom(imgList);
+    }, 1000);
+
+    return () => {
+      done = true;
+      clear();
+    };
+  }, []);
 
   return (
     <>
@@ -55,4 +74,5 @@ export default function MdxLayout({
 
 const mdxComponents: MDXComponents = {
   pre: CodeBlock,
+  img: (props) => <img {...props} className="asd" />,
 };
