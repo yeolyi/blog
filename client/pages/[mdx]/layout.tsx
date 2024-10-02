@@ -41,7 +41,7 @@ export default function MdxLayout({
           <article className="prose prose-base prose-stone mx-auto max-w-[70ch] px-4 lg:prose-lg dark:prose-invert sm:px-8">
             <Suspense fallback={<Fallback />}>
               <Island />
-              <h1 className="font-semibold">{mdxPage.title}</h1>
+              <h1>{mdxPage.title}</h1>
               <Mdx components={mdxComponents} />
               <MediumZoom />
             </Suspense>

@@ -25,9 +25,12 @@ export const MainPage = () => {
           <h1 className="mr-[30px] text-[40px] font-semibold leading-[1.2] text-textblack sm:text-[48px] sm:leading-[1.1875] md:text-[64px] md:leading-[1.171875] lg:text-[80px] lg:leading-[1.15] dark:text-white">
             이성열 yeolyi
           </h1>
-          <p className="mt-[10px] w-auto max-w-[430px] text-[19px] font-medium leading-[1.32] tracking-[0.012em] text-textblack min-[590px]:max-w-[535px] lg:w-[390px] lg:text-[21px] dark:text-white">
-            배우고 경험한 것들을 다듬어 여기에 공유해요. 카카오에서 프론트엔드
-            개발을 합니다. 서울대학교에서 컴퓨터공학을 복수전공합니다.
+          <p className="mt-[10px] w-auto max-w-[430px] text-[19px] font-semibold leading-[1.32] tracking-[0.012em] text-textblack min-[590px]:max-w-[535px] lg:w-[390px] lg:text-[21px] dark:font-medium dark:text-white">
+            배우고 경험한 것들을 다듬어 여기에 공유해요.
+            <br />
+            카카오에서 프론트엔드 개발을 합니다.
+            <br />
+            서울대학교에서 컴퓨터공학을 복수전공합니다.
           </p>
         </Section.Top>
 
