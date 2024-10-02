@@ -5,11 +5,7 @@ const useCurrentHeading = () => {
   const [headingList, setHeadingList] = useState<HTMLHeadingElement[]>([]);
   const [currentHeading, setCurrentHeading] = useState<HTMLHeadingElement>();
 
-  if (!import.meta.env.SSR)
-    console.log('a', document.querySelector('article')?.cloneNode(true));
-
   useEffect(() => {
-    console.log('b', document.querySelector('article')?.cloneNode(true));
     const headingList = [
       ...document.querySelectorAll('h2,h3'),
     ] as HTMLHeadingElement[];
@@ -21,7 +17,6 @@ const useCurrentHeading = () => {
   useEffect(() => {
     const handleScroll = debounce(() => {
       const heading = getCurHeading(headingList);
-      console.log(heading);
       setCurrentHeading(heading);
     }, 250);
 

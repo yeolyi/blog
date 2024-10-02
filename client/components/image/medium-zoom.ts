@@ -1,46 +1,94 @@
 import './medium-zoom.css';
 
-import { isSvg, createOverlay, cloneTarget } from './utils';
+import { isSvg, createOverlay, cloneTarget } from './utils.ts';
 
-const MARGIN = 0;
 const SCROLL_OFFSET = 40;
 
 // TODO: 소스코드 참고해 srcset 지원?
 const mediumZoom = (elementList: HTMLImageElement[]) => {
-  let images: HTMLImageElement[] = [];
+  const images: Set<HTMLImageElement> = new Set(elementList);
+
   let isAnimating = false;
   let scrollTop = 0;
 
-  const active: { original?: HTMLImageElement; zoomed?: HTMLImageElement } = {};
+  let focused:
+    | { original: undefined; zoomed: undefined }
+    | { original: HTMLImageElement; zoomed: undefined }
+    | { original: HTMLImageElement; zoomed: HTMLImageElement } = {
+    original: undefined,
+    zoomed: undefined,
+  };
+
   const overlay = createOverlay();
 
-  const handleClick = ({ target }: MouseEvent) => {
-    if (target === overlay) {
-      close();
-      return;
-    }
+  const open = ({ target }: { target: HTMLImageElement }) => {
+    if (focused.zoomed) return;
 
-    if (
-      !(target instanceof HTMLImageElement) ||
-      images.indexOf(target) === -1
-    ) {
-      return;
-    }
+    scrollTop = scrollY;
+    isAnimating = true;
 
-    if (active.original) {
-      close();
-    } else {
-      open({ target });
-    }
+    focused = { original: target, zoomed: cloneTarget(target) };
+
+    overlay.addEventListener('click', close);
+    document.body.appendChild(overlay);
+    document.body.appendChild(focused.zoomed);
+
+    // TODO: 왜 여기만 requestAnimationFrame?
+    requestAnimationFrame(() => {
+      document.body.classList.add('medium-zoom--opened');
+    });
+
+    focused.original.classList.add('medium-zoom-image--hidden');
+    focused.zoomed.classList.add('medium-zoom-image--opened');
+
+    focused.zoomed.addEventListener('click', close);
+
+    const handleTransitioned = () => {
+      isAnimating = false;
+    };
+
+    focused.zoomed.addEventListener('transitionend', handleTransitioned, {
+      once: true,
+    });
+
+    focused.zoomed.style.transform = getTransform(target);
+  };
+
+  const close = () => {
+    if (!focused.original || !focused.zoomed) return;
+
+    isAnimating = true;
+    document.body.classList.remove('medium-zoom--opened');
+    focused.zoomed.style.transform = '';
+
+    const handleCloseEnd = () => {
+      if (!focused.original || !focused.zoomed) return;
+
+      focused.original.classList.remove('medium-zoom-image--hidden');
+      focused.zoomed.classList.remove('medium-zoom-image--opened');
+
+      document.body.removeChild(focused.zoomed);
+      document.body.removeChild(overlay);
+
+      isAnimating = false;
+
+      focused = { original: undefined, zoomed: undefined };
+    };
+
+    focused.zoomed.addEventListener('transitionend', handleCloseEnd, {
+      once: true,
+    });
+
+    overlay.removeEventListener('click', close);
   };
 
   const handleScroll = () => {
-    if (isAnimating || !active.original) {
+    if (isAnimating || !focused.original) {
       return;
     }
 
     if (Math.abs(scrollTop - scrollY) > SCROLL_OFFSET) {
-      setTimeout(close, 150);
+      setTimeout(close, 100);
     }
   };
 
@@ -50,107 +98,53 @@ const mediumZoom = (elementList: HTMLImageElement[]) => {
     }
   };
 
+  const handleClick = (event: MouseEvent) => {
+    if (focused.original) {
+      close();
+    } else {
+      open({ target: event.target as HTMLImageElement });
+    }
+  };
+
+  // attach & detach
+  const attach = () => {
+    document.addEventListener('keyup', handleKeyup);
+    document.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', close);
+
+    images.forEach((image) => {
+      image.classList.add('medium-zoom-image');
+      image.addEventListener('click', handleClick);
+    });
+  };
+
   const detach = () => {
-    if (active.zoomed) {
+    if (focused.zoomed) {
       close();
     }
 
     images.forEach((image) => {
       image.classList.remove('medium-zoom-image');
+      image.removeEventListener('click', handleClick);
     });
 
-    images = [];
+    images.clear();
+
+    document.removeEventListener('keyup', handleKeyup);
+    document.removeEventListener('scroll', handleScroll);
+    window.removeEventListener('resize', close);
   };
 
-  const open = ({ target }: { target: HTMLImageElement }) => {
-    return new Promise<void>((resolve) => {
-      if (active.zoomed) {
-        resolve();
-        return;
-      }
-
-      scrollTop = scrollY;
-      isAnimating = true;
-
-      active.original = target;
-      active.zoomed = cloneTarget(active.original);
-
-      document.body.appendChild(overlay);
-      document.body.appendChild(active.zoomed);
-
-      // TODO: 왜 여기만 requestAnimationFrame?
-      requestAnimationFrame(() => {
-        document.body.classList.add('medium-zoom--opened');
-      });
-
-      active.original.classList.add('medium-zoom-image--hidden');
-      active.zoomed.classList.add('medium-zoom-image--opened');
-
-      const handleTransitioned = () => {
-        isAnimating = false;
-        resolve();
-      };
-
-      active.zoomed.addEventListener('click', close);
-      active.zoomed.addEventListener('transitionend', handleTransitioned, {
-        once: true,
-      });
-
-      active.zoomed.style.transform = getTransform(target);
-    });
-  };
-
-  const close = () =>
-    new Promise<void>((resolve) => {
-      if (!active.original || !active.zoomed) {
-        resolve();
-        return;
-      }
-
-      isAnimating = true;
-      document.body.classList.remove('medium-zoom--opened');
-      active.zoomed.style.transform = '';
-
-      const handleCloseEnd = () => {
-        if (!active.original || !active.zoomed) return;
-
-        active.original.classList.remove('medium-zoom-image--hidden');
-        active.zoomed.classList.remove('medium-zoom-image--opened');
-
-        document.body.removeChild(active.zoomed);
-        document.body.removeChild(overlay);
-
-        isAnimating = false;
-
-        active.original = undefined;
-        active.zoomed = undefined;
-
-        resolve();
-      };
-
-      active.zoomed.addEventListener('transitionend', handleCloseEnd, {
-        once: true,
-      });
-    });
-
-  elementList
-    .filter((newImage) => images.indexOf(newImage) === -1)
-    .forEach((newImage) => {
-      images.push(newImage);
-      newImage.classList.add('medium-zoom-image');
-    });
-
-  document.addEventListener('click', handleClick);
-  document.addEventListener('keyup', handleKeyup);
-  document.addEventListener('scroll', handleScroll);
-  window.addEventListener('resize', close);
+  attach();
 
   return detach;
 };
 
 const getTransform = (zoomTarget: HTMLImageElement) => {
-  const viewportWidth = innerWidth - MARGIN * 2;
-  const viewportHeight = innerHeight - MARGIN * 2;
+  const margin = 5;
+
+  const viewportWidth = innerWidth - margin * 2;
+  const viewportHeight = innerHeight - margin * 2;
 
   const naturalWidth =
     isSvg(zoomTarget) ? viewportWidth : (
@@ -160,15 +154,18 @@ const getTransform = (zoomTarget: HTMLImageElement) => {
     isSvg(zoomTarget) ? viewportHeight : (
       zoomTarget.naturalHeight || viewportHeight
     );
+
   const { top, left, width, height } = zoomTarget.getBoundingClientRect();
 
+  // 사진을 가능한 원본 크기로 확대
   const scaleX = Math.min(Math.max(width, naturalWidth), viewportWidth) / width;
   const scaleY =
     Math.min(Math.max(height, naturalHeight), viewportHeight) / height;
   const scale = Math.min(scaleX, scaleY);
 
-  const translateX = (-left + (viewportWidth - width) / 2 + MARGIN) / scale;
-  const translateY = (-top + (viewportHeight - height) / 2 + MARGIN) / scale;
+  // 확대된 사진을 중앙으로 이동
+  const translateX = (-left + (viewportWidth - width) / 2 + margin) / scale;
+  const translateY = (-top + (viewportHeight - height) / 2 + margin) / scale;
 
   return `scale(${scale}) translate3d(${translateX}px, ${translateY}px, 0)`;
 };
