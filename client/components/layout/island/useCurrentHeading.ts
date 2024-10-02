@@ -1,12 +1,15 @@
-import { useLoad } from '@/client/util/useLoad';
 import { debounce } from 'es-toolkit';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const useCurrentHeading = () => {
   const [headingList, setHeadingList] = useState<HTMLHeadingElement[]>([]);
   const [currentHeading, setCurrentHeading] = useState<HTMLHeadingElement>();
 
-  const handleMutation = useCallback(() => {
+  if (!import.meta.env.SSR)
+    console.log('a', document.querySelector('article')?.cloneNode(true));
+
+  useEffect(() => {
+    console.log('b', document.querySelector('article')?.cloneNode(true));
     const headingList = [
       ...document.querySelectorAll('h2,h3'),
     ] as HTMLHeadingElement[];
@@ -14,8 +17,6 @@ const useCurrentHeading = () => {
     setHeadingList(headingList);
     setCurrentHeading(getCurHeading(headingList));
   }, []);
-
-  useLoad(handleMutation);
 
   useEffect(() => {
     const handleScroll = debounce(() => {

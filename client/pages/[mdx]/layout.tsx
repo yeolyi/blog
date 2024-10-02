@@ -1,13 +1,12 @@
 import CodeBlock from '@/client/components/code';
 import Giscus from '@/client/components/common/Giscus';
-import mediumZoom from '@/client/components/image/medium-zoom';
 import Footer from '@/client/components/layout/Footer';
 import Island from '@/client/components/layout/island';
 import { Fallback } from '@/client/pages/[mdx]/Fallback';
+import MediumZoom from '@/client/pages/[mdx]/MediumZoom';
 import { MdxPage } from '@/client/types/page';
-import { useLoad } from '@/client/util/useLoad';
 import { MDXComponents } from 'mdx/types';
-import { lazy, Suspense, useCallback, useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 export default function MdxLayout({
@@ -26,15 +25,6 @@ export default function MdxLayout({
     scrollTo(0, 0);
   }, [pathname]);
 
-  const setupMediumZoom = useCallback(() => {
-    const imgList = [
-      ...document.querySelectorAll('article img'),
-    ] as HTMLImageElement[];
-    return mediumZoom(imgList);
-  }, []);
-
-  useLoad(setupMediumZoom);
-
   return (
     <>
       <main>
@@ -49,10 +39,11 @@ export default function MdxLayout({
           className={`pb-[100px] ${mdxPage.src ? 'pt-[50px] md:pt-[60px]' : 'pt-[100px] md:pt-[120px]'}`}
         >
           <article className="prose prose-base prose-stone mx-auto max-w-[70ch] px-4 lg:prose-lg dark:prose-invert sm:px-8">
-            <Island />
             <Suspense fallback={<Fallback />}>
+              <Island />
               <h1 className="font-semibold">{mdxPage.title}</h1>
               <Mdx components={mdxComponents} />
+              <MediumZoom />
             </Suspense>
             <div className="my-16 h-[1px] w-full bg-neutral-300" />
             <Giscus discussionNumber={discussionNumber} />
