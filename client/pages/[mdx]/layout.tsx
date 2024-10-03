@@ -3,7 +3,7 @@ import Giscus from '@/client/components/common/Giscus';
 import Footer from '@/client/components/layout/Footer';
 import Island from '@/client/components/layout/island';
 import { Fallback } from '@/client/pages/[mdx]/Fallback';
-import MediumZoom from '@/client/pages/[mdx]/MediumZoom';
+import MediumZoom from '@/client/components/image/MediumZoom';
 import { MdxPage } from '@/client/types/page';
 import { MDXComponents } from 'mdx/types';
 import { lazy, Suspense, useEffect } from 'react';

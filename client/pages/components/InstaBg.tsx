@@ -1,19 +1,51 @@
-import gsap from 'gsap';
+import { random } from 'es-toolkit';
 import { useEffect } from 'react';
 
 export default function InstaBg() {
   useEffect(() => {
-    const heartList = [...document.querySelectorAll('.heart')];
-    heartList.forEach((heart) => {
-      gsap.to(heart, {
-        y: -600,
-        repeat: -1,
-        duration: 'random(3,5)',
-        opacity: 0,
-        filter: 'blur(4px)',
-        ease: 'sine.out',
+    const heartList = [
+      ...document.querySelectorAll('.heart'),
+    ] as HTMLLIElement[];
+
+    const parentHeight = parseInt(
+      getComputedStyle(document.body).getPropertyValue('--wide-tile-height'),
+    );
+
+    let positionPercentage = Array(heartList.length)
+      .fill(0)
+      .map(() => random(1));
+
+    let done = false;
+    let prevTime = 0;
+
+    const update: FrameRequestCallback = (time) => {
+      if (done) return;
+      requestAnimationFrame(update);
+
+      const delta = time - prevTime;
+      prevTime = time;
+      positionPercentage = positionPercentage.map((x) => {
+        const val = x + delta / 10000;
+        return 1.1 <= val ? 0 : val;
       });
-    });
+
+      const opacity = positionPercentage
+        .map((x) => Math.min(100, x * 200 + 10))
+        .map((x) => `${x}%`);
+
+      const position = positionPercentage.map((x) => -x * parentHeight + 'px');
+
+      heartList.forEach((heart, idx) => {
+        heart.style.transform = `translate(0, ${position[idx]})`;
+        heart.style.opacity = opacity[idx];
+      });
+    };
+
+    requestAnimationFrame(update);
+
+    return () => {
+      done = true;
+    };
   }, []);
 
   return (

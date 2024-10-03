@@ -48,7 +48,7 @@ const JS = ({ title, description, path }: MdxPage) => {
         to={path}
       >
         <h3
-          className="font-semibold dark:text-white"
+          className="font-bold dark:text-white"
           style={{ fontSize: 'var(--tile-title)' }}
         >
           {title}
@@ -69,7 +69,7 @@ const WebAPI = ({ title, description, path }: MdxPage) => {
         to={path}
       >
         <h3
-          className="block font-semibold dark:text-white"
+          className="block font-bold dark:text-white"
           style={{ fontSize: 'var(--tile-title)' }}
         >
           {title}
