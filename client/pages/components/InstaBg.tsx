@@ -25,8 +25,7 @@ export default function InstaBg() {
       const delta = time - prevTime;
       prevTime = time;
       positionPercentage = positionPercentage.map((x) => {
-        const val = x + delta / 10000;
-        return 1.1 <= val ? 0 : val;
+        return (x + delta / 5000) % 1.1;
       });
 
       const opacity = positionPercentage
@@ -44,6 +43,7 @@ export default function InstaBg() {
     requestAnimationFrame(update);
 
     return () => {
+      console.log('return');
       done = true;
     };
   }, []);
