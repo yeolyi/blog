@@ -66,7 +66,7 @@ export default function InstaBg() {
         {[...Array(30).keys()].map((i) => (
           <li
             suppressHydrationWarning
-            className="heart absolute bottom-0 list-none blur-[1px]"
+            className="heart absolute bottom-0 list-none blur-[1px] will-change-transform"
             key={i}
             style={{ left: `${Math.random() * 100}%` }}
           />
