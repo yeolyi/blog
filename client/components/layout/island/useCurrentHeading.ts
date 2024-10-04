@@ -1,4 +1,4 @@
-import { debounce } from 'es-toolkit';
+import { throttle } from 'es-toolkit';
 import { useEffect, useState } from 'react';
 
 const useCurrentHeading = () => {
@@ -15,7 +15,8 @@ const useCurrentHeading = () => {
   }, []);
 
   useEffect(() => {
-    const handleScroll = debounce(() => {
+    // debounce쓰지말자 ^^...
+    const handleScroll = throttle(() => {
       const heading = getCurHeading(headingList);
       setCurrentHeading(heading);
     }, 250);
@@ -27,11 +28,7 @@ const useCurrentHeading = () => {
     };
   }, [headingList]);
 
-  return {
-    currentHeading: currentHeading ?? headingList[0],
-    setCurrentHeading,
-    headingList,
-  };
+  return { currentHeading, headingList };
 };
 
 const getCurHeading = (headingList: HTMLHeadingElement[]) => {
