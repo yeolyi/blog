@@ -11,9 +11,7 @@ export const useClickOutside = (
       }
     };
 
-    document.addEventListener('scroll', handleClickOutside);
-    return () => {
-      document.removeEventListener('scroll', handleClickOutside);
-    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {};
   }, [callback, ref]);
 };

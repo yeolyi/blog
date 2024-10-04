@@ -9,15 +9,8 @@ import {
   defaultBorderSize,
 } from '@/client/components/layout/island/path';
 import useCurrentHeading from '@/client/components/layout/island/useCurrentHeading';
-import { useClickOutside } from '@/client/util/useClickOutside.ts';
 import { LazyMotion, m } from 'framer-motion';
-import {
-  ReactNode,
-  useCallback,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { RiHome2Line } from 'react-icons/ri';
 import { useNavigate } from 'react-router-dom';
 
@@ -31,13 +24,27 @@ export default function Island() {
   const { headingList, currentHeading } = useCurrentHeading();
   const borderSize = hover ? ultraBorderSize : defaultBorderSize;
   const size = hover ? ultraSvgSize : defaultSVGSize;
+  const isTouch = window.matchMedia('(any-hover: none)').matches;
   const navigate = useNavigate();
 
   const ref = useRef<HTMLDivElement>(null);
-  const close = useCallback(() => {
-    setHover(false);
-  }, []);
-  useClickOutside(ref, close);
+
+  useEffect(() => {
+    if (!isTouch) return;
+
+    const handleClickOutside = (event: Event) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        if (isTouch) setHover(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('scroll', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('scroll', handleClickOutside);
+    };
+  }, [isTouch]);
 
   useLayoutEffect(() => {
     // TODO: 정리좀...
@@ -46,8 +53,7 @@ export default function Island() {
       const tmp = headingList
         .slice(0, idx)
         .reduce((acc, cur) => acc + cur.offsetHeight, 0);
-      ref.current.scrollTop = tmp + (idx - 1) * 4 - 30;
-      console.log(currentHeading.offsetHeight);
+      ref.current.scrollTop = tmp + (idx - 1) * 4 - 100;
     }
   }, [hover]);
 
@@ -74,7 +80,6 @@ export default function Island() {
             type: 'spring',
             stiffness: 400,
             damping: 30,
-            duration: 1.2,
           },
         }}
         initial={false}
@@ -90,11 +95,11 @@ export default function Island() {
             type: 'spring',
             stiffness: 400,
             damping: 30,
-            duration: 1.2,
           },
         }}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
+        onHoverStart={() => setHover(true)}
+        onHoverEnd={() => setHover(false)}
+        onClick={() => isTouch && setHover(true)}
         initial={false}
         ref={ref}
       >
@@ -115,7 +120,7 @@ export default function Island() {
               key={idx}
               onClick={() => {
                 if (!hover) return;
-                heading.scrollIntoView({ behavior: 'smooth' });
+                heading.scrollIntoView({ behavior: 'smooth', block: 'center' });
               }}
               transition={{ type: 'spring', stiffness: 400, damping: 30 }}
             >
@@ -129,7 +134,11 @@ export default function Island() {
                   <H2Label layoutId={idx + ''}>{content}</H2Label>
                 : <>
                     {!hover ?
-                      <H2Label>{prevH2Heading?.textContent}</H2Label>
+                      <H2Label
+                        layoutId={headingList.indexOf(prevH2Heading!) + ''}
+                      >
+                        {prevH2Heading?.textContent}
+                      </H2Label>
                     : null}
                     {'  '}
                     <H3Label layoutId={idx + ''}>{content}</H3Label>
@@ -155,6 +164,7 @@ const H2Label = ({
     <m.span
       className="inline-block text-center text-base font-bold text-neutral-200"
       layoutId={layoutId}
+      transition={{ type: 'tween', duration: 0.25 }}
     >
       {children}
     </m.span>
@@ -171,6 +181,7 @@ const H3Label = ({
   <m.span
     className="inline-block text-center text-sm font-semibold text-neutral-400"
     layoutId={layoutId}
+    transition={{ type: 'tween', duration: 0.25 }}
   >
     {children}
   </m.span>
