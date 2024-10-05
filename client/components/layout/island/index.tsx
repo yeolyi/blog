@@ -91,7 +91,7 @@ export default function Island({ page }: { page: MdxPage }) {
 const Preview = () => {
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <PiMapPinBold className="text-[20px]" />
+      <PiMapPinBold className="text-[25px]" />
     </div>
   );
 };
