@@ -1,12 +1,12 @@
 import { App } from '@/client/App';
 import { pageList, mainPage } from '@/client/constants/page';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'wouter';
 
 export const HTML = ({ cssPath }: { cssPath: string }) => {
-  const { pathname } = useLocation();
+  const [location] = useLocation();
 
   // 존재하지 않는 페이지에 대해서는 mainPage의 메타데이터 사용
-  const page = pageList.find(({ path }) => path === pathname) ?? mainPage;
+  const page = pageList.find(({ path }) => path === location) ?? mainPage;
 
   return (
     <html lang="ko">

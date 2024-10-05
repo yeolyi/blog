@@ -1,11 +1,11 @@
 import React from 'react';
-import { StaticRouter } from 'react-router-dom/server';
 import { renderToPipeableStream } from 'react-dom/server';
 import { Response } from 'express';
 import manifest from '../dist/client/.vite/manifest.json';
 import { HTML } from '@/client/HTML';
 import { sitemap as _sitemap } from '@/client/constants/sitemap';
 import { xml as _xml } from '@/client/constants/xml';
+import { Router } from 'wouter';
 
 export const sitemap = _sitemap;
 export const xml = _xml;
@@ -20,9 +20,9 @@ const cssPath =
 export const render = (url: string, res: Response) => {
   const { pipe, abort } = renderToPipeableStream(
     <React.StrictMode>
-      <StaticRouter location={url}>
+      <Router ssrPath={url === '' ? '/' : url}>
         <HTML cssPath={cssPath} />
-      </StaticRouter>
+      </Router>
     </React.StrictMode>,
     {
       bootstrapScriptContent: `window.cssPath = '${cssPath}'`,

@@ -43,7 +43,6 @@ export default function InstaBg() {
     requestAnimationFrame(update);
 
     return () => {
-      console.log('return');
       done = true;
     };
   }, []);

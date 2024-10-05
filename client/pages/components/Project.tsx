@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useMemo, useState } from 'react';
 
 import { FaChevronRight } from 'react-icons/fa6';
-import { Link } from 'react-router-dom';
+import { Link } from 'wouter';
 
 // TODO: 스크롤 로직 리팩터링
 const Project = ({ children }: { children: ReactNode }) => {
@@ -87,7 +87,7 @@ const Cell = ({ name, copy, href, bg }: TileProps) => (
         {copy}
       </p>
       <Link
-        to={href}
+        href={href}
         className="mt-[20px] flex items-center gap-[2px] text-[14px] font-normal leading-[1.28] tracking-[0] text-white hover:underline"
       >
         보러가기

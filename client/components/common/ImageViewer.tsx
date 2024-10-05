@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link } from 'wouter';
 
 export default function ImageViewer({
   src,
@@ -20,5 +20,5 @@ export default function ImageViewer({
     />
   );
 
-  return href ? <Link to={href}>{image}</Link> : image;
+  return href ? <Link href={href}>{image}</Link> : image;
 }

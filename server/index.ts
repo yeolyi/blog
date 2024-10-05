@@ -39,7 +39,7 @@ export function prepareServerWithModule(
   // SSR
   app.use('*', async (req, res) => {
     try {
-      render(req.baseUrl, res);
+      render(req.url, res);
     } catch (e) {
       if (e instanceof Error) {
         onError?.(e);

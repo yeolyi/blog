@@ -6,7 +6,8 @@ import MediumZoom from '@/client/components/image/MediumZoom';
 import { MdxPage } from '@/client/types/page';
 import { MDXComponents } from 'mdx/types';
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Fallback } from '@/client/pages/[mdx]/Fallback';
+import { useLocation } from 'wouter';
 
 export default function MdxLayout({
   discussionNumber,
@@ -17,7 +18,7 @@ export default function MdxLayout({
 }) {
   const Mdx = lazy(mdxPage.importMdx);
 
-  const { pathname } = useLocation();
+  const [pathname] = useLocation();
   // https://gist.github.com/gaearon/e7d97cdf38a2907924ea12e4ebdf3c85
   // TODO: useLayoutEffect를 사용할 방법?
   useEffect(() => {
@@ -43,11 +44,13 @@ export default function MdxLayout({
           className={`pb-[100px] ${mdxPage.src ? 'pt-[50px] md:pt-[60px]' : 'pt-[100px] md:pt-[120px]'}`}
         >
           <article className="prose prose-base prose-stone mx-auto max-w-[70ch] px-4 lg:prose-lg dark:prose-invert sm:px-8">
-            {tmp && <Island page={mdxPage} />}
             <Suspense>
-              <h1>{mdxPage.title}</h1>
-              <Mdx components={mdxComponents} />
-              <MediumZoom />
+              {tmp && <Island page={mdxPage} />}
+              <Suspense fallback={<Fallback />}>
+                <h1>{mdxPage.title}</h1>
+                <Mdx components={mdxComponents} />
+                <MediumZoom />
+              </Suspense>
             </Suspense>
             <div className="my-16 h-[1px] w-full bg-neutral-300" />
             <Giscus discussionNumber={discussionNumber} />

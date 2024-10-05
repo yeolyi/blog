@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { FaInstagram } from 'react-icons/fa6';
-import { Link } from 'react-router-dom';
+import { Link } from 'wouter';
 
 type BadgeProps = {
   icon: ReactNode;
@@ -45,7 +45,7 @@ const Badge = ({ icon, title, cnt, href }: BadgeProps) => {
   return (
     <Link
       className="flex items-center overflow-hidden whitespace-nowrap rounded-[.25em] border border-solid border-[#d0d7de] dark:border-stone-700"
-      to={href}
+      href={href}
     >
       <span className="flex items-center gap-[4px] bg-[#ebf0f4] px-[10px] py-[5px] text-[12px] font-semibold text-[#24292f] dark:bg-stone-700 dark:fill-white dark:font-medium dark:text-white">
         {icon}

@@ -1,7 +1,7 @@
 import { MdxPage } from '@/client/types/page';
 import { useImageColor } from '@/client/util/color';
 import { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'wouter';
 
 const List = ({ children }: { children: ReactNode }) => (
   <ul className="horizontal-pad flex flex-wrap items-start gap-[20px] pb-[64px] lg:pb-[80px]">
@@ -18,7 +18,7 @@ const Post = ({
 
   return (
     <li className="group relative flex w-[var(--tile-width)] list-none flex-col overflow-hidden rounded-[16px] bg-white dark:bg-transparent dark:stroke-2 dark:shadow-[inset_0_0_0_2px_#292524]">
-      <Link to={path} className="flex h-full w-full flex-col">
+      <Link href={path} className="flex h-full w-full flex-col">
         <div className="z-10 flex grow flex-col justify-between p-[24px] lg:p-[32px]">
           <h3
             className="w-fit pr-4 font-bold text-black dark:font-semibold dark:text-white"
@@ -45,7 +45,7 @@ const JS = ({ title, description, path }: MdxPage) => {
       </p>
       <Link
         className={`z-10 flex w-full flex-col items-start gap-[10px] p-[20px] md:p-[25px]`}
-        to={path}
+        href={path}
       >
         <h3
           className="font-bold dark:text-white"
@@ -66,7 +66,7 @@ const WebAPI = ({ title, description, path }: MdxPage) => {
     <li className="relative flex w-[var(--tile-width)] snap-start overflow-clip rounded-[28px] bg-white dark:bg-black">
       <Link
         className={`z-10 flex w-full flex-col items-start gap-[10px] p-[20px] md:p-[25px]`}
-        to={path}
+        href={path}
       >
         <h3
           className="block font-bold dark:text-white"

@@ -16,7 +16,7 @@ import { FaInstagram } from 'react-icons/fa6';
 import { PiMapPinBold } from 'react-icons/pi';
 import { RiHomeLine } from 'react-icons/ri';
 import { RxGithubLogo } from 'react-icons/rx';
-import { Link } from 'react-router-dom';
+import { Link } from 'wouter';
 
 const loadFeatures = () => import('./lazy.ts').then((res) => res.default);
 
@@ -46,7 +46,7 @@ export default function Island({ page }: { page: MdxPage }) {
   }, [isTouch]);
 
   return (
-    <LazyMotion features={loadFeatures}>
+    <LazyMotion features={loadFeatures} strict>
       <div className="not-prose fixed bottom-6 left-6 z-50">
         <m.div
           className="absolute bottom-[-1px] left-[-1px] bg-[#3C3C3C]"
@@ -108,7 +108,7 @@ const Detail = ({ page }: { page: MdxPage }) => {
   let wordCnt = 0;
   for (const post of relatedPostList) {
     wordCnt += post.title.length;
-    if (140 < wordCnt) break;
+    if (130 < wordCnt) break;
     recentPostList.push(post);
   }
 
@@ -131,7 +131,7 @@ const Detail = ({ page }: { page: MdxPage }) => {
             );
           })}
       </m.p>
-      <div className="flex w-full gap-4">
+      <div className="flex w-full justify-end gap-4">
         <DetailLink href="/" className="flex items-center gap-1">
           <RiHomeLine className="inline text-[20px]" />홈
         </DetailLink>
@@ -170,7 +170,7 @@ const DetailLink = ({
   <Link
     className={`font-semibold ${highlight ? 'text-white' : 'text-neutral-400'} cursor-pointer hover:text-neutral-200 ${className}`}
     onClick={onClick}
-    to={href}
+    href={href}
   >
     {children}
   </Link>

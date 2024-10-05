@@ -1,44 +1,40 @@
 import './index.css';
 
-import { Route, Routes } from 'react-router-dom';
-
 import { jsPageList } from './mdx/js';
 import { webapiPageList } from './mdx/webapi';
 import { postPageList } from './mdx/post';
 import MdxLayout from '@/client/pages/[mdx]/layout';
 import { notFoundPage } from '@/client/constants/page';
 import { MainPage } from '@/client/pages';
+import { useLocation } from 'wouter';
 
 export const App = () => {
-  return (
-    <Routes>
-      <Route path="/" element={<MainPage />} />
+  const [location] = useLocation();
 
-      {jsPageList.map((page) => (
-        <Route
-          key={page.path}
-          path={page.path}
-          element={<MdxLayout discussionNumber={2} mdxPage={page} />}
-        />
-      ))}
-
-      {webapiPageList.map((page) => (
-        <Route
-          key={page.path}
-          path={page.path}
-          element={<MdxLayout discussionNumber={10} mdxPage={page} />}
-        />
-      ))}
-
-      {postPageList.map((page) => (
-        <Route
-          key={page.path}
-          path={page.path}
-          element={<MdxLayout mdxPage={page} />}
-        />
-      ))}
-
-      <Route path="*" element={<MdxLayout mdxPage={notFoundPage} />} />
-    </Routes>
-  );
+  // TODO: 왜 switch + route 조합으로는 안되지??
+  if (location === '/') return <MainPage />;
+  else if (location.startsWith('/js')) {
+    return (
+      <MdxLayout
+        discussionNumber={2}
+        mdxPage={jsPageList.find((x) => x.path === location)!}
+      />
+    );
+  } else if (location.startsWith('/webapi')) {
+    return (
+      <MdxLayout
+        discussionNumber={2}
+        mdxPage={webapiPageList.find((x) => x.path === location)!}
+      />
+    );
+  } else if (location.startsWith('/post')) {
+    return (
+      <MdxLayout
+        discussionNumber={2}
+        mdxPage={postPageList.find((x) => x.path === location)!}
+      />
+    );
+  } else {
+    return <MdxLayout mdxPage={notFoundPage} />;
+  }
 };
