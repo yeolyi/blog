@@ -2,7 +2,6 @@ import CodeBlock from '@/client/components/code';
 import Giscus from '@/client/components/common/Giscus';
 import Footer from '@/client/components/layout/Footer';
 import Island from '@/client/components/layout/island';
-import { Fallback } from '@/client/pages/[mdx]/Fallback';
 import MediumZoom from '@/client/components/image/MediumZoom';
 import { MdxPage } from '@/client/types/page';
 import { MDXComponents } from 'mdx/types';
@@ -44,8 +43,8 @@ export default function MdxLayout({
           className={`pb-[100px] ${mdxPage.src ? 'pt-[50px] md:pt-[60px]' : 'pt-[100px] md:pt-[120px]'}`}
         >
           <article className="prose prose-base prose-stone mx-auto max-w-[70ch] px-4 lg:prose-lg dark:prose-invert sm:px-8">
-            <Suspense fallback={<Fallback />}>
-              {tmp && <Island />}
+            {tmp && <Island page={mdxPage} />}
+            <Suspense>
               <h1>{mdxPage.title}</h1>
               <Mdx components={mdxComponents} />
               <MediumZoom />

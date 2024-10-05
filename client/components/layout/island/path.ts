@@ -1,7 +1,7 @@
 export const defaultSVGSize = {
-  width: 193,
+  width: 40,
   height: 40,
-  borderRadius: 22,
+  borderRadius: 20,
 };
 
 export const ultraSvgSize = {

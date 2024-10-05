@@ -8,24 +8,23 @@ import {
   ultraBorderSize,
   defaultBorderSize,
 } from '@/client/components/layout/island/path';
-import useCurrentHeading from '@/client/components/layout/island/useCurrentHeading';
+import { allMdxPosts } from '@/client/mdx/index.ts';
+import { MdxPage } from '@/client/types/page.ts';
 import { LazyMotion, m } from 'framer-motion';
-import { ReactNode, useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { RiHome2Line } from 'react-icons/ri';
-import { useNavigate } from 'react-router-dom';
-
-// https://developer.apple.com/design/human-interface-guidelines/live-activities
-// https://www.behance.net/gallery/153642485/Dynamic-Island-Reference-Dimensions
+import { ReactNode, useEffect, useRef, useState } from 'react';
+import { FaInstagram } from 'react-icons/fa6';
+import { PiMapPinBold } from 'react-icons/pi';
+import { RiHomeLine } from 'react-icons/ri';
+import { RxGithubLogo } from 'react-icons/rx';
+import { Link } from 'react-router-dom';
 
 const loadFeatures = () => import('./lazy.ts').then((res) => res.default);
 
-export default function Island() {
+export default function Island({ page }: { page: MdxPage }) {
   const [hover, setHover] = useState(false);
-  const { headingList, currentHeading } = useCurrentHeading();
   const borderSize = hover ? ultraBorderSize : defaultBorderSize;
   const size = hover ? ultraSvgSize : defaultSVGSize;
   const isTouch = window.matchMedia('(any-hover: none)').matches;
-  const navigate = useNavigate();
 
   const ref = useRef<HTMLDivElement>(null);
 
@@ -46,143 +45,133 @@ export default function Island() {
     };
   }, [isTouch]);
 
-  useLayoutEffect(() => {
-    // TODO: 정리좀...
-    if (currentHeading && ref.current) {
-      const idx = headingList.indexOf(currentHeading) ?? 0;
-      const tmp = headingList
-        .slice(0, idx)
-        .reduce((acc, cur) => acc + cur.offsetHeight, 0);
-      ref.current.scrollTop = tmp + (idx - 1) * 4 - 100;
-    }
-  }, [hover]);
-
   return (
     <LazyMotion features={loadFeatures}>
-      <m.div
-        className="fixed bottom-6 z-50 cursor-pointer rounded-full border border-[#3C3C3C] bg-black sm:bottom-auto sm:top-6"
-        style={{
-          left: `calc(50vw + ${defaultSVGSize.width / 2 + 5}px)`,
-          width: defaultSVGSize.height,
-          height: defaultSVGSize.height,
-        }}
-        animate={{ translateX: hover ? '40px' : 0 }}
-        onClick={() => navigate('/')}
-      >
-        <RiHome2Line className="h-full w-full p-2" />
-      </m.div>
-      <m.div
-        className="not-prose fixed bottom-6 left-1/2 z-40 -translate-x-1/2 translate-y-[1px] bg-[#3C3C3C] sm:bottom-auto sm:top-6 sm:translate-y-[-1px]"
-        animate={{
-          ...borderSize,
-          clipPath: `path('${hover ? ultraBorderPath : defaultBorderPath}')`,
-          transition: {
-            type: 'spring',
-            stiffness: 400,
-            damping: 30,
-          },
-        }}
-        initial={false}
-      />
-      <m.div
-        className="not-prose no-scrollbar fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 flex-col gap-1 overflow-x-clip overflow-y-scroll bg-black px-2 sm:bottom-auto sm:top-6"
-        animate={{
-          ...size,
-          clipPath: `path('${hover ? ultraPath : defaultPath}')`,
-          paddingTop: hover ? '10px' : 0,
-          paddingBottom: hover ? '10px' : 0,
-          transition: {
-            type: 'spring',
-            stiffness: 400,
-            damping: 30,
-          },
-        }}
-        onHoverStart={() => setHover(true)}
-        onHoverEnd={() => setHover(false)}
-        onClick={() => isTouch && setHover(true)}
-        initial={false}
-        ref={ref}
-      >
-        {headingList.map((heading, idx) => {
-          const visible = hover || heading === currentHeading;
-          if (!visible) return;
-
-          const isH2 = heading.tagName === 'H2';
-          const content = heading.textContent;
-
-          const prevH2Heading =
-            isH2 ? undefined : (
-              headingList.slice(0, idx).findLast((x) => x.tagName === 'H2')
-            );
-
-          return (
-            <m.button
-              key={idx}
-              onClick={() => {
-                if (!hover) return;
-                heading.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              }}
-              transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-            >
-              <m.p
-                className="text-ellipsis text-nowrap"
-                style={{
-                  lineHeight: hover ? undefined : defaultSVGSize.height + 'px',
-                }}
-              >
-                {isH2 ?
-                  <H2Label layoutId={idx + ''}>{content}</H2Label>
-                : <>
-                    {!hover ?
-                      <H2Label
-                        layoutId={headingList.indexOf(prevH2Heading!) + ''}
-                      >
-                        {prevH2Heading?.textContent}
-                      </H2Label>
-                    : null}
-                    {'  '}
-                    <H3Label layoutId={idx + ''}>{content}</H3Label>
-                  </>
-                }
-              </m.p>
-            </m.button>
-          );
-        })}
-      </m.div>
+      <div className="not-prose fixed bottom-6 left-6 z-50">
+        <m.div
+          className="absolute bottom-[-1px] left-[-1px] bg-[#3C3C3C]"
+          animate={{
+            ...borderSize,
+            clipPath: `path('${hover ? ultraBorderPath : defaultBorderPath}')`,
+            transition: {
+              type: 'spring',
+              stiffness: 400,
+              damping: 30,
+            },
+          }}
+          initial={false}
+        />
+        <m.div
+          className="absolute bottom-0 left-0 gap-1 bg-black"
+          animate={{
+            ...size,
+            clipPath: `path('${hover ? ultraPath : defaultPath}')`,
+            transition: {
+              type: 'spring',
+              stiffness: 400,
+              damping: 30,
+            },
+          }}
+          onHoverStart={() => setHover(true)}
+          onHoverEnd={() => setHover(false)}
+          onClick={() => isTouch && setHover(true)}
+          initial={false}
+          ref={ref}
+          layout
+        >
+          {hover ?
+            <Detail page={page} />
+          : <Preview />}
+        </m.div>
+      </div>
     </LazyMotion>
   );
 }
 
-const H2Label = ({
-  layoutId,
-  children,
-}: {
-  layoutId?: string;
-  children: ReactNode;
-}) => {
+const Preview = () => {
   return (
-    <m.span
-      className="inline-block text-center text-base font-bold text-neutral-200"
-      layoutId={layoutId}
-      transition={{ type: 'tween', duration: 0.25 }}
-    >
-      {children}
-    </m.span>
+    <div className="flex h-full w-full items-center justify-center">
+      <PiMapPinBold className="text-[20px]" />
+    </div>
   );
 };
 
-const H3Label = ({
-  layoutId,
+const Detail = ({ page }: { page: MdxPage }) => {
+  const getPathId = (x: string) => x.split('/')[1];
+  const id = getPathId(page.path);
+
+  const relatedPostList = allMdxPosts.filter(
+    ({ path }) => id === getPathId(path),
+  );
+
+  const recentPostList: MdxPage[] = [];
+  let wordCnt = 0;
+  for (const post of relatedPostList) {
+    wordCnt += post.title.length;
+    if (140 < wordCnt) break;
+    recentPostList.push(post);
+  }
+
+  return (
+    <div
+      className="flex h-full w-full flex-col justify-between px-6 py-4"
+      style={ultraSvgSize}
+    >
+      <m.p className="whitespace-pre-wrap">
+        {recentPostList
+          .filter(({ path }) => id === getPathId(path))
+          .map((_page, idx) => {
+            const isCurrent = _page === page;
+
+            return (
+              <DetailLink highlight={isCurrent} key={idx} href={_page.path}>
+                {_page.title}
+                {'    '}
+              </DetailLink>
+            );
+          })}
+      </m.p>
+      <div className="flex w-full gap-4">
+        <DetailLink href="/" className="flex items-center gap-1">
+          <RiHomeLine className="inline text-[20px]" />홈
+        </DetailLink>
+        <DetailLink
+          href="https://github.com/yeolyi"
+          className="flex items-center gap-1"
+        >
+          <RxGithubLogo className="inline text-[20px]" />
+          깃허브
+        </DetailLink>
+        <DetailLink
+          href="https://instagram.com/yeolyii"
+          className="flex items-center gap-1"
+        >
+          <FaInstagram className="inline text-[20px]" />
+          인스타그램
+        </DetailLink>
+      </div>
+    </div>
+  );
+};
+
+const DetailLink = ({
+  className,
+  href,
+  highlight,
+  onClick,
   children,
 }: {
-  layoutId: string;
+  className?: string;
+  href: string;
+  highlight?: boolean;
+  onClick?: () => void;
   children: ReactNode;
 }) => (
-  <m.span
-    className="inline-block text-center text-sm font-semibold text-neutral-400"
-    layoutId={layoutId}
-    transition={{ type: 'tween', duration: 0.25 }}
+  <Link
+    className={`font-semibold ${highlight ? 'text-white' : 'text-neutral-400'} cursor-pointer hover:text-neutral-200 ${className}`}
+    onClick={onClick}
+    to={href}
   >
     {children}
-  </m.span>
+  </Link>
 );
