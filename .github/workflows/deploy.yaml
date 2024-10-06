@@ -25,6 +25,8 @@ jobs:
           key: ${{ secrets.KEY }}
           script: |
             cd blog
-            docker stop blog
             docker pull yeolyi/blog
+            docker stop blog
+            docker rm blog
+            docker rmi $(docker images -f "dangling=true" -q)
             docker run -d --name blog -p 5173:5173 yeolyi/blog
