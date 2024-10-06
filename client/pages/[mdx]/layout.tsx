@@ -43,7 +43,7 @@ export default function MdxLayout({
         <div
           className={`pb-[100px] ${mdxPage.src ? 'pt-[50px] md:pt-[60px]' : 'pt-[100px] md:pt-[120px]'}`}
         >
-          <article className="prose prose-base prose-stone mx-auto max-w-[70ch] px-4 lg:prose-lg dark:prose-invert sm:px-8">
+          <article className="prose prose-base prose-stone mx-auto max-w-[70ch] break-words px-4 lg:prose-lg dark:prose-invert sm:px-8">
             <Suspense>
               {tmp && <Island page={mdxPage} />}
               <Suspense fallback={<Fallback />}>
