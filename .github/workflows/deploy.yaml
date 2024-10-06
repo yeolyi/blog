@@ -18,14 +18,13 @@ jobs:
         with:
           push: true
           tags: yeolyi/blog:latest
-      # - uses: appleboy/ssh-action@v1.0.3
-      #   with:
-      #     host: ${{ secrets.HOST }}
-      #     username: ${{ secrets.USERNAME }}
-      #     key: ${{ secrets.KEY }}
-      #     script: |
-      #       cd blog
-      #       git pull --rebase
-      #       pnpm install
-      #       pnpm build
-      #       pm2 restart blog
+      - uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          script: |
+            cd blog
+            docker stop blog
+            docker pull yeolyi/blog
+            docker run -d --name blog -p 5173:5173 yeolyi/blog
