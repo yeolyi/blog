@@ -147,7 +147,7 @@ const Detail = ({ page }: { page: MdxPage }) => {
           className="flex items-center gap-1"
         >
           <FaInstagram className="inline text-[20px]" />
-          인스타그램
+          인스타
         </DetailLink>
       </div>
     </div>
