@@ -28,6 +28,9 @@ export default {
             'code::after': { content: 'none' },
             'li p': { margin: '0 !important' },
             p: { 'overflow-wrap': 'break-word' },
+            td: {
+              overflowWrap: 'anywhere',
+            },
           },
         },
       },
