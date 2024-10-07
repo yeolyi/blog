@@ -1,12 +1,10 @@
 import {
-  ultraPath,
-  defaultPath,
-  ultraSvgSize,
-  defaultSVGSize,
-  ultraBorderPath,
-  defaultBorderPath,
-  ultraBorderSize,
-  defaultBorderSize,
+  squirclePath,
+  squircleSize,
+  circleSize,
+  squircleBorderSize,
+  circleBorderSize,
+  squircleBorderPath,
 } from '@/client/components/layout/island/path';
 import { allMdxPosts } from '@/client/mdx/index.ts';
 import { MdxPage } from '@/client/types/page.ts';
@@ -22,8 +20,7 @@ const loadFeatures = () => import('./lazy.ts').then((res) => res.default);
 
 export default function Island({ page }: { page: MdxPage }) {
   const [hover, setHover] = useState(false);
-  const borderSize = hover ? ultraBorderSize : defaultBorderSize;
-  const size = hover ? ultraSvgSize : defaultSVGSize;
+  const size = hover ? squircleSize : circleSize;
   const isTouch = window.matchMedia('(any-hover: none)').matches;
 
   const ref = useRef<HTMLDivElement>(null);
@@ -45,6 +42,8 @@ export default function Island({ page }: { page: MdxPage }) {
     };
   }, [isTouch]);
 
+  const borderSize = hover ? squircleBorderSize : circleBorderSize;
+
   return (
     <LazyMotion features={loadFeatures} strict>
       <div className="not-prose fixed bottom-6 left-6 z-50">
@@ -52,24 +51,28 @@ export default function Island({ page }: { page: MdxPage }) {
           className="absolute bottom-[-1px] left-[-1px] bg-[#3C3C3C]"
           animate={{
             ...borderSize,
-            clipPath: `path('${hover ? ultraBorderPath : defaultBorderPath}')`,
             transition: {
               type: 'spring',
               stiffness: 400,
               damping: 30,
             },
+            transitionEnd: {
+              clipPath: hover ? `path('${squircleBorderPath}')` : 'none',
+            },
           }}
           initial={false}
         />
         <m.div
-          className="absolute bottom-0 left-0 gap-1 bg-black"
+          className="absolute bottom-0 left-0 gap-1 overflow-hidden bg-black"
           animate={{
             ...size,
-            clipPath: `path('${hover ? ultraPath : defaultPath}')`,
             transition: {
               type: 'spring',
               stiffness: 400,
               damping: 30,
+            },
+            transitionEnd: {
+              clipPath: hover ? `path('${squirclePath}')` : 'none',
             },
           }}
           onHoverStart={() => setHover(true)}
@@ -115,7 +118,7 @@ const Detail = ({ page }: { page: MdxPage }) => {
   return (
     <div
       className="flex h-full w-full flex-col justify-between px-6 py-4"
-      style={ultraSvgSize}
+      style={squircleSize}
     >
       <m.p className="whitespace-pre-wrap">
         {recentPostList
@@ -132,22 +135,23 @@ const Detail = ({ page }: { page: MdxPage }) => {
           })}
       </m.p>
       <div className="flex w-full justify-end gap-4">
-        <DetailLink href="/" className="flex items-center gap-1">
-          <RiHomeLine className="inline text-[20px]" />홈
+        <DetailLink
+          href="/"
+          className="flex w-10 items-center justify-center gap-1"
+        >
+          <RiHomeLine className="inline text-[20px]" />
         </DetailLink>
         <DetailLink
           href="https://github.com/yeolyi"
-          className="flex items-center gap-1"
+          className="flex w-10 items-center justify-center gap-1"
         >
           <RxGithubLogo className="inline text-[20px]" />
-          깃허브
         </DetailLink>
         <DetailLink
           href="https://instagram.com/yeolyii"
-          className="flex items-center gap-1"
+          className="flex w-10 items-center justify-center gap-1"
         >
           <FaInstagram className="inline text-[20px]" />
-          인스타
         </DetailLink>
       </div>
     </div>

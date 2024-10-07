@@ -1,53 +1,41 @@
-export const defaultSVGSize = {
+import { getSvgPath } from 'figma-squircle';
+
+export const circleSize = {
   width: 50,
   height: 50,
   borderRadius: 25,
 };
 
-export const ultraSvgSize = {
+export const squircleSize = {
   width: Math.min(409, import.meta.env.SSR ? 999 : innerWidth - 30),
   height: 200,
   borderRadius: 25,
 };
 
-import { getSvgPath } from 'figma-squircle';
-
-export const defaultPath = getSvgPath({
-  ...defaultSVGSize,
+export const squirclePath = getSvgPath({
+  ...squircleSize,
   cornerSmoothing: 1,
-  cornerRadius: defaultSVGSize.borderRadius,
-});
-
-export const ultraPath = getSvgPath({
-  ...ultraSvgSize,
-  cornerSmoothing: 1,
-  cornerRadius: ultraSvgSize.borderRadius,
+  cornerRadius: squircleSize.borderRadius,
 });
 
 export const borderWidth = 1;
 
-export const defaultBorderSize = {
-  width: defaultSVGSize.width + 2 * borderWidth,
-  height: defaultSVGSize.height + 2 * borderWidth,
-  borderRadius: defaultSVGSize.borderRadius,
+export const circleBorderSize = {
+  width: circleSize.width + 2 * borderWidth,
+  height: circleSize.height + 2 * borderWidth,
+  borderRadius: circleSize.borderRadius,
 };
 
-export const ultraBorderSize = {
-  width: ultraSvgSize.width + 2 * borderWidth,
-  height: ultraSvgSize.height + 2 * borderWidth,
-  borderRadius: ultraSvgSize.borderRadius,
+export const squircleBorderSize = {
+  width: squircleSize.width + 2 * borderWidth,
+  height: squircleSize.height + 2 * borderWidth,
+  borderRadius: squircleSize.borderRadius,
 };
 
-export const defaultBorderPath = getSvgPath({
-  ...defaultBorderSize,
+export const squircleBorderPath = getSvgPath({
+  ...squircleBorderSize,
+  width: squircleSize.width + 2 * borderWidth,
+  height: squircleSize.height + 2 * borderWidth,
   cornerSmoothing: 1,
-  cornerRadius: defaultSVGSize.borderRadius,
-});
-
-export const ultraBorderPath = getSvgPath({
-  ...ultraBorderSize,
-  width: ultraSvgSize.width + 2 * borderWidth,
-  height: ultraSvgSize.height + 2 * borderWidth,
-  cornerSmoothing: 1,
-  cornerRadius: ultraSvgSize.borderRadius,
+  cornerRadius: squircleSize.borderRadius,
 });
