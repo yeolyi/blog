@@ -159,23 +159,22 @@ const Detail = ({ page }: { page: MdxPage }) => {
 };
 
 const DetailLink = ({
-  className,
+  className: _className,
   href,
   highlight,
-  onClick,
   children,
 }: {
   className?: string;
   href: string;
   highlight?: boolean;
-  onClick?: () => void;
   children: ReactNode;
-}) => (
-  <Link
-    className={`font-semibold ${highlight ? 'text-white' : 'text-neutral-400'} cursor-pointer hover:text-neutral-200 ${className}`}
-    onClick={onClick}
-    href={href}
-  >
-    {children}
-  </Link>
-);
+}) => {
+  const className = `font-semibold ${highlight ? 'text-white' : 'text-neutral-400'} cursor-pointer hover:text-neutral-200 ${_className}`;
+  const props = { className, href, children };
+
+  if (href.startsWith('http')) {
+    return <a {...props} />;
+  } else {
+    return <Link {...props} />;
+  }
+};
