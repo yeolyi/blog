@@ -56,7 +56,7 @@ export const MainPage = () => {
             />
 
             <button
-              className="absolute -right-12 top-1/2 -translate-y-1/2 text-neutral-600 hover:text-black dark:text-neutral-400 dark:hover:text-neutral-200"
+              className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-neutral-600 hover:text-black dark:text-neutral-400 dark:hover:text-neutral-200"
               onClick={() => {
                 setOrder([order[1], order[0]]);
               }}
