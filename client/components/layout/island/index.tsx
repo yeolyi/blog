@@ -16,7 +16,8 @@ import { RiHomeLine } from 'react-icons/ri';
 import { RxGithubLogo } from 'react-icons/rx';
 import { Link } from 'wouter';
 
-const loadFeatures = () => import('./lazy.ts').then((res) => res.default);
+const loadFeatures = () =>
+  import('../../../util/lazyMotion.ts').then((res) => res.default);
 
 export default function Island({ page }: { page: MdxPage }) {
   const [hover, setHover] = useState(false);

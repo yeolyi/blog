@@ -11,8 +11,12 @@ import List from '@/client/pages/components/List';
 import Section from '@/client/pages/components/Section';
 import Project from '@/client/pages/components/Project';
 import Footer from '@/client/components/layout/Footer';
+import { useState } from 'react';
+import { FiRotateCw } from 'react-icons/fi';
 
 export const MainPage = () => {
+  const [order, setOrder] = useState([0, 1]);
+
   return (
     <>
       <main>
@@ -37,17 +41,28 @@ export const MainPage = () => {
         <Section>
           <Project>
             <Project.Cell
-              name="cse.snu.ac.kr"
-              copy="서울대학교 컴퓨터공학부 홈페이지 리뉴얼에 프론트엔드 개발자로 참여중입니다."
-              href="https://cse.snu.ac.kr"
-              bg={<CserealBg />}
-            />
-            <Project.Cell
               name="@yeolyii"
               copy="인스타그램 개발 계정에 유익하고 바보같은 개발 일상을 나눠요."
               href="https://instagram.com/yeolyii"
               bg={<InstaBg />}
+              index={order[1]}
             />
+            <Project.Cell
+              name="cse.snu.ac.kr"
+              copy="서울대학교 컴퓨터공학부 홈페이지 리뉴얼에 프론트엔드 개발자로 참여중입니다."
+              href="https://cse.snu.ac.kr"
+              bg={<CserealBg />}
+              index={order[0]}
+            />
+
+            <button
+              className="absolute -right-12 top-1/2 -translate-y-1/2 text-neutral-600 hover:text-black dark:text-neutral-400 dark:hover:text-neutral-200"
+              onClick={() => {
+                setOrder([order[1], order[0]]);
+              }}
+            >
+              <FiRotateCw className="text-[24px]" />
+            </button>
           </Project>
         </Section>
 
