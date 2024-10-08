@@ -1,72 +1,16 @@
 import { useSquircle } from '@/client/pages/components/useSquircle';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 import { FaChevronRight } from 'react-icons/fa6';
 import { Link } from 'wouter';
 
-// TODO: 스크롤 로직 리팩터링
 const Project = ({ children }: { children: ReactNode }) => {
-  const [container, setContainer] = useState<HTMLDivElement | null>(null);
-  const [disabledDir, setDisabledDir] = useState<'none' | 'prev' | 'next'>(
-    'prev',
-  );
-
-  const unit = useMemo(() => {
-    if (container === null) return null;
-    return parseInt(
-      getComputedStyle(container).getPropertyValue('--wide-tile-width'),
-    );
-  }, [container]);
-
-  const scroll = (mode: 'prev' | 'next') => {
-    if (container === null || unit === null) return;
-    container.scrollBy({
-      left: mode === 'prev' ? -unit : unit,
-      behavior: 'smooth',
-    });
-  };
-
-  useEffect(() => {
-    if (container === null) return;
-
-    const f = (e: Event) => {
-      const target = e.target as HTMLElement;
-      if (target.scrollLeft <= 200) setDisabledDir('prev');
-      else if (
-        target.scrollWidth - (target.scrollLeft + target.clientWidth) <=
-        200
-      )
-        setDisabledDir('next');
-      else setDisabledDir('none');
-    };
-
-    container.addEventListener('scroll', f);
-    return () => container.removeEventListener('scroll', f);
-  }, [container]);
-
   return (
-    <div
-      className={`wide pb-[118px] sm:pb-[124px] md:pb-[134px] lg:pb-[150px]`}
+    <ul
+      className={`mb-[64px] flex flex-wrap gap-[20px] px-[calc(50%-var(--viewport-content)/2)] md:mr-[40px] md:gap-[40px] lg:mb-[80px]`}
     >
-      <div
-        className="no-scrollbar snap-x snap-mandatory scroll-p-[calc(50%-var(--viewport-content)/2)] overflow-scroll"
-        ref={setContainer}
-      >
-        <ul
-          className="mb-[10px] inline-grid w-fit grid-flow-col gap-[20px] px-[calc(50%-var(--viewport-content)/2)] sm:mb-[16px] md:mb-[18px] md:mr-[40px] lg:mb-[22px]"
-          style={{ gridTemplateRows: 'var(--wide-tile-height)' }}
-        >
-          {children}
-        </ul>
-      </div>
-
-      <Control
-        prev={() => scroll('prev')}
-        next={() => scroll('next')}
-        prevDisabled={disabledDir === 'prev'}
-        nextDisabled={disabledDir === 'next'}
-      />
-    </div>
+      {children}
+    </ul>
   );
 };
 
@@ -75,16 +19,19 @@ type TileProps = {
   copy: string;
   href: string;
   bg: ReactNode;
+  onClick?: () => void;
+  className?: string;
 };
 
-const Cell = ({ name, copy, href, bg }: TileProps) => {
+const Cell = ({ name, copy, href, bg, onClick, className }: TileProps) => {
   const [container, setContainer] = useState<HTMLElement | null>(null);
   useSquircle(container, 28);
 
   return (
     <li
-      className="relative flex w-[var(--wide-tile-width)] snap-start flex-col items-center justify-end overflow-hidden rounded-[28px] px-[20px] py-[60px] lg:px-[40px]"
+      className={`relative flex h-[var(--wide-tile-height)] w-[var(--wide-tile-width)] flex-col items-center justify-end overflow-hidden rounded-[28px] px-[20px] py-[60px] lg:px-[40px] ${className}`}
       ref={setContainer}
+      onClick={onClick}
     >
       <div className="absolute bottom-0 left-0 right-0 top-0">{bg}</div>
       <div className="relative z-10 flex flex-col items-center">
@@ -105,50 +52,5 @@ const Cell = ({ name, copy, href, bg }: TileProps) => {
     </li>
   );
 };
-
-const Control = ({
-  prev,
-  prevDisabled,
-  next,
-  nextDisabled,
-}: {
-  prev: () => void;
-  prevDisabled: boolean;
-  next: () => void;
-  nextDisabled: boolean;
-}) => {
-  return (
-    <div className="relative">
-      <div className="absolute right-[calc(50%-var(--viewport-content)/2)] top-[18px] mr-[var(--apps-margin-inline-end)] flex gap-[18px]">
-        <button
-          onClick={prev}
-          className="rotate-180"
-          style={{ opacity: prevDisabled ? 0.42 : 1 }}
-          disabled={prevDisabled}
-        >
-          <CircleChevron />
-        </button>
-        <button
-          onClick={next}
-          style={{ opacity: nextDisabled ? 0.42 : 1 }}
-          disabled={nextDisabled}
-        >
-          <CircleChevron />
-        </button>
-      </div>
-    </div>
-  );
-};
-
-const CircleChevron = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 36 36"
-    className="h-[36px] w-[36px] rounded-full bg-[rgb(210,210,215)] fill-[rgba(0,0,0,0.56)] hover:bg-[rgba(0,0,0,0.16)] hover:fill-[rgba(0,0,0,0.64)] dark:bg-transparent dark:fill-white dark:hover:fill-gray-500"
-    style={{ transition: 'fill 100ms linear' }}
-  >
-    <path d="M23.5587,16.916 C24.1447,17.4999987 24.1467,18.446 23.5647,19.034 L16.6077,26.056 C16.3147,26.352 15.9287,26.4999987 15.5427,26.4999987 C15.1607,26.4999987 14.7787,26.355 14.4867,26.065 C13.8977,25.482 13.8947,24.533 14.4777,23.944 L20.3818,17.984 L14.4408,12.062 C13.8548,11.478 13.8528,10.5279 14.4378,9.941 C15.0218,9.354 15.9738,9.353 16.5588,9.938 L23.5588,16.916 L23.5587,16.916 Z"></path>
-  </svg>
-);
 
 export default Object.assign(Project, { Cell });

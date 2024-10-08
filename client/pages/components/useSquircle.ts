@@ -7,6 +7,7 @@ export const useSquircle = (
 ) => {
   useEffect(() => {
     if (!element) return;
+
     const onResize = () => {
       const clipPath = getSquirclePath(
         element.clientWidth,

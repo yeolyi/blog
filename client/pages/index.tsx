@@ -36,9 +36,18 @@ export const MainPage = () => {
 
         <Section>
           <Project>
-            {projectList.map((prop) => (
-              <Project.Cell key={prop.href} {...prop} />
-            ))}
+            <Project.Cell
+              name="cse.snu.ac.kr"
+              copy="서울대학교 컴퓨터공학부 홈페이지 리뉴얼에 프론트엔드 개발자로 참여중입니다."
+              href="https://cse.snu.ac.kr"
+              bg={<CserealBg />}
+            />
+            <Project.Cell
+              name="@yeolyii"
+              copy="인스타그램 개발 계정에 유익하고 바보같은 개발 일상을 나눠요."
+              href="https://instagram.com/yeolyii"
+              bg={<InstaBg />}
+            />
           </Project>
         </Section>
 
@@ -82,18 +91,3 @@ export const MainPage = () => {
     </>
   );
 };
-
-const projectList = [
-  {
-    name: 'cse.snu.ac.kr',
-    copy: '서울대학교 컴퓨터공학부 홈페이지 리뉴얼에 프론트엔드 개발자로 참여중입니다.',
-    href: 'https://cse.snu.ac.kr',
-    bg: <CserealBg />,
-  },
-  {
-    name: '@yeolyii',
-    copy: '인스타그램 개발 계정에 유익하고 바보같은 개발 일상을 나눠요.',
-    href: 'https://instagram.com/yeolyii',
-    bg: <InstaBg />,
-  },
-];
