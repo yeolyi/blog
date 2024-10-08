@@ -1,6 +1,5 @@
 import { useSquircle } from '@/client/pages/components/useSquircle';
 import { MdxPage } from '@/client/types/page';
-import { useImageColor } from '@/client/util/color';
 import { ReactNode, useState } from 'react';
 import { Link } from 'wouter';
 
@@ -10,12 +9,7 @@ const List = ({ children }: { children: ReactNode }) => (
   </ul>
 );
 
-const Post = ({
-  mdxPage: { path, src: imageSrc, title, dateStr },
-}: {
-  mdxPage: MdxPage;
-}) => {
-  const color = useImageColor(imageSrc);
+const Post = ({ mdxPage: { path, title, dateStr } }: { mdxPage: MdxPage }) => {
   const [container, setContainer] = useState<HTMLElement | null>(null);
   useSquircle(container, 28);
 
@@ -30,7 +24,7 @@ const Post = ({
             className="w-fit pr-4 font-bold text-black dark:font-semibold dark:text-white"
             style={{ fontSize: 'var(--tile-title)' }}
           >
-            <span style={{ boxShadow: `inset 0 -5px 0 ${color + 'c0'}` }}>
+            <span style={{ boxShadow: `inset 0 -5px 0 #ddddddc0` }}>
               {title}
             </span>
           </h3>
