@@ -1,6 +1,7 @@
+import { useSquircle } from '@/client/pages/components/useSquircle';
 import { MdxPage } from '@/client/types/page';
 import { useImageColor } from '@/client/util/color';
-import { ReactNode } from 'react';
+import { ReactNode, useState } from 'react';
 import { Link } from 'wouter';
 
 const List = ({ children }: { children: ReactNode }) => (
@@ -15,9 +16,14 @@ const Post = ({
   mdxPage: MdxPage;
 }) => {
   const color = useImageColor(imageSrc);
+  const [container, setContainer] = useState<HTMLElement | null>(null);
+  useSquircle(container, 28);
 
   return (
-    <li className="group relative flex w-[var(--tile-width)] list-none flex-col overflow-hidden rounded-[16px] bg-white dark:bg-transparent dark:stroke-2 dark:shadow-[inset_0_0_0_2px_#292524]">
+    <li
+      className="group relative flex w-[var(--tile-width)] list-none flex-col overflow-hidden rounded-[16px] bg-white dark:bg-stone-800"
+      ref={setContainer}
+    >
       <Link href={path} className="flex h-full w-full flex-col">
         <div className="z-10 flex grow flex-col justify-between p-[24px] lg:p-[32px]">
           <h3
@@ -38,8 +44,14 @@ const Post = ({
 };
 
 const JS = ({ title, description, path }: MdxPage) => {
+  const [container, setContainer] = useState<HTMLElement | null>(null);
+  useSquircle(container, 28);
+
   return (
-    <li className="relative flex w-[var(--tile-width)] snap-start overflow-clip rounded-[28px] bg-lightgray dark:bg-stone-900">
+    <li
+      className="relative flex w-[var(--tile-width)] snap-start overflow-clip rounded-[28px] bg-lightgray dark:bg-stone-900"
+      ref={setContainer}
+    >
       <p className="absolute -top-1/2 left-0 origin-top-left text-[600px] font-black leading-[100%] text-gray-200 opacity-50 dark:text-stone-800">
         {title[0]}
       </p>
@@ -62,8 +74,14 @@ const JS = ({ title, description, path }: MdxPage) => {
 };
 
 const WebAPI = ({ title, description, path }: MdxPage) => {
+  const [container, setContainer] = useState<HTMLElement | null>(null);
+  useSquircle(container, 28);
+
   return (
-    <li className="relative flex w-[var(--tile-width)] snap-start overflow-clip rounded-[28px] bg-white dark:bg-black">
+    <li
+      className="relative flex w-[var(--tile-width)] snap-start overflow-clip rounded-[28px] bg-white dark:bg-black"
+      ref={setContainer}
+    >
       <Link
         className={`z-10 flex w-full flex-col items-start gap-[10px] p-[20px] md:p-[25px]`}
         href={path}
