@@ -1,6 +1,5 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { FaInstagram } from 'react-icons/fa6';
-import { Link } from 'wouter';
 
 type BadgeProps = {
   icon: ReactNode;
@@ -43,7 +42,7 @@ const StarSVG = () => (
 
 const Badge = ({ icon, title, cnt, href }: BadgeProps) => {
   return (
-    <Link
+    <a
       className="flex items-center overflow-hidden whitespace-nowrap rounded-[.25em] border border-solid border-[#d0d7de] dark:border-stone-700"
       href={href}
     >
@@ -54,7 +53,7 @@ const Badge = ({ icon, title, cnt, href }: BadgeProps) => {
       <span className="bg-white px-[10px] py-[5px] text-[12px] font-semibold text-[#24292f] dark:bg-black dark:font-medium dark:text-white">
         {cnt.toLocaleString()}
       </span>
-    </Link>
+    </a>
   );
 };
 

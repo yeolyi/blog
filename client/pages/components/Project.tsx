@@ -2,7 +2,6 @@ import { useSquircle } from '@/client/pages/components/useSquircle';
 import { ReactNode, useState } from 'react';
 
 import { FaChevronRight } from 'react-icons/fa6';
-import { Link } from 'wouter';
 
 const Project = ({ children }: { children: ReactNode }) => {
   return (
@@ -41,13 +40,13 @@ const Cell = ({ name, copy, href, bg, onClick, className }: TileProps) => {
         <p className="mt-[10px] max-w-[265px] text-center text-[14px] font-normal leading-[1.43] tracking-[0em] text-[rgb(245,245,247)] sm:max-w-[375px] md:max-w-full md:whitespace-pre lg:text-[17px]">
           {copy}
         </p>
-        <Link
+        <a
           href={href}
           className="mt-[20px] flex items-center gap-[2px] text-[14px] font-normal leading-[1.28] tracking-[0] text-white hover:underline"
         >
           보러가기
           <FaChevronRight className="h-[10px] w-[10px]" />
-        </Link>
+        </a>
       </div>
     </li>
   );
