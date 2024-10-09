@@ -46,6 +46,7 @@ const Cell = ({ name, copy, href, bg, onClick, index }: TileProps) => {
             damping: 30,
           },
         }}
+        initial={false}
       >
         <div className="absolute bottom-0 left-0 right-0 top-0">{bg}</div>
         <div className="relative z-10 flex flex-col items-center">
