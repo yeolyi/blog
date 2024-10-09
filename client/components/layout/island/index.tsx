@@ -49,7 +49,7 @@ export default function Island({ page }: { page: MdxPage }) {
     <LazyMotion features={loadFeatures} strict>
       <div className="not-prose fixed bottom-6 left-6 z-50">
         <m.div
-          className="absolute bottom-[-1px] left-[-1px] bg-[#3C3C3C]"
+          className="absolute bottom-[-1px] left-[-1px] bg-transparent dark:bg-[#3C3C3C]"
           animate={{
             ...borderSize,
             transition: {
@@ -64,7 +64,7 @@ export default function Island({ page }: { page: MdxPage }) {
           initial={false}
         />
         <m.div
-          className="absolute bottom-0 left-0 gap-1 overflow-hidden bg-black"
+          className="absolute bottom-0 left-0 gap-1 overflow-hidden bg-stone-200 dark:bg-black"
           animate={{
             ...size,
             transition: {
@@ -170,7 +170,7 @@ const DetailLink = ({
   highlight?: boolean;
   children: ReactNode;
 }) => {
-  const className = `font-semibold ${highlight ? 'text-white' : 'text-neutral-400'} cursor-pointer hover:text-neutral-200 ${_className}`;
+  const className = `font-semibold ${highlight ? 'text-neutral-700 dark:text-white' : 'text-neutral-500 dark:text-neutral-400'} cursor-pointer hover:text-black dark:hover:text-neutral-200 ${_className}`;
   const props = { className, href, children };
 
   if (href.startsWith('http')) {
