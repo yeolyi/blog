@@ -23,16 +23,13 @@ export const App = () => {
   } else if (location.startsWith('/webapi')) {
     return (
       <MdxLayout
-        discussionNumber={2}
+        discussionNumber={10}
         mdxPage={webapiPageList.find((x) => x.path === location)!}
       />
     );
   } else if (location.startsWith('/post')) {
     return (
-      <MdxLayout
-        discussionNumber={2}
-        mdxPage={postPageList.find((x) => x.path === location)!}
-      />
+      <MdxLayout mdxPage={postPageList.find((x) => x.path === location)!} />
     );
   } else {
     return <MdxLayout mdxPage={notFoundPage} />;
