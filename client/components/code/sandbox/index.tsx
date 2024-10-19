@@ -80,7 +80,9 @@ export default function Sandbox({
               height: iframeHeight && `${iframeHeight}px`,
               minHeight: iframeHeight ?? '200px',
             }}
-            ref={(ref) => setIframe(ref)}
+            ref={(ref) => {
+              setIframe(ref);
+            }}
             srcDoc={srcdoc}
           />
         )}
@@ -90,7 +92,9 @@ export default function Sandbox({
         <iframe
           key={iframeKey}
           className="h-0 w-0"
-          ref={(ref) => setIframe(ref)}
+          ref={(ref) => {
+            setIframe(ref);
+          }}
           srcDoc={srcdoc}
         />
       )}

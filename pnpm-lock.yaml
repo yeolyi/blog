@@ -40,7 +40,7 @@ importers:
         version: 1.1.0
       framer-motion:
         specifier: ^11.11.0
-        version: 11.11.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 11.11.0(react-dom@19.0.0-rc-b8ae38f8-20241018(react@19.0.0-rc-b8ae38f8-20241018))(react@19.0.0-rc-b8ae38f8-20241018)
       highlight.js:
         specifier: ^11.10.0
         version: 11.10.0
@@ -48,14 +48,14 @@ importers:
         specifier: ^4.0.2
         version: 4.0.2
       react:
-        specifier: ^18.3.1
-        version: 18.3.1
+        specifier: 19.0.0-rc-b8ae38f8-20241018
+        version: 19.0.0-rc-b8ae38f8-20241018
       react-dom:
-        specifier: ^18.3.1
-        version: 18.3.1(react@18.3.1)
+        specifier: 19.0.0-rc-b8ae38f8-20241018
+        version: 19.0.0-rc-b8ae38f8-20241018(react@19.0.0-rc-b8ae38f8-20241018)
       react-icons:
         specifier: ^5.2.1
-        version: 5.2.1(react@18.3.1)
+        version: 5.2.1(react@19.0.0-rc-b8ae38f8-20241018)
       rss:
         specifier: ^1.2.2
         version: 1.2.2
@@ -67,7 +67,7 @@ importers:
         version: 4.17.0
       wouter:
         specifier: ^3.3.5
-        version: 3.3.5(react@18.3.1)
+        version: 3.3.5(react@19.0.0-rc-b8ae38f8-20241018)
     optionalDependencies:
       '@rollup/rollup-linux-x64-gnu':
         specifier: 4.9.5
@@ -151,6 +151,12 @@ importers:
       tailwindcss:
         specifier: ^3.4.9
         version: 3.4.9(ts-node@10.9.2(@swc/core@1.7.10)(@types/node@22.2.0)(typescript@5.5.4))
+      types-react:
+        specifier: 19.0.0-rc.1
+        version: 19.0.0-rc.1
+      types-react-dom:
+        specifier: 19.0.0-rc.1
+        version: 19.0.0-rc.1
       typescript:
         specifier: ^5.5.3
         version: 5.5.4
@@ -2735,10 +2741,10 @@ packages:
     resolution: {integrity: sha512-8zGqypfENjCIqGhgXToC8aB2r7YrBX+AQAfIPs/Mlk+BtPTztOvTS01NRW/3Eh60J+a48lt8qsCzirQ6loCVfA==}
     engines: {node: '>= 0.8'}
 
-  react-dom@18.3.1:
-    resolution: {integrity: sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==}
+  react-dom@19.0.0-rc-b8ae38f8-20241018:
+    resolution: {integrity: sha512-tpE0uxYzUugFdDk8ztzHFvIfRwdxMV6+zCnwmxv8Z3yQMNIdyulzkLYG3Sm76TwjHqA5BD51wEWvsOGlF7ggoQ==}
     peerDependencies:
-      react: ^18.3.1
+      react: 19.0.0-rc-b8ae38f8-20241018
 
   react-icons@5.2.1:
     resolution: {integrity: sha512-zdbW5GstTzXaVKvGSyTaBalt7HSfuK5ovrzlpyiWHAFXndXTdd/1hdDHI4xBM1Mn7YriT6aqESucFl9kEXzrdw==}
@@ -2748,8 +2754,8 @@ packages:
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
-  react@18.3.1:
-    resolution: {integrity: sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==}
+  react@19.0.0-rc-b8ae38f8-20241018:
+    resolution: {integrity: sha512-biHm+Fh5xA/N8fp/34mDxk3zHrRQ1pFUYIe+jmVDsyg58OtHnYkmX7mxA63dtOhL5vwnXagUTWM3iktM585Iug==}
     engines: {node: '>=0.10.0'}
 
   read-cache@1.0.0:
@@ -2843,8 +2849,8 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  scheduler@0.23.2:
-    resolution: {integrity: sha512-UOShsPwz7NrMUqhR6t0hWjFduvOzbtv7toDH1/hIrfRNIDBnnBWd0CwJTGvTpngVlmwGCdP9/Zl/tVrDqcuYzQ==}
+  scheduler@0.25.0-rc-b8ae38f8-20241018:
+    resolution: {integrity: sha512-mIDFzXIHvZiHazgIaPRIWOEsgvohqW9vUzoXDkK7Y+I1xG9khkBPsdKkkORnAM1r/vmd2eeUOo123I48F1b7oQ==}
 
   semver@6.3.1:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
@@ -3102,6 +3108,12 @@ packages:
   typed-array-length@1.0.6:
     resolution: {integrity: sha512-/OxDN6OtAk5KBpGb28T+HZc2M+ADtvRxXrKKbUwtsLgdoxgX13hyy7ek6bFRl5+aBs2yZzB0c4CnQfAtVypW/g==}
     engines: {node: '>= 0.4'}
+
+  types-react-dom@19.0.0-rc.1:
+    resolution: {integrity: sha512-VSLZJl8VXCD0fAWp7DUTFUDCcZ8DVXOQmjhJMD03odgeFmu14ZQJHCXeETm3BEAhJqfgJaFkLnGkQv88sRx0fQ==}
+
+  types-react@19.0.0-rc.1:
+    resolution: {integrity: sha512-RshndUfqTW6K3STLPis8BtAYCGOkMbtvYsi90gmVNDZBXUyUc5juf2PE9LfS/JmOlUIRO8cWTS/1MTnmhjDqyQ==}
 
   typescript-eslint@8.0.1:
     resolution: {integrity: sha512-V3Y+MdfhawxEjE16dWpb7/IOgeXnLwAEEkS7v8oDqNcR1oYlqWhGH/iHqHdKVdpWme1VPZ0SoywXAkCqawj2eQ==}
@@ -4974,12 +4986,12 @@ snapshots:
 
   fraction.js@4.3.7: {}
 
-  framer-motion@11.11.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+  framer-motion@11.11.0(react-dom@19.0.0-rc-b8ae38f8-20241018(react@19.0.0-rc-b8ae38f8-20241018))(react@19.0.0-rc-b8ae38f8-20241018):
     dependencies:
       tslib: 2.7.0
     optionalDependencies:
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
+      react: 19.0.0-rc-b8ae38f8-20241018
+      react-dom: 19.0.0-rc-b8ae38f8-20241018(react@19.0.0-rc-b8ae38f8-20241018)
 
   fresh@0.5.2: {}
 
@@ -6139,21 +6151,18 @@ snapshots:
       iconv-lite: 0.4.24
       unpipe: 1.0.0
 
-  react-dom@18.3.1(react@18.3.1):
+  react-dom@19.0.0-rc-b8ae38f8-20241018(react@19.0.0-rc-b8ae38f8-20241018):
     dependencies:
-      loose-envify: 1.4.0
-      react: 18.3.1
-      scheduler: 0.23.2
+      react: 19.0.0-rc-b8ae38f8-20241018
+      scheduler: 0.25.0-rc-b8ae38f8-20241018
 
-  react-icons@5.2.1(react@18.3.1):
+  react-icons@5.2.1(react@19.0.0-rc-b8ae38f8-20241018):
     dependencies:
-      react: 18.3.1
+      react: 19.0.0-rc-b8ae38f8-20241018
 
   react-is@16.13.1: {}
 
-  react@18.3.1:
-    dependencies:
-      loose-envify: 1.4.0
+  react@19.0.0-rc-b8ae38f8-20241018: {}
 
   read-cache@1.0.0:
     dependencies:
@@ -6306,9 +6315,7 @@ snapshots:
 
   safer-buffer@2.1.2: {}
 
-  scheduler@0.23.2:
-    dependencies:
-      loose-envify: 1.4.0
+  scheduler@0.25.0-rc-b8ae38f8-20241018: {}
 
   semver@6.3.1: {}
 
@@ -6670,6 +6677,14 @@ snapshots:
       is-typed-array: 1.1.13
       possible-typed-array-names: 1.0.0
 
+  types-react-dom@19.0.0-rc.1:
+    dependencies:
+      '@types/react': 18.3.3
+
+  types-react@19.0.0-rc.1:
+    dependencies:
+      csstype: 3.1.3
+
   typescript-eslint@8.0.1(eslint@9.9.0(jiti@1.21.6))(typescript@5.5.4):
     dependencies:
       '@typescript-eslint/eslint-plugin': 8.0.1(@typescript-eslint/parser@8.0.1(eslint@9.9.0(jiti@1.21.6))(typescript@5.5.4))(eslint@9.9.0(jiti@1.21.6))(typescript@5.5.4)
@@ -6750,9 +6765,9 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  use-sync-external-store@1.2.2(react@18.3.1):
+  use-sync-external-store@1.2.2(react@19.0.0-rc-b8ae38f8-20241018):
     dependencies:
-      react: 18.3.1
+      react: 19.0.0-rc-b8ae38f8-20241018
 
   util-deprecate@1.0.2: {}
 
@@ -6844,12 +6859,12 @@ snapshots:
 
   word-wrap@1.2.5: {}
 
-  wouter@3.3.5(react@18.3.1):
+  wouter@3.3.5(react@19.0.0-rc-b8ae38f8-20241018):
     dependencies:
       mitt: 3.0.1
-      react: 18.3.1
+      react: 19.0.0-rc-b8ae38f8-20241018
       regexparam: 3.0.0
-      use-sync-external-store: 1.2.2(react@18.3.1)
+      use-sync-external-store: 1.2.2(react@19.0.0-rc-b8ae38f8-20241018)
 
   wrap-ansi@7.0.0:
     dependencies:
