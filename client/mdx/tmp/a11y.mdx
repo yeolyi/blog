@@ -1,0 +1,296 @@
+# 접근성
+
+## What is accessibility?
+
+The practice of making sites accessible also benefits other groups such as those
+using mobile devices, or those with slow network connections.
+
+- Semantic HTML, which improves accessibility, also improves SEO, making your
+  site more findable.
+- Caring about accessibility demonstrates good ethics and morals, which improves
+  your public image.
+- Other good practices that improve accessibility also make your site more
+  usable by other groups, such as mobile phone users or those on low network
+  speed. In fact, everyone can benefit from many such improvements.
+- Did we mention it is also the law in some places?
+
+"Over a billion people, about 15% of the world's population, have some form of
+disability"
+https://www.who.int/en/news-room/fact-sheets/detail/disability-and-health
+
+2023년 등록장애인 264만 2,000명, 전체 인구 대비 5.1%
+https://www.mohw.go.kr/board.es?mid=a10503000000&bid=0027&list_no=1481120&act=view
+
+스크린리더로 JAWS나 NVDA를 가장 많이 사용한다던데 윈도우 작업 환경이 없어서
+보이스오버로 한게 아쉽.
+
+Some people might have difficulty making the exact hand movements required to
+use a mouse, while others might be more severely affected, perhaps being
+significantly paralyzed to the point where they need to use a head pointer to
+interact with computers.
+
+Designing with cognitive accessibility will lead to good design practices. They
+will benefit everyone.
+
+If however, you consider accessibility from the start of a project, the cost of
+making most content accessible should be fairly minimal. Just like any other
+bug, an accessibility problem becomes more expensive to fix the later it is
+discovered.
+
+개선사항마다 PR로 연결시켜도 좋을 듯.
+
+Publish an accessibility statement on your site and engage with people having
+problems.
+
+For a start, the W3C has published a large and very detailed document that
+includes very precise, technology-agnostic criteria for accessibility
+conformance. These are called the **Web Content Accessibility Guidelines
+(WCAG)**, and they are not a short read by any means.
+https://www.w3.org/WAI/standards-guidelines/wcag/glance/
+
+Nextjs 언급?
+
+Web browsers make use of special accessibility APIs (provided by the underlying
+operating system) that expose information useful for assistive technologies
+(ATs). This information is structured in a tree of information called the
+accessibility tree.
+
+Where the native semantic information provided by the HTML elements in your web
+apps falls down, you can supplement it with features from the WAI-ARIA
+specification, which add semantic information to the accessibility tree to
+improve accessibility.
+
+## HTML: A good basis for accessibility
+
+A great deal of web content can be made accessible just by making sure the
+correct Hypertext Markup Language elements are used for the correct purpose at
+all times.
+
+Don't use dashes if you can avoid it. Instead of writing 5-7, write 5 to 7.
+Expand abbreviations — instead of writing Jan, write January. Expand acronyms,
+at least once or twice, then use the \<abbr\> tag to describe them.
+
+One key aspect of the accessibility of UI controls is that by default, browsers
+allow them to be manipulated by the keyboard. In the rare to non-existent case
+when you need to use a non-button element for a button, **use the button
+role(이거 봐보자)** and implement all the default button behaviors, including
+keyboard and mouse button support.
+
+Basically, the tabindex attribute is primarily intended to allow tabbable
+elements to have a custom tab order (specified in positive numerical order),
+instead of just being tabbed through in their default source order.
+
+- tabindex="0" — as indicated above, this value allows elements that are not
+  normally tabbable to become tabbable. This is the most useful value of
+  tabindex.
+- tabindex="-1" — this allows not normally tabbable elements to receive focus
+  programmatically, e.g., via JavaScript, or as the target of links.
+
+엔터칠 때 열리는 것도 따로 처리를 해주어야한다.
+
+You should make sure that your button and link text labels are understandable
+and distinctive. Don't just use "Click here" for your labels, as screen reader
+users sometimes get up a list of buttons and form controls.
+
+```html
+<p>
+  Whales are really awesome creatures.
+  <a href="whales.html">Find out more about whales</a>.
+</p>
+```
+
+```html
+<p>
+  Whales are really awesome creatures. To find out more about whales,
+  <a href="whales.html">click here</a>.
+</p>
+```
+
+```html
+Fill in your name: <input type="text" id="name" name="name" />
+```
+
+```html
+<div>
+  <label for="name">Fill in your name:</label>
+  <input type="text" id="name" name="name" />
+</div>
+```
+
+Table headers are defined using \<th\> elements — you can also specify if they
+are headers for rows or columns using the scope attribute. This gives you
+complete groups of data that can be consumed by screen readers as single units.
+The \<caption\> element and the \<table\> element's summary attribute both do
+similar jobs — they act as alt text for a table, giving a screen reader user a
+useful quick summary of the table's contents. The \<caption\> element is
+generally preferred as it makes it's content accessible to sighted users too,
+who might also find it useful. You don't really need both.
+
+Whereas textual content is inherently accessible, the same cannot necessarily be
+said for multimedia content.
+
+```html
+<img src="dinosaur.png" />
+
+<img
+  src="dinosaur.png"
+  alt="A red Tyrannosaurus Rex: A two legged dinosaur standing upright like a human, with small arms, and a large head with lots of sharp teeth."
+/>
+```
+
+이거 AI로 해도 유용할듯.
+
+All information image conveys that a sited user can access and is relevant to
+the context is what needs to be conveyed; nothing more. Keep it short, precise,
+and useful.
+
+If they are decorative, it is better to write an empty text as a value for alt
+attribute (see Empty alt attributes) or to just include them in the page as CSS
+background images. If possible you should use CSS to display images that are
+only decorative.
+
+If you do want to provide extra contextual information, you should put it in the
+text surrounding the image, or inside a title attribute, as shown above. In this
+case, most screen readers will read out the alt text, the title attribute, and
+the filename. In addition, browsers display title text as tooltips when moused
+over.
+
+```html
+<!-- This is especially useful if you want to use the same text as a label for multiple images — something that isn't possible with alt. -->
+<img src="dinosaur.png" aria-labelledby="dino-label" />
+<p id="dino-label">The Mozilla red Tyrannosaurus…</p>
+```
+
+Next에서 경고 띄운다고 alt에 빈 문자열을 넣는건 오히려 안좋은거 아닌가? 아얘
+안읽는다고 그러는데...
+
+Links that open in a new tab or window via the target="\_blank" declaration and
+links to whose href value points to a file resource should include an indicator
+about the behavior that will occur when the link is activated.
+
+People experiencing low vision conditions, who are navigating with the aid of
+screen reading technology, or who have cognitive concerns may become confused
+when the new tab, window, or application is opened unexpectedly.
+
+```html
+<a target="_blank" href="https://www.wikipedia.org/"
+  >Wikipedia (opens in a new window)</a
+>
+```
+
+If an icon is used in place of text to signify this kind of links behavior, make
+sure it includes an alternate description.
+
+Skip links are especially useful for people who navigate with the aid of
+assistive technology such as switch control, voice command, or mouth sticks/head
+wands, where the act of moving through repetitive links can be a laborious task.
+
+Large amounts of interactive content—including anchors—placed in close visual
+proximity to each other should have space inserted to separate them.
+
+## CSS and JavaScript accessibility best practices
+
+the link receives a highlight when focused (e.g. via tabbing) or activated.
+
+https://developer.mozilla.org/en-US/docs/Web/CSS/:active
+
+https://webaim.org/resources/contrastchecker/
+
+A high contrast ratio will also allow anyone using a smartphone or tablet with a
+glossy screen to better read pages when in a bright environment, such as
+sunlight.
+
+Another tip is to not rely on color alone for signposts/information, as this
+will be no good for those who can't see the color. Instead of marking required
+form fields in red, for example, mark them **with an asterisk and in red**.
+
+스크린 리더를 쓰는 경우 tabbed box등에서 한번에 다 보이는 것을 선호한다.
+display: none은 쓰지 말자. https://webaim.org/techniques/css/invisiblecontent/
+
+Another way to improve accessibility for non-semantic JavaScript-powered widgets
+is to use WAI-ARIA to provide extra semantics for screen reader users.
+
+The idea of unobtrusive JavaScript is that it should be used wherever possible
+to enhance functionality, not build it in entirely.
+
+- Providing client-side form validation, which alerts users to problems with
+  their form entries quickly, without having to wait for the server to check the
+  data. If it isn't available, the form will still work, but validation might be
+  slower.
+- Providing custom controls for HTML \<video\>s that are accessible to
+  keyboard-only users, along with a direct link to the video that can be used to
+  access it if JavaScript is not available (the default \<video\> browser
+  controls aren't keyboard accessible in most browsers).
+
+Form validation은 클라와 서버에서 모두 하는게 맞구나. 전자는 responsive UI를
+위해, 후자는 전자가 바이패스될 수 있으니 안전을 위해.
+
+We only do the validation when the form is submitted — this is so that we don't
+update the UI too often and potentially confuse screen reader (and possibly
+other) users:
+
+Note: In this example, we are hiding and showing the error message box using
+absolute positioning rather than another method such as visibility or display,
+because it doesn't interfere with the screen reader being able to read content
+from it. (role="alert")
+
+에러 다이얼로그에 에러 요소로의 링크를 달 수 있다. 다이얼로그를 문서 최전선에
+놓아 바로 알 수 있게 할 수 있다. 실제 위치는 CSS로 조절.
+
+mouseover, mouseout, dblclick 같은 event handler가 불가능한 경우가 있으니 다른
+수단으로도 fire가 가능하게 처리할 수 있다. 예를 들어 호버 외에 블러를 통해
+이미지를 선택할 떄도 함수를 넣는다던가.
+
+onclick은 focue 후 enter시에도 실행된다.
+
+## WAI-ARIA basics
+
+WAI-ARIA is a technology that can help with such problems by adding in further
+semantics that browsers and assistive technologies can recognize and use to let
+users know what is going on.
+
+기본 제공되는 datepicker등이 마음에 안들어 직접 구현했는데 The problem here is
+that visually they work, but screen readers can't make any sense of what they
+are at all, and their users just get told that they can see a jumble of elements
+with no semantics to describe what they mean.
+
+> WAI-ARIA (Web Accessibility Initiative - Accessible Rich Internet
+> Applications) is a specification written by the W3C, defining a set of
+> additional HTML attributes that can be applied to elements to provide
+> additional semantics and improve accessibility wherever it is lacking.
+
+States differ from properties in that properties don't change throughout the
+lifecycle of an app, whereas states can change, generally programmatically via
+JavaScript.
+
+An important point about WAI-ARIA attributes is that they don't affect anything
+about the web page, except for the information exposed by the browser's
+accessibility APIs. **WAI-ARIA doesn't affect webpage structure, the DOM,
+etc.,** although the attributes can be useful for selecting elements by CSS.
+
+WAI-ARIA는 페이지상에 랜드마크(search, tablist...)를 만들거나, 컨텐츠가 바뀔 떄
+알리거나, 기본 제공 요소 아닌거 쓸 때 키보드 접근성을 향상시키거나(tabindex),
+아까 말한 것처럼 복잡한 UI만들 떄 뭐가 뭔지 나타내거나할 때 쓴다.
+
+**You should only use WAI-ARIA when you need to! Ideally, you should always use
+native HTML features to provide the semantics required by screen readers to tell
+their users what is going on**.
+
+### Signposts/Landmarks
+
+따로 라벨을 넣을 UI가 아닐 떄 aria-label을 활용할 수도 있다.
+
+form에 role을 넣으면 called out as a separate item, both when browsing through
+the page, and in the Landmarks menu..
+
+### Dynamic content updates
+
+The problem is that modern web apps are often not just static text — they often
+update parts of the page by fetching new content from the server and updating
+the DOM. 이거 논문에 쓰면 좋을듯.
+
+WAI-ARIA, fortunately, provides a useful mechanism to provide these alerts — the
+aria-live property. Applying this to an element causes screen readers to read
+out the content that is updated.
+
+## Enhancing keyboard accessibility
