@@ -8,6 +8,8 @@ import { MDXComponents } from 'mdx/types';
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { Fallback } from '@/client/pages/[mdx]/Fallback';
 import { useLocation } from 'wouter';
+import { mainPage, pageList } from '@/client/constants/page';
+import { PageMeta } from '@/client/components/common/PageMeta';
 
 export default function MdxLayout({
   discussionNumber,
@@ -16,9 +18,13 @@ export default function MdxLayout({
   discussionNumber?: number;
   mdxPage: MdxPage;
 }) {
+  const [location] = useLocation();
+  const page = pageList.find(({ path }) => path === location) ?? mainPage;
+
   const Mdx = lazy(mdxPage.importMdx);
 
   const [pathname] = useLocation();
+
   // https://gist.github.com/gaearon/e7d97cdf38a2907924ea12e4ebdf3c85
   // TODO: useLayoutEffect를 사용할 방법?
   useEffect(() => {
@@ -32,6 +38,7 @@ export default function MdxLayout({
 
   return (
     <>
+      <PageMeta page={page} />
       <main>
         {mdxPage.src && (
           <img

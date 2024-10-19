@@ -7,9 +7,11 @@ export const mainPage: Page = {
   path: '/',
 };
 
-// TODO: 404 페이지 메타데이터 추가
 export const notFoundPage: MdxPage = {
-  ...mainPage,
+  title: '404 Not Found',
+  description: '404 문서 구경하고 가세요.',
+  // 이게 맞나...?
+  path: '/aegjnhln',
   importMdx: () => import('../mdx/etc/notFound.mdx'),
 };
 

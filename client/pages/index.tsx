@@ -12,12 +12,15 @@ import Section from '@/client/pages/components/Section';
 import Project from '@/client/pages/components/Project';
 import Footer from '@/client/components/layout/Footer';
 import { useReducer } from 'react';
+import { PageMeta } from '@/client/components/common/PageMeta';
+import { mainPage } from '@/client/constants/page';
 
 export const MainPage = () => {
   const [order, flip] = useReducer((arr) => [arr[1], arr[0]], [0, 1]);
 
   return (
     <>
+      <PageMeta page={mainPage} />
       <main>
         <img
           src={profile}

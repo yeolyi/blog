@@ -154,9 +154,6 @@ importers:
       types-react:
         specifier: 19.0.0-rc.1
         version: 19.0.0-rc.1
-      types-react-dom:
-        specifier: 19.0.0-rc.1
-        version: 19.0.0-rc.1
       typescript:
         specifier: ^5.5.3
         version: 5.5.4
@@ -3108,9 +3105,6 @@ packages:
   typed-array-length@1.0.6:
     resolution: {integrity: sha512-/OxDN6OtAk5KBpGb28T+HZc2M+ADtvRxXrKKbUwtsLgdoxgX13hyy7ek6bFRl5+aBs2yZzB0c4CnQfAtVypW/g==}
     engines: {node: '>= 0.4'}
-
-  types-react-dom@19.0.0-rc.1:
-    resolution: {integrity: sha512-VSLZJl8VXCD0fAWp7DUTFUDCcZ8DVXOQmjhJMD03odgeFmu14ZQJHCXeETm3BEAhJqfgJaFkLnGkQv88sRx0fQ==}
 
   types-react@19.0.0-rc.1:
     resolution: {integrity: sha512-RshndUfqTW6K3STLPis8BtAYCGOkMbtvYsi90gmVNDZBXUyUc5juf2PE9LfS/JmOlUIRO8cWTS/1MTnmhjDqyQ==}
@@ -6676,10 +6670,6 @@ snapshots:
       has-proto: 1.0.3
       is-typed-array: 1.1.13
       possible-typed-array-names: 1.0.0
-
-  types-react-dom@19.0.0-rc.1:
-    dependencies:
-      '@types/react': 18.3.3
 
   types-react@19.0.0-rc.1:
     dependencies:

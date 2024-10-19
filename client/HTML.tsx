@@ -1,13 +1,6 @@
 import { App } from '@/client/App';
-import { pageList, mainPage } from '@/client/constants/page';
-import { useLocation } from 'wouter';
 
 export const HTML = ({ cssPath }: { cssPath: string }) => {
-  const [location] = useLocation();
-
-  // 존재하지 않는 페이지에 대해서는 mainPage의 메타데이터 사용
-  const page = pageList.find(({ path }) => path === location) ?? mainPage;
-
   return (
     <html lang="ko">
       <head>
@@ -15,15 +8,6 @@ export const HTML = ({ cssPath }: { cssPath: string }) => {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
         <link rel="stylesheet" href={cssPath} />
-
-        <title>{page.title}</title>
-        <meta name="description" content={page.description} />
-
-        <meta property="og:title" content={page.title} />
-        <meta property="og:type" content="website" />
-        <meta property="og:image" content={page.src} />
-        <meta property="og:description" content={page.description} />
-        <meta property="og:site_name" content="yeolyi.com" />
 
         <script
           defer
