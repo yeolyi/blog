@@ -12,6 +12,7 @@ export const App = () => {
   const [location] = useLocation();
 
   // TODO: 왜 switch + route 조합으로는 안되지??
+  // 상태가 날아갔었나 이 주석 왜 적었었지
   if (location === '/') return <MainPage />;
   else if (location.startsWith('/js')) {
     return (

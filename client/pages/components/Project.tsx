@@ -19,23 +19,21 @@ type TileProps = {
   copy: string;
   href: string;
   bg: ReactNode;
-  onClick?: () => void;
   index: number;
 };
 
 const loadFeatures = () =>
   import('../../util/lazyMotion.ts').then((res) => res.default);
 
-const Cell = ({ name, copy, href, bg, onClick, index }: TileProps) => {
+const Cell = ({ name, copy, href, bg, index }: TileProps) => {
   const [container, setContainer] = useState<HTMLElement | null>(null);
   useSquircle(container, 28);
 
   return (
     <LazyMotion features={loadFeatures} strict>
       <m.li
-        className={`absolute bottom-0 left-0 right-0 top-0 flex flex-col items-center justify-end overflow-hidden rounded-[28px] px-[20px] py-[60px] lg:px-[40px]`}
+        className={`absolute bottom-0 left-0 right-0 top-0 flex cursor-pointer flex-col items-center justify-end overflow-hidden rounded-[28px] px-[20px] py-[60px] lg:px-[40px]`}
         ref={setContainer}
-        onClick={onClick}
         animate={{
           zIndex: 999 - index,
           translateY: `${index * -8}%`,

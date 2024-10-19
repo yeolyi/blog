@@ -1,7 +1,7 @@
 import { random } from 'es-toolkit';
 import { useEffect } from 'react';
 
-export default function InstaBg() {
+export default function InstaBg({ onClick }: { onClick: () => void }) {
   useEffect(() => {
     const heartList = [
       ...document.querySelectorAll('.heart'),
@@ -60,6 +60,7 @@ export default function InstaBg() {
                         #285aeb 90%
                     )`,
       }}
+      onClick={onClick}
     >
       <ul className="relative h-full w-full">
         {[...Array(30).keys()].map((i) => (

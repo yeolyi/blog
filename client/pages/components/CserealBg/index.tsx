@@ -35,7 +35,7 @@ const ripple = throttle((idx: number, elementList: HTMLDivElement[]) => {
   setScale(target, 1, DURATION);
 }, 500);
 
-export const CserealBg = () => {
+export const CserealBg = ({ onClick }: { onClick: () => void }) => {
   const spanListRef = useRef<HTMLDivElement[] | null>(null);
   const lastRippleTimeRef = useRef(0);
 
@@ -62,7 +62,8 @@ export const CserealBg = () => {
     <div className="relative h-full w-full">
       <img
         src={cserealbg}
-        className="absolute bottom-0 left-0 right-0 top-0 h-full w-full object-cover"
+        className="absolute bottom-0 left-0 right-0 top-0 h-full w-full cursor-pointer object-cover"
+        onClick={onClick}
       />
       <div
         className="relative mx-auto grid w-fit select-none pt-[120px] sm:pt-[90px] md:pt-[60px]"
