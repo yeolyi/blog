@@ -1,9 +1,26 @@
 import Image from "next/image";
 import styles from "./page.module.css";
+import { signOut } from "@/app/private/actions";
+import { signInWithGithub } from "@/app/private/actions";
+import { createClient } from "@/utils/supabase/server";
 
-export default function Home() {
+export default async function Home() {
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+  console.log(data);
+
   return (
     <div className={styles.page}>
+      <div>
+        {data && data.user ? (
+          <>
+            <p>Signed in as {data.user.id}</p>
+            <button onClick={signOut}>Sign Out</button>
+          </>
+        ) : (
+          <button onClick={signInWithGithub}>Sign In</button>
+        )}
+      </div>
       <main className={styles.main}>
         <Image
           className={styles.logo}
