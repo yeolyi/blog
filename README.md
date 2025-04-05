@@ -20,3 +20,50 @@ config.toml설정하는데 localhost랑 127.0.0.1 차이가 있다고???
 https://github.com/supabase/supabase-js/issues/1381
 
 https://github.com/orgs/supabase/discussions/26791#discussioncomment-10648756
+
+---
+
+# Supabase RLS 정책의 무한 재귀 문제 해결
+
+`infinite recursion detected in policy for relation "profiles"` 오류는 Row Level Security(RLS) 정책이 자기 자신을 참조하여 무한 루프에 빠졌다는 의미입니다.
+
+## 원인
+
+이 문제는 보통 다음과 같은 정책을 설정할 때 발생합니다:
+
+```sql
+CREATE POLICY "관리자는 모든 프로필 확인 가능" ON profiles
+  FOR SELECT USING (
+    (SELECT role FROM profiles WHERE id = auth.uid()) = 'admin'
+  );
+```
+
+이 정책은 무한 재귀를 유발합니다:
+
+1. 정책이 profiles 테이블 접근을 확인하기 위해
+2. profiles 테이블을 다시 쿼리하지만
+3. 그 쿼리는 다시 같은 정책을 트리거하고
+4. 무한 루프가 발생
+
+## 해결 방법
+
+### 1. 보안 정의자 함수 사용
+
+```sql
+-- 1. 사용자 역할을 확인하는 함수 생성
+CREATE OR REPLACE FUNCTION is_admin()
+RETURNS BOOLEAN AS $$
+DECLARE
+  user_role TEXT;
+BEGIN
+  SELECT role INTO user_role FROM profiles WHERE id = auth.uid();
+  RETURN user_role = 'admin';
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 2. 함수를 사용하여 정책 생성
+CREATE POLICY "관리자는 모든 프로필 확인 가능" ON profiles
+  FOR SELECT USING (
+    is_admin() OR auth.uid() = id
+  );
+```
