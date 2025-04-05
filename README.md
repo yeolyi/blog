@@ -70,7 +70,6 @@ CREATE POLICY "관리자는 모든 프로필 확인 가능" ON profiles
 
 ---
 
-
 ```sql
 -- 밈 테이블
 CREATE TABLE memes (
@@ -133,7 +132,7 @@ CREATE POLICY "관리자만 밈 추가 가능" ON public.memes
   TO authenticated
   WITH CHECK (
     EXISTS (
-      SELECT 1 FROM public.profiles 
+      SELECT 1 FROM public.profiles
       WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
     )
   );
@@ -143,7 +142,7 @@ CREATE POLICY "관리자만 밈 수정 가능" ON public.memes
   TO authenticated
   USING (
     EXISTS (
-      SELECT 1 FROM public.profiles 
+      SELECT 1 FROM public.profiles
       WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
     )
   );
@@ -153,7 +152,7 @@ CREATE POLICY "관리자만 밈 삭제 가능" ON public.memes
   TO authenticated
   USING (
     EXISTS (
-      SELECT 1 FROM public.profiles 
+      SELECT 1 FROM public.profiles
       WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
     )
   );
@@ -164,7 +163,7 @@ CREATE POLICY "관리자만 태그 추가 가능" ON public.tags
   TO authenticated
   WITH CHECK (
     EXISTS (
-      SELECT 1 FROM public.profiles 
+      SELECT 1 FROM public.profiles
       WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
     )
   );
@@ -174,7 +173,7 @@ CREATE POLICY "관리자만 태그 수정 가능" ON public.tags
   TO authenticated
   USING (
     EXISTS (
-      SELECT 1 FROM public.profiles 
+      SELECT 1 FROM public.profiles
       WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
     )
   );
@@ -184,7 +183,7 @@ CREATE POLICY "관리자만 태그 삭제 가능" ON public.tags
   TO authenticated
   USING (
     EXISTS (
-      SELECT 1 FROM public.profiles 
+      SELECT 1 FROM public.profiles
       WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
     )
   );
@@ -195,7 +194,7 @@ CREATE POLICY "관리자만 밈_태그 추가 가능" ON public.meme_tags
   TO authenticated
   WITH CHECK (
     EXISTS (
-      SELECT 1 FROM public.profiles 
+      SELECT 1 FROM public.profiles
       WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
     )
   );
@@ -205,7 +204,7 @@ CREATE POLICY "관리자만 밈_태그 수정 가능" ON public.meme_tags
   TO authenticated
   USING (
     EXISTS (
-      SELECT 1 FROM public.profiles 
+      SELECT 1 FROM public.profiles
       WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
     )
   );
@@ -215,7 +214,7 @@ CREATE POLICY "관리자만 밈_태그 삭제 가능" ON public.meme_tags
   TO authenticated
   USING (
     EXISTS (
-      SELECT 1 FROM public.profiles 
+      SELECT 1 FROM public.profiles
       WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
     )
   );
@@ -228,7 +227,7 @@ CREATE POLICY "관리자만 파일 업로드 가능" ON storage.objects
   WITH CHECK (
     bucket_id = 'memes' AND
     EXISTS (
-      SELECT 1 FROM public.profiles 
+      SELECT 1 FROM public.profiles
       WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
     )
   );
@@ -240,7 +239,7 @@ CREATE POLICY "관리자만 파일 수정 가능" ON storage.objects
   USING (
     bucket_id = 'memes' AND
     EXISTS (
-      SELECT 1 FROM public.profiles 
+      SELECT 1 FROM public.profiles
       WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
     )
   );
@@ -252,7 +251,7 @@ CREATE POLICY "관리자만 파일 삭제 가능" ON storage.objects
   USING (
     bucket_id = 'memes' AND
     EXISTS (
-      SELECT 1 FROM public.profiles 
+      SELECT 1 FROM public.profiles
       WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
     )
   );
@@ -307,8 +306,8 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = existing_user.id) THEN
       -- 없으면 새 프로필 생성
       INSERT INTO public.profiles (
-        id, 
-        role, 
+        id,
+        role,
         display_name,
         created_at
       )
@@ -332,7 +331,6 @@ SELECT public.migrate_existing_users();
 
 https://github.com/orgs/supabase/discussions/604 이런 api 좋다
 
-
 ```sql
 BEGIN;
   DELETE FROM meme_tags;
@@ -346,7 +344,7 @@ COMMIT;
 
 programmerio는 영상은 없네
 
---- 
+---
 
 맞는 지적입니다! 일반적인 프로미스는 생성되자마자 실행됩니다. 하지만 Supabase 쿼리 빌더는 조금 특별하게 작동합니다.
 
@@ -373,17 +371,26 @@ let query = supabase.from("memes").select(`...`);
 네, 정확합니다. Supabase 쿼리 빌더는 PromiseLike 객체(또는 Thenable 객체)를 활용한다고 볼 수 있습니다.
 
 PromiseLike 객체란:
+
 - `.then()` 메서드를 구현해 Promise처럼 동작
 - `await`과 함께 사용 가능
 - 하지만 실제 Promise 인스턴스는 아님
 
 Supabase 쿼리 빌더는:
+
 1. 쿼리 정의용 메서드 체이닝을 지원하는 빌더 객체
 2. `.then()`을 구현해 Promise처럼 사용 가능하게 함
 3. 실제 HTTP 요청은 `.then()` 또는 `await`이 호출될 때 시작됨
 
 이렇게 하면 쿼리를 미리 정의해두고 실제 데이터가 필요한 시점에 실행할 수 있다는 장점이 있습니다. 즉 지연 실행(lazy execution) 패턴을 구현하면서도 Promise와 호환되는 방식으로 동작하게 만든 것입니다.
 
---- 
+---
 
 zod도 써보자
+
+---
+
+[Error: Failed to find Server Action "409e6c69c2216d01d51c5068d86b019ef1552d6fca". This request might be from an older or newer deployment. Original error: Cannot read properties of undefined (reading 'workers')
+Read more: https://nextjs.org/docs/messages/failed-to-find-server-action]
+
+이런 에러도 있구나...

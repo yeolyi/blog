@@ -3,27 +3,10 @@
 import { usePathname } from "next/navigation";
 import { MemeItem } from "./MenuItem";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { getMemes } from "../actions";
-
-export interface Tag {
-  id: string;
-  name: string;
-}
-
-export interface MemeTag {
-  tag_id: string;
-  tags: Tag;
-}
-
-export interface Meme {
-  id: string;
-  title: string;
-  description: string | null;
-  media_url: string;
-  created_at: string;
-  meme_tags: MemeTag[];
-}
+import { Meme, Tag } from "@/types/meme";
+import { useInfiniteScroll } from "@/utils/useInfiniteScroll";
 
 interface MemeListProps {
   memes: Meme[];
@@ -43,15 +26,6 @@ export default function MemeList({
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const lastMemeRef = useRef<HTMLDivElement | null>(null);
-
-  // 처음 로드 시 초기 데이터 설정
-  useEffect(() => {
-    setMemes(initialMemes);
-    setPage(1);
-    setHasMore(true);
-  }, [initialMemes, selectedTag]);
 
   // 추가 밈 로드 함수
   const loadMoreMemes = useCallback(async () => {
@@ -75,34 +49,12 @@ export default function MemeList({
     }
   }, [loading, hasMore, page, selectedTag]);
 
-  // 인터섹션 옵저버 설정
-  useEffect(() => {
-    if (loading) return;
-
-    if (observerRef.current) {
-      observerRef.current.disconnect();
-    }
-
-    const callback = async (entries: IntersectionObserverEntry[]) => {
-      if (entries[0].isIntersecting && hasMore) {
-        await loadMoreMemes();
-      }
-    };
-
-    observerRef.current = new IntersectionObserver(callback, {
-      rootMargin: "100px",
-    });
-
-    if (lastMemeRef.current) {
-      observerRef.current.observe(lastMemeRef.current);
-    }
-
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, [loading, hasMore, loadMoreMemes]);
+  // 무한 스크롤 훅 사용
+  const { setLastItemRef } = useInfiniteScroll({
+    loading,
+    hasMore,
+    onIntersect: loadMoreMemes,
+  });
 
   return (
     <div>
@@ -140,7 +92,7 @@ export default function MemeList({
           {memes.map((meme, index) => (
             <div
               key={meme.id}
-              ref={index === memes.length - 1 ? lastMemeRef : null}
+              ref={index === memes.length - 1 ? setLastItemRef : null}
             >
               <MemeItem meme={meme} isAdmin={isAdmin} />
             </div>

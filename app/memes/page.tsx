@@ -1,8 +1,7 @@
 import { Suspense } from "react";
-import { getMemes, getAllTags } from "./actions";
-import MemeList from "@/app/memes/components/MemeList";
 import { getIsAdmin } from "@/utils/auth";
 import Link from "next/link";
+import MemeListServer from "@/app/memes/components/MemeListServer";
 
 export default async function MemesPage({
   searchParams,
@@ -12,11 +11,7 @@ export default async function MemesPage({
   const { tag } = await searchParams;
 
   // admin인 경우 밈 데이터 조회 및 표시
-  const [memesResult, isAdmin, tags] = await Promise.all([
-    getMemes(tag),
-    getIsAdmin(),
-    getAllTags(),
-  ]);
+  const isAdmin = await getIsAdmin();
 
   return (
     <div style={{ padding: "2rem" }}>
@@ -28,12 +23,7 @@ export default async function MemesPage({
         </>
       )}
       <Suspense fallback={<div>로딩 중...</div>}>
-        <MemeList
-          memes={memesResult.data || []}
-          isAdmin={isAdmin}
-          allTags={tags}
-          selectedTag={tag}
-        />
+        <MemeListServer isAdmin={isAdmin} selectedTag={tag} />
       </Suspense>
     </div>
   );

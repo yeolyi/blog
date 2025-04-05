@@ -1,6 +1,6 @@
 "use client";
 
-import { Meme } from "@/app/memes/components/MemeList";
+import { Meme } from "@/types/meme";
 import { getMediaTypeFromUrl } from "@/utils/form";
 import Image from "next/image";
 import Link from "next/link";
