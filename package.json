@@ -13,6 +13,7 @@
     "@supabase/supabase-js": "^2.49.4",
     "@types/uuid": "^10.0.0",
     "next": "15.2.4",
+    "playwright": "^1.51.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.55.0",

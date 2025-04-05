@@ -45,11 +45,9 @@ export async function deleteMeme(id: string) {
   try {
     // URL에서 파일 경로 추출 (memes 버킷 가정)
     const fileUrl = new URL(meme.media_url);
-    console.log(fileUrl);
     const filePath = fileUrl.pathname.split(
       "/storage/v1/object/public/memes/"
     )[1]; // 'memes' 버킷 경로 추출
-    console.log(filePath);
 
     if (filePath) {
       const { error: storageError } = await supabase.storage
