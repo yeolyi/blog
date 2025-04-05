@@ -1,9 +1,21 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
   images: {
-    domains: ["localhost", "yeolyi.com"],
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+      },
+      {
+        protocol: "https",
+        hostname: "yeolyi.com",
+      },
+      {
+        protocol: "https",
+        hostname: "djypfjnlicwuannconhq.supabase.co",
+      },
+    ],
   },
 };
 

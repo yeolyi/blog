@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { batchUploadMemes } from "../actions";
 
+export const maxDuration = 60;
+
 interface FormInputs {
   memesJson: string;
 }
