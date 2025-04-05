@@ -2,7 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
-import { connectMemeToTag } from "@/app/actions/meme";
+import { connectMemeToTag } from "@/actions/meme";
 
 export async function getMemes(tag?: string, page = 1, pageSize = 30) {
   const supabase = await createClient();

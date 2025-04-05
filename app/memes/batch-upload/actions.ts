@@ -3,8 +3,8 @@
 import { createClient } from "@/utils/supabase/server";
 import { v4 as uuidv4 } from "uuid";
 import { revalidatePath } from "next/cache";
-import { connectMemeToTag } from "@/app/actions/meme";
-import { uploadFileToSupabase } from "@/app/actions/supabase";
+import { connectMemeToTag } from "@/actions/meme";
+import { uploadFileToSupabase } from "@/actions/supabase";
 
 interface Meme {
   title: string;

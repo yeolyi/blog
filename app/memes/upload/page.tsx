@@ -5,8 +5,8 @@ import { v4 as uuidv4 } from "uuid";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { getMediaTypeFromFile } from "@/utils/form";
-import { connectMemeToTag } from "@/app/actions/meme";
-import { uploadFileToSupabase } from "@/app/actions/supabase";
+import { connectMemeToTag } from "@/actions/meme";
+import { uploadFileToSupabase } from "@/actions/supabase";
 
 interface FormInputs {
   title: string;
