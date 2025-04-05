@@ -14,7 +14,13 @@ export default async function MemesPage() {
       <Suspense fallback={<div>로딩 중...</div>}>
         <MemeList memes={memes} />
       </Suspense>
-      {isAdmin && <Link href="/memes/upload">밈 추가</Link>}
+      {isAdmin && (
+        <>
+          <Link href="/memes/upload">밈 추가</Link>
+          <br />
+          <Link href="/memes/batch-upload">배치 업로드</Link>
+        </>
+      )}
     </div>
   );
 }

@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { signInWithGithub, signOut } from "@/app/actions";
-import { createClient } from "@/utils/supabase/server";
+import Header from "./components/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,27 +22,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = await createClient();
-  const { data: user } = await supabase.auth.getUser();
-
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <header
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            padding: "1rem",
-            borderBottom: "1px solid #e0e0e0",
-          }}
-        >
-          {user.user?.email}
-          {user.user ? (
-            <button onClick={signOut}>로그아웃</button>
-          ) : (
-            <button onClick={signInWithGithub}>로그인</button>
-          )}
-        </header>
+        <Header />
         {children}
       </body>
     </html>

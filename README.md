@@ -289,4 +289,40 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+  -- 기존 사용자 마이그레이션 함수
+CREATE OR REPLACE FUNCTION public.migrate_existing_users()
+RETURNS void AS $$
+DECLARE
+  existing_user RECORD;
+BEGIN
+  -- auth.users 테이블에서 모든 사용자를 가져옴
+  FOR existing_user IN (SELECT * FROM auth.users) LOOP
+    -- 이미 profiles 테이블에 있는지 확인
+    IF NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = existing_user.id) THEN
+      -- 없으면 새 프로필 생성
+      INSERT INTO public.profiles (
+        id, 
+        role, 
+        display_name,
+        created_at
+      )
+      VALUES (
+        existing_user.id,
+        'user',  -- 기본 역할
+        COALESCE(existing_user.raw_user_meta_data->>'full_name', existing_user.email),
+        existing_user.created_at
+      );
+    END IF;
+  END LOOP;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 기존 사용자 마이그레이션 실행
+SELECT public.migrate_existing_users();
+
+-- 마이그레이션 완료 후 함수 삭제 (선택사항)
+-- DROP FUNCTION public.migrate_existing_users();
 ```
+
+https://github.com/orgs/supabase/discussions/604 이런 api 좋다

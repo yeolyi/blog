@@ -1,5 +1,5 @@
 import { Meme } from "@/app/memes/components/MemeList";
-import { getMediaTypeFromUrl } from "@/utils/mediaType";
+import { getMediaTypeFromUrl } from "@/utils/form";
 import Image from "next/image";
 
 interface MemeItemProps {
@@ -8,7 +8,7 @@ interface MemeItemProps {
 
 export function MemeItem({ meme }: MemeItemProps) {
   return (
-    <div key={meme.id}>
+    <div key={meme.id} style={{ border: "1px solid #e0e0e0", padding: "1rem" }}>
       {getMediaTypeFromUrl(meme.media_url) === "image" ? (
         <div>
           <Image

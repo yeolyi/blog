@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 
 //  These utility functions(client & server) adapt
 // @supabase/ssr's cookie handling for Next.js.
-// You need to reconfigure the fetch call anew for every request to your server, 
+// You need to reconfigure the fetch call anew for every request to your server,
 // because you need the cookies from the request.
 export async function createClient() {
   const cookieStore = await cookies();
@@ -23,7 +23,7 @@ export async function createClient() {
             );
           } catch {
             // The `setAll` method was called from a Server Component.
-            // You can safely ignore this error because you'll set up 
+            // You can safely ignore this error because you'll set up
             // middleware in the next step to write refreshed cookies to storage.
             /*
              * When working with cookies in Server Components, it's important to understand that cookies are

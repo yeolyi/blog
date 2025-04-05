@@ -8,24 +8,28 @@ interface FormInputs {
   memesJson: string;
 }
 
+const textareaPlaceholder = `[
+  {
+    "title": "재밌는 밈",
+    "description": "설명 (선택사항)",
+    "media_url": "https://example.com/image.jpg",
+    "tags": ["웃긴", "귀여운"]
+  }
+]`;
 export default function BatchUploader() {
-  const [uploading, setUploading] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
-  const [isComplete, setIsComplete] = useState(false);
   const [processedCount, setProcessedCount] = useState(0);
 
   const {
     register,
     handleSubmit,
-    formState: { errors: formErrors },
+    formState: { errors: formErrors, isSubmitting, isSubmitSuccessful },
     reset,
   } = useForm<FormInputs>();
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
-      setUploading(true);
       setErrors([]);
-      setIsComplete(false);
 
       const result = await batchUploadMemes(data.memesJson);
 
@@ -34,27 +38,23 @@ export default function BatchUploader() {
         if (result.errors) {
           setErrors(result.errors);
         }
-        setIsComplete(true);
       } else {
         setErrors([result.error || "알 수 없는 오류가 발생했습니다."]);
       }
     } catch (error) {
       setErrors([(error as Error).message]);
-    } finally {
-      setUploading(false);
     }
   };
 
   const handleReset = () => {
     reset();
     setErrors([]);
-    setIsComplete(false);
     setProcessedCount(0);
   };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
-      {!uploading && !isComplete ? (
+      {!isSubmitting && !isSubmitSuccessful ? (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label
@@ -67,26 +67,9 @@ export default function BatchUploader() {
               id="memesJson"
               rows={10}
               className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-              placeholder={`[
-  {
-    "title": "재밌는 밈",
-    "description": "설명 (선택사항)",
-    "media_url": "https://example.com/image.jpg",
-    "tags": ["웃긴", "귀여운"]
-  }
-]`}
+              placeholder={textareaPlaceholder}
               {...register("memesJson", {
                 required: "JSON 데이터를 입력하세요",
-                validate: (value) => {
-                  try {
-                    const parsed = JSON.parse(value);
-                    return (
-                      Array.isArray(parsed) || "JSON 배열 형식이어야 합니다"
-                    );
-                  } catch {
-                    return "JSON 형식이 올바르지 않습니다";
-                  }
-                },
               })}
             />
             {formErrors.memesJson && (
@@ -98,18 +81,21 @@ export default function BatchUploader() {
 
           <button
             type="submit"
+            disabled={isSubmitting}
             className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            업로드 시작
+            {isSubmitting ? "업로드 중..." : "업로드 시작"}
           </button>
         </form>
       ) : (
         <div className="space-y-4">
           <h2 className="text-xl font-semibold">
-            {isComplete ? "업로드 완료" : "업로드 진행 중..."}
+            {isSubmitSuccessful ? "업로드 완료" : "업로드 진행 중..."}
           </h2>
 
-          {isComplete && <p>총 {processedCount}개의 밈이 업로드되었습니다.</p>}
+          {isSubmitSuccessful && (
+            <p>총 {processedCount}개의 밈이 업로드되었습니다.</p>
+          )}
 
           {errors.length > 0 && (
             <div className="mt-4">
@@ -124,7 +110,7 @@ export default function BatchUploader() {
             </div>
           )}
 
-          {isComplete && (
+          {isSubmitSuccessful && (
             <button
               onClick={handleReset}
               className="mt-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
