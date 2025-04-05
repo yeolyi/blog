@@ -31,39 +31,29 @@ export async function deleteMeme(id: string) {
   const supabase = await createClient();
 
   // 1. 밈 정보 가져오기 (스토리지 파일 경로를 위해)
-  const { data: meme, error: fetchError } = await supabase
+  const { data: meme } = await supabase
     .from("memes")
     .select("media_url")
     .eq("id", id)
-    .single();
-
-  if (fetchError) {
-    console.error("밈 조회 오류:", fetchError);
-    throw new Error("밈을 삭제하는 중 오류가 발생했습니다");
-  }
+    .single()
+    .throwOnError();
 
   // 2. 밈 레코드 삭제 (meme_tags는 CASCADE로 자동 삭제됨)
-  const { error: deleteError } = await supabase
-    .from("memes")
-    .delete()
-    .eq("id", id);
-
-  if (deleteError) {
-    console.error("밈 삭제 오류:", deleteError);
-    throw new Error("밈을 삭제하는 중 오류가 발생했습니다");
-  }
+  await supabase.from("memes").delete().eq("id", id).throwOnError();
 
   // 3. 스토리지에서 파일 삭제 (URL에서 경로 추출)
   try {
     // URL에서 파일 경로 추출 (memes 버킷 가정)
     const fileUrl = new URL(meme.media_url);
+    console.log(fileUrl);
     const filePath = fileUrl.pathname.split(
       "/storage/v1/object/public/memes/"
     )[1]; // 'memes' 버킷 경로 추출
+    console.log(filePath);
 
     if (filePath) {
       const { error: storageError } = await supabase.storage
-        .from("memes") // 'public'에서 'memes'로 변경
+        .from("memes")
         .remove([filePath]);
 
       if (storageError) {

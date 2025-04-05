@@ -257,6 +257,11 @@ CREATE POLICY "관리자만 파일 삭제 가능" ON storage.objects
     )
   );
 
+CREATE POLICY "모든 사용자 파일 조회 가능" ON storage.objects
+FOR SELECT
+TO public
+USING (bucket_id = 'memes');
+
 -- 1. 사용자 역할을 확인하는 함수 생성
 CREATE OR REPLACE FUNCTION is_admin()
 RETURNS BOOLEAN AS $$

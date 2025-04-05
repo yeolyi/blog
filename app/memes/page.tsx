@@ -12,7 +12,7 @@ export default async function MemesPage() {
   return (
     <div style={{ padding: "2rem" }}>
       <Suspense fallback={<div>로딩 중...</div>}>
-        <MemeList memes={memes} />
+        <MemeList memes={memes} isAdmin={isAdmin} />
       </Suspense>
       {isAdmin && (
         <>

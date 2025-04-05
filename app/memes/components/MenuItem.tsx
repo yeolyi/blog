@@ -1,12 +1,33 @@
+"use client";
+
 import { Meme } from "@/app/memes/components/MemeList";
 import { getMediaTypeFromUrl } from "@/utils/form";
 import Image from "next/image";
+import { deleteMeme } from "@/app/memes/actions";
+import { useState } from "react";
 
 interface MemeItemProps {
   meme: Meme;
+  isAdmin: boolean;
 }
 
-export function MemeItem({ meme }: MemeItemProps) {
+export function MemeItem({ meme, isAdmin }: MemeItemProps) {
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (confirm("정말로 이 밈을 삭제하시겠습니까?")) {
+      setIsDeleting(true);
+      try {
+        await deleteMeme(meme.id);
+      } catch (error) {
+        console.error("삭제 중 오류:", error);
+        alert("삭제 중 오류가 발생했습니다.");
+      } finally {
+        setIsDeleting(false);
+      }
+    }
+  };
+
   return (
     <div key={meme.id} style={{ border: "1px solid #e0e0e0", padding: "1rem" }}>
       {getMediaTypeFromUrl(meme.media_url) === "image" ? (
@@ -43,6 +64,23 @@ export function MemeItem({ meme }: MemeItemProps) {
             <span key={tag.tag_id}>{tag.tags.name}</span>
           ))}
         </div>
+        {isAdmin && (
+          <button
+            onClick={handleDelete}
+            disabled={isDeleting}
+            style={{
+              marginTop: "10px",
+              padding: "5px 10px",
+              backgroundColor: "#ff4d4f",
+              color: "white",
+              border: "none",
+              borderRadius: "4px",
+              cursor: isDeleting ? "not-allowed" : "pointer",
+            }}
+          >
+            {isDeleting ? "삭제 중..." : "삭제"}
+          </button>
+        )}
       </div>
     </div>
   );

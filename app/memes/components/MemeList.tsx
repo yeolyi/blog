@@ -23,9 +23,10 @@ export interface Meme {
 
 interface MemeListProps {
   memes: Meme[];
+  isAdmin: boolean;
 }
 
-export default function MemeList({ memes }: MemeListProps) {
+export default function MemeList({ memes, isAdmin }: MemeListProps) {
   const [selectedTag, setSelectedTag] = useState<string | null>(null);
 
   // 모든 태그 추출 (중복 제거)
@@ -67,7 +68,7 @@ export default function MemeList({ memes }: MemeListProps) {
           }}
         >
           {filteredMemes.map((meme) => (
-            <MemeItem key={meme.id} meme={meme} />
+            <MemeItem key={meme.id} meme={meme} isAdmin={isAdmin} />
           ))}
         </div>
       )}
