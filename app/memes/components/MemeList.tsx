@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { MemeItem } from "./MenuItem";
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getMemes } from "../actions";
 import { Meme, Tag } from "@/types/meme";
 import { useInfiniteScroll } from "@/utils/useInfiniteScroll";
@@ -26,6 +26,13 @@ export default function MemeList({
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+
+  // 태그 바뀔 때 초기화를 위해 필요
+  useEffect(() => {
+    setMemes(initialMemes);
+    setPage(1);
+    setHasMore(true);
+  }, [initialMemes]);
 
   // 추가 밈 로드 함수
   const loadMoreMemes = useCallback(async () => {
