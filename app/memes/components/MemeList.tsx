@@ -17,7 +17,6 @@ export interface Meme {
   title: string;
   description: string | null;
   media_url: string;
-  media_type: "image" | "video";
   created_at: string;
   meme_tags: MemeTag[];
 }

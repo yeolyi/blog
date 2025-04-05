@@ -18,7 +18,6 @@ interface MemeTag {
 interface FormInputs {
   title: string;
   description: string;
-  mediaType: "image" | "video";
   file: FileList;
   tags: string;
 }
@@ -28,7 +27,6 @@ export default function UploadMeme() {
   const {
     register,
     handleSubmit,
-    watch,
     reset,
     formState: { errors, isSubmitting },
     setError: setFormError,
@@ -36,13 +34,30 @@ export default function UploadMeme() {
     defaultValues: {
       title: "",
       description: "",
-      mediaType: "image",
       tags: "",
     },
   });
   const router = useRouter();
 
-  const mediaType = watch("mediaType");
+  // 확장자로 미디어 타입 판단하는 함수 추가
+  const getMediaTypeFromFile = (file: File): "image" | "video" => {
+    if (file.type.startsWith("image/")) return "image";
+    if (file.type.startsWith("video/")) return "video";
+
+    // MIME 타입으로 판단 안되면 확장자로 판단
+    const fileExt = file.name.split(".").pop()?.toLowerCase() || "";
+    const videoExtensions = [
+      "mp4",
+      "webm",
+      "ogg",
+      "mov",
+      "avi",
+      "wmv",
+      "flv",
+      "mkv",
+    ];
+    return videoExtensions.includes(fileExt) ? "video" : "image";
+  };
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     const file = data.file?.[0];
@@ -52,12 +67,16 @@ export default function UploadMeme() {
       return;
     }
 
-    if (data.mediaType === "image" && !file.type.startsWith("image/")) {
+    // 파일 타입 자동 감지
+    const mediaType = getMediaTypeFromFile(file);
+
+    // 타입에 맞는 파일인지 확인
+    if (mediaType === "image" && !file.type.startsWith("image/")) {
       setFormError("file", { message: "이미지 파일만 업로드 가능합니다" });
       return;
     }
 
-    if (data.mediaType === "video" && !file.type.startsWith("video/")) {
+    if (mediaType === "video" && !file.type.startsWith("video/")) {
       setFormError("file", { message: "비디오 파일만 업로드 가능합니다" });
       return;
     }
@@ -98,7 +117,6 @@ export default function UploadMeme() {
             title: data.title,
             description: data.description,
             media_url: publicUrl,
-            media_type: data.mediaType,
           },
         ])
         .select()
@@ -214,26 +232,12 @@ export default function UploadMeme() {
       </div>
 
       <div>
-        <label>미디어 유형</label>
-        <div>
-          <label>
-            <input type="radio" value="image" {...register("mediaType")} />
-            이미지
-          </label>
-          <label>
-            <input type="radio" value="video" {...register("mediaType")} />
-            비디오
-          </label>
-        </div>
-      </div>
-
-      <div>
         <label htmlFor="file">파일</label>
         <input
           id="file"
           type="file"
           {...register("file", { required: "파일을 선택해주세요" })}
-          accept={mediaType === "image" ? "image/*" : "video/*"}
+          accept="image/*,video/*" // 모든 이미지와 비디오 파일 허용
         />
         {errors.file && <p style={{ color: "red" }}>{errors.file.message}</p>}
       </div>

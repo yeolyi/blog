@@ -67,3 +67,226 @@ CREATE POLICY "관리자는 모든 프로필 확인 가능" ON profiles
     is_admin() OR auth.uid() = id
   );
 ```
+
+---
+
+
+```sql
+-- 밈 테이블
+CREATE TABLE memes (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  title TEXT NOT NULL,
+  description TEXT,
+  media_url TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 태그 테이블
+CREATE TABLE tags (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  name TEXT UNIQUE NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 밈-태그 연결 테이블
+CREATE TABLE meme_tags (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  meme_id UUID REFERENCES memes(id) ON DELETE CASCADE,
+  tag_id UUID REFERENCES tags(id) ON DELETE CASCADE,
+  UNIQUE(meme_id, tag_id)
+);
+
+-- profiles 테이블 생성
+CREATE TABLE profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  role TEXT DEFAULT 'user',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+-- 밈 미디어 저장소 버킷 생성
+INSERT INTO storage.buckets (id, name, public) VALUES ('memes', 'memes', false);
+
+-- 2. RLS가 활성화되어 있는지 확인
+ALTER TABLE public.memes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.tags ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.meme_tags ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
+
+-- 3. 모든 사용자가 조회 가능하도록 설정
+CREATE POLICY "모든 사용자 밈 조회 가능" ON public.memes
+  FOR SELECT
+  USING (true);
+
+CREATE POLICY "모든 사용자 태그 조회 가능" ON public.tags
+  FOR SELECT
+  USING (true);
+
+CREATE POLICY "모든 사용자 밈_태그 조회 가능" ON public.meme_tags
+  FOR SELECT
+  USING (true);
+
+-- 4. admin 사용자만 추가/수정/삭제 가능하도록 설정
+-- memes 테이블
+CREATE POLICY "관리자만 밈 추가 가능" ON public.memes
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM public.profiles 
+      WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
+    )
+  );
+
+CREATE POLICY "관리자만 밈 수정 가능" ON public.memes
+  FOR UPDATE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles 
+      WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
+    )
+  );
+
+CREATE POLICY "관리자만 밈 삭제 가능" ON public.memes
+  FOR DELETE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles 
+      WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
+    )
+  );
+
+-- tags 테이블
+CREATE POLICY "관리자만 태그 추가 가능" ON public.tags
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM public.profiles 
+      WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
+    )
+  );
+
+CREATE POLICY "관리자만 태그 수정 가능" ON public.tags
+  FOR UPDATE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles 
+      WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
+    )
+  );
+
+CREATE POLICY "관리자만 태그 삭제 가능" ON public.tags
+  FOR DELETE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles 
+      WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
+    )
+  );
+
+-- meme_tags 테이블
+CREATE POLICY "관리자만 밈_태그 추가 가능" ON public.meme_tags
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM public.profiles 
+      WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
+    )
+  );
+
+CREATE POLICY "관리자만 밈_태그 수정 가능" ON public.meme_tags
+  FOR UPDATE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles 
+      WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
+    )
+  );
+
+CREATE POLICY "관리자만 밈_태그 삭제 가능" ON public.meme_tags
+  FOR DELETE
+  TO authenticated
+  USING (
+    EXISTS (
+      SELECT 1 FROM public.profiles 
+      WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
+    )
+  );
+
+-- 3. 관리자만 파일 업로드/수정/삭제 가능하도록 설정
+-- 파일 업로드 (INSERT)
+CREATE POLICY "관리자만 파일 업로드 가능" ON storage.objects
+  FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    bucket_id = 'memes' AND
+    EXISTS (
+      SELECT 1 FROM public.profiles 
+      WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
+    )
+  );
+
+-- 파일 업데이트 (UPDATE)
+CREATE POLICY "관리자만 파일 수정 가능" ON storage.objects
+  FOR UPDATE
+  TO authenticated
+  USING (
+    bucket_id = 'memes' AND
+    EXISTS (
+      SELECT 1 FROM public.profiles 
+      WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
+    )
+  );
+
+-- 파일 삭제 (DELETE)
+CREATE POLICY "관리자만 파일 삭제 가능" ON storage.objects
+  FOR DELETE
+  TO authenticated
+  USING (
+    bucket_id = 'memes' AND
+    EXISTS (
+      SELECT 1 FROM public.profiles 
+      WHERE profiles.id = auth.uid() AND profiles.role = 'admin'
+    )
+  );
+
+-- 1. 사용자 역할을 확인하는 함수 생성
+CREATE OR REPLACE FUNCTION is_admin()
+RETURNS BOOLEAN AS $$
+DECLARE
+  user_role TEXT;
+BEGIN
+  SELECT role INTO user_role FROM profiles WHERE id = auth.uid();
+  RETURN user_role = 'admin';
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 2. 함수를 사용하여 정책 생성
+CREATE POLICY "관리자는 모든 프로필 확인 가능" ON profiles
+  FOR SELECT USING (
+    is_admin() OR auth.uid() = id
+  );
+
+-- 간단한 사용자 처리 트리거 함수
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.profiles (id, role)
+  VALUES (NEW.id, 'user');  -- 모든 신규 사용자는 'user' 역할로 시작
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- 트리거 설정
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+```
