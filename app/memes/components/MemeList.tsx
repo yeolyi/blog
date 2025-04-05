@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { MemeItem } from "./MenuItem";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getMemes } from "../actions";
 
 export interface Tag {
@@ -53,6 +53,28 @@ export default function MemeList({
     setHasMore(true);
   }, [initialMemes, selectedTag]);
 
+  // 추가 밈 로드 함수
+  const loadMoreMemes = useCallback(async () => {
+    if (loading || !hasMore) return;
+
+    setLoading(true);
+    try {
+      const nextPage = page + 1;
+      const result = await getMemes(selectedTag, nextPage);
+
+      if (result.data.length === 0) {
+        setHasMore(false);
+      } else {
+        setMemes((prev) => [...prev, ...result.data]);
+        setPage(nextPage);
+      }
+    } catch (error) {
+      console.error("밈 추가 로딩 오류:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [loading, hasMore, page, selectedTag]);
+
   // 인터섹션 옵저버 설정
   useEffect(() => {
     if (loading) return;
@@ -80,29 +102,7 @@ export default function MemeList({
         observerRef.current.disconnect();
       }
     };
-  }, [loading, hasMore, lastMemeRef.current]);
-
-  // 추가 밈 로드 함수
-  const loadMoreMemes = async () => {
-    if (loading || !hasMore) return;
-
-    setLoading(true);
-    try {
-      const nextPage = page + 1;
-      const result = await getMemes(selectedTag, nextPage);
-
-      if (result.data.length === 0) {
-        setHasMore(false);
-      } else {
-        setMemes((prev) => [...prev, ...result.data]);
-        setPage(nextPage);
-      }
-    } catch (error) {
-      console.error("밈 추가 로딩 오류:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [loading, hasMore, loadMoreMemes]);
 
   return (
     <div>

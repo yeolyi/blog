@@ -7,10 +7,9 @@ import Link from "next/link";
 export default async function MemesPage({
   searchParams,
 }: {
-  searchParams: { tag?: string };
+  searchParams: Promise<{ tag?: string }>;
 }) {
-  // 쿼리 파라미터에서 태그 가져오기
-  const tag = searchParams.tag;
+  const { tag } = await searchParams;
 
   // admin인 경우 밈 데이터 조회 및 표시
   const [memesResult, isAdmin, tags] = await Promise.all([
