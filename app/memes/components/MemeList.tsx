@@ -3,6 +3,8 @@
 import { usePathname } from "next/navigation";
 import { MemeItem } from "./MenuItem";
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import { getMemes } from "../actions";
 
 export interface Tag {
   id: string;
@@ -31,12 +33,76 @@ interface MemeListProps {
 }
 
 export default function MemeList({
-  memes,
+  memes: initialMemes,
   isAdmin,
   allTags,
   selectedTag,
 }: MemeListProps) {
   const pathname = usePathname();
+  const [memes, setMemes] = useState<Meme[]>(initialMemes);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const lastMemeRef = useRef<HTMLDivElement | null>(null);
+
+  // 처음 로드 시 초기 데이터 설정
+  useEffect(() => {
+    setMemes(initialMemes);
+    setPage(1);
+    setHasMore(true);
+  }, [initialMemes, selectedTag]);
+
+  // 인터섹션 옵저버 설정
+  useEffect(() => {
+    if (loading) return;
+
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
+    const callback = async (entries: IntersectionObserverEntry[]) => {
+      if (entries[0].isIntersecting && hasMore) {
+        await loadMoreMemes();
+      }
+    };
+
+    observerRef.current = new IntersectionObserver(callback, {
+      rootMargin: "100px",
+    });
+
+    if (lastMemeRef.current) {
+      observerRef.current.observe(lastMemeRef.current);
+    }
+
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, [loading, hasMore, lastMemeRef.current]);
+
+  // 추가 밈 로드 함수
+  const loadMoreMemes = async () => {
+    if (loading || !hasMore) return;
+
+    setLoading(true);
+    try {
+      const nextPage = page + 1;
+      const result = await getMemes(selectedTag, nextPage);
+
+      if (result.data.length === 0) {
+        setHasMore(false);
+      } else {
+        setMemes((prev) => [...prev, ...result.data]);
+        setPage(nextPage);
+      }
+    } catch (error) {
+      console.error("밈 추가 로딩 오류:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div>
@@ -71,9 +137,15 @@ export default function MemeList({
             gap: "1rem",
           }}
         >
-          {memes.map((meme) => (
-            <MemeItem key={meme.id} meme={meme} isAdmin={isAdmin} />
+          {memes.map((meme, index) => (
+            <div
+              key={meme.id}
+              ref={index === memes.length - 1 ? lastMemeRef : null}
+            >
+              <MemeItem meme={meme} isAdmin={isAdmin} />
+            </div>
           ))}
+          {loading && <div>로딩 중...</div>}
         </div>
       )}
     </div>

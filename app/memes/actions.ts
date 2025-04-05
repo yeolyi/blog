@@ -3,8 +3,12 @@
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
-export async function getMemes(tag?: string) {
+export async function getMemes(tag?: string, page = 1, pageSize = 30) {
   const supabase = await createClient();
+
+  // 오프셋 계산
+  const from = (page - 1) * pageSize;
+  const to = from + pageSize - 1;
 
   let query = supabase.from("memes").select(
     `
@@ -16,6 +20,8 @@ export async function getMemes(tag?: string) {
     `
   );
 
+  let tagId = null;
+
   // 태그가 제공된 경우, 해당 태그를 가진 밈만 필터링
   if (tag) {
     // 먼저 태그 ID를 가져옵니다
@@ -25,40 +31,60 @@ export async function getMemes(tag?: string) {
       .eq("name", tag)
       .single();
 
-    if (tagData?.id) {
-      // 해당 태그 ID를 가진 밈 ID 목록을 가져옵니다
-      const { data: memeIds } = await supabase
-        .from("meme_tags")
-        .select("meme_id")
-        .eq("tag_id", tagData.id);
-
-      if (memeIds && memeIds.length > 0) {
-        // 해당 밈 ID만 필터링합니다
-        query = query.in(
-          "id",
-          memeIds.map((item) => item.meme_id)
-        );
-      } else {
-        // 일치하는 밈이 없으면 빈 결과 반환
-        return [];
-      }
-    } else {
-      // 일치하는 태그가 없으면 빈 결과 반환
-      return [];
+    // 일치하는 태그가 없으면 빈 결과 반환
+    if (tagData?.id === undefined) {
+      return { data: [], count: 0 };
     }
+
+    tagId = tagData.id;
+    // 해당 태그 ID를 가진 밈 ID 목록을 가져옵니다
+    const { data: memeIds } = await supabase
+      .from("meme_tags")
+      .select("meme_id")
+      .eq("tag_id", tagId);
+
+    // 일치하는 밈이 없으면 빈 결과 반환
+    if (!memeIds || memeIds.length === 0) {
+      return { data: [], count: 0 };
+    }
+
+    // 해당 밈 ID만 필터링
+    query = query.in(
+      "id",
+      memeIds.map((item) => item.meme_id)
+    );
   }
 
   // 정렬 적용
   query = query.order("created_at", { ascending: true });
 
-  const { data, error } = await query;
+  // 카운트 쿼리 생성
+  let countQuery;
+  if (tag && tagId) {
+    // 태그가 있는 경우, 미리 가져온 memeIds를 사용하여 카운트
+    countQuery = supabase
+      .from("meme_tags")
+      .select("*", { count: "exact" })
+      .eq("tag_id", tagId);
+  } else {
+    // 태그가 없는 경우, 모든 밈 카운트
+    countQuery = supabase
+      .from("memes")
+      .select("*", { count: "exact", head: true });
+  }
 
-  if (error) {
-    console.error("밈 불러오기 오류:", error);
+  // 페이지네이션 적용
+  query = query.range(from, to);
+
+  // 데이터와 총 개수를 병렬로 가져오기
+  const [{ data, error }, countResult] = await Promise.all([query, countQuery]);
+
+  if (error || countResult.error) {
+    console.error("밈 불러오기 오류:", error || countResult.error);
     throw new Error("밈을 불러오는 중 오류가 발생했습니다");
   }
 
-  return data;
+  return { data: data || [], count: countResult.count || 0 };
 }
 
 export async function deleteMeme(id: string) {

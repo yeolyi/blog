@@ -346,3 +346,42 @@ COMMIT;
 
 programmerio는 영상은 없네
 
+--- 
+
+맞는 지적입니다! 일반적인 프로미스는 생성되자마자 실행됩니다. 하지만 Supabase 쿼리 빌더는 조금 특별하게 작동합니다.
+
+Supabase 쿼리 빌더는 실제 프로미스가 아니라 빌더 패턴을 구현한 객체를 반환합니다. 즉:
+
+```typescript
+let query = supabase.from("memes").select(`...`);
+```
+
+여기서 `query`는 실제 프로미스가 아니라 쿼리를 정의하는 객체입니다. 이 객체는 실제 HTTP 요청을 보내지 않습니다.
+
+실제 HTTP 요청과 데이터베이스 접근은 이 객체에 다음과 같은 방법으로 접근할 때 발생합니다:
+
+1. `await query`를 호출할 때
+2. `query.then()`을 호출할 때
+3. `.single()`, `.maybeSingle()` 같은 최종 실행 메서드를 호출할 때
+
+이런 지연 실행(lazy execution) 패턴은 쿼리를 조합하고 수정할 수 있는 유연성을 제공합니다. 실제 요청은 최종적으로 데이터가 필요한 시점에만 실행됩니다.
+
+그래서 `await Promise.all([query, countQuery])`에서 실제 데이터베이스 쿼리가 실행되는 것입니다.
+
+---
+
+네, 정확합니다. Supabase 쿼리 빌더는 PromiseLike 객체(또는 Thenable 객체)를 활용한다고 볼 수 있습니다.
+
+PromiseLike 객체란:
+- `.then()` 메서드를 구현해 Promise처럼 동작
+- `await`과 함께 사용 가능
+- 하지만 실제 Promise 인스턴스는 아님
+
+Supabase 쿼리 빌더는:
+1. 쿼리 정의용 메서드 체이닝을 지원하는 빌더 객체
+2. `.then()`을 구현해 Promise처럼 사용 가능하게 함
+3. 실제 HTTP 요청은 `.then()` 또는 `await`이 호출될 때 시작됨
+
+이렇게 하면 쿼리를 미리 정의해두고 실제 데이터가 필요한 시점에 실행할 수 있다는 장점이 있습니다. 즉 지연 실행(lazy execution) 패턴을 구현하면서도 Promise와 호환되는 방식으로 동작하게 만든 것입니다.
+
+--- 

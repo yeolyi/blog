@@ -13,7 +13,7 @@ export default async function MemesPage({
   const tag = searchParams.tag;
 
   // admin인 경우 밈 데이터 조회 및 표시
-  const [memes, isAdmin, tags] = await Promise.all([
+  const [memesResult, isAdmin, tags] = await Promise.all([
     getMemes(tag),
     getIsAdmin(),
     getAllTags(),
@@ -30,7 +30,7 @@ export default async function MemesPage({
       )}
       <Suspense fallback={<div>로딩 중...</div>}>
         <MemeList
-          memes={memes}
+          memes={memesResult.data || []}
           isAdmin={isAdmin}
           allTags={tags}
           selectedTag={tag}
