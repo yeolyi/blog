@@ -13,85 +13,55 @@ interface Meme {
   tags?: string[];
 }
 
-export async function batchUploadMemes(jsonData: string) {
+// 단일 밈 업로드 함수
+export async function uploadSingleMeme(meme: Meme) {
   try {
-    // JSON 유효성 검사 및 파싱
-    let memes: Meme[];
-    try {
-      memes = JSON.parse(jsonData);
-      if (!Array.isArray(memes)) {
-        throw new Error("JSON 데이터가 배열 형식이 아닙니다");
-      }
-    } catch (error) {
-      throw new Error(`JSON 파싱 오류: ${(error as Error).message}`);
+    // 필수 필드 검사
+    if (!meme.title || !meme.media_url) {
+      throw new Error("제목과 미디어 URL은 필수입니다");
     }
 
     const supabase = await createClient();
-    const errors: string[] = [];
 
-    // 각 밈 처리
-    for (let i = 0; i < memes.length; i++) {
-      const meme = memes[i];
+    // URL에서 파일 다운로드
+    const mediaResponse = await fetch(meme.media_url);
+    if (!mediaResponse.ok) {
+      throw new Error(`미디어 다운로드 실패 (${mediaResponse.status})`);
+    }
 
-      try {
-        // 필수 필드 검사
-        if (!meme.title || !meme.media_url) {
-          throw new Error(`밈 #${i + 1}: 제목과 미디어 URL은 필수입니다`);
-        }
+    // 파일 데이터 가져오기
+    const blob = await mediaResponse.blob();
+    const fileExt = meme.media_url.split(".").pop()?.split("?")[0] || "";
+    const fileName = `${uuidv4()}.${fileExt}`;
 
-        // URL에서 파일 다운로드
-        const mediaResponse = await fetch(meme.media_url);
-        if (!mediaResponse.ok) {
-          throw new Error(
-            `밈 #${i + 1}: 미디어 다운로드 실패 (${mediaResponse.status})`
+    // Supabase 스토리지에 업로드
+    const publicUrl = await uploadFileToSupabase(fileName, blob);
+
+    // memes 테이블에 정보 저장
+    const { data: memeData } = await supabase
+      .from("memes")
+      .insert([
+        {
+          title: meme.title,
+          description: meme.description || null,
+          media_url: publicUrl,
+        },
+      ])
+      .select()
+      .single()
+      .throwOnError();
+
+    // 태그 처리 (선택사항)
+    const tagErrors: string[] = [];
+    if (meme.tags && Array.isArray(meme.tags) && meme.tags.length > 0) {
+      for (const tagName of meme.tags) {
+        try {
+          await connectMemeToTag(memeData.id, tagName);
+        } catch (tagError) {
+          tagErrors.push(
+            `태그 처리 오류 (${tagName}): ${(tagError as Error).message}`
           );
         }
-
-        // 파일 데이터 가져오기
-        const blob = await mediaResponse.blob();
-        const fileExt = meme.media_url.split(".").pop()?.split("?")[0] || "";
-        const fileName = `${uuidv4()}.${fileExt}`;
-
-        // Supabase 스토리지에 업로드
-        const publicUrl = await uploadFileToSupabase(fileName, blob);
-
-        // memes 테이블에 정보 저장
-        const { data: memeData, error: memeError } = await supabase
-          .from("memes")
-          .insert([
-            {
-              title: meme.title,
-              description: meme.description || null,
-              media_url: publicUrl,
-            },
-          ])
-          .select()
-          .single();
-
-        if (memeError) {
-          throw new Error(
-            `밈 #${i + 1}: 데이터 저장 실패 - ${memeError.message}`
-          );
-        }
-
-        // 태그 처리 (선택사항)
-        if (meme.tags && Array.isArray(meme.tags) && meme.tags.length > 0) {
-          for (const tagName of meme.tags) {
-            try {
-              await connectMemeToTag(memeData.id, tagName);
-            } catch (tagError) {
-              errors.push(
-                `밈 #${i + 1}: 태그 처리 오류 (${tagName}): ${
-                  (tagError as Error).message
-                }`
-              );
-            }
-          }
-        }
-        console.log(`밈 #${i + 1} 처리 완료`);
-      } catch (error) {
-        errors.push((error as Error).message);
-        console.log(`밈 #${i + 1} 처리 실패: `, error);
       }
     }
 
@@ -100,14 +70,13 @@ export async function batchUploadMemes(jsonData: string) {
 
     return {
       success: true,
-      processed: memes.length,
-      errors: errors.length > 0 ? errors : null,
+      memeId: memeData.id,
+      tagErrors: tagErrors.length > 0 ? tagErrors : null,
     };
   } catch (error) {
     return {
       success: false,
       error: (error as Error).message,
-      processed: 0,
     };
   }
 }

@@ -2,12 +2,19 @@
 
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { batchUploadMemes } from "../actions";
+import { uploadSingleMeme } from "../actions";
 
 export const maxDuration = 60;
 
 interface FormInputs {
   memesJson: string;
+}
+
+interface Meme {
+  title: string;
+  description?: string;
+  media_url: string;
+  tags?: string[];
 }
 
 const textareaPlaceholder = `[
@@ -21,6 +28,9 @@ const textareaPlaceholder = `[
 export default function BatchUploader() {
   const [errors, setErrors] = useState<string[]>([]);
   const [processedCount, setProcessedCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const {
     register,
@@ -32,19 +42,56 @@ export default function BatchUploader() {
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     try {
       setErrors([]);
+      setProcessedCount(0);
+      setCurrentIndex(0);
+      setIsProcessing(true);
 
-      const result = await batchUploadMemes(data.memesJson);
-
-      if (result.success) {
-        setProcessedCount(result.processed);
-        if (result.errors) {
-          setErrors(result.errors);
+      // JSON 파싱
+      let memes: Meme[];
+      try {
+        memes = JSON.parse(data.memesJson);
+        if (!Array.isArray(memes)) {
+          throw new Error("JSON 데이터가 배열 형식이 아닙니다");
         }
-      } else {
-        setErrors([result.error || "알 수 없는 오류가 발생했습니다."]);
+      } catch (error) {
+        setErrors([`JSON 파싱 오류: ${(error as Error).message}`]);
+        setIsProcessing(false);
+        return;
       }
+
+      setTotalCount(memes.length);
+
+      // 각 밈을 개별적으로 처리
+      const allErrors: string[] = [];
+      for (let i = 0; i < memes.length; i++) {
+        setCurrentIndex(i);
+        const meme = memes[i];
+
+        try {
+          const result = await uploadSingleMeme(meme);
+
+          if (result.success) {
+            setProcessedCount((prev) => prev + 1);
+            if (result.tagErrors) {
+              result.tagErrors.forEach((err) => {
+                allErrors.push(`밈 #${i + 1}: ${err}`);
+              });
+            }
+          } else {
+            allErrors.push(`밈 #${i + 1}: ${result.error}`);
+          }
+        } catch (error) {
+          allErrors.push(`밈 #${i + 1}: ${(error as Error).message}`);
+        }
+      }
+
+      if (allErrors.length > 0) {
+        setErrors(allErrors);
+      }
+      setIsProcessing(false);
     } catch (error) {
       setErrors([(error as Error).message]);
+      setIsProcessing(false);
     }
   };
 
@@ -52,11 +99,13 @@ export default function BatchUploader() {
     reset();
     setErrors([]);
     setProcessedCount(0);
+    setCurrentIndex(0);
+    setTotalCount(0);
   };
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
-      {!isSubmitting && !isSubmitSuccessful ? (
+      {!isProcessing && !isSubmitSuccessful ? (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div>
             <label
@@ -92,12 +141,28 @@ export default function BatchUploader() {
       ) : (
         <div className="space-y-4">
           <h2 className="text-xl font-semibold">
-            {isSubmitSuccessful ? "업로드 완료" : "업로드 진행 중..."}
+            {!isProcessing ? "업로드 완료" : "업로드 진행 중..."}
           </h2>
 
-          {isSubmitSuccessful && (
-            <p>총 {processedCount}개의 밈이 업로드되었습니다.</p>
-          )}
+          <div className="mt-2">
+            <div className="w-full bg-gray-200 rounded-full h-2.5">
+              <div
+                className="bg-indigo-600 h-2.5 rounded-full"
+                style={{
+                  width: `${
+                    totalCount > 0 ? (processedCount / totalCount) * 100 : 0
+                  }%`,
+                }}
+              ></div>
+            </div>
+            <p className="mt-2">
+              {isProcessing
+                ? `처리 중: ${processedCount}/${totalCount} (${
+                    currentIndex + 1
+                  }번째 밈 처리 중)`
+                : `완료: ${processedCount}/${totalCount}`}
+            </p>
+          </div>
 
           {errors.length > 0 && (
             <div className="mt-4">
@@ -112,7 +177,7 @@ export default function BatchUploader() {
             </div>
           )}
 
-          {isSubmitSuccessful && (
+          {!isProcessing && (
             <button
               onClick={handleReset}
               className="mt-4 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
