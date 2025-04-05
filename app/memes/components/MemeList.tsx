@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { MemeItem } from "./MenuItem";
+import Link from "next/link";
+
 export interface Tag {
   id: string;
   name: string;
@@ -24,38 +26,40 @@ export interface Meme {
 interface MemeListProps {
   memes: Meme[];
   isAdmin: boolean;
+  allTags: Tag[];
+  selectedTag?: string;
 }
 
-export default function MemeList({ memes, isAdmin }: MemeListProps) {
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
-
-  // 모든 태그 추출 (중복 제거)
-  const allTags = Array.from(
-    new Set(memes.flatMap((meme) => meme.meme_tags.map((mt) => mt.tags.name)))
-  ).sort();
-
-  // 태그로 필터링
-  const filteredMemes = selectedTag
-    ? memes.filter((meme) =>
-        meme.meme_tags.some((mt) => mt.tags.name === selectedTag)
-      )
-    : memes;
+export default function MemeList({
+  memes,
+  isAdmin,
+  allTags,
+  selectedTag,
+}: MemeListProps) {
+  const pathname = usePathname();
 
   return (
     <div>
       <div>
         <div>
           <span>태그 필터링:</span>
-          <button onClick={() => setSelectedTag(null)}>전체</button>
+          <Link href={pathname}>
+            <button className={selectedTag ? "" : "selected"}>전체</button>
+          </Link>
           {allTags.map((tag) => (
-            <button key={tag} onClick={() => setSelectedTag(tag)}>
-              {tag}
-            </button>
+            <Link
+              key={tag.id}
+              href={`${pathname}?tag=${encodeURIComponent(tag.name)}`}
+            >
+              <button className={selectedTag === tag.name ? "selected" : ""}>
+                {tag.name}
+              </button>
+            </Link>
           ))}
         </div>
       </div>
 
-      {filteredMemes.length === 0 ? (
+      {memes.length === 0 ? (
         <div>
           <p>표시할 밈이 없습니다</p>
         </div>
@@ -67,7 +71,7 @@ export default function MemeList({ memes, isAdmin }: MemeListProps) {
             gap: "1rem",
           }}
         >
-          {filteredMemes.map((meme) => (
+          {memes.map((meme) => (
             <MemeItem key={meme.id} meme={meme} isAdmin={isAdmin} />
           ))}
         </div>

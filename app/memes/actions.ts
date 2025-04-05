@@ -3,21 +3,55 @@
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
-export async function getMemes() {
+export async function getMemes(tag?: string) {
   const supabase = await createClient();
 
-  const { data, error } = await supabase
-    .from("memes")
-    .select(
-      `
+  let query = supabase.from("memes").select(
+    `
       *,
       meme_tags(
         tag_id,
         tags(id, name)
       )
     `
-    )
-    .order("created_at", { ascending: false });
+  );
+
+  // 태그가 제공된 경우, 해당 태그를 가진 밈만 필터링
+  if (tag) {
+    // 먼저 태그 ID를 가져옵니다
+    const { data: tagData } = await supabase
+      .from("tags")
+      .select("id")
+      .eq("name", tag)
+      .single();
+
+    if (tagData?.id) {
+      // 해당 태그 ID를 가진 밈 ID 목록을 가져옵니다
+      const { data: memeIds } = await supabase
+        .from("meme_tags")
+        .select("meme_id")
+        .eq("tag_id", tagData.id);
+
+      if (memeIds && memeIds.length > 0) {
+        // 해당 밈 ID만 필터링합니다
+        query = query.in(
+          "id",
+          memeIds.map((item) => item.meme_id)
+        );
+      } else {
+        // 일치하는 밈이 없으면 빈 결과 반환
+        return [];
+      }
+    } else {
+      // 일치하는 태그가 없으면 빈 결과 반환
+      return [];
+    }
+  }
+
+  // 정렬 적용
+  query = query.order("created_at", { ascending: true });
+
+  const { data, error } = await query;
 
   if (error) {
     console.error("밈 불러오기 오류:", error);
@@ -68,4 +102,20 @@ export async function deleteMeme(id: string) {
   revalidatePath("/private/memes");
 
   return { success: true };
+}
+
+export async function getAllTags() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("tags")
+    .select("id, name")
+    .order("name");
+
+  if (error) {
+    console.error("태그 불러오기 오류:", error);
+    throw new Error("태그를 불러오는 중 오류가 발생했습니다");
+  }
+
+  return data;
 }

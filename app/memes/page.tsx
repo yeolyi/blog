@@ -1,19 +1,26 @@
 import { Suspense } from "react";
-import { getMemes } from "./actions";
+import { getMemes, getAllTags } from "./actions";
 import MemeList from "@/app/memes/components/MemeList";
 import { getIsAdmin } from "@/utils/auth";
 import Link from "next/link";
 
-export default async function MemesPage() {
+export default async function MemesPage({
+  searchParams,
+}: {
+  searchParams: { tag?: string };
+}) {
+  // 쿼리 파라미터에서 태그 가져오기
+  const tag = searchParams.tag;
+
   // admin인 경우 밈 데이터 조회 및 표시
-  const memes = await getMemes();
-  const isAdmin = await getIsAdmin();
+  const [memes, isAdmin, tags] = await Promise.all([
+    getMemes(tag),
+    getIsAdmin(),
+    getAllTags(),
+  ]);
 
   return (
     <div style={{ padding: "2rem" }}>
-      <Suspense fallback={<div>로딩 중...</div>}>
-        <MemeList memes={memes} isAdmin={isAdmin} />
-      </Suspense>
       {isAdmin && (
         <>
           <Link href="/memes/upload">밈 추가</Link>
@@ -21,6 +28,14 @@ export default async function MemesPage() {
           <Link href="/memes/batch-upload">배치 업로드</Link>
         </>
       )}
+      <Suspense fallback={<div>로딩 중...</div>}>
+        <MemeList
+          memes={memes}
+          isAdmin={isAdmin}
+          allTags={tags}
+          selectedTag={tag}
+        />
+      </Suspense>
     </div>
   );
 }

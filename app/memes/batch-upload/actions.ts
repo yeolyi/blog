@@ -88,8 +88,10 @@ export async function batchUploadMemes(jsonData: string) {
             }
           }
         }
+        console.log(`밈 #${i + 1} 처리 완료`);
       } catch (error) {
         errors.push((error as Error).message);
+        console.log(`밈 #${i + 1} 처리 실패: `, error);
       }
     }
 

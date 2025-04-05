@@ -331,3 +331,18 @@ SELECT public.migrate_existing_users();
 ```
 
 https://github.com/orgs/supabase/discussions/604 이런 api 좋다
+
+
+```sql
+BEGIN;
+  DELETE FROM meme_tags;
+  DELETE FROM memes;
+  DELETE FROM storage.objects
+  WHERE bucket_id = (
+    SELECT id FROM storage.buckets WHERE name = 'memes'
+  );
+COMMIT;
+```
+
+programmerio는 영상은 없네
+

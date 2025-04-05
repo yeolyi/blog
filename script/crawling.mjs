@@ -1,4 +1,5 @@
 import { chromium } from "playwright";
+import fs from "fs";
 
 async function openProgrammerHumor() {
   // 브라우저 실행
@@ -92,7 +93,8 @@ async function openProgrammerHumor() {
     }
 
     console.log(`총 ${posts.length}개의 포스트 정보를 추출했습니다.`);
-    console.log(JSON.stringify(posts));
+    const json = JSON.stringify(posts);
+    fs.writeFileSync("posts.json", json);
 
     new Promise((resolve) => setTimeout(resolve, 1000000));
   } catch (error) {
