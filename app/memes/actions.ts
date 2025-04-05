@@ -90,7 +90,15 @@ export async function getMemes(tag?: string, page = 1, pageSize = 30) {
 export async function deleteMeme(id: string) {
   const supabase = await createClient();
 
-  // 1. 밈 정보 가져오기 (스토리지 파일 경로를 위해)
+  // 1. 밈과 연결된 태그 ID들을 먼저 가져오기
+  const { data: memeTags } = await supabase
+    .from("meme_tags")
+    .select("tag_id")
+    .eq("meme_id", id);
+
+  const tagIds = memeTags?.map((tag) => tag.tag_id) || [];
+
+  // 2. 밈 정보 가져오기 (스토리지 파일 경로를 위해)
   const { data: meme } = await supabase
     .from("memes")
     .select("media_url")
@@ -98,10 +106,23 @@ export async function deleteMeme(id: string) {
     .single()
     .throwOnError();
 
-  // 2. 밈 레코드 삭제 (meme_tags는 CASCADE로 자동 삭제됨)
+  // 3. 밈 레코드 삭제 (meme_tags는 CASCADE로 자동 삭제됨)
   await supabase.from("memes").delete().eq("id", id).throwOnError();
 
-  // 3. 스토리지에서 파일 삭제 (URL에서 경로 추출)
+  // 4. 각 태그에 대해 다른 밈이 연결되어 있는지 확인하고, 없으면 태그 삭제
+    for (const tagId of tagIds) {
+      const { count } = await supabase
+        .from("meme_tags")
+        .select("*", { count: "exact", head: true })
+        .eq("tag_id", tagId);
+
+      // 연결된 밈이 없으면 태그 삭제
+      if (count === 0) {
+        await supabase.from("tags").delete().eq("id", tagId);
+      }
+    }
+
+  // 5. 스토리지에서 파일 삭제 (URL에서 경로 추출)
   try {
     // URL에서 파일 경로 추출 (memes 버킷 가정)
     const fileUrl = new URL(meme.media_url);
