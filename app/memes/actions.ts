@@ -261,3 +261,44 @@ export async function updateMeme({
 
   return { success: true };
 }
+
+export async function getRandomMeme() {
+  const supabase = await createClient();
+  
+  // 1. 전체 밈 개수를 먼저 확인
+  const { count, error: countError } = await supabase
+    .from("memes")
+    .select("*", { count: "exact", head: true });
+    
+  if (countError) {
+    console.error("밈 카운트 오류:", countError);
+    throw new Error("밈을 불러오는 중 오류가 발생했습니다");
+  }
+  
+  if (!count || count === 0) {
+    return null; // 밈이 없는 경우
+  }
+  
+  // 2. 랜덤 인덱스 생성
+  const randomIndex = Math.floor(Math.random() * count);
+  
+  // 3. 랜덤한 밈 하나 가져오기 (오프셋 사용)
+  const { data, error } = await supabase
+    .from("memes")
+    .select(`
+      *,
+      meme_tags(
+        tag_id,
+        tags(id, name)
+      )
+    `)
+    .range(randomIndex, randomIndex)
+    .single();
+    
+  if (error) {
+    console.error("랜덤 밈 조회 오류:", error);
+    throw new Error("랜덤 밈을 불러오는 중 오류가 발생했습니다");
+  }
+  
+  return data;
+}

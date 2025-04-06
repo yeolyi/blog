@@ -7,14 +7,13 @@ const PostList = styled.ul`
 `;
 
 const PostLi = styled.li`
-  display: flex;
-  gap: 0.5rem;
   cursor: pointer;
   &:hover {
     background-color: white;
   }
   font-size: 1.5rem;
   font-weight: 600;
+  padding: 0.5rem 0;
 `;
 
 const PostItemLink = styled(Link)`

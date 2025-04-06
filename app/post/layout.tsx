@@ -1,4 +1,4 @@
-import { globalCss, styled } from "@pigment-css/react";
+import { styled } from "@pigment-css/react";
 
 export default function PostLayout({
   children,
