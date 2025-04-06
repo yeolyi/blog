@@ -37,7 +37,7 @@ export default async function Home() {
 
 const Container = styled.div`
   max-width: 600px;
-  margin: 10vh auto 30vh auto;
+  margin: 6rem auto 30vh auto;
   padding: 0 1rem;
   display: flex;
   flex-direction: column;

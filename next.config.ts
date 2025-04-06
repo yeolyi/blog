@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 import createMDX from "@next/mdx";
 import { withPigment } from "@pigment-css/nextjs-plugin";
+import remarkGfm from "remark-gfm";
 
 const nextConfig: NextConfig = {
   images: {
@@ -22,6 +23,10 @@ const nextConfig: NextConfig = {
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
 };
 
-const withMDX = createMDX({});
+const withMDX = createMDX({
+  options: {
+    remarkPlugins: [remarkGfm],
+  },
+});
 
 export default withPigment(withMDX(nextConfig));
