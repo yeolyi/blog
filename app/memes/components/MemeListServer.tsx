@@ -1,34 +1,9 @@
 import MemeList from "@/app/memes/components/MemeList";
 import { getAllTags, getMemes } from "../actions";
 
-export interface Tag {
-  id: string;
-  name: string;
-}
-
-export interface MemeTag {
-  tag_id: string;
-  tags: Tag;
-}
-
-export interface Meme {
-  id: string;
-  title: string;
-  description: string | null;
-  media_url: string;
-  created_at: string;
-  meme_tags: MemeTag[];
-}
-
-interface MemeListProps {
-  selectedTag?: string;
-}
-
-export default async function MemeListServer({
-  selectedTag,
-}: MemeListProps) {
+export default async function MemeListServer() {
   const [memesResult, tags] = await Promise.all([
-    getMemes(selectedTag),
+    getMemes(),
     getAllTags(),
   ]);
 
@@ -36,7 +11,6 @@ export default async function MemeListServer({
     <MemeList
       memes={memesResult.data || []}
       allTags={tags}
-      selectedTag={selectedTag}
     />
   );
 }

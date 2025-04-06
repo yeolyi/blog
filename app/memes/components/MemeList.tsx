@@ -1,9 +1,7 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import { MemeItem } from "./MenuItem";
-import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { getMemes } from "../actions";
 import { Meme, Tag } from "@/types/meme";
 import { useInfiniteScroll } from "@/utils/useInfiniteScroll";
@@ -12,26 +10,38 @@ import { styled } from "@pigment-css/react";
 interface MemeListProps {
   memes: Meme[];
   allTags: Tag[];
-  selectedTag?: string;
 }
 
 export default function MemeList({
   memes: initialMemes,
   allTags,
-  selectedTag,
 }: MemeListProps) {
-  const pathname = usePathname();
   const [memes, setMemes] = useState<Meme[]>(initialMemes);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [selectedTag, setSelectedTag] = useState<string | undefined>(undefined);
 
-  // 태그 바뀔 때 초기화를 위해 필요
-  useEffect(() => {
-    setMemes(initialMemes);
+  const changeTag = useCallback((tag?: string) => {
+    if (loading) return;
+    setSelectedTag(tag);
+    setMemes([]);
     setPage(1);
     setHasMore(true);
-  }, [initialMemes]);
+    setLoading(true);
+
+    const fetchMemes = async () => {
+      const result = await getMemes(tag, 1);
+      setMemes(result.data);
+      setLoading(false);
+    };
+
+    fetchMemes();
+
+    return () => {
+      setLoading(false);
+    };
+  }, [loading]);
 
   // 추가 밈 로드 함수
   const loadMoreMemes = useCallback(async () => {
@@ -65,17 +75,17 @@ export default function MemeList({
   return (
     <Container>
       <TagFilterContainer>
-        <TagLink href={pathname} className={selectedTag ? "" : "selected"}>
+        <TagButton onClick={() => changeTag(undefined)} className={selectedTag ? "" : "selected"}>
           전체
-        </TagLink>
+        </TagButton>
         {allTags.map((tag) => (
-          <TagLink
+          <TagButton
             key={tag.id}
-            href={`${pathname}?tag=${encodeURIComponent(tag.name)}`}
+            onClick={() => changeTag(tag.name)}
             className={selectedTag === tag.name ? "selected" : ""}
           >
             {tag.name}
-          </TagLink>
+          </TagButton>
         ))}
       </TagFilterContainer>
 
@@ -106,7 +116,7 @@ const TagFilterContainer = styled.div`
   align-items: center;
 `;
 
-const TagLink = styled(Link)`
+const TagButton = styled.button`
   text-decoration: none;
   padding: 0.5rem 1rem;
   background-color: transparent;
