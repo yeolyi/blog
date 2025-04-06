@@ -394,3 +394,29 @@ zod도 써보자
 Read more: https://nextjs.org/docs/messages/failed-to-find-server-action]
 
 이런 에러도 있구나...
+
+---
+
+Tailwind
+Tailwind is great. Yet, if you plan to use Radix Themes with Tailwind, keep in mind how its ergonomics may encourage you to create complex styles on the fly, sometimes reaching into the component internals without friction.
+
+Tailwind is a different styling paradigm, which may not mix well with the idea of a closed component system where customization is achieved through props, tokens, and creating new components on top of a shared set of building blocks.
+
+---
+
+아래는 The Creative Momentum의 포스팅에서 소개한 네오 브루탈리즘의 대략적인 
+
+- 특징들을 나열해 놓은 것이다.
+- 검은색 또는 흰색 배경
+- 그라데이션이나 음영을 사용하지 않음
+- 구성요소들을 겹쳐 놓음
+- 대칭적인 요소가 없음
+- 번잡한 디자인
+- 분명한 위계질서가 없음
+- 폭이 일정한 타이포그래피
+- 전체적으로 하나의 폰트만 사용
+- 대비가 강한 컬러 팔레트
+- 애니메이션을 거의 사용하지 않음
+- 이미지가 거의 없음
+- 네비게이션이 단순하거나 아예 없음
+- 싱글 페이지(Single-page) 웹사이트 디자인
