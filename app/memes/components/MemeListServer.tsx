@@ -21,12 +21,10 @@ export interface Meme {
 }
 
 interface MemeListProps {
-  isAdmin: boolean;
   selectedTag?: string;
 }
 
 export default async function MemeListServer({
-  isAdmin,
   selectedTag,
 }: MemeListProps) {
   const [memesResult, tags] = await Promise.all([
@@ -38,7 +36,6 @@ export default async function MemeListServer({
     <MemeList
       memes={memesResult.data || []}
       allTags={tags}
-      isAdmin={isAdmin}
       selectedTag={selectedTag}
     />
   );

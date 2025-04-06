@@ -2,55 +2,30 @@
 
 import { getMediaTypeFromUrl } from "@/utils/form";
 import Image from "next/image";
-import { deleteMeme } from "@/app/memes/actions";
-import { useState } from "react";
 import Link from "next/link";
 import { Meme } from "@/types/meme";
+import { styled } from "@pigment-css/react";
 
 interface MemeItemProps {
   meme: Meme;
-  isAdmin: boolean;
+  ref: ((ref: HTMLDivElement) => void) | null;
 }
 
-export function MemeItem({ meme, isAdmin }: MemeItemProps) {
-  const [isDeleting, setIsDeleting] = useState(false);
-
-  const handleDelete = async () => {
-    if (confirm("정말로 이 밈을 삭제하시겠습니까?")) {
-      setIsDeleting(true);
-      try {
-        await deleteMeme(meme.id);
-      } catch (error) {
-        console.error("삭제 중 오류:", error);
-        alert("삭제 중 오류가 발생했습니다.");
-      } finally {
-        setIsDeleting(false);
-      }
-    }
-  };
+export function MemeItem({ meme, ref }: MemeItemProps) {
 
   return (
-    <div key={meme.id} style={{ border: "1px solid #e0e0e0", padding: "1rem" }}>
-      <Link
-        href={`/memes/${meme.id}`}
-        style={{ textDecoration: "none", color: "inherit" }}
-      >
+    <MemeCard key={meme.id} ref={ref}>
+      <MemeLink href={`/memes/${meme.id}`}>
         {getMediaTypeFromUrl(meme.media_url) === "image" ? (
-          <div>
-            <Image
-              src={meme.media_url}
-              alt={meme.title}
-              width={300}
-              height={200}
-              style={{
-                width: "100%",
-                height: "200px",
-                objectFit: "cover",
-              }}
-            />
-          </div>
+          <Image
+            src={meme.media_url}
+            alt={meme.title}
+            width={300}
+            height={200}
+            style={{ objectFit: "cover" }}
+          />
         ) : (
-          <div>
+          <MediaContainer>
             <video
               src={meme.media_url}
               controls
@@ -58,54 +33,74 @@ export function MemeItem({ meme, isAdmin }: MemeItemProps) {
             >
               Your browser does not support video playback.
             </video>
-          </div>
+          </MediaContainer>
         )}
 
-        <div>
-          <h3>{meme.title}</h3>
-          {meme.description && <p>{meme.description}</p>}
-          <div>
+        <ContentContainer>
+          <MemeTitle>{meme.title}</MemeTitle>
+          {meme.description && (
+            <MemeDescription>{meme.description}</MemeDescription>
+          )}
+
+          <TagContainer>
             {meme.meme_tags.map((tag) => (
-              <span key={tag.tag_id}>{tag.tags.name}</span>
+              <Tag key={tag.tag_id}>{tag.tags.name}</Tag>
             ))}
-          </div>
-        </div>
-      </Link>
-
-      {isAdmin && (
-        <div style={{ marginTop: "10px" }}>
-          <button
-            onClick={handleDelete}
-            disabled={isDeleting}
-            style={{
-              padding: "5px 10px",
-              backgroundColor: "#ff4d4f",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: isDeleting ? "not-allowed" : "pointer",
-            }}
-          >
-            {isDeleting ? "삭제 중..." : "삭제"}
-          </button>
-
-          <Link href={`/memes/${meme.id}/edit`}>
-            <button
-              style={{
-                marginLeft: "10px",
-                padding: "5px 10px",
-                backgroundColor: "#4CAF50",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-            >
-              수정
-            </button>
-          </Link>
-        </div>
-      )}
-    </div>
+          </TagContainer>
+        </ContentContainer>
+      </MemeLink>
+    </MemeCard>
   );
 }
+
+const MemeCard = styled.div`
+  border: 1px solid #5e5e5e;
+  &:hover {
+    transform: translateY(-4px);
+  }
+  width: 300px;
+`;
+
+const MemeLink = styled(Link)`
+  text-decoration: none;
+`;
+
+const MediaContainer = styled.div`
+  width: 100%;
+  height: 100%;
+`;
+
+const ContentContainer = styled.div`
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+const MemeTitle = styled.h3`
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: white;
+`;
+
+const MemeDescription = styled.p`
+  color: #e0e0e0;
+  font-size: 0.9rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+`;
+
+const TagContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+`;
+
+const Tag = styled.span`
+  background-color: white;
+  color: black;
+  font-size: 1rem;
+  font-weight: 500;
+`;

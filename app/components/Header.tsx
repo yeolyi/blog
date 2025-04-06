@@ -1,7 +1,8 @@
 import { signOut, signInWithGithub } from "@/app/actions";
 import { createClient } from "@/utils/supabase/server";
-import { css, styled } from "@pigment-css/react";
+import { styled } from "@pigment-css/react";
 import NextLink from "next/link";
+import Button from "./Button";
 
 export default async function Header() {
   const supabase = await createClient();
@@ -12,13 +13,13 @@ export default async function Header() {
       <HomeLink href="/">seongyeol</HomeLink>
       <RightContainer>
         {user.user ? (
-          <button className={rightStyle} onClick={signOut}>
+          <Button onClick={signOut}>
             로그아웃
-          </button>
+          </Button>
         ) : (
-          <button className={rightStyle} onClick={signInWithGithub}>
+          <Button onClick={signInWithGithub}>
             GitHub 로그인
-          </button>
+          </Button>
         )}
       </RightContainer>
     </Container>
@@ -41,20 +42,6 @@ const HomeLink = styled(NextLink)`
   font-size: 2.5rem;
   font-weight: 700;
   text-decoration: none;
-`;
-
-const rightStyle = css`
-  color: black;
-  background-color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2rem;
-  font-weight: 600;
-
-  &:hover {
-    background-color: black;
-    color: white;
-  }
 `;
 
 const RightContainer = styled.div`

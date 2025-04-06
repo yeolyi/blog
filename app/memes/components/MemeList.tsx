@@ -7,17 +7,16 @@ import { useCallback, useEffect, useState } from "react";
 import { getMemes } from "../actions";
 import { Meme, Tag } from "@/types/meme";
 import { useInfiniteScroll } from "@/utils/useInfiniteScroll";
+import { styled } from "@pigment-css/react";
 
 interface MemeListProps {
   memes: Meme[];
-  isAdmin: boolean;
   allTags: Tag[];
   selectedTag?: string;
 }
 
 export default function MemeList({
   memes: initialMemes,
-  isAdmin,
   allTags,
   selectedTag,
 }: MemeListProps) {
@@ -64,49 +63,79 @@ export default function MemeList({
   });
 
   return (
-    <div>
-      <div>
-        <div>
-          <span>태그 필터링:</span>
-          <Link href={pathname}>
-            <button className={selectedTag ? "" : "selected"}>전체</button>
-          </Link>
-          {allTags.map((tag) => (
-            <Link
-              key={tag.id}
-              href={`${pathname}?tag=${encodeURIComponent(tag.name)}`}
-            >
-              <button className={selectedTag === tag.name ? "selected" : ""}>
-                {tag.name}
-              </button>
-            </Link>
-          ))}
-        </div>
-      </div>
+    <Container>
+      <TagFilterContainer>
+        <TagLink href={pathname} className={selectedTag ? "" : "selected"}>
+          전체
+        </TagLink>
+        {allTags.map((tag) => (
+          <TagLink
+            key={tag.id}
+            href={`${pathname}?tag=${encodeURIComponent(tag.name)}`}
+            className={selectedTag === tag.name ? "selected" : ""}
+          >
+            {tag.name}
+          </TagLink>
+        ))}
+      </TagFilterContainer>
 
-      {memes.length === 0 ? (
-        <div>
-          <p>표시할 밈이 없습니다</p>
-        </div>
-      ) : (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: "1rem",
-          }}
-        >
-          {memes.map((meme, index) => (
-            <div
-              key={meme.id}
-              ref={index === memes.length - 1 ? setLastItemRef : null}
-            >
-              <MemeItem meme={meme} isAdmin={isAdmin} />
-            </div>
-          ))}
-          {loading && <div>로딩 중...</div>}
-        </div>
-      )}
-    </div>
+      <MemeGrid>
+        {memes.map((meme, index) => (
+          <MemeItem
+            meme={meme}
+            key={meme.id}
+            ref={index === memes.length - 1 ? setLastItemRef : null}
+          />
+        ))}
+        {loading && <LoadingText>로딩 중...</LoadingText>}
+      </MemeGrid>
+    </Container>
   );
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+`;
+
+const TagFilterContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  align-items: center;
+`;
+
+const TagLink = styled(Link)`
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  background-color: transparent;
+  border: 1px solid #5e5e5e;
+  color: #e0e0e0;
+  cursor: pointer;
+
+  &:hover {
+    background-color: white;
+    color: black;
+  }
+
+  &.selected {
+    background-color: white;
+    color: black;
+    border-color: white;
+  }
+`;
+
+const MemeGrid = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+`;
+
+const LoadingText = styled.div`
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #e0e0e0;
+`;

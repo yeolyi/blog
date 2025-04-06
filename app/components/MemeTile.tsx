@@ -13,8 +13,7 @@ const linkStyle = css({
 
 const containerStyle = css({
   position: "relative",
-  width: "50vw",
-  aspectRatio: "16/9",
+  aspectRatio: "5/4",
   overflow: "hidden",
 });
 
@@ -28,14 +27,13 @@ const videoStyle = css({
   objectFit: "cover"
 });
 
-
 export default async function MemeTile() {
   // 랜덤 밈 가져오기
   const meme = await getRandomMeme();
   if (!meme) return;
   
   return (
-    <Tile.Item title="개발 밈 모음집">
+    <Tile.Item title="개발 밈 모음집" size="75%">
       <Link href="/memes" className={linkStyle}>
           <div className={containerStyle}>
             {getMediaTypeFromUrl(meme.media_url) === "image" ? (

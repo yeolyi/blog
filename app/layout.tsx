@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans_KR } from "next/font/google";
 import Header from "./components/Header";
-import "./globalCss";
+
+// 두 개 순서가 뭐가 맞음????
 import "@pigment-css/react/styles.css";
+import "./globalCss";
+
 import * as React from "react";
 
 const ibmPlexSans = IBM_Plex_Sans_KR({
