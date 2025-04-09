@@ -1,0 +1,48 @@
+<html>
+    <body>
+        <div id="root"></div>
+        <script src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+        <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+        <script type="text/babel">
+            const { useState, useEffect } = React;
+
+            function Child() {
+                const [count, setCount] = useState(1);
+                // debugger;
+                useEffect(() => {
+                    // debugger;
+                    setCount((count) => count + 1);
+                }, []);
+                return <button onClick={() => setCount((count) => count + 1)}>{count}</button>;
+            }
+
+            function App() {
+                return (
+                    <div>
+                        Parent
+                        <Child />
+                    </div>
+                );
+            }
+
+            const root = ReactDOM.createRoot(document.getElementById("root"));
+
+            // FiberRootNode is a special node that acts as the React root, 
+            // it holds the necessary meta info about the whole app. 
+            // Its current points to the actual Fiber Tree, 
+            // every time a new Fiber Tree is constructed, it re-points its current to the new HostRoot.
+            const fiberRootNode = root._internalRoot;
+
+
+            const hostRoot = fiberRootNode.current;
+
+            console.log(fiberRootNode);
+            console.log(hostRoot);
+
+            console.log(hostRoot.stateNode === fiberRootNode)
+            console.log(fiberRootNode.containerInfo); // 이게 hostRoot 하위로 안들어가네? 처음에는 fiberRootNode에 있음.
+            root.render(<App />);
+        </script>
+    </body>
+</html>
