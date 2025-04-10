@@ -21,6 +21,9 @@ const nextConfig: NextConfig = {
     ],
   },
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+  compiler: {
+    styledComponents: true,
+  },
 };
 
 const withMDX = createMDX({

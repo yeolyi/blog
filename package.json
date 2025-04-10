@@ -24,6 +24,7 @@
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.55.0",
     "remark-gfm": "^4.0.1",
+    "styled-components": "^6.1.17",
     "uuid": "^11.1.0"
   },
   "devDependencies": {

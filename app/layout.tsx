@@ -7,6 +7,7 @@ import "@pigment-css/react/styles.css";
 import "./globalCss";
 
 import * as React from "react";
+import StyledComponentsRegistry from "@/utils/registry";
 
 const ibmPlexSans = IBM_Plex_Sans_KR({
   variable: "--font-ibm-plex-sans",
@@ -26,7 +27,7 @@ export default async function RootLayout({
   return (
     <html lang="en" className={`${ibmPlexSans.variable}`}>
       <body>
-        {children}
+        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
         <Header />
       </body>
     </html>
