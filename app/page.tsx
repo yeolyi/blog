@@ -6,7 +6,8 @@ import Post from "@/app/components/Post";
 import Tile from "@/app/components/Tile";
 import MemeTile from "@/app/components/MemeTile";
 import { Suspense } from "react";
-export default async function Home() {
+
+export default function Home() {
   return (
     <Container>
       <ImageContainer>

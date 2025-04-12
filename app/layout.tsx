@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   title: "개발자 성열",
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
