@@ -4,7 +4,6 @@ import type { Meme } from '@/types/meme';
 import { getMediaTypeFromUrl } from '@/utils/form';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Suspense } from 'react';
 
 export default async function MemeTile() {
   // 랜덤 밈 가져오기

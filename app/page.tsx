@@ -55,11 +55,11 @@ export default function Home() {
         <PostList />
       </Suspense>
 
-      <Tile>
-        <Suspense>
+      <Suspense>
+        <Tile>
           <MemeTile />
-        </Suspense>
-      </Tile>
+        </Tile>
+      </Suspense>
     </div>
   );
 }
