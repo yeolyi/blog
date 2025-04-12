@@ -30,21 +30,21 @@ export default function Home() {
         안녕하세요👋 개발자 이성열입니다.{' '}
         <Link
           href="https://cse.snu.ac.kr"
-          className="text-white hover:text-black hover:bg-white underline"
+          className="text-white hover:text-black hover:bg-white underline active:text-black active:bg-white"
         >
           서울대 컴공 홈페이지
         </Link>{' '}
         리뉴얼 프로젝트에 프론트엔드 개발자로 참여했습니다. 지금은 카카오에서{' '}
         <Link
           href="https://edoc.kakao.com/desktop"
-          className="text-white hover:text-black hover:bg-white underline"
+          className="text-white hover:text-black hover:bg-white underline active:text-black active:bg-white"
         >
           전자문서
         </Link>
         를 개발합니다.{' '}
         <Link
           href="https://www.instagram.com/yeol.dev"
-          className="text-white hover:text-black hover:bg-white underline"
+          className="text-white hover:text-black hover:bg-white underline active:text-black active:bg-white"
         >
           인스타그램
         </Link>

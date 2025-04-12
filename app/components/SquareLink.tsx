@@ -14,7 +14,7 @@ const SquareLink = ({
   return (
     <Link
       {...props}
-      className={`text-black bg-white border-none cursor-pointer text-lg font-semibold hover:bg-black hover:text-white ${className}`}
+      className={`text-black bg-white border-none cursor-pointer text-lg font-semibold hover:bg-black hover:text-white active:bg-black active:text-white ${className}`}
     >
       {children}
     </Link>
