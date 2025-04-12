@@ -3,28 +3,31 @@ import { createClient } from "@/utils/supabase/server";
 import { styled } from "@pigment-css/react";
 import NextLink from "next/link";
 import Button from "./Button";
+import { Suspense } from "react";
 
-export default async function Header() {
-  const supabase = await createClient();
-  const { data: user } = await supabase.auth.getUser();
-
+export default function Header() {
   return (
     <Container>
       <HomeLink href="/">seongyeol</HomeLink>
       <RightContainer>
-        {user.user ? (
-          <Button onClick={signOut}>
-            로그아웃
-          </Button>
-        ) : (
-          <Button onClick={signInWithGithub}>
-            GitHub 로그인
-          </Button>
-        )}
+        <Suspense fallback={<div>Loading...</div>}>
+          <AuthButton />
+        </Suspense>
       </RightContainer>
     </Container>
   );
 }
+
+const AuthButton = async () => {
+  const supabase = await createClient();
+  const { data: user } = await supabase.auth.getUser();
+
+  return user.user ? (
+    <Button onClick={signOut}>로그아웃</Button>
+  ) : (
+    <Button onClick={signInWithGithub}>GitHub 로그인</Button>
+  );
+};
 
 const Container = styled.header`
   position: fixed;
