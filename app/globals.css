@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
-
+@config "../tailwind.config.js";
 
 @layer base {
   body {
@@ -62,4 +62,5 @@
   #root, #__next {
     isolation: isolate;
   }
+
 }

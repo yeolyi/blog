@@ -448,3 +448,10 @@ https://stackoverflow.com/questions/23803743/what-is-the-explicit-promise-constr
 
 supabase에서 용량 초과로 에러가 뜰줄은...
 
+- - - 
+
+https://github.com/vercel/next.js/issues/64434
+
+`next.config.mjs`로 바꾸니까 되네 진짜 실화냐
+
+esm only라서 뭔가 꼬인건가

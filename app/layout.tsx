@@ -12,6 +12,14 @@ const ibmPlexSans = IBM_Plex_Sans_KR({
   weight: ["400", "600", "700"],
 });
 
+import localFont from "next/font/local";
+
+const monoplexKR = localFont({
+  src: "./MonoplexKR-Text.ttf",
+  variable: "--font-monoplex-kr",
+});
+
+
 export const metadata: Metadata = {
   title: "개발자 성열",
 };
@@ -22,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${ibmPlexSans.variable}`}>
+    <html lang="en" className={`${ibmPlexSans.variable} ${monoplexKR.variable}`}>
       <body>
         {children}
         <Header />

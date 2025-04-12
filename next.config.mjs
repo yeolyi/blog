@@ -1,8 +1,9 @@
-import type { NextConfig } from "next";
 import createMDX from "@next/mdx";
 import remarkGfm from "remark-gfm";
+import rehypeShiki from "@shikijs/rehype";
+import { transformerNotationFocus, transformerNotationHighlight } from "@shikijs/transformers";
 
-const nextConfig: NextConfig = {
+const nextConfig = {
   images: {
     remotePatterns: [
       {
@@ -20,14 +21,13 @@ const nextConfig: NextConfig = {
     ],
   },
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
-  compiler: {
-    styledComponents: true,
-  },
+  transpilePackages: ["shiki", "@shikijs/rehype"],
 };
 
 const withMDX = createMDX({
   options: {
     remarkPlugins: [remarkGfm],
+    rehypePlugins: [[rehypeShiki, { theme: 'github-dark', transformers: [transformerNotationHighlight(), transformerNotationFocus()] }]],
   },
 });
 
