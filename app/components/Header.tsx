@@ -1,8 +1,8 @@
-import { signOut, signInWithGithub } from '@/app/actions';
+import { signInWithGithub, signOut } from '@/app/actions';
 import { createClient } from '@/utils/supabase/server';
 import NextLink from 'next/link';
-import Button from './Button';
 import { Suspense } from 'react';
+import Button from './Button';
 
 export default function Header() {
   return (
@@ -44,7 +44,7 @@ const AuthButton = async () => {
         <Button onClick={signOut}>로그아웃</Button>
       </div>
     );
-  } 
-  
+  }
+
   return <Button onClick={signInWithGithub}>GitHub 로그인</Button>;
 };

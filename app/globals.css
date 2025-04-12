@@ -23,7 +23,7 @@
   /* 3. Enable keyword animations */
   @media (prefers-reduced-motion: no-preference) {
     html {
-    /* biome-ignore lint/correctness/noUnknownProperty: https://developer.mozilla.org/en-US/docs/Web/CSS/interpolate-size*/
+      /* biome-ignore lint/correctness/noUnknownProperty: https://developer.mozilla.org/en-US/docs/Web/CSS/interpolate-size*/
       interpolate-size: allow-keywords;
     }
   }

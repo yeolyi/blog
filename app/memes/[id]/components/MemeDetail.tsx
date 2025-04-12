@@ -1,12 +1,12 @@
 'use client';
 
+import { deleteMeme } from '@/app/memes/actions';
 import type { Meme } from '@/types/meme';
 import { getMediaTypeFromUrl } from '@/utils/form';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
-import { deleteMeme } from '@/app/memes/actions';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 interface MemeDetailProps {
   meme: Meme;
@@ -46,7 +46,7 @@ export default function MemeDetail({ meme, isAdmin }: MemeDetailProps) {
           />
         ) : (
           // biome-ignore lint/a11y/useMediaCaption: 보여줄 캡션이 없다...
-<video className="max-w-full h-auto" src={meme.media_url} controls>
+          <video className="max-w-full h-auto" src={meme.media_url} controls>
             Your browser does not support video playback.
           </video>
         )}

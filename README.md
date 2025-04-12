@@ -476,3 +476,4 @@ https://biomejs.dev/linter/rules/use-key-with-click-events/
 
 Husky is a widely-used hook manager in the JavaScript ecosystem. Husky doesn’t hide unstaged changes and is not able to provide the list of staged files. This is why it is often used in tandem with another tool such as lint-staged or git-format-staged.
 
+마크다운 두 줄 띄는게 귀찮을 수 있는데, max width 포맷팅 생각하면 두 줄 띄는게 낫다. 글 쓸 때와 볼 때의 화면폭이 다를 수 있어서...

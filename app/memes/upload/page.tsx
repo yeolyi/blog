@@ -1,12 +1,12 @@
 'use client';
 
-import { createClient } from '@/utils/supabase/client';
-import { v4 as uuidv4 } from 'uuid';
-import { useForm, type SubmitHandler } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
-import { getMediaTypeFromFile } from '@/utils/form';
 import { connectMemeToTag } from '@/actions/meme';
 import { uploadFileToSupabase } from '@/actions/supabase';
+import { getMediaTypeFromFile } from '@/utils/form';
+import { createClient } from '@/utils/supabase/client';
+import { useRouter } from 'next/navigation';
+import { type SubmitHandler, useForm } from 'react-hook-form';
+import { v4 as uuidv4 } from 'uuid';
 
 interface FormInputs {
   title: string;
@@ -152,7 +152,7 @@ export default function UploadMeme() {
 
       <div>
         <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ?  '업로드 중...' : '업로드'}
+          {isSubmitting ? '업로드 중...' : '업로드'}
         </button>
       </div>
     </form>
