@@ -22,11 +22,25 @@ const AuthButton = async () => {
   const supabase = await createClient();
   const { data: user } = await supabase.auth.getUser();
 
-  return user.user ? (
-    <Button onClick={signOut}>로그아웃</Button>
-  ) : (
-    <Button onClick={signInWithGithub}>GitHub 로그인</Button>
-  );
+  if (user.user) {
+    // 사용자의 프로필 정보와 등록 번호 가져오기
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("registration_number")
+      .eq("id", user.user.id)
+      .single();
+
+    return (
+      <AuthContainer>
+        {profile && (
+          <UserNumber>#{profile.registration_number}번째 개발자님</UserNumber>
+        )}
+        <Button onClick={signOut}>로그아웃</Button>
+      </AuthContainer>
+    );
+  } else {
+    return <Button onClick={signInWithGithub}>GitHub 로그인</Button>;
+  }
 };
 
 const Container = styled.header`
@@ -51,4 +65,17 @@ const RightContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
+`;
+
+// 사용자 정보와 로그아웃 버튼을 위한 컨테이너
+const AuthContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+`;
+
+// 회원 번호 스타일
+const UserNumber = styled.span`
+  color: #e0e0e0;
+  font-size: 0.9rem;
 `;

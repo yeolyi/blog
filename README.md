@@ -328,6 +328,9 @@ SELECT public.migrate_existing_users();
 -- 마이그레이션 완료 후 함수 삭제 (선택사항)
 -- DROP FUNCTION public.migrate_existing_users();
 
+ALTER TABLE public.profiles 
+ADD COLUMN registration_number SERIAL;
+
 -- 이후 버킷을 public으로 설정
 ```
 
@@ -442,3 +445,6 @@ https://stackoverflow.com/questions/23803743/what-is-the-explicit-promise-constr
 - - - 
 
 이미지 다운로드 -> 안되는 부분/값싼부분(로컬 네트워크 접속, db 접속이 아닌) 먼저 해서 빨리 실패하게 하기. 
+
+supabase에서 용량 초과로 에러가 뜰줄은...
+
