@@ -1,7 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { unstable_cache } from 'next/cache';
 
-export const getPostIds = async () => {
+// 실제 포스트 ID를 가져오는 함수
+const fetchPostIds = async () => {
   const postsDirectory = path.join(process.cwd(), 'mdx');
   const directories = fs.readdirSync(postsDirectory, { withFileTypes: true });
 
@@ -14,3 +16,7 @@ export const getPostIds = async () => {
     })
     .map((dirent) => dirent.name);
 };
+
+export const getPostIds = unstable_cache(async () => {
+  return await fetchPostIds();
+});

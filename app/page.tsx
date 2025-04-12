@@ -1,15 +1,12 @@
 import MemeTile from '@/app/components/MemeTile';
-import Post from '@/app/components/Post';
+import PostList from '@/app/components/Post';
 import Tile from '@/app/components/Tile';
-import { getPostIds } from '@/utils/post';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import me from './assets/me.jpg';
 
-export default async function Home() {
-  const ids = await getPostIds();
-
+export default function Home() {
   return (
     <div className="max-w-[600px] mx-auto mt-24 mb-[30vh] px-4 flex flex-col gap-16">
       <div className="relative w-full aspect-square mx-auto">
@@ -54,19 +51,9 @@ export default async function Home() {
         에는 개발자를 위한 컨텐츠를 공유해요.
       </p>
 
-      <Post>
-        {ids.map(async (id) => {
-          const { title, date } = await import(`@/mdx/${id}/page.mdx`);
-          return (
-            <Post.Item
-              key={id}
-              href={`/post/${id}`}
-              date={date}
-              title={title}
-            />
-          );
-        })}
-      </Post>
+      <Suspense>
+        <PostList />
+      </Suspense>
 
       <Tile>
         <Suspense>

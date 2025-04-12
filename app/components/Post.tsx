@@ -1,14 +1,21 @@
-import type React from 'react';
+import { getPostIds } from '@/utils/post';
 import Link from 'next/link';
+import type React from 'react';
 
-type PostListProps = {
-  children: React.ReactNode;
-  className?: string;
-};
+export default async function PostList() {
+  const ids = await getPostIds();
 
-const PostList = ({ children, className = '' }: PostListProps) => {
-  return <ul className={`list-none p-0 ${className}`}>{children}</ul>;
-};
+  return (
+    <ul className="list-none p-0">
+      {ids.map(async (id) => {
+        const { title, date } = await import(`@/mdx/${id}/page.mdx`);
+        return (
+          <PostItem key={id} href={`/post/${id}`} date={date} title={title} />
+        );
+      })}
+    </ul>
+  );
+}
 
 type PostItemProps = {
   href: string;
@@ -31,7 +38,3 @@ const PostItem = ({ href, date, title, className = '' }: PostItemProps) => {
     </li>
   );
 };
-
-export default Object.assign(PostList, {
-  Item: PostItem,
-});

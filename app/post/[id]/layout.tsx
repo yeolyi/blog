@@ -12,7 +12,7 @@ export default async function PostLayout({
   const { id } = await params;
 
   return (
-    <div className="max-w-2xl mx-auto mt-40 mb-32 px-4 prose prose-invert">
+    <div className="max-w-2xl mx-auto mt-[12vh] mb-32 px-4 prose prose-invert">
       {children}
       <Comment id={id} />
     </div>

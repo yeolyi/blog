@@ -481,3 +481,12 @@ Husky is a widely-used hook manager in the JavaScript ecosystem. Husky doesn’t
 The width property represents the **intrinsic image width** in pixels. This property is used to infer the correct aspect ratio of the image and avoid layout shift during loading. It does not determine the rendered size of the image, which is controlled by CSS, similar to the width attribute in the HTML <img> tag.
 
 https://github.com/yzhang-gh/vscode-markdown/issues/89#issuecomment-2228045372
+
+- - -  
+
+React cache vs Next.js unstable_cache 차이점
+범위: React cache는 단일 렌더링 내 메모이제이션, unstable_cache는 서버 전체에서 지속되는 캐시
+지속성: cache는 요청 단위로 리셋, unstable_cache는 여러 요청에 걸쳐 유지
+설정: cache는 단순한 메모이제이션만 제공, unstable_cache는 유효기간, 태그 기반 무효화 등 다양한 옵션 제공
+무효화: cache는 자체 무효화 메커니즘 없음, unstable_cache는 태그 기반 무효화와 시간 기반 재검증 지원
+사용처: cache는 서버 컴포넌트 내부 최적화용, unstable_cach
