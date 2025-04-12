@@ -327,6 +327,8 @@ SELECT public.migrate_existing_users();
 
 -- 마이그레이션 완료 후 함수 삭제 (선택사항)
 -- DROP FUNCTION public.migrate_existing_users();
+
+-- 이후 버킷을 public으로 설정
 ```
 
 https://github.com/orgs/supabase/discussions/604 이런 api 좋다
@@ -420,3 +422,23 @@ Tailwind is a different styling paradigm, which may not mix well with the idea o
 - 이미지가 거의 없음
 - 네비게이션이 단순하거나 아예 없음
 - 싱글 페이지(Single-page) 웹사이트 디자인
+
+- - - 
+
+https://www.reddit.com/r/nextjs/comments/17ti9zu/fast_app_on_localhost_is_incredibly_slow_on/
+
+There's many things this could be, but the first to check would be the **physical locations of things**. For example, if you Supabase database is in us-east, and your Vercel Functions are in eu-east, then you're already fighting an uphill battle from the start. So first, ensure your functions and your database are in the same region (closest to your users).
+
+> 진짜 빨라진듯?
+
+Second, you need to consider where and when you need fresh data on every request. You mention navigating between pages can be slow. This is likely because you're not using any caching (you're directly communicating with Supabase) and could be potentially making a slow query, or fetching a lot of data.
+
+Since the Supabase client does not use fetch, you can use unstable_cache to wrap your database queries, allowing you to provide revalidation periods or cache tags. If you use cache tags, for example, you can "purge" the data when you do any data mutations. E.g. you add a new user, great, now purge the cache tag "users" so you fetch the new list of users.
+
+If you are fetching data that needs to be fresh on every request, but you're also calling that function multiple times, then you can use React's cache function to prevent repeat calls for that request.
+
+https://stackoverflow.com/questions/23803743/what-is-the-explicit-promise-construction-antipattern-and-how-do-i-avoid-it
+
+- - - 
+
+이미지 다운로드 -> 안되는 부분/값싼부분(로컬 네트워크 접속, db 접속이 아닌) 먼저 해서 빨리 실패하게 하기. 

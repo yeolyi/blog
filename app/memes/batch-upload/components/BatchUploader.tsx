@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
-import { uploadSingleMeme } from "../actions";
+import { uploadMemes } from "../actions";
 
 export const maxDuration = 60;
 
@@ -60,34 +60,7 @@ export default function BatchUploader() {
       }
 
       setTotalCount(memes.length);
-
-      // 각 밈을 개별적으로 처리
-      const allErrors: string[] = [];
-      for (let i = 0; i < memes.length; i++) {
-        setCurrentIndex(i);
-        const meme = memes[i];
-
-        try {
-          const result = await uploadSingleMeme(meme);
-
-          if (result.success) {
-            setProcessedCount((prev) => prev + 1);
-            if (result.tagErrors) {
-              result.tagErrors.forEach((err) => {
-                allErrors.push(`밈 #${i + 1}: ${err}`);
-              });
-            }
-          } else {
-            allErrors.push(`밈 #${i + 1}: ${result.error}`);
-          }
-        } catch (error) {
-          allErrors.push(`밈 #${i + 1}: ${(error as Error).message}`);
-        }
-      }
-
-      if (allErrors.length > 0) {
-        setErrors(allErrors);
-      }
+      await uploadMemes(memes);
       setIsProcessing(false);
     } catch (error) {
       setErrors([(error as Error).message]);

@@ -3,7 +3,6 @@
 import { createClient } from "@/utils/supabase/server";
 import { v4 as uuidv4 } from "uuid";
 import { revalidatePath } from "next/cache";
-import { connectMemeToTag } from "@/actions/meme";
 import { uploadFileToSupabase } from "@/actions/supabase";
 
 interface Meme {
@@ -13,70 +12,95 @@ interface Meme {
   tags?: string[];
 }
 
-// 단일 밈 업로드 함수
-export async function uploadSingleMeme(meme: Meme) {
-  try {
-    // 필수 필드 검사
-    if (!meme.title || !meme.media_url) {
-      throw new Error("제목과 미디어 URL은 필수입니다");
+const retry = async <T>(
+  fn: () => Promise<T>,
+  maxRetries = 3,
+  delay = 1000
+): Promise<T> => {
+  let lastError: Error | null = null;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      if (attempt > 0) {
+        console.log(`재시도 중... (${attempt}/${maxRetries})`);
+      }
+      return await fn();
+    } catch (error) {
+      lastError = error as Error;
+      if (attempt < maxRetries) {
+        const waitTime = delay * Math.pow(2, attempt);
+        console.log(`오류 발생, ${waitTime}ms 후 재시도...`);
+        await new Promise((resolve) => setTimeout(resolve, waitTime));
+      }
     }
+  }
+
+  throw lastError || new Error("최대 재시도 횟수 초과");
+};
+
+export async function uploadMemes(memes: Meme[]) {
+  try {
+    let progress = 0;
+    const blobList = await Promise.all(
+      memes.map(async (meme) => {
+        const mediaResponse = await retry(async () => {
+          const response = await fetch(meme.media_url);
+          if (!response.ok) {
+            throw new Error(`미디어 다운로드 실패 (${response.status})`);
+          }
+          return response;
+        });
+
+        progress++;
+        console.log(`${progress}번째 밈 다운로드 완료`);
+        return mediaResponse.blob();
+      })
+    );
+
+    console.log("blobList 완료");
+    progress = 0;
+
+    const urlList = await Promise.all(
+      blobList.map(async (blob, idx) => {
+        const fileExt =
+          memes[idx].media_url.split(".").pop()?.split("?")[0] || "";
+        const fileName = `${uuidv4()}.${fileExt}`;
+
+        const publicUrl = await retry(async () => {
+          return await uploadFileToSupabase(fileName, blob);
+        });
+        progress++;
+        console.log(`${progress}번째 밈 업로드 완료`);
+        return publicUrl;
+      })
+    );
+
+    console.log("urlList 완료");
 
     const supabase = await createClient();
 
-    // URL에서 파일 다운로드
-    const mediaResponse = await fetch(meme.media_url);
-    if (!mediaResponse.ok) {
-      throw new Error(`미디어 다운로드 실패 (${mediaResponse.status})`);
+    for (let i = 0; i < memes.length; i++) {
+      const meme = memes[i];
+      const url = urlList[i];
+
+      await supabase
+        .from("memes")
+        .insert([
+          {
+            title: meme.title,
+            description: meme.description || null,
+            media_url: url,
+          },
+        ])
+        .select()
+        .single()
+        .throwOnError();
+
+      console.log(`${i + 1}번째 밈 업로드 완료`);
     }
 
-    // 파일 데이터 가져오기
-    const blob = await mediaResponse.blob();
-    const fileExt = meme.media_url.split(".").pop()?.split("?")[0] || "";
-    const fileName = `${uuidv4()}.${fileExt}`;
-
-    // Supabase 스토리지에 업로드
-    const publicUrl = await uploadFileToSupabase(fileName, blob);
-
-    // memes 테이블에 정보 저장
-    const { data: memeData } = await supabase
-      .from("memes")
-      .insert([
-        {
-          title: meme.title,
-          description: meme.description || null,
-          media_url: publicUrl,
-        },
-      ])
-      .select()
-      .single()
-      .throwOnError();
-
-    // 태그 처리 (선택사항)
-    const tagErrors: string[] = [];
-    if (meme.tags && Array.isArray(meme.tags) && meme.tags.length > 0) {
-      for (const tagName of meme.tags) {
-        try {
-          await connectMemeToTag(memeData.id, tagName);
-        } catch (tagError) {
-          tagErrors.push(
-            `태그 처리 오류 (${tagName}): ${(tagError as Error).message}`
-          );
-        }
-      }
-    }
-
-    // 페이지 재검증
     revalidatePath("/memes");
-
-    return {
-      success: true,
-      memeId: memeData.id,
-      tagErrors: tagErrors.length > 0 ? tagErrors : null,
-    };
   } catch (error) {
-    return {
-      success: false,
-      error: (error as Error).message,
-    };
+    console.log(error);
   }
 }
