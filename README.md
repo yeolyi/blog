@@ -473,3 +473,6 @@ The default type of a button is submit, which causes the submission of a form wh
 https://biomejs.dev/linter/rules/use-nodejs-import-protocol/
 
 https://biomejs.dev/linter/rules/use-key-with-click-events/
+
+Husky is a widely-used hook manager in the JavaScript ecosystem. Husky doesn’t hide unstaged changes and is not able to provide the list of staged files. This is why it is often used in tandem with another tool such as lint-staged or git-format-staged.
+

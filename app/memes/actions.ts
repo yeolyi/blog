@@ -1,8 +1,8 @@
 'use server';
 
+import { connectMemeToTag } from '@/actions/meme';
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { connectMemeToTag } from '@/actions/meme';
 
 export async function getMemes(tag?: string, page = 1, pageSize = 30) {
   const supabase = await createClient();
@@ -60,19 +60,13 @@ export async function getMemes(tag?: string, page = 1, pageSize = 30) {
   query = query.order('created_at', { ascending: true });
 
   // 카운트 쿼리 생성
-  let countQuery;
-  if (tag && tagId) {
-    // 태그가 있는 경우, 미리 가져온 memeIds를 사용하여 카운트
-    countQuery = supabase
-      .from('meme_tags')
-      .select('*', { count: 'exact' })
-      .eq('tag_id', tagId);
-  } else {
-    // 태그가 없는 경우, 모든 밈 카운트
-    countQuery = supabase
-      .from('memes')
-      .select('*', { count: 'exact', head: true });
-  }
+  const countQuery =
+    tag && tagId
+      ? supabase
+          .from('meme_tags')
+          .select('*', { count: 'exact' })
+          .eq('tag_id', tagId)
+      : supabase.from('memes').select('*', { count: 'exact', head: true });
 
   // 페이지네이션 적용
   query = query.range(from, to);

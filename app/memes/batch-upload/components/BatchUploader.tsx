@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm, type SubmitHandler } from 'react-hook-form';
+import { type SubmitHandler, useForm } from 'react-hook-form';
 import { uploadMemes } from '../actions';
 
 export const maxDuration = 60;
@@ -144,7 +144,7 @@ export default function BatchUploader() {
               </h3>
               <ul className="list-disc pl-5 mt-2 text-sm text-red-600 space-y-1">
                 {errors.map((error, index) => (
-                  <li key={index}>{error}</li>
+                  <li key={error}>{error}</li>
                 ))}
               </ul>
             </div>
