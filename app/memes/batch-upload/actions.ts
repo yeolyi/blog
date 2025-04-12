@@ -1,9 +1,9 @@
-"use server";
+'use server';
 
-import { createClient } from "@/utils/supabase/server";
-import { v4 as uuidv4 } from "uuid";
-import { revalidatePath } from "next/cache";
-import { uploadFileToSupabase } from "@/actions/supabase";
+import { createClient } from '@/utils/supabase/server';
+import { v4 as uuidv4 } from 'uuid';
+import { revalidatePath } from 'next/cache';
+import { uploadFileToSupabase } from '@/actions/supabase';
 
 interface Meme {
   title: string;
@@ -15,7 +15,7 @@ interface Meme {
 const retry = async <T>(
   fn: () => Promise<T>,
   maxRetries = 3,
-  delay = 1000
+  delay = 1000,
 ): Promise<T> => {
   let lastError: Error | null = null;
 
@@ -28,14 +28,14 @@ const retry = async <T>(
     } catch (error) {
       lastError = error as Error;
       if (attempt < maxRetries) {
-        const waitTime = delay * Math.pow(2, attempt);
+        const waitTime = delay * 2 ** attempt;
         console.log(`오류 발생, ${waitTime}ms 후 재시도...`);
         await new Promise((resolve) => setTimeout(resolve, waitTime));
       }
     }
   }
 
-  throw lastError || new Error("최대 재시도 횟수 초과");
+  throw lastError || new Error('최대 재시도 횟수 초과');
 };
 
 export async function uploadMemes(memes: Meme[]) {
@@ -54,16 +54,16 @@ export async function uploadMemes(memes: Meme[]) {
         progress++;
         console.log(`${progress}번째 밈 다운로드 완료`);
         return mediaResponse.blob();
-      })
+      }),
     );
 
-    console.log("blobList 완료");
+    console.log('blobList 완료');
     progress = 0;
 
     const urlList = await Promise.all(
       blobList.map(async (blob, idx) => {
         const fileExt =
-          memes[idx].media_url.split(".").pop()?.split("?")[0] || "";
+          memes[idx].media_url.split('.').pop()?.split('?')[0] || '';
         const fileName = `${uuidv4()}.${fileExt}`;
 
         const publicUrl = await retry(async () => {
@@ -72,10 +72,10 @@ export async function uploadMemes(memes: Meme[]) {
         progress++;
         console.log(`${progress}번째 밈 업로드 완료`);
         return publicUrl;
-      })
+      }),
     );
 
-    console.log("urlList 완료");
+    console.log('urlList 완료');
 
     const supabase = await createClient();
 
@@ -84,7 +84,7 @@ export async function uploadMemes(memes: Meme[]) {
       const url = urlList[i];
 
       await supabase
-        .from("memes")
+        .from('memes')
         .insert([
           {
             title: meme.title,
@@ -99,7 +99,7 @@ export async function uploadMemes(memes: Meme[]) {
       console.log(`${i + 1}번째 밈 업로드 완료`);
     }
 
-    revalidatePath("/memes");
+    revalidatePath('/memes');
   } catch (error) {
     console.log(error);
   }

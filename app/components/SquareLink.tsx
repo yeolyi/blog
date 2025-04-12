@@ -1,12 +1,16 @@
-import React from "react";
-import Link, { LinkProps } from "next/link";
+import type React from 'react';
+import Link, { type LinkProps } from 'next/link';
 
 interface SquareLinkProps extends LinkProps {
   children: React.ReactNode;
   className?: string;
 }
 
-const SquareLink = ({ children, className = "", ...props }: SquareLinkProps) => {
+const SquareLink = ({
+  children,
+  className = '',
+  ...props
+}: SquareLinkProps) => {
   return (
     <Link
       {...props}

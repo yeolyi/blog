@@ -1,4 +1,4 @@
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from '@/utils/supabase/server';
 
 export async function getIsAdmin(): Promise<boolean> {
   try {
@@ -15,9 +15,9 @@ export async function getIsAdmin(): Promise<boolean> {
 
     // 사용자의 프로필 정보 가져오기
     const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", user.id)
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
       .single();
 
     if (profileError || !profile) {
@@ -25,9 +25,9 @@ export async function getIsAdmin(): Promise<boolean> {
       return false;
     }
 
-    return profile.role === "admin";
+    return profile.role === 'admin';
   } catch (error) {
-    console.error("어드민 확인 중 오류 발생:", error);
+    console.error('어드민 확인 중 오류 발생:', error);
     return false;
   }
 }
@@ -46,7 +46,7 @@ export async function isAuthenticated(): Promise<boolean> {
 
     return !!user && !error;
   } catch (error) {
-    console.error("인증 확인 중 오류 발생:", error);
+    console.error('인증 확인 중 오류 발생:', error);
     return false;
   }
 }

@@ -1,9 +1,9 @@
-import { Meme } from "@/types/meme";
-import { getMediaTypeFromUrl } from "@/utils/form";
-import Image from "next/image";
+import type { Meme } from '@/types/meme';
+import { getMediaTypeFromUrl } from '@/utils/form';
+import Image from 'next/image';
 
 export default function MemeTileMedia({ meme }: { meme: Meme }) {
-  return getMediaTypeFromUrl(meme.media_url) === "image" ? (
+  return getMediaTypeFromUrl(meme.media_url) === 'image' ? (
     <Image
       src={meme.media_url}
       alt={meme.title}

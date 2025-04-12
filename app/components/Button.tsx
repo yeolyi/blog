@@ -1,18 +1,19 @@
-import React from "react";
+import type React from 'react';
 
-const Button = ({ 
-  onClick, 
+const Button = ({
+  onClick,
   children,
-  className = ""
-}: { 
+  className = '',
+}: {
   onClick?: () => void;
-  children: React.ReactNode; 
+  children: React.ReactNode;
   className?: string;
 }) => {
   return (
-    <button 
+    <button
       onClick={onClick}
       className={`text-black bg-white border-none px-1 cursor-pointer text-md font-semibold hover:bg-black hover:text-white ${className}`}
+      type="button"
     >
       {children}
     </button>

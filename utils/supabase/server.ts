@@ -1,5 +1,5 @@
-import { createServerClient } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { createServerClient } from '@supabase/ssr';
+import { cookies } from 'next/headers';
 
 //  These utility functions(client & server) adapt
 // @supabase/ssr's cookie handling for Next.js.
@@ -9,7 +9,9 @@ export async function createClient() {
   const cookieStore = await cookies();
 
   return createServerClient(
+    // biome-ignore lint/style/noNonNullAssertion: 없으면 터지는게 맞음
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    // biome-ignore lint/style/noNonNullAssertion: 없으면 터지는게 맞음
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
@@ -18,9 +20,9 @@ export async function createClient() {
         },
         setAll(cookiesToSet) {
           try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              cookieStore.set(name, value, options)
-            );
+            for (const { name, value, options } of cookiesToSet) {
+              cookieStore.set(name, value, options);
+            }
           } catch {
             // The `setAll` method was called from a Server Component.
             // You can safely ignore this error because you'll set up
@@ -38,6 +40,6 @@ export async function createClient() {
           }
         },
       },
-    }
+    },
   );
 }

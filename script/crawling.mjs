@@ -1,5 +1,5 @@
-import { chromium } from "playwright";
-import fs from "fs";
+import { chromium } from 'playwright';
+import fs from 'node:fs';
 
 async function openProgrammerHumor() {
   // 브라우저 실행
@@ -10,26 +10,26 @@ async function openProgrammerHumor() {
 
   try {
     // programmerhumor.io/hot 페이지로 이동
-    console.log("programmerhumor.io/hot 페이지로 이동 중...");
-    await page.goto("https://programmerhumor.io/hot", {
-      waitUntil: "networkidle",
+    console.log('programmerhumor.io/hot 페이지로 이동 중...');
+    await page.goto('https://programmerhumor.io/hot', {
+      waitUntil: 'networkidle',
     });
-    console.log("페이지 로드 완료!");
+    console.log('페이지 로드 완료!');
 
     // time-filter-buttons 클래스 아래의 마지막 자식 버튼 클릭
     // Locator API 사용
-    const timeFilterButtons = page.locator(".time-filter-buttons");
+    const timeFilterButtons = page.locator('.time-filter-buttons');
     await timeFilterButtons.waitFor(); // 요소가 나타날 때까지 대기
 
-    const lastButton = page.locator(".time-filter-buttons > button:last-child");
+    const lastButton = page.locator('.time-filter-buttons > button:last-child');
     await lastButton.click();
-    console.log("All Time 필터 클릭됨");
+    console.log('All Time 필터 클릭됨');
 
     // 스크롤하면서 .post 요소 수집
     const targetPostCount = 1000; // N개의 포스트를 원하는 경우 이 값을 조정하세요
 
     // 현재 로드된 .post 요소 개수 확인 함수 (Locator API 사용)
-    const postLocator = page.locator(".post");
+    const postLocator = page.locator('.post');
 
     // 초기 포스트 개수 확인
     await postLocator.first().waitFor(); // 최소 하나의 포스트가 로드될 때까지 기다림
@@ -51,7 +51,7 @@ async function openProgrammerHumor() {
 
       // 더 이상 새 포스트가 로드되지 않으면 종료
       if (newPostCount === currentPostCount) {
-        console.log("더 이상 새 포스트가 로드되지 않습니다.");
+        console.log('더 이상 새 포스트가 로드되지 않습니다.');
         break;
       }
 
@@ -68,21 +68,21 @@ async function openProgrammerHumor() {
       const post = postLocator.nth(i);
 
       // 제목 추출
-      const titleElement = post.locator(".post-title");
-      const title = (await titleElement.textContent()) || "";
+      const titleElement = post.locator('.post-title');
+      const title = (await titleElement.textContent()) || '';
 
       // 이미지 URL 추출
-      const imgElement = post.locator("img");
-      let media_url = "";
+      const imgElement = post.locator('img');
+      let media_url = '';
       if ((await imgElement.count()) > 0) {
-        media_url = (await imgElement.getAttribute("src")) || "";
+        media_url = (await imgElement.getAttribute('src')) || '';
       }
 
       // 설명 추출
-      const excerptElement = post.locator(".post-excerpt-short");
-      let description = "";
+      const excerptElement = post.locator('.post-excerpt-short');
+      let description = '';
       if ((await excerptElement.count()) > 0) {
-        description = (await excerptElement.textContent()) || "";
+        description = (await excerptElement.textContent()) || '';
       }
 
       posts.push({
@@ -94,14 +94,14 @@ async function openProgrammerHumor() {
 
     console.log(`총 ${posts.length}개의 포스트 정보를 추출했습니다.`);
     const json = JSON.stringify(posts);
-    fs.writeFileSync("posts.json", json);
+    fs.writeFileSync('posts.json', json);
 
     new Promise((resolve) => setTimeout(resolve, 1000000));
   } catch (error) {
-    console.error("에러 발생:", error);
+    console.error('에러 발생:', error);
   } finally {
     // await browser.close();
-    console.log("브라우저가 종료되었습니다.");
+    console.log('브라우저가 종료되었습니다.');
   }
 }
 

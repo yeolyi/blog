@@ -1,17 +1,17 @@
-"use server";
+'use server';
 
-import { createClient } from "@/utils/supabase/server";
-import { redirect } from "next/navigation";
+import { createClient } from '@/utils/supabase/server';
+import { redirect } from 'next/navigation';
 
 export async function signInWithGithub() {
   const supabase = await createClient();
-  const isLocalEnv = process.env.NODE_ENV === "development";
+  const isLocalEnv = process.env.NODE_ENV === 'development';
   const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: "github",
+    provider: 'github',
     options: {
       redirectTo: isLocalEnv
-        ? "http://localhost:3000/auth/callback"
-        : "https://yeolyi.com/auth/callback",
+        ? 'http://localhost:3000/auth/callback'
+        : 'https://yeolyi.com/auth/callback',
     },
   });
 

@@ -455,3 +455,21 @@ https://github.com/vercel/next.js/issues/64434
 `next.config.mjs`로 바꾸니까 되네 진짜 실화냐
 
 esm only라서 뭔가 꼬인건가
+
+- - - 
+
+https://github.com/vercel/next.js/discussions/59347
+
+eslint 싫어하는 사람들이 많다. 
+
+forEach may lead to performance issues when working with large arrays. When combined with functions like filter or map, this causes multiple iterations over the same type.
+
+This else clause can be omitted because previous branches break early.
+
+Importing the types with import type ensures that they are removed by the compilers and avoids loading unnecessary modules.
+  
+The default type of a button is submit, which causes the submission of a form when placed inside a `form` element. This is likely not the behaviour that you want inside a React application.
+  
+https://biomejs.dev/linter/rules/use-nodejs-import-protocol/
+
+https://biomejs.dev/linter/rules/use-key-with-click-events/

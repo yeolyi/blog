@@ -1,8 +1,8 @@
-import Tile from "@/app/components/Tile";
-import Link from "next/link";
-import { getRandomMeme } from "@/app/memes/actions";
-import MemeTileMedia from "@/app/components/MemeTileMedia";
-import { Suspense } from "react";
+import Tile from '@/app/components/Tile';
+import Link from 'next/link';
+import { getRandomMeme } from '@/app/memes/actions';
+import MemeTileMedia from '@/app/components/MemeTileMedia';
+import { Suspense } from 'react';
 
 export default async function MemeTile() {
   // 랜덤 밈 가져오기

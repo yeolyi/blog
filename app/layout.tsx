@@ -1,27 +1,26 @@
-import type { Metadata } from "next";
-import { IBM_Plex_Sans_KR } from "next/font/google";
-import Header from "./components/Header";
+import type { Metadata } from 'next';
+import { IBM_Plex_Sans_KR } from 'next/font/google';
+import Header from './components/Header';
 
-import "@/app/globals.css";
+import '@/app/globals.css';
 
-import * as React from "react";
+import type * as React from 'react';
 
 const ibmPlexSans = IBM_Plex_Sans_KR({
-  variable: "--font-ibm-plex-sans",
-  subsets: ["latin"],
-  weight: ["400", "600", "700"],
+  variable: '--font-ibm-plex-sans',
+  subsets: ['latin'],
+  weight: ['400', '600', '700'],
 });
 
-import localFont from "next/font/local";
+import localFont from 'next/font/local';
 
 const monoplexKR = localFont({
-  src: "./MonoplexKR-Text.ttf",
-  variable: "--font-monoplex-kr",
+  src: './MonoplexKR-Text.ttf',
+  variable: '--font-monoplex-kr',
 });
 
-
 export const metadata: Metadata = {
-  title: "개발자 성열",
+  title: '개발자 성열',
 };
 
 export default function RootLayout({
@@ -30,7 +29,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${ibmPlexSans.variable} ${monoplexKR.variable}`}>
+    <html
+      lang="en"
+      className={`${ibmPlexSans.variable} ${monoplexKR.variable}`}
+    >
       <body>
         {children}
         <Header />

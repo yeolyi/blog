@@ -1,5 +1,5 @@
-import { createServerClient } from "@supabase/ssr";
-import { NextResponse, type NextRequest } from "next/server";
+import { createServerClient } from '@supabase/ssr';
+import { NextResponse, type NextRequest } from 'next/server';
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -7,7 +7,9 @@ export async function updateSession(request: NextRequest) {
   });
 
   const supabase = createServerClient(
+    // biome-ignore lint/style/noNonNullAssertion: 없으면 터지는게 맞음
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    // biome-ignore lint/style/noNonNullAssertion: 없으면 터지는게 맞음
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
@@ -17,19 +19,19 @@ export async function updateSession(request: NextRequest) {
         setAll(cookiesToSet) {
           // Passing the refreshed Auth token to Server Components,
           // so they don't attempt to refresh the same token themselves.
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value)
-          );
+          for (const { name, value } of cookiesToSet) {
+            request.cookies.set(name, value);
+          }
           supabaseResponse = NextResponse.next({
             request,
           });
           // Passing the refreshed Auth token to the browser, so it replaces the old token.
-          cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
-          );
+          for (const { name, value, options } of cookiesToSet) {
+            supabaseResponse.cookies.set(name, value, options);
+          }
         },
       },
-    }
+    },
   );
 
   // Do not run code between createServerClient and

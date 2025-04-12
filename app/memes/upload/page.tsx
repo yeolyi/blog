@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { createClient } from "@/utils/supabase/client";
-import { v4 as uuidv4 } from "uuid";
-import { useForm, SubmitHandler } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { getMediaTypeFromFile } from "@/utils/form";
-import { connectMemeToTag } from "@/actions/meme";
-import { uploadFileToSupabase } from "@/actions/supabase";
+import { createClient } from '@/utils/supabase/client';
+import { v4 as uuidv4 } from 'uuid';
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import { useRouter } from 'next/navigation';
+import { getMediaTypeFromFile } from '@/utils/form';
+import { connectMemeToTag } from '@/actions/meme';
+import { uploadFileToSupabase } from '@/actions/supabase';
 
 interface FormInputs {
   title: string;
@@ -20,14 +20,14 @@ const uploadForm = async (data: FormInputs) => {
   const supabase = createClient();
 
   // 파일 업로드
-  const fileExt = file.name.split(".").pop();
+  const fileExt = file.name.split('.').pop();
   const fileName = `${uuidv4()}.${fileExt}`;
   const filePath = `${fileName}`;
   const url = await uploadFileToSupabase(filePath, file);
 
   // memes 테이블에 정보 저장
   const { data: meme } = await supabase
-    .from("memes")
+    .from('memes')
     .insert([
       {
         title: data.title,
@@ -43,7 +43,7 @@ const uploadForm = async (data: FormInputs) => {
   if (!data.tags.trim()) return;
 
   const tagNames = data.tags
-    .split(",")
+    .split(',')
     .map((tag) => tag.trim())
     .filter((tag) => tag);
 
@@ -60,9 +60,9 @@ export default function UploadMeme() {
     setError: setFormError,
   } = useForm<FormInputs>({
     defaultValues: {
-      title: "",
-      description: "",
-      tags: "",
+      title: '',
+      description: '',
+      tags: '',
     },
   });
   const router = useRouter();
@@ -74,26 +74,26 @@ export default function UploadMeme() {
     const mediaType = getMediaTypeFromFile(file);
 
     // 타입에 맞는 파일인지 확인
-    if (mediaType === "image" && !file.type.startsWith("image/")) {
-      setFormError("file", { message: "이미지 파일만 업로드 가능합니다" });
+    if (mediaType === 'image' && !file.type.startsWith('image/')) {
+      setFormError('file', { message: '이미지 파일만 업로드 가능합니다' });
       return;
     }
 
-    if (mediaType === "video" && !file.type.startsWith("video/")) {
-      setFormError("file", { message: "비디오 파일만 업로드 가능합니다" });
+    if (mediaType === 'video' && !file.type.startsWith('video/')) {
+      setFormError('file', { message: '비디오 파일만 업로드 가능합니다' });
       return;
     }
 
     try {
       await uploadForm(data);
-      router.push("/memes");
+      router.push('/memes');
     } catch (err) {
       const errorMessage =
-        err instanceof Error ? err.message : "알 수 없는 오류가 발생했습니다.";
+        err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.';
 
       // 폼 전체 에러 설정
-      setFormError("root", {
-        type: "manual",
+      setFormError('root', {
+        type: 'manual',
         message: errorMessage,
       });
     }
@@ -104,10 +104,10 @@ export default function UploadMeme() {
       {errors.root?.message && (
         <div
           style={{
-            color: "red",
-            marginBottom: "10px",
-            padding: "10px",
-            border: "1px solid red",
+            color: 'red',
+            marginBottom: '10px',
+            padding: '10px',
+            border: '1px solid red',
           }}
         >
           <strong>오류:</strong> {errors.root.message}
@@ -119,14 +119,14 @@ export default function UploadMeme() {
         <input
           id="title"
           type="text"
-          {...register("title", { required: "제목을 입력해주세요" })}
+          {...register('title', { required: '제목을 입력해주세요' })}
         />
-        {errors.title && <p style={{ color: "red" }}>{errors.title.message}</p>}
+        {errors.title && <p style={{ color: 'red' }}>{errors.title.message}</p>}
       </div>
 
       <div>
         <label htmlFor="description">설명 (선택사항)</label>
-        <textarea id="description" {...register("description")} rows={3} />
+        <textarea id="description" {...register('description')} rows={3} />
       </div>
 
       <div>
@@ -134,10 +134,10 @@ export default function UploadMeme() {
         <input
           id="file"
           type="file"
-          {...register("file", { required: "파일을 선택해주세요" })}
+          {...register('file', { required: '파일을 선택해주세요' })}
           accept="image/*,video/*" // 모든 이미지와 비디오 파일 허용
         />
-        {errors.file && <p style={{ color: "red" }}>{errors.file.message}</p>}
+        {errors.file && <p style={{ color: 'red' }}>{errors.file.message}</p>}
       </div>
 
       <div>
@@ -145,14 +145,14 @@ export default function UploadMeme() {
         <input
           id="tags"
           type="text"
-          {...register("tags")}
+          {...register('tags')}
           placeholder="예: 재밌는, 귀여운, 대학생"
         />
       </div>
 
       <div>
         <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? `업로드 중...` : "업로드"}
+          {isSubmitting ?  '업로드 중...' : '업로드'}
         </button>
       </div>
     </form>

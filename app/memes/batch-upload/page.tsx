@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import BatchUploader from "@/app/memes/batch-upload/components/BatchUploader";
+import BatchUploader from '@/app/memes/batch-upload/components/BatchUploader';
 
 export default function BatchUploadPage() {
   return (
