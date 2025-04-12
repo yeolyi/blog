@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function SampleClockComponent() {
   const [time, setTime] = useState(new Date());

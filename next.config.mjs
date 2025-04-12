@@ -1,10 +1,10 @@
 import createMDX from '@next/mdx';
-import remarkGfm from 'remark-gfm';
 import rehypeShiki from '@shikijs/rehype';
 import {
   transformerNotationFocus,
   transformerNotationHighlight,
 } from '@shikijs/transformers';
+import remarkGfm from 'remark-gfm';
 
 const nextConfig = {
   images: {
