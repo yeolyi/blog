@@ -1,5 +1,5 @@
-import type React from 'react';
 import Link, { type LinkProps } from 'next/link';
+import type React from 'react';
 
 interface SquareLinkProps extends LinkProps {
   children: React.ReactNode;

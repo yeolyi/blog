@@ -219,7 +219,7 @@ CREATE POLICY "관리자만 밈_태그 삭제 가능" ON public.meme_tags
     )
   );
 
--- 3. 관리자만 파일 업로드/수정/삭제 가능하도록 설정
+**-- 3. 관리자만 파일 업로드/수정/삭제 가능하도록 설정
 -- 파일 업로드 (INSERT)
 CREATE POLICY "관리자만 파일 업로드 가능" ON storage.objects
   FOR INSERT
@@ -259,7 +259,7 @@ CREATE POLICY "관리자만 파일 삭제 가능" ON storage.objects
 CREATE POLICY "모든 사용자 파일 조회 가능" ON storage.objects
 FOR SELECT
 TO public
-USING (bucket_id = 'memes');
+USING (bucket_id = 'memes');**
 
 -- 1. 사용자 역할을 확인하는 함수 생성
 CREATE OR REPLACE FUNCTION is_admin()
@@ -477,3 +477,7 @@ https://biomejs.dev/linter/rules/use-key-with-click-events/
 Husky is a widely-used hook manager in the JavaScript ecosystem. Husky doesn’t hide unstaged changes and is not able to provide the list of staged files. This is why it is often used in tandem with another tool such as lint-staged or git-format-staged.
 
 마크다운 두 줄 띄는게 귀찮을 수 있는데, max width 포맷팅 생각하면 두 줄 띄는게 낫다. 글 쓸 때와 볼 때의 화면폭이 다를 수 있어서...
+
+The width property represents the **intrinsic image width** in pixels. This property is used to infer the correct aspect ratio of the image and avoid layout shift during loading. It does not determine the rendered size of the image, which is controlled by CSS, similar to the width attribute in the HTML <img> tag.
+
+https://github.com/yzhang-gh/vscode-markdown/issues/89#issuecomment-2228045372

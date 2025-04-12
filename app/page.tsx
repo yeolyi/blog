@@ -1,16 +1,16 @@
-import Link from 'next/link';
-import me from './assets/me.jpg';
-import Image from 'next/image';
+import MemeTile from '@/app/components/MemeTile';
 import Post from '@/app/components/Post';
 import Tile from '@/app/components/Tile';
-import MemeTile from '@/app/components/MemeTile';
+import Image from 'next/image';
+import Link from 'next/link';
 import { Suspense } from 'react';
+import me from './assets/me.jpg';
 
 export default function Home() {
   return (
     <div className="max-w-[600px] mx-auto mt-24 mb-[30vh] px-4 flex flex-col gap-16">
       <div className="relative w-full aspect-square mx-auto">
-        <Image src={me} alt="me" fill objectFit="cover" />
+        <Image src={me} alt="me" className="object-cover w-full h-full" />
         <div className="flex flex-col gap-2 absolute bottom-5 left-5">
           <Link
             href="https://github.com/yeolyi/blog"
@@ -30,21 +30,21 @@ export default function Home() {
         안녕하세요👋 개발자 이성열입니다.{' '}
         <Link
           href="https://cse.snu.ac.kr"
-          className="text-white hover:text-black hover:bg-white"
+          className="text-white hover:text-black hover:bg-white underline"
         >
           서울대 컴공 홈페이지
         </Link>{' '}
         리뉴얼 프로젝트에 프론트엔드 개발자로 참여했습니다. 지금은 카카오에서{' '}
         <Link
           href="https://edoc.kakao.com/desktop"
-          className="text-white hover:text-black hover:bg-white"
+          className="text-white hover:text-black hover:bg-white underline"
         >
           전자문서
         </Link>
         를 개발합니다.{' '}
         <Link
           href="https://www.instagram.com/yeol.dev"
-          className="text-white hover:text-black hover:bg-white"
+          className="text-white hover:text-black hover:bg-white underline"
         >
           인스타그램
         </Link>
@@ -52,8 +52,6 @@ export default function Home() {
       </p>
 
       <Post>
-        <Post.Item href="/post/sample" date="2024-01-01" title="샘플 글" />
-        <Post.Item href="/post/sample" date="2024-01-01" title="샘플 글" />
         <Post.Item href="/post/sample" date="2024-01-01" title="샘플 글" />
       </Post>
 

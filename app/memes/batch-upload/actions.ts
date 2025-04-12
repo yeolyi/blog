@@ -1,9 +1,9 @@
 'use server';
 
-import { createClient } from '@/utils/supabase/server';
-import { v4 as uuidv4 } from 'uuid';
-import { revalidatePath } from 'next/cache';
 import { uploadFileToSupabase } from '@/actions/supabase';
+import { createClient } from '@/utils/supabase/server';
+import { revalidatePath } from 'next/cache';
+import { v4 as uuidv4 } from 'uuid';
 
 interface Meme {
   title: string;
@@ -14,7 +14,7 @@ interface Meme {
 
 const retry = async <T>(
   fn: () => Promise<T>,
-  maxRetries = 3,
+  maxRetries = 5,
   delay = 1000,
 ): Promise<T> => {
   let lastError: Error | null = null;
@@ -30,6 +30,7 @@ const retry = async <T>(
       if (attempt < maxRetries) {
         const waitTime = delay * 2 ** attempt;
         console.log(`오류 발생, ${waitTime}ms 후 재시도...`);
+        console.log(error);
         await new Promise((resolve) => setTimeout(resolve, waitTime));
       }
     }
