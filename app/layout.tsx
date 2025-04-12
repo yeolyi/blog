@@ -2,12 +2,9 @@ import type { Metadata } from "next";
 import { IBM_Plex_Sans_KR } from "next/font/google";
 import Header from "./components/Header";
 
-// 두 개 순서가 뭐가 맞음????
-import "@pigment-css/react/styles.css";
-import "./globalCss";
+import "@/app/globals.css";
 
 import * as React from "react";
-import StyledComponentsRegistry from "@/utils/registry";
 
 const ibmPlexSans = IBM_Plex_Sans_KR({
   variable: "--font-ibm-plex-sans",
@@ -27,7 +24,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${ibmPlexSans.variable}`}>
       <body>
-        <StyledComponentsRegistry>{children}</StyledComponentsRegistry>
+        {children}
         <Header />
       </body>
     </html>

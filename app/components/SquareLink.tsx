@@ -1,18 +1,20 @@
-import { styled } from "@pigment-css/react";
-import Link from "next/link";
+import React from "react";
+import Link, { LinkProps } from "next/link";
 
-const SquareLink = styled(Link)`
-  color: black;
-  background-color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2rem;
-  font-weight: 600;
+interface SquareLinkProps extends LinkProps {
+  children: React.ReactNode;
+  className?: string;
+}
 
-  &:hover {
-    background-color: black;
-    color: white;
-  }
-`;
+const SquareLink = ({ children, className = "", ...props }: SquareLinkProps) => {
+  return (
+    <Link
+      {...props}
+      className={`text-black bg-white border-none cursor-pointer text-lg font-semibold hover:bg-black hover:text-white ${className}`}
+    >
+      {children}
+    </Link>
+  );
+};
 
 export default SquareLink;

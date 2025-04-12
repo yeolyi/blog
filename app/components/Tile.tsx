@@ -1,60 +1,38 @@
-import { styled } from "@pigment-css/react";
+import React from "react";
 
-const Tile = styled.div`
-  display: flex;
-  gap: 1rem;
-`;
-
-type TileItemProps = {
-  size: "75%";
+type TileProps = {
+  children: React.ReactNode;
+  className?: string;
 };
 
-const TileItemStyle = styled.div<TileItemProps>({
-  border: "1px solid #5e5e5e",
-  "&:hover": {
-    backgroundColor: "white",
-  },
-  cursor: "pointer",
-  position: "relative",
-  variants: [
-    {
-      props: { size: "75%" },
-      style: {
-        width: "75%",
-        height: "75%",
-      },
-    },
-  ],
-});
+const Tile = ({ children, className = "" }: TileProps) => {
+  return (
+    <div className={`flex gap-4 ${className}`}>{children}</div>
+  );
+};
 
-const TileItemTitle = styled.h3({
-  position: "absolute",
-  bottom: "10px",
-  left: "10px",
-  backgroundColor: "black",
-  fontSize: "1.5rem",
-  fontWeight: 600,
-  color: "white",
-  [`${TileItemStyle}:hover &`]: {
-    color: "black",
-    backgroundColor: "white",
-  },
-});
+type TileItemProps = {
+  title: string;
+  children: React.ReactNode;
+  size: "75%";
+  className?: string;
+};
 
 const TileItem = ({
   title,
   children,
   size,
-}: {
-  title: string;
-  children: React.ReactNode;
-  size: TileItemProps["size"];
-}) => {
+  className = ""
+}: TileItemProps) => {
   return (
-    <TileItemStyle size={size}>
+    <div 
+      className={`border border-[#5e5e5e] hover:bg-white cursor-pointer relative ${size === "75%" ? "w-3/4 h-3/4" : ""} ${className}`}
+    >
       {children}
-      <TileItemTitle>{title}</TileItemTitle>
-    </TileItemStyle>
+      <h3 className="absolute bottom-[10px] left-[10px] bg-black text-xl font-semibold text-white group-hover:text-black group-hover:bg-white">
+        {title}
+      </h3>
+    </div>
   );
 };
 

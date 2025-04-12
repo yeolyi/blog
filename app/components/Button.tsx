@@ -1,17 +1,22 @@
-import { styled } from "@pigment-css/react";
+import React from "react";
 
-const Button = styled.button`
-  color: black;
-  background-color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 1.2rem;
-  font-weight: 600;
-
-  &:hover {
-    background-color: black;
-    color: white;
-  }
-`;
+const Button = ({ 
+  onClick, 
+  children,
+  className = ""
+}: { 
+  onClick?: () => void;
+  children: React.ReactNode; 
+  className?: string;
+}) => {
+  return (
+    <button 
+      onClick={onClick}
+      className={`text-black bg-white border-none cursor-pointer text-lg font-semibold hover:bg-black hover:text-white ${className}`}
+    >
+      {children}
+    </button>
+  );
+};
 
 export default Button;

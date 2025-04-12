@@ -1,6 +1,5 @@
 import { Meme } from "@/types/meme";
 import { getMediaTypeFromUrl } from "@/utils/form";
-import { css } from "@pigment-css/react";
 import Image from "next/image";
 
 export default function MemeTileMedia({ meme }: { meme: Meme }) {
@@ -10,7 +9,7 @@ export default function MemeTileMedia({ meme }: { meme: Meme }) {
       alt={meme.title}
       fill
       sizes="(max-width: 768px) 100vw, 300px"
-      className={imageStyle}
+      className="object-cover"
       priority
     />
   ) : (
@@ -20,17 +19,7 @@ export default function MemeTileMedia({ meme }: { meme: Meme }) {
       loop
       autoPlay
       playsInline
-      className={videoStyle}
+      className="w-full h-full object-cover"
     />
   );
 }
-
-const imageStyle = css({
-  objectFit: "cover",
-});
-
-const videoStyle = css({
-  width: "100%",
-  height: "100%",
-  objectFit: "cover",
-});

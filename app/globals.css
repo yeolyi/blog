@@ -1,13 +1,13 @@
-import { globalCss } from "@pigment-css/react";
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-expressions
-globalCss`
+
+@layer base {
   body {
     font-family: var(--font-ibm-plex-sans);
-    background-color: #000000;
+    @apply bg-black;
   }
-   
-  /* https://www.joshwcomeau.com/css/custom-css-reset/ */
+
   /* 1. Use a more-intuitive box-sizing model */
   *, *::before, *::after {
     box-sizing: border-box;
@@ -62,4 +62,4 @@ globalCss`
   #root, #__next {
     isolation: isolate;
   }
-`;
+}

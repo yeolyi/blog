@@ -5,7 +5,6 @@ import { useCallback, useState } from "react";
 import { getMemes } from "../actions";
 import { Meme, Tag } from "@/types/meme";
 import { useInfiniteScroll } from "@/utils/useInfiniteScroll";
-import { styled } from "@pigment-css/react";
 
 interface MemeListProps {
   memes: Meme[];
@@ -73,23 +72,26 @@ export default function MemeList({
   });
 
   return (
-    <Container>
-      <TagFilterContainer>
-        <TagButton onClick={() => changeTag(undefined)} className={selectedTag ? "" : "selected"}>
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-wrap gap-3 items-center">
+        <button 
+          onClick={() => changeTag(undefined)} 
+          className={`text-decoration-none py-2 px-4 bg-transparent border border-[#5e5e5e] text-[#e0e0e0] cursor-pointer hover:bg-white hover:text-black ${!selectedTag ? 'bg-white text-black border-white' : ''}`}
+        >
           전체
-        </TagButton>
+        </button>
         {allTags.map((tag) => (
-          <TagButton
+          <button
             key={tag.id}
             onClick={() => changeTag(tag.name)}
-            className={selectedTag === tag.name ? "selected" : ""}
+            className={`text-decoration-none py-2 px-4 bg-transparent border border-[#5e5e5e] text-[#e0e0e0] cursor-pointer hover:bg-white hover:text-black ${selectedTag === tag.name ? 'bg-white text-black border-white' : ''}`}
           >
             {tag.name}
-          </TagButton>
+          </button>
         ))}
-      </TagFilterContainer>
+      </div>
 
-      <MemeGrid>
+      <div className="flex flex-wrap gap-6">
         {memes.map((meme, index) => (
           <MemeItem
             meme={meme}
@@ -97,55 +99,8 @@ export default function MemeList({
             ref={index === memes.length - 1 ? setLastItemRef : null}
           />
         ))}
-        {loading && <LoadingText>로딩 중...</LoadingText>}
-      </MemeGrid>
-    </Container>
+        {loading && <div className="text-center py-8 text-xl text-[#e0e0e0] w-full">로딩 중...</div>}
+      </div>
+    </div>
   );
 }
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-`;
-
-const TagFilterContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-  align-items: center;
-`;
-
-const TagButton = styled.button`
-  text-decoration: none;
-  padding: 0.5rem 1rem;
-  background-color: transparent;
-  border: 1px solid #5e5e5e;
-  color: #e0e0e0;
-  cursor: pointer;
-
-  &:hover {
-    background-color: white;
-    color: black;
-  }
-
-  &.selected {
-    background-color: white;
-    color: black;
-    border-color: white;
-  }
-`;
-
-const MemeGrid = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-`;
-
-const LoadingText = styled.div`
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 2rem;
-  font-size: 1.2rem;
-  color: #e0e0e0;
-`;

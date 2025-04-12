@@ -1,7 +1,6 @@
 import Link from "next/link";
 import me from "./assets/me.jpg";
 import Image from "next/image";
-import { styled } from "@pigment-css/react";
 import Post from "@/app/components/Post";
 import Tile from "@/app/components/Tile";
 import MemeTile from "@/app/components/MemeTile";
@@ -9,29 +8,29 @@ import { Suspense } from "react";
 
 export default function Home() {
   return (
-    <Container>
-      <ImageContainer>
+    <div className="max-w-[600px] mx-auto mt-24 mb-[30vh] px-4 flex flex-col gap-16">
+      <div className="relative w-full aspect-square mx-auto">
         <Image src={me} alt="me" fill objectFit="cover" />
-        <SNSLinkContainer>
-          <SNSLink href="https://github.com/yeolyi/blog">GitHub</SNSLink>
-          <SNSLink href="https://www.instagram.com/yeol.dev">Instagram</SNSLink>
-        </SNSLinkContainer>
-      </ImageContainer>
-      <Introduction>
+        <div className="flex flex-col gap-2 absolute bottom-5 left-5">
+          <Link href="https://github.com/yeolyi/blog" className="block text-white text-2xl font-semibold bg-black w-fit hover:bg-white hover:text-black">GitHub</Link>
+          <Link href="https://www.instagram.com/yeol.dev" className="block text-white text-2xl font-semibold bg-black w-fit hover:bg-white hover:text-black">Instagram</Link>
+        </div>
+      </div>
+      <p className="text-xl font-semibold text-white break-keep">
         안녕하세요👋 개발자 이성열입니다.{" "}
-        <IntroductionLink href="https://cse.snu.ac.kr">
+        <Link href="https://cse.snu.ac.kr" className="text-white hover:text-black hover:bg-white">
           서울대 컴공 홈페이지
-        </IntroductionLink>{" "}
+        </Link>{" "}
         리뉴얼 프로젝트에 프론트엔드 개발자로 참여했습니다. 지금은 카카오에서{" "}
-        <IntroductionLink href="https://edoc.kakao.com/desktop">
+        <Link href="https://edoc.kakao.com/desktop" className="text-white hover:text-black hover:bg-white">
           전자문서
-        </IntroductionLink>
+        </Link>
         를 개발합니다.{" "}
-        <IntroductionLink href="https://www.instagram.com/yeol.dev">
+        <Link href="https://www.instagram.com/yeol.dev" className="text-white hover:text-black hover:bg-white">
           인스타그램
-        </IntroductionLink>
+        </Link>
         에는 개발자를 위한 컨텐츠를 공유해요.
-      </Introduction>
+      </p>
 
       <Post>
         <Post.Item href="/post/sample" date="2024-01-01" title="샘플 글" />
@@ -44,61 +43,7 @@ export default function Home() {
           <MemeTile />
         </Suspense>
       </Tile>
-    </Container>
+    </div>
   );
 }
-
-const Container = styled.div`
-  max-width: 600px;
-  margin: 6rem auto 30vh auto;
-  padding: 0 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 4rem;
-`;
-
-const ImageContainer = styled.div`
-  position: relative;
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  margin: 0 auto;
-`;
-
-const SNSLinkContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-`;
-
-const SNSLink = styled(Link)`
-  display: block;
-  color: white;
-  font-size: 2rem;
-  font-weight: 600;
-  background-color: black;
-  width: fit-content;
-
-  &:hover {
-    background-color: white;
-    color: black;
-  }
-`;
-
-const Introduction = styled.p`
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: white;
-  word-break: keep-all;
-`;
-
-const IntroductionLink = styled(Link)`
-  color: white;
-  &:hover {
-    color: black;
-    background-color: white;
-  }
-`;
 

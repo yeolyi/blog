@@ -1,20 +1,19 @@
 import { signOut, signInWithGithub } from "@/app/actions";
 import { createClient } from "@/utils/supabase/server";
-import { styled } from "@pigment-css/react";
 import NextLink from "next/link";
 import Button from "./Button";
 import { Suspense } from "react";
 
 export default function Header() {
   return (
-    <Container>
-      <HomeLink href="/">seongyeol</HomeLink>
-      <RightContainer>
+    <header className="fixed top-0 left-0 right-0 flex justify-between items-center p-4">
+      <NextLink href="/" className="text-[#e0e0e0] text-2xl font-bold no-underline">seongyeol</NextLink>
+      <div className="flex items-center gap-4">
         <Suspense fallback={<div>Loading...</div>}>
           <AuthButton />
         </Suspense>
-      </RightContainer>
-    </Container>
+      </div>
+    </header>
   );
 }
 
@@ -31,51 +30,14 @@ const AuthButton = async () => {
       .single();
 
     return (
-      <AuthContainer>
+      <div className="flex items-center gap-4">
         {profile && (
-          <UserNumber>#{profile.registration_number}번째 개발자님</UserNumber>
+          <span className="text-[#e0e0e0] text-sm">#{profile.registration_number}번째 개발자님</span>
         )}
         <Button onClick={signOut}>로그아웃</Button>
-      </AuthContainer>
+      </div>
     );
   } else {
     return <Button onClick={signInWithGithub}>GitHub 로그인</Button>;
   }
 };
-
-const Container = styled.header`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem;
-`;
-
-const HomeLink = styled(NextLink)`
-  color: #e0e0e0;
-  font-size: 2.5rem;
-  font-weight: 700;
-  text-decoration: none;
-`;
-
-const RightContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-`;
-
-// 사용자 정보와 로그아웃 버튼을 위한 컨테이너
-const AuthContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-`;
-
-// 회원 번호 스타일
-const UserNumber = styled.span`
-  color: #e0e0e0;
-  font-size: 0.9rem;
-`;

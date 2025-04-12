@@ -1,59 +1,37 @@
-import { styled } from "@pigment-css/react";
+import React from "react";
 import Link from "next/link";
 
-const PostList = styled.ul`
-  list-style: none;
-  padding: 0;
-`;
+type PostListProps = {
+  children: React.ReactNode;
+  className?: string;
+};
 
-const PostLi = styled.li`
-  cursor: pointer;
-  &:hover {
-    background-color: white;
-  }
-  font-size: 1.5rem;
-  font-weight: 600;
-  padding: 0.5rem 0;
-`;
+const PostList = ({ children, className = "" }: PostListProps) => {
+  return (
+    <ul className={`list-none p-0 ${className}`}>{children}</ul>
+  );
+};
 
-const PostItemLink = styled(Link)`
-  display: flex;
-  width: 100%;
-  gap: 0.5rem;
-  text-decoration: none;
-`;
-
-const PostItemTitle = styled.span({
-  fontSize: "1.5rem",
-  fontWeight: 600,
-  color: "white",
-  [`${PostLi}:hover &`]: {
-    color: "black",
-  },
-});
-
-
-const PostItemDate = styled.span({
-  fontSize: "1.5rem",
-  color: "#666",
-});
+type PostItemProps = {
+  href: string;
+  date: string;
+  title: string;
+  className?: string;
+};
 
 const PostItem = ({
   href,
   date,
   title,
-}: {
-  href: string;
-  date: string;
-  title: string;
-}) => {
+  className = ""
+}: PostItemProps) => {
   return (
-    <PostLi>
-      <PostItemLink href={href}>
-        <PostItemTitle>{title}</PostItemTitle>
-        <PostItemDate>{date}</PostItemDate>
-      </PostItemLink>
-    </PostLi>
+    <li className={`group cursor-pointer hover:bg-white text-xl font-semibold py-2 ${className}`}>
+      <Link href={href} className="flex w-full gap-2 no-underline">
+        <span className="text-xl font-semibold text-white group-hover:text-black">{title}</span>
+        <span className="text-xl text-[#666]">{date}</span>
+      </Link>
+    </li>
   );
 };
 

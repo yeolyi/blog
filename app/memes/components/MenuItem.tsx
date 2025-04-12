@@ -4,7 +4,6 @@ import { getMediaTypeFromUrl } from "@/utils/form";
 import Image from "next/image";
 import Link from "next/link";
 import { Meme } from "@/types/meme";
-import { styled } from "@pigment-css/react";
 
 interface MemeItemProps {
   meme: Meme;
@@ -14,8 +13,8 @@ interface MemeItemProps {
 export function MemeItem({ meme, ref }: MemeItemProps) {
 
   return (
-    <MemeCard key={meme.id} ref={ref}>
-      <MemeLink href={`/memes/${meme.id}`}>
+    <div key={meme.id} ref={ref} className="border border-[#5e5e5e] hover:translate-y-[-4px] w-[300px]">
+      <Link href={`/memes/${meme.id}`} className="no-underline">
         {getMediaTypeFromUrl(meme.media_url) === "image" ? (
           <Image
             src={meme.media_url}
@@ -25,7 +24,7 @@ export function MemeItem({ meme, ref }: MemeItemProps) {
             style={{ objectFit: "cover" }}
           />
         ) : (
-          <MediaContainer>
+          <div className="w-full h-full">
             <video
               src={meme.media_url}
               controls
@@ -33,74 +32,26 @@ export function MemeItem({ meme, ref }: MemeItemProps) {
             >
               Your browser does not support video playback.
             </video>
-          </MediaContainer>
+          </div>
         )}
 
-        <ContentContainer>
-          <MemeTitle>{meme.title}</MemeTitle>
+        <div className="p-4 flex flex-col gap-2">
+          <h3 className="text-lg font-semibold text-white">{meme.title}</h3>
           {meme.description && (
-            <MemeDescription>{meme.description}</MemeDescription>
+            <p className="text-[#e0e0e0] text-sm overflow-hidden text-ellipsis whitespace-nowrap max-w-full">
+              {meme.description}
+            </p>
           )}
 
-          <TagContainer>
+          <div className="flex flex-wrap gap-2">
             {meme.meme_tags.map((tag) => (
-              <Tag key={tag.tag_id}>{tag.tags.name}</Tag>
+              <span key={tag.tag_id} className="bg-white text-black text-base font-medium">
+                {tag.tags.name}
+              </span>
             ))}
-          </TagContainer>
-        </ContentContainer>
-      </MemeLink>
-    </MemeCard>
+          </div>
+        </div>
+      </Link>
+    </div>
   );
 }
-
-const MemeCard = styled.div`
-  border: 1px solid #5e5e5e;
-  &:hover {
-    transform: translateY(-4px);
-  }
-  width: 300px;
-`;
-
-const MemeLink = styled(Link)`
-  text-decoration: none;
-`;
-
-const MediaContainer = styled.div`
-  width: 100%;
-  height: 100%;
-`;
-
-const ContentContainer = styled.div`
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-`;
-
-const MemeTitle = styled.h3`
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: white;
-`;
-
-const MemeDescription = styled.p`
-  color: #e0e0e0;
-  font-size: 0.9rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
-`;
-
-const TagContainer = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-`;
-
-const Tag = styled.span`
-  background-color: white;
-  color: black;
-  font-size: 1rem;
-  font-weight: 500;
-`;

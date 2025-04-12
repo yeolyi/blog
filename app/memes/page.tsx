@@ -1,32 +1,17 @@
 import { Suspense } from "react";
 import MemeListServer from "@/app/memes/components/MemeListServer";
-import {  styled } from "@pigment-css/react";
 import Admin from "@/app/memes/components/Admin";
-export default async function MemesPage() {
 
+export default async function MemesPage() {
   return (
-    <Container>
+    <div className="mx-auto my-24 mb-[30vh] p-8 flex flex-col gap-4">
       <Suspense>
         <Admin/>
       </Suspense>
-      <Suspense fallback={<LoadingText>로딩 중...</LoadingText>}>
+      <Suspense fallback={<div className="text-xl font-medium text-[#5e5e5e]">로딩 중...</div>}>
         <MemeListServer />
       </Suspense>
-    </Container>
+    </div>
   );
 }
-
-const Container = styled.div`
-  margin: 6rem auto 30vh auto;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-`;
-
-const LoadingText = styled.div`
-  font-size: 1.2rem;
-  font-weight: 500;
-  color: #5e5e5e;
-`;
 

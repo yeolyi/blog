@@ -1,6 +1,5 @@
 import type { NextConfig } from "next";
 import createMDX from "@next/mdx";
-import { withPigment } from "@pigment-css/nextjs-plugin";
 import remarkGfm from "remark-gfm";
 
 const nextConfig: NextConfig = {
@@ -32,4 +31,4 @@ const withMDX = createMDX({
   },
 });
 
-export default withPigment(withMDX(nextConfig));
+export default withMDX(nextConfig);
