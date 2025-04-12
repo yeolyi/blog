@@ -5,6 +5,7 @@ import { styled } from "@pigment-css/react";
 import Post from "@/app/components/Post";
 import Tile from "@/app/components/Tile";
 import MemeTile from "@/app/components/MemeTile";
+import { Suspense } from "react";
 export default async function Home() {
   return (
     <Container>
@@ -38,7 +39,9 @@ export default async function Home() {
       </Post>
 
       <Tile>
-        <MemeTile/>
+        <Suspense>
+          <MemeTile />
+        </Suspense>
       </Tile>
     </Container>
   );
