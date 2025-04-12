@@ -1,5 +1,4 @@
-import Comment from '@/app/post/[id]/components/Comment';
-
+import Comments from '@/app/post/[id]/components/Comments';
 import localFont from 'next/font/local';
 
 const monoplexKR = localFont({
@@ -23,7 +22,7 @@ export default async function PostLayout({
       className={`${monoplexKR.variable} max-w-2xl mx-auto mt-[12vh] mb-32 px-4 prose prose-invert`}
     >
       {children}
-      <Comment id={id} />
+      <Comments postId={id} />
     </div>
   );
 }

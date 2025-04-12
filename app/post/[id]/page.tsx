@@ -1,4 +1,5 @@
 import { getPostIds } from '@/utils/post';
+import Comments from './components/Comments';
 
 export default async function PostPage({
   params,
