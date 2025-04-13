@@ -180,7 +180,7 @@ export async function updateComment(formData: FormData) {
 /**
  * 이모지 반응을 추가하는 서버 액션
  */
-export async function addEmojiReaction({
+export async function toggleEmojiReaction({
   postId,
   emoji,
 }: {
@@ -191,7 +191,7 @@ export async function addEmojiReaction({
     const supabase = await createClient();
 
     // 사용자 ID를 전달하지 않고 함수 호출
-    const { data, error } = await supabase.rpc('toggle_emoji_reaction', {
+    const { error } = await supabase.rpc('toggle_emoji_reaction', {
       p_post_id: postId,
       p_emoji: emoji,
     });

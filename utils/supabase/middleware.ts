@@ -1,5 +1,6 @@
+import { getUserFromSession } from '@/utils/supabase/getUserFromSession';
 import { createServerClient } from '@supabase/ssr';
-import { NextResponse, type NextRequest } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -41,7 +42,7 @@ export async function updateSession(request: NextRequest) {
   // IMPORTANT: DO NOT REMOVE auth.getUser()
 
   // Refresh the Auth token by calling getUsers
-  await supabase.auth.getUser();
+  await getUserFromSession(supabase);
 
   // if (
   //   !user &&
