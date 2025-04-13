@@ -7,6 +7,20 @@ interface EmojiReactionsListProps {
   postId: string;
 }
 
+export const EmojiResponseFallback = () => {
+  return (
+    <div className="flex flex-wrap gap-2 mt-2">
+      <EmojiButton
+        emoji="👍"
+        count={0}
+        postId=""
+        userReacted={false}
+        isAuthenticated={false}
+      />
+    </div>
+  );
+};
+
 export async function EmojiReactionsList({ postId }: EmojiReactionsListProps) {
   try {
     const isAuthenticated = await getIsAuthenticated();
