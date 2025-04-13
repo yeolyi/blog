@@ -1,8 +1,9 @@
 'use client';
 
+import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 
-export default function SampleClockComponent() {
+export const SampleClock = () => {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -13,5 +14,5 @@ export default function SampleClockComponent() {
     return () => clearInterval(interval);
   }, []);
 
-  return <div suppressHydrationWarning>{time.toLocaleTimeString()}</div>;
-}
+  return <div suppressHydrationWarning>{dayjs(time).format('HH:mm:ss')}</div>;
+};

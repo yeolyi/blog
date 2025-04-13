@@ -1,0 +1,166 @@
+export const title = 'Cursor와 함께 풀스택 블로그 만들기';
+export const date = '2025-04-13';
+
+import Image from '@/app/components/Image';
+import me from '@/app/assets/me.jpg';
+import before from './assets/before.png';
+import after from './assets/after.png';
+
+# Cursor와 함께 풀스택 블로그 만들기
+
+저는 프론트엔드 개발자입니다. 백엔드 코드를 다룰 기회가 적어 백엔드는 제게
+마법같은 분야로 남아있지요. 블로그를 만들 때도 댓글 기능은
+[giscus](https://giscus.app/ko)로 처리하는 등 백엔드 지식이 필요한 부분은 모두
+간접적으로 처리했습니다.
+
+그리고 저는 [개발 인스타그램 계정](https://www.instagram.com/yeol.dev/)을
+운영하는데요, 플랫폼이 인스타그램이다보니 메타의 눈치를 볼 수밖에 없습니다 ㅎㅎ;
+어딘가의 종속적이지 않은 저만의 블로그 플랫폼을 가지고 싶다는 생각도 있었고 서버
+없는 블로그는 이 역할을 하기 어려웠어요.
+
+이렇게 백엔드 있는 블로그에 대한 니즈가 생기던 중 최근 Cursor와 같은 AI 에디터가
+등장하면서 풀스택 블로그의 가능성을 보았습니다. 이것저것 물어볼 백엔드 개발자가
+에디터 안에 있으니 해볼만해 보였어요.
+
+그래서 이번에 도전해봤습니다. 두번의 주말을 바쳐 블로그를 완성했고 그 내용을
+공유드려볼게요.
+
+## 기술 스택
+
+제가 좋아하는 블로그인 joshwcomeau.com의
+[블로그 개발기](https://www.joshwcomeau.com/blog/how-i-built-my-blog-v2/)를 많이
+참고했습니다.
+
+### Next.js
+
+블로그에서 많은 일을 벌일 것 같아 지원폭이 넓은 **Next.js**를 선택했습니다.
+백엔드 코드도 짤 계획이라 서버 컴포넌트를 지원하는 App router를 사용했어요.
+
+### CSS
+
+**CSS 도구**로는 개발기에서 추천된
+[Pigment CSS](https://mui.com/blog/introducing-pigment-css/)를 써보고 싶었지만
+써보니 Next.js에서
+[fast refresh가 안되는 이슈](https://github.com/mui/pigment-css/issues/303)가
+있어 포기했습니다. styled-component와 유사한 구조의 도구를 써보고싶었지만
+아쉽게도 대부분 SSR 지원이 시원찮아 **tailwind**를 선택했습니다.
+[tailwindcss-typography](https://github.com/tailwindlabs/tailwindcss-typography)를
+사용하면 마크다운 스타일도 깔끔하게 넣을 수 있다는 장점이 있습니다.
+
+### MDX
+
+게시글은 **MDX** 파일로 작성합니다. 마크다운과 리액트 컴포넌트를 혼합해서 작성할
+수 있다는 유연함이 장점입니다. 이미지를 제가 원하는 리액트 컴포넌트로 보여줄
+수도 있어요. 클릭해보세요!
+[medium-zoom](https://github.com/francoischalifour/medium-zoom) 라이브러리를
+활용했어요.
+
+<Image src={me} alt="me" className="aspect-[16/9] object-cover" />
+
+MDX 내부 코드 하이라이팅은 [Shiki](https://shiki.style/)를 사용했습니다.
+게시물을 정적 렌더할 때 서버단에서 동작하며
+[highlightjs](https://highlightjs.org/)와의 차이점은 쓰면서 알아봐야겠습니다.
+
+한가지 신기한 기능이 있는데 `// [!code highlight]`같은 주석을 달면 아래처럼
+하이라이트 처리를 해주는 플러그인이 있습니다. 플러그인 종류가 많아 인상깊었네요.
+[참고](https://shiki.style/packages/transformers).
+
+```js
+console.log('highlighted');
+// [!code highlight]
+console.log('highlighted');
+console.log('not highlighted');
+```
+
+### Biome
+
+매번 prettier와 eslint를 설정하는건 귀찮은 일입니다.
+[Biome](https://biomejs.dev/) 을 사용하면 코드 포맷팅과 린팅을 한번에 해결할 수
+있어요.
+
+잠시 써본 후기로는 속도도 빠르고 생전 처음 보는 린트 에러도 있어서 공부가 많이
+됐습니다.
+
+## 메모
+
+만들면서 기억할만한 것들을 메모했습니다.
+
+### js, mjs 확장자 이슈
+
+Shiki를 초기 설정할 때
+`[ERR_REQUIRE_ESM]: require() of ES Module shiki when using 14.2.x`라는 에러가
+발생했습니다. https://github.com/vercel/next.js/issues/64434
+
+`next.config.js`를 `next.config.mjs`로 변경하니 해결되었습니다. ESM, CJS 관련
+이슈는 봐도봐도 어려워요...
+
+## Supabase 쿼리 빌더의 지연 실행
+
+보통 프로미스는 생성되자마자 실행됩니다.
+
+```js
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+// 여기서 바로 setTimeout 시작
+delay(1000);
+```
+
+하지만 Supabase 쿼리 빌더는 일반적인 프로미스와 다르게 작동합니다.Supabase 쿼리
+빌더는 실제 프로미스가 아닌 빌더 패턴을 구현한 객체를 반환합니다.
+
+```typescript
+let query = supabase.from('memes').select(`...`);
+```
+
+여기서 `query`는 실제 프로미스가 아니라 쿼리를 정의하는 객체입니다. 실제 HTTP
+요청은 다음과 같은 방법으로 접근할 때 발생합니다:
+
+1. `await query`를 호출할 때
+2. `query.then()`을 호출할 때
+3. `.single()`, `.maybeSingle()` 같은 최종 실행 메서드를 호출할 때
+
+이런 지연 실행(lazy execution) 패턴은 쿼리를 조합하고 수정할 수 있는 유연성을
+제공합니다.
+
+### Vercel 배포 성능 이슈
+
+로컬에서는 빠르게 동작하던 앱이 Vercel에 배포 후 매우 느려졌습니다. 이 경우에는
+코드 외적인 배포 리전에 이슈가 있던 거라서 기억에 남네요.
+
+> By default, Vercel Functions execute in Washington, D.C., USA (iad1) for all
+> new projects to ensure they are located close to most external data sources,
+> which are hosted on the East Coast of the USA. You can set a new default
+> region through your project's settings on Vercel
+
+Server action은 워싱턴에서 실행되는데 supabase db는 싱가폴에 있고 그걸 접속하는
+저는 한국에 있어서 생긴 이슈였습니다. Supabase 리전은 중도 수정이 안되니
+여러분들은 꼭 잘 보고 만드세요 ㅠㅠ. 저는 새로 만들어서 마이그레이션하느라
+힘들었네요.
+
+vercel 한국 / supabase 싱가폴 성능
+
+<Image src={before} alt="before" />
+
+vercel 한국 / supabase 한국 성능
+
+<Image src={after} alt="after" />
+
+### localhost와 127.0.0.1 차이로 인한 이슈
+
+Supabase auth 설정할 때 localhost와 127.0.0.1가 혼용되어 쿠키가 제대로 남지 않는
+이슈가 있었습니다. 하루 꼬박 걸려 디버깅했네요.
+
+### 기타 팁
+
+- **최적화 전략**: 비싼 연산(DB 접속 등)보다 값싼 연산(로컬 네트워크 접속)을
+  먼저 해서 빨리 실패하도록 구성했습니다.
+- **마크다운 작성 팁**: 마크다운에서 두 줄 띄는 것이 귀찮을 수 있지만, max width
+  포맷팅 고려 시 두 줄 띄는 것이 좋습니다. 글 작성 시와 열람 시의 화면 폭이 다를
+  수 있기 때문입니다.
+- **이미지 속성 활용**: 이미지의 width 속성은 픽셀 단위의 본질적 이미지 너비를
+  나타내며, 이미지의 정확한 비율을 추론하고 로딩 중 레이아웃 이동을 방지하는 데
+  사용됩니다.
+
+## 남은 할 일
+
+- i18n 지원
+- SEO (sitemap 등)

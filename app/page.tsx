@@ -1,6 +1,4 @@
-import MemeTile from '@/app/components/MemeTile';
 import PostList from '@/app/components/Post';
-import Tile from '@/app/components/Tile';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
@@ -53,12 +51,6 @@ export default function Home() {
 
       <Suspense>
         <PostList />
-      </Suspense>
-
-      <Suspense>
-        <Tile>
-          <MemeTile />
-        </Tile>
       </Suspense>
     </div>
   );
