@@ -1,3 +1,4 @@
+import EmojiButton from '@/app/post/[id]/components/EmojiButton';
 import React from 'react';
 import { getEmojiReactions } from '../actions';
 
@@ -8,17 +9,23 @@ interface EmojiReactionsListProps {
 export async function EmojiReactionsList({ postId }: EmojiReactionsListProps) {
   try {
     // 이모지 반응 데이터 가져오기
-    const emojiCounts = await getEmojiReactions(postId);
+    const emojiReactions = await getEmojiReactions(postId);
 
     // 이모지가 없으면 아무것도 표시하지 않음
-    if (!emojiCounts || Object.keys(emojiCounts).length === 0) {
+    if (!emojiReactions || emojiReactions.length === 0) {
       return null;
     }
 
     return (
       <div className="flex flex-wrap gap-2 mt-2">
-        {Object.entries(emojiCounts).map(([emoji, count]) => (
-          <EmojiButton key={emoji} emoji={emoji} count={count} />
+        {emojiReactions.map(({ emoji, count, user_reacted }) => (
+          <EmojiButton
+            key={emoji}
+            emoji={emoji}
+            count={count}
+            postId={postId}
+            userReacted={user_reacted}
+          />
         ))}
         <AddEmojiButton />
       </div>
@@ -32,18 +39,6 @@ export async function EmojiReactionsList({ postId }: EmojiReactionsListProps) {
     );
   }
 }
-
-const EmojiButton = ({ emoji, count }: { emoji: string; count: number }) => {
-  return (
-    <button
-      className="flex items-center border border-[#5E5E5E] px-2 py-1 cursor-pointer hover:bg-white hover:text-black text-white"
-      type="button"
-    >
-      <span className="text-xl mr-1">{emoji}</span>
-      <span className="text-sm">{count}</span>
-    </button>
-  );
-};
 
 const AddEmojiButton = () => {
   return (

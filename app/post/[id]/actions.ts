@@ -2,7 +2,6 @@
 
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
-import { cookies } from 'next/headers';
 
 // 댓글 목록 불러오기 액션
 export async function getComments(postId: string) {
@@ -190,16 +189,12 @@ export async function toggleEmojiReaction({
   try {
     const supabase = await createClient();
 
-    // 사용자 ID를 전달하지 않고 함수 호출
-    const { error } = await supabase.rpc('toggle_emoji_reaction', {
-      p_post_id: postId,
-      p_emoji: emoji,
-    });
-
-    if (error) {
-      console.error('이모지 반응 토글 오류:', error);
-      return { error: '이모지 반응 처리 중 오류가 발생했습니다.' };
-    }
+    await supabase
+      .rpc('toggle_emoji_reaction', {
+        p_post_id: postId,
+        p_emoji: emoji,
+      })
+      .throwOnError();
 
     revalidatePath(`/post/${postId}`);
     return { success: true };
@@ -219,15 +214,13 @@ export async function getEmojiReactions(postId: string) {
     .rpc('get_emoji_counts', {
       p_post_id: postId,
     })
-    .throwOnError()) as { data: { emoji: string; count: number }[] };
+    .throwOnError()) as {
+    data: {
+      emoji: string;
+      count: number;
+      user_reacted: boolean;
+    }[];
+  };
 
-  const emojiCounts = data.reduce(
-    (acc, item) => {
-      acc[item.emoji] = item.count;
-      return acc;
-    },
-    {} as Record<string, number>,
-  );
-
-  return emojiCounts;
+  return data;
 }

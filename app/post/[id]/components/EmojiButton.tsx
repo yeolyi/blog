@@ -6,10 +6,18 @@ export default function EmojiButton({
   emoji,
   count,
   postId,
-}: { emoji: string; count: number; postId: string }) {
+  userReacted,
+}: {
+  emoji: string;
+  count: number;
+  postId: string;
+  userReacted: boolean;
+}) {
   return (
     <button
-      className="flex items-center border border-[#5E5E5E] px-2 py-1 cursor-pointer hover:bg-white hover:text-black text-white"
+      className={`flex items-center border border-[#5E5E5E] px-2 py-1 cursor-pointer hover:bg-white hover:text-black text-white ${
+        userReacted ? 'bg-zinc-700' : ''
+      }`}
       type="button"
       onClick={() => toggleEmojiReaction({ postId, emoji })}
     >
