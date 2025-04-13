@@ -2,7 +2,7 @@
 
 import { Eye, EyeOff } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { type UseFormRegisterReturn, useForm } from 'react-hook-form';
 import { renderMarkdown } from '../utils/markdown';
 
 interface CommentFormClientProps {
@@ -72,6 +72,12 @@ export function CommentFormClient({
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      handleSubmit(onSubmit)();
+    }
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 relative">
       <button
@@ -85,7 +91,7 @@ export function CommentFormClient({
       </button>
 
       {!showPreview ? (
-        <textarea
+        <FitTextArea
           {...register('content', {
             required: '내용을 입력해주세요.',
             minLength: {
@@ -93,9 +99,8 @@ export function CommentFormClient({
               message: '최소 2자 이상 입력해주세요.',
             },
           })}
-          placeholder="댓글을 작성해보세요 (마크다운 지원)"
-          className="block w-full min-h-32 h-fit resize-y p-3 border border-[#5E5E5E] focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 dark:text-gray-100"
           disabled={isSubmitting}
+          onKeyDown={handleKeyDown}
         />
       ) : (
         <div className="w-full min-h-32 p-3 border border-[#5E5E5E] overflow-auto">
@@ -129,3 +134,33 @@ export function CommentFormClient({
     </form>
   );
 }
+
+const FitTextArea = (
+  props: React.TextareaHTMLAttributes<HTMLTextAreaElement> &
+    UseFormRegisterReturn,
+) => {
+  return (
+    <textarea
+      {...props}
+      ref={(ref) => {
+        if (!ref) return;
+        if (props.ref) {
+          props.ref(ref);
+        }
+
+        const handleInput = () => {
+          // textarea.style.height = 'auto'가 필요한 이유는,
+          // 행의 수가 줄어드는 경우에는 scrollHeight가 변하지 않기 때문이다.
+          // height를 auto로 설정해줌으로써 overflow를 강제로 발생시킨다.
+          // 이로부터 원하는 textarea의 scrollHeight를 얻어내는 것이다.
+          ref.style.height = 'auto';
+          ref.style.height = `${ref.scrollHeight}px`;
+        };
+        ref.addEventListener('input', handleInput);
+        return () => ref.removeEventListener('input', handleInput);
+      }}
+      placeholder="댓글을 작성해보세요 (마크다운 지원)"
+      className="block w-full resize-none min-h-32 p-3 border border-[#5E5E5E] focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 dark:text-gray-100 overflow-hidden"
+    />
+  );
+};

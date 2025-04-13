@@ -9,6 +9,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@ferrucc-io/emoji-picker": "^0.0.44",
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
     "@next/mdx": "^15.2.4",
