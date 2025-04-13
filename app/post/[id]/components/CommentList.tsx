@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
+import { Suspense } from 'react';
 import { deleteComment, getComments } from '../actions';
 import { CommentItem } from './CommentItem';
 
@@ -29,15 +30,17 @@ export default async function CommentList({ postId }: CommentListProps) {
             아직 댓글이 없습니다. 첫 댓글을 남겨보세요!
           </p>
         ) : (
-          comments.map((comment) => (
-            <CommentItem
-              key={comment.id}
-              comment={comment}
-              postId={postId}
-              currentUserId={user?.id}
-              deleteAction={deleteComment}
-            />
-          ))
+          <Suspense fallback={<div>Loading...</div>}>
+            {comments.map((comment) => (
+              <CommentItem
+                key={comment.id}
+                comment={comment}
+                postId={postId}
+                currentUserId={user?.id}
+                deleteAction={deleteComment}
+              />
+            ))}
+          </Suspense>
         )}
       </div>
     </div>

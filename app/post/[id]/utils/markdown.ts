@@ -1,18 +1,39 @@
 import DOMPurify from 'isomorphic-dompurify';
-import { marked } from 'marked';
+import { Marked } from 'marked';
+import { markedHighlight } from 'marked-highlight';
+import { createHighlighter } from 'shiki';
 
-// 마크다운 옵션 설정
-marked.use({
-  gfm: true, // GitHub Flavored Markdown 활성화
-  breaks: true, // 줄바꿈 허용
+const langs = ['js', 'ts', 'py', 'bash', 'md', 'json'];
+
+const highlighter = await createHighlighter({
+  themes: ['github-dark'],
+  langs,
 });
 
-export function renderMarkdown(text: string): string {
-  const rawHtml = marked.parse(text, {
-    async: false,
-  }) as string;
+const marked = new Marked();
 
+marked.use(
+  markedHighlight({
+    highlight(code, lang, info) {
+      if (langs.includes(lang)) {
+        return highlighter.codeToHtml(code, { lang, theme: 'github-dark' });
+      }
+      return code;
+    },
+  }),
+);
+
+marked.use({
+  renderer: {
+    code({ text }) {
+      console.log(text);
+      return text;
+    },
+  },
+});
+
+export async function renderMarkdown(text: string): Promise<string> {
+  const rawHtml = await marked.parse(text);
   const cleanHtml = DOMPurify.sanitize(rawHtml);
-
   return cleanHtml;
 }

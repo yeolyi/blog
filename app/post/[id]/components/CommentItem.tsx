@@ -24,7 +24,7 @@ interface CommentItemProps {
   ) => Promise<{ success?: boolean; error?: string }>;
 }
 
-export function CommentItem({
+export async function CommentItem({
   comment,
   postId,
   currentUserId,
@@ -35,7 +35,7 @@ export function CommentItem({
   const developerNumber = comment.developerNumber;
 
   // 마크다운을 HTML로 변환
-  const renderedContent = renderMarkdown(comment.content);
+  const renderedContent = await renderMarkdown(comment.content);
 
   return (
     <div className="p-4 border border-gray-300 bg-gray-50 dark:bg-gray-900 dark:border-gray-700">
@@ -58,7 +58,6 @@ export function CommentItem({
       </div>
 
       <div
-        className="prose prose-sm max-w-none text-gray-800 dark:text-gray-200 dark:prose-invert prose-a:text-gray-700 dark:prose-a:text-gray-300 prose-a:no-underline hover:prose-a:underline"
         // biome-ignore lint/security/noDangerouslySetInnerHtml: 마크다운 렌더링을 위해 필요하며, DOMPurify로 HTML을 정화했습니다
         dangerouslySetInnerHTML={{ __html: renderedContent }}
       />

@@ -12,7 +12,6 @@ export default async function PostPage({
     title,
     date,
   } = await import(`@/mdx/${id}/page.mdx`);
-  console.log(title, date);
   return <Component />;
 }
 
