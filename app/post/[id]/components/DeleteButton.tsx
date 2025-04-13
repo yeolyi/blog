@@ -49,7 +49,7 @@ export function DeleteButton({
       <Dialog.Root open={open} onOpenChange={setOpen}>
         <Dialog.Trigger asChild>
           <button
-            className="text-gray-500 hover:text-gray-800 disabled:opacity-50 cursor-pointer"
+            className="text-[#5E5E5E] hover:text-gray-400 disabled:opacity-50 cursor-pointer"
             aria-label="댓글 삭제"
             type="button"
             disabled={isDeleting}

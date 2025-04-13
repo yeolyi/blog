@@ -1,5 +1,6 @@
 import AddEmojiButton from '@/app/post/[id]/components/AddEmojiButton';
 import EmojiButton from '@/app/post/[id]/components/EmojiButton';
+import { getIsAuthenticated } from '@/utils/auth';
 import React from 'react';
 import { getEmojiReactions } from '../actions';
 
@@ -9,6 +10,8 @@ interface EmojiReactionsListProps {
 
 export async function EmojiReactionsList({ postId }: EmojiReactionsListProps) {
   try {
+    const isAuthenticated = await getIsAuthenticated();
+
     // 이모지 반응 데이터 가져오기
     const emojiReactions = await getEmojiReactions(postId);
 
@@ -30,9 +33,10 @@ export async function EmojiReactionsList({ postId }: EmojiReactionsListProps) {
             count={count}
             postId={postId}
             userReacted={user_reacted}
+            isAuthenticated={isAuthenticated}
           />
         ))}
-        <AddEmojiButton />
+        {isAuthenticated && <AddEmojiButton />}
       </div>
     );
   } catch (error) {

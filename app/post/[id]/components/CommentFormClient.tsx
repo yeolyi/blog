@@ -1,6 +1,6 @@
 'use client';
 
-import { Eye, EyeOff } from 'lucide-react';
+import { Paintbrush } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { type UseFormRegisterReturn, useForm } from 'react-hook-form';
 import { renderMarkdown } from '../utils/markdown';
@@ -84,20 +84,16 @@ export function CommentFormClient({
         type="button"
         onClick={() => setShowPreview((x) => !x)}
         className={`px-3 py-1 text-sm flex items-center gap-1 absolute top-2 right-2 cursor-pointer ${
-          showPreview ? 'text-white' : 'text-[#5E5E5E]'
+          showPreview ? 'text-white' : 'text-[#5E5E5E] hover:text-gray-400'
         }`}
       >
-        {showPreview ? <Eye size={20} /> : <EyeOff size={20} />}
+        <Paintbrush size={20} />
       </button>
 
       {!showPreview ? (
         <FitTextArea
           {...register('content', {
             required: '내용을 입력해주세요.',
-            minLength: {
-              value: 2,
-              message: '최소 2자 이상 입력해주세요.',
-            },
           })}
           disabled={isSubmitting}
           onKeyDown={handleKeyDown}
@@ -156,6 +152,9 @@ const FitTextArea = (
           ref.style.height = 'auto';
           ref.style.height = `${ref.scrollHeight}px`;
         };
+
+        handleInput();
+
         ref.addEventListener('input', handleInput);
         return () => ref.removeEventListener('input', handleInput);
       }}

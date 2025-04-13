@@ -19,7 +19,7 @@ export default async function CommentList({ postId }: CommentListProps) {
   const { comments } = await getComments(postId);
 
   return (
-    <div className="space-y-4">
+    <>
       {comments.length === 0 ? (
         <p className="text-gray-500 dark:text-gray-400">
           아직 댓글이 없습니다. 첫 댓글을 남겨보세요!
@@ -37,6 +37,6 @@ export default async function CommentList({ postId }: CommentListProps) {
           ))}
         </Suspense>
       )}
-    </div>
+    </>
   );
 }

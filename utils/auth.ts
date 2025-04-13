@@ -36,7 +36,7 @@ export async function getIsAdmin(): Promise<boolean> {
  * 현재 사용자가 로그인했는지 확인하는 함수
  * @returns {Promise<boolean>} 로그인 여부
  */
-export async function isAuthenticated(): Promise<boolean> {
+export async function getIsAuthenticated(): Promise<boolean> {
   try {
     const supabase = await createClient();
     const {
