@@ -3,35 +3,42 @@ import { Marked } from 'marked';
 import { markedHighlight } from 'marked-highlight';
 import { createHighlighter } from 'shiki';
 
-const langs = ['js', 'ts', 'py', 'bash', 'md', 'json'];
+const getMarkedInstance = async () => {
+  const langs = ['js', 'ts', 'py', 'bash', 'md', 'json'];
 
-const highlighter = await createHighlighter({
-  themes: ['github-dark'],
-  langs,
-});
+  const highlighter = await createHighlighter({
+    themes: ['github-dark'],
+    langs,
+  });
 
-const marked = new Marked();
+  const marked = new Marked();
 
-marked.use(
-  markedHighlight({
-    highlight(code, lang, info) {
-      if (langs.includes(lang)) {
-        return highlighter.codeToHtml(code, { lang, theme: 'github-dark' });
-      }
-      return code;
+  marked.use(
+    markedHighlight({
+      highlight(code, lang, info) {
+        if (langs.includes(lang)) {
+          return highlighter.codeToHtml(code, { lang, theme: 'github-dark' });
+        }
+        return code;
+      },
+    }),
+  );
+
+  marked.use({
+    renderer: {
+      code({ text }) {
+        return text;
+      },
     },
-  }),
-);
+  });
 
-marked.use({
-  renderer: {
-    code({ text }) {
-      return text;
-    },
-  },
-});
+  return marked;
+};
+
+let marked: Marked | undefined;
 
 export async function renderMarkdown(text: string): Promise<string> {
+  if (!marked) marked = await getMarkedInstance();
   const rawHtml = await marked.parse(text);
   const cleanHtml = DOMPurify.sanitize(rawHtml);
   return cleanHtml;

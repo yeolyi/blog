@@ -1,5 +1,6 @@
 'use client';
 
+import { Eye, EyeOff } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { renderMarkdown } from '../utils/markdown';
@@ -72,31 +73,16 @@ export function CommentFormClient({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-      <div className="flex gap-2 mb-1">
-        <button
-          type="button"
-          onClick={() => setShowPreview(false)}
-          className={`px-3 py-1 text-sm ${
-            !showPreview
-              ? 'bg-gray-800 text-white dark:bg-gray-700'
-              : 'bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
-          }`}
-        >
-          작성
-        </button>
-        <button
-          type="button"
-          onClick={() => setShowPreview(true)}
-          className={`px-3 py-1 text-sm ${
-            showPreview
-              ? 'bg-gray-800 text-white dark:bg-gray-700'
-              : 'bg-gray-200 text-gray-800 dark:bg-gray-800 dark:text-gray-300'
-          }`}
-        >
-          미리보기
-        </button>
-      </div>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 relative">
+      <button
+        type="button"
+        onClick={() => setShowPreview((x) => !x)}
+        className={`px-3 py-1 text-sm flex items-center gap-1 absolute top-2 right-2 cursor-pointer ${
+          showPreview ? 'text-white' : 'text-[#5E5E5E]'
+        }`}
+      >
+        {showPreview ? <Eye size={20} /> : <EyeOff size={20} />}
+      </button>
 
       {!showPreview ? (
         <textarea
@@ -107,23 +93,17 @@ export function CommentFormClient({
               message: '최소 2자 이상 입력해주세요.',
             },
           })}
-          placeholder="댓글을 작성해주세요..."
-          className="w-full min-h-24 resize-y p-3 border border-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 dark:bg-gray-900 dark:border-gray-700 dark:text-gray-100"
+          placeholder="댓글을 작성해보세요 (마크다운 지원)"
+          className="block w-full min-h-32 h-fit resize-y p-3 border border-[#5E5E5E] focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 dark:text-gray-100"
           disabled={isSubmitting}
         />
       ) : (
-        <div className="w-full min-h-24 p-3 border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 overflow-auto">
-          {preview ? (
-            <div
-              // biome-ignore lint/security/noDangerouslySetInnerHtml: 마크다운 렌더링을 위해 필요
-              dangerouslySetInnerHTML={{ __html: preview }}
-              className="prose prose-gray dark:prose-invert max-w-none"
-            />
-          ) : (
-            <p className="text-gray-400 dark:text-gray-500">
-              미리보기 내용이 여기에 표시됩니다...
-            </p>
-          )}
+        <div className="w-full min-h-32 p-3 border border-[#5E5E5E] overflow-auto">
+          <div
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: 마크다운 렌더링을 위해 필요
+            dangerouslySetInnerHTML={{ __html: preview }}
+            className="prose prose-gray dark:prose-invert max-w-none"
+          />
         </div>
       )}
 
@@ -142,7 +122,7 @@ export function CommentFormClient({
       <button
         type="submit"
         disabled={isSubmitting}
-        className="px-4 py-2 bg-gray-800 text-white border border-gray-800 hover:bg-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-500 focus:ring-offset-1 disabled:opacity-50 disabled:bg-gray-400 disabled:cursor-not-allowed dark:bg-gray-700 dark:hover:bg-gray-600"
+        className="w-full px-4 py-2 bg-white text-black hover:bg-black hover:text-white focus:outline-none focus:ring-1 focus:ring-gray-500 focus:ring-offset-1 disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed cursor-pointer"
       >
         {isSubmitting ? '작성 중...' : '댓글 작성'}
       </button>

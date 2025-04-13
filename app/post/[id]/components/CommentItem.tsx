@@ -39,16 +39,21 @@ export async function CommentItem({
   const renderedContent = await renderMarkdown(comment.content);
 
   return (
-    <div className="p-4 border border-gray-300 bg-gray-50 dark:bg-gray-900 dark:border-gray-700">
-      <div className="flex justify-between items-start mb-2">
-        <a
-          href={githubUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-medium text-gray-700 hover:underline dark:text-gray-300"
-        >
-          #{developerNumber}번째 개발자님
-        </a>
+    <div className="p-4 border border-[#5E5E5E] dark:border-[#5E5E5E]">
+      <div className="flex justify-between items-start mb-4">
+        <p>
+          <a
+            href={githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-gray-700 hover:underline dark:text-gray-300"
+          >
+            #{developerNumber}번째 개발자님
+          </a>
+          <span className="text-xs text-gray-500 mt-2 whitespace-pre">
+            {dayjs(comment.created_at).format('  YYYY년 MM월 DD일 HH:mm')}
+          </span>
+        </p>
         {currentUserId === comment.author_id && (
           <DeleteButton
             commentId={comment.id}
@@ -59,13 +64,10 @@ export async function CommentItem({
       </div>
 
       <div
+        className="prose prose-invert"
         // biome-ignore lint/security/noDangerouslySetInnerHtml: 마크다운 렌더링을 위해 필요하며, DOMPurify로 HTML을 정화했습니다
         dangerouslySetInnerHTML={{ __html: renderedContent }}
       />
-
-      <p className="text-xs text-gray-500 mt-2">
-        {dayjs(comment.created_at).format('YYYY년 MM월 DD일 HH:mm')}
-      </p>
     </div>
   );
 }

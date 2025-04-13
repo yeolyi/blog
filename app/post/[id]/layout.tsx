@@ -19,9 +19,9 @@ export default async function PostLayout({
 
   return (
     <div
-      className={`${monoplexKR.variable} max-w-2xl mx-auto mt-[12vh] mb-32 px-4 prose prose-invert`}
+      className={`${monoplexKR.variable} max-w-2xl mx-auto mt-[12vh] mb-32 px-4`}
     >
-      {children}
+      <div className="prose prose-invert">{children}</div>
       <Comments postId={id} />
     </div>
   );

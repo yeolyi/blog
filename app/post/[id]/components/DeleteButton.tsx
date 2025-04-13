@@ -49,28 +49,28 @@ export function DeleteButton({
       <Dialog.Root open={open} onOpenChange={setOpen}>
         <Dialog.Trigger asChild>
           <button
-            className="text-gray-500 hover:text-gray-800 disabled:opacity-50 dark:text-gray-400 dark:hover:text-gray-200"
+            className="text-gray-500 hover:text-gray-800 disabled:opacity-50 cursor-pointer"
             aria-label="댓글 삭제"
             type="button"
             disabled={isDeleting}
           >
-            <Trash size={16} />
+            <Trash size={20} />
           </button>
         </Dialog.Trigger>
         <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 bg-black/50" />
-          <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 p-6 rounded-md shadow-lg w-[90vw] max-w-md">
+          <Dialog.Overlay className="fixed inset-0 bg-black/80" />
+          <Dialog.Content className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black p-6 shadow-lg w-[90vw] max-w-md border border-[#5E5E5E]">
             <Dialog.Title className="text-lg font-medium mb-4 dark:text-white">
               댓글 삭제
             </Dialog.Title>
             <Dialog.Description className="text-gray-600 dark:text-gray-300 mb-6">
-              정말 이 댓글을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+              정말 이 댓글을 삭제하시겠습니까?
             </Dialog.Description>
 
             <div className="flex justify-end gap-3">
               <Dialog.Close asChild>
                 <button
-                  className="px-4 py-2 text-sm border border-gray-300 rounded-md dark:border-gray-600 dark:text-gray-300"
+                  className="px-4 py-2 text-sm text-white cursor-pointer"
                   type="button"
                 >
                   취소
@@ -79,7 +79,7 @@ export function DeleteButton({
               <button
                 onClick={handleDelete}
                 disabled={isDeleting}
-                className="px-4 py-2 text-sm bg-red-500 text-white rounded-md hover:bg-red-600 disabled:opacity-50"
+                className="px-4 py-2 text-sm bg-white text-black border border-[#5E5E5E] hover:bg-black hover:text-white disabled:opacity-50 cursor-pointer"
                 type="button"
               >
                 {isDeleting ? '삭제 중...' : '삭제'}

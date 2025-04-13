@@ -35,7 +35,7 @@ function CommentFormLoading() {
 
 export default function Comments({ postId }: CommentsProps) {
   return (
-    <div className="mt-10 border-t border-gray-300 pt-8 dark:border-gray-700">
+    <div className="pt-8">
       <Suspense fallback={<CommentFormLoading />}>
         <CommentForm postId={postId} />
       </Suspense>
