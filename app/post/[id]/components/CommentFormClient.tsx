@@ -1,5 +1,6 @@
 'use client';
 
+import { createComment, toggleEmojiReaction } from '@/app/post/[id]/actions';
 import { Paintbrush } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { type UseFormRegisterReturn, useForm } from 'react-hook-form';
@@ -7,19 +8,13 @@ import { renderMarkdown } from '../utils/markdown';
 
 interface CommentFormClientProps {
   postId: string;
-  createAction: (
-    formData: FormData,
-  ) => Promise<{ success?: boolean; error?: string }>;
 }
 
 interface CommentFormValues {
   content: string;
 }
 
-export function CommentFormClient({
-  postId,
-  createAction,
-}: CommentFormClientProps) {
+export function CommentFormClient({ postId }: CommentFormClientProps) {
   const [serverError, setServerError] = useState<string | null>(null);
   const [preview, setPreview] = useState<string>('');
   const [showPreview, setShowPreview] = useState<boolean>(false);
@@ -47,8 +42,27 @@ export function CommentFormClient({
     updatePreview();
   }, [content, showPreview]);
 
+  const isSingleEmoji = (text: string): boolean => {
+    // Intl.Segmenter를 사용하여 그래픽 클러스터로 텍스트 분할
+    const segmenter = new Intl.Segmenter('ko', { granularity: 'grapheme' });
+    const segments = [...segmenter.segment(text.trim())];
+
+    // 정확히 하나의 그래픽 클러스터만 있는지 확인
+    if (segments.length !== 1) return false;
+
+    // 이모지 유니코드 범위 확인
+    const segment = segments[0].segment;
+
+    // 이모지 감지 정규식
+    const emojiRegex = /\p{Emoji}/u;
+
+    // 텍스트가 이모지인지 확인
+    return emojiRegex.test(segment);
+  };
+
   const onSubmit = async (values: CommentFormValues) => {
-    if (!values.content.trim()) return;
+    const trimmedContent = values.content.trim();
+    if (!trimmedContent) return;
 
     setServerError(null);
 
@@ -57,14 +71,31 @@ export function CommentFormClient({
       formData.append('postId', postId);
       formData.append('content', values.content);
 
-      const result = await createAction(formData);
+      // 단일 이모지인 경우 이모지 액션으로 처리
+      if (isSingleEmoji(trimmedContent)) {
+        const result = await toggleEmojiReaction({
+          postId,
+          emoji: values.content,
+        });
 
-      if (result.error) {
-        setServerError(result.error);
-      } else if (result.success) {
-        reset(); // 폼 초기화
-        setPreview('');
-        setShowPreview(false);
+        if (result.error) {
+          setServerError(result.error);
+        } else if (result.success) {
+          reset(); // 폼 초기화
+          setPreview('');
+          setShowPreview(false);
+        }
+      } else {
+        // 일반 댓글 처리
+        const result = await createComment(formData);
+
+        if (result.error) {
+          setServerError(result.error);
+        } else if (result.success) {
+          reset(); // 폼 초기화
+          setPreview('');
+          setShowPreview(false);
+        }
       }
     } catch (e) {
       setServerError('댓글 작성 중 오류가 발생했습니다.');
@@ -80,15 +111,17 @@ export function CommentFormClient({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 relative">
-      <button
-        type="button"
-        onClick={() => setShowPreview((x) => !x)}
-        className={`px-3 py-1 text-sm flex items-center gap-1 absolute top-2 right-2 cursor-pointer ${
-          showPreview ? 'text-white' : 'text-[#5E5E5E] hover:text-gray-400'
-        }`}
-      >
-        <Paintbrush size={20} />
-      </button>
+      <div className="flex items-center gap-2 absolute top-2 right-2">
+        <button
+          type="button"
+          onClick={() => setShowPreview((x) => !x)}
+          className={`text-sm cursor-pointer w-6 h-6 ${
+            showPreview ? 'text-white' : 'text-[#5E5E5E] hover:text-gray-400'
+          }`}
+        >
+          <Paintbrush size={20} />
+        </button>
+      </div>
 
       {!showPreview ? (
         <FitTextArea
@@ -158,7 +191,7 @@ const FitTextArea = (
         ref.addEventListener('input', handleInput);
         return () => ref.removeEventListener('input', handleInput);
       }}
-      placeholder="댓글을 작성해보세요 (마크다운 지원)"
+      placeholder="댓글이나 이모지를 남겨보세요."
       className="block w-full resize-none min-h-32 p-3 border border-[#5E5E5E] focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 dark:text-gray-100 overflow-hidden"
     />
   );

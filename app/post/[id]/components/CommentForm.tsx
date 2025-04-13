@@ -1,5 +1,4 @@
 import { createClient } from '@/utils/supabase/server';
-import { createComment } from '../actions';
 import { CommentFormClient } from './CommentFormClient';
 
 interface CommentFormProps {
@@ -22,7 +21,7 @@ export default async function CommentForm({ postId }: CommentFormProps) {
           댓글을 작성하려면 로그인이 필요합니다.
         </p>
       ) : (
-        <CommentFormClient postId={postId} createAction={createComment} />
+        <CommentFormClient postId={postId} />
       )}
     </>
   );

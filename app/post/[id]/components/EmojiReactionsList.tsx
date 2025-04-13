@@ -1,4 +1,3 @@
-import AddEmojiButton from '@/app/post/[id]/components/AddEmojiButton';
 import EmojiButton from '@/app/post/[id]/components/EmojiButton';
 import { getIsAuthenticated } from '@/utils/auth';
 import React from 'react';
@@ -36,7 +35,6 @@ export async function EmojiReactionsList({ postId }: EmojiReactionsListProps) {
             isAuthenticated={isAuthenticated}
           />
         ))}
-        {isAuthenticated && <AddEmojiButton />}
       </div>
     );
   } catch (error) {
