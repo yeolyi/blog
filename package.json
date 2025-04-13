@@ -23,6 +23,7 @@
     "@types/uuid": "^10.0.0",
     "dayjs": "^1.11.13",
     "isomorphic-dompurify": "^2.23.0",
+    "lucide-react": "^0.487.0",
     "marked": "^15.0.8",
     "marked-highlight": "^2.2.1",
     "medium-zoom": "^1.1.0",

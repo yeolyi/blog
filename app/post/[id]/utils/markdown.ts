@@ -26,7 +26,6 @@ marked.use(
 marked.use({
   renderer: {
     code({ text }) {
-      console.log(text);
       return text;
     },
   },

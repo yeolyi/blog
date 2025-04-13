@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { renderMarkdown } from '../utils/markdown';
 import { DeleteButton } from './DeleteButton';
 
@@ -63,13 +64,7 @@ export async function CommentItem({
       />
 
       <p className="text-xs text-gray-500 mt-2">
-        {new Date(comment.created_at).toLocaleDateString('ko-KR', {
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-        })}
+        {dayjs(comment.created_at).format('YYYY년 MM월 DD일 HH:mm')}
       </p>
     </div>
   );

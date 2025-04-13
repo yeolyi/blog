@@ -147,3 +147,31 @@ export async function deleteComment(formData: FormData) {
     return { error: '댓글 삭제 중 오류가 발생했습니다.' };
   }
 }
+
+// 댓글 수정 서버 액션
+export async function updateComment(formData: FormData) {
+  const commentId = formData.get('commentId') as string;
+  const postId = formData.get('postId') as string;
+  const content = formData.get('content') as string;
+
+  if (!commentId || !postId || !content?.trim()) {
+    return { error: '필요한 정보가 누락되었습니다.' };
+  }
+
+  try {
+    const supabase = await createClient();
+
+    await supabase
+      .from('comments')
+      .update({ content, updated_at: new Date().toISOString() })
+      .eq('id', commentId)
+      .throwOnError();
+
+    revalidatePath(`/post/${postId}`);
+
+    return { success: true };
+  } catch (error) {
+    console.error('댓글 수정 에러:', error);
+    return { error: '댓글 수정 중 오류가 발생했습니다.' };
+  }
+}
