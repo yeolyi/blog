@@ -2,6 +2,7 @@
 
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
 
 // 댓글 목록 불러오기 액션
 export async function getComments(postId: string) {
@@ -174,4 +175,59 @@ export async function updateComment(formData: FormData) {
     console.error('댓글 수정 에러:', error);
     return { error: '댓글 수정 중 오류가 발생했습니다.' };
   }
+}
+
+/**
+ * 이모지 반응을 추가하는 서버 액션
+ */
+export async function addEmojiReaction({
+  postId,
+  emoji,
+}: {
+  postId: string;
+  emoji: string;
+}) {
+  try {
+    const supabase = await createClient();
+
+    // 사용자 ID를 전달하지 않고 함수 호출
+    const { data, error } = await supabase.rpc('toggle_emoji_reaction', {
+      p_post_id: postId,
+      p_emoji: emoji,
+    });
+
+    if (error) {
+      console.error('이모지 반응 토글 오류:', error);
+      return { error: '이모지 반응 처리 중 오류가 발생했습니다.' };
+    }
+
+    revalidatePath(`/post/${postId}`);
+    return { success: true };
+  } catch (error) {
+    console.error('이모지 반응 추가 오류:', error);
+    return { error: '서버 오류가 발생했습니다.' };
+  }
+}
+
+/**
+ * 게시물의 이모지 반응 개수를 가져오는 서버 액션
+ */
+export async function getEmojiReactions(postId: string) {
+  const supabase = await createClient();
+
+  const { data } = (await supabase
+    .rpc('get_emoji_counts', {
+      p_post_id: postId,
+    })
+    .throwOnError()) as { data: { emoji: string; count: number }[] };
+
+  const emojiCounts = data.reduce(
+    (acc, item) => {
+      acc[item.emoji] = item.count;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  return emojiCounts;
 }

@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import CommentForm from './CommentForm';
 import CommentList from './CommentList';
+import { EmojiReactionsList } from './EmojiReactionsList';
 
 interface CommentsProps {
   postId: string;
@@ -35,16 +36,18 @@ function CommentFormLoading() {
 
 export default function Comments({ postId }: CommentsProps) {
   return (
-    <div className="pt-8">
+    <div className="pt-8 space-y-4">
+      <Suspense>
+        <EmojiReactionsList postId={postId} />
+      </Suspense>
+
       <Suspense fallback={<CommentFormLoading />}>
         <CommentForm postId={postId} />
       </Suspense>
 
-      <div className="mt-10">
-        <Suspense fallback={<CommentLoading />}>
-          <CommentList postId={postId} />
-        </Suspense>
-      </div>
+      <Suspense fallback={<CommentLoading />}>
+        <CommentList postId={postId} />
+      </Suspense>
     </div>
   );
 }
