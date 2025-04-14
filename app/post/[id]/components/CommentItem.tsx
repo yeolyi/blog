@@ -40,7 +40,8 @@ export async function CommentItem({
 
   return (
     <div className="p-4 border border-[#5E5E5E] dark:border-[#5E5E5E]">
-      <div className="flex justify-between items-start mb-4">
+      {/* 게시물에 첨부된 경우 prose가 적용되지 않도록 처리 */}
+      <div className="not-prose flex justify-between items-start mb-4">
         <p>
           <a
             href={githubUrl}
