@@ -1,33 +1,6 @@
-export const title = 'Cursor와 함께 풀스택 블로그 만들기';
-export const date = '2025-04-13';
-
-import Image from '@/app/components/Image';
-import me from '@/app/assets/me.jpg';
-import before from './assets/before.png';
-import after from './assets/after.png';
-
-# Cursor와 함께 풀스택 블로그 만들기
-
-저는 프론트엔드 개발자입니다. 백엔드 코드를 다룰 기회가 적어 백엔드는 제게
-마법같은 분야로 남아있지요. 블로그를 만들 때도 댓글 기능은
-[giscus](https://giscus.app/ko)로 처리하는 등 백엔드 지식이 필요한 부분은 모두
-간접적으로 처리했습니다.
-
-그리고 저는 [개발 인스타그램 계정](https://www.instagram.com/yeol.dev/)을
-운영하는데요, 플랫폼이 인스타그램이다보니 메타의 눈치를 볼 수밖에 없습니다 ㅎㅎ;
-어딘가의 종속적이지 않은 저만의 블로그 플랫폼을 가지고 싶다는 생각도 있었고 서버
-없는 블로그는 이 역할을 하기 어려웠어요.
-
-이렇게 백엔드 있는 블로그에 대한 니즈가 생기던 중 최근 Cursor와 같은 AI 에디터가
-등장하면서 풀스택 블로그의 가능성을 보았습니다. 이것저것 물어볼 백엔드 개발자가
-에디터 안에 있으니 해볼만해 보였어요.
-
-그래서 이번에 도전해봤습니다. 두번의 주말을 바쳐 블로그를 완성했고 그 내용을
-공유드려볼게요.
-
 ## 기술 스택
 
-제가 좋아하는 블로그인 joshwcomeau.com의
+제가 좋아하는 블로그이자 학습 플랫폼인 joshwcomeau.com
 [블로그 개발기](https://www.joshwcomeau.com/blog/how-i-built-my-blog-v2/)를 많이
 참고했습니다.
 
@@ -72,6 +45,8 @@ console.log('highlighted');
 console.log('not highlighted');
 ```
 
+### Supabase
+
 ### Biome
 
 매번 prettier와 eslint를 설정하는건 귀찮은 일입니다.
@@ -81,9 +56,11 @@ console.log('not highlighted');
 잠시 써본 후기로는 속도도 빠르고 생전 처음 보는 린트 에러도 있어서 공부가 많이
 됐습니다.
 
+### bun
+
 ## 메모
 
-만들면서 기억할만한 것들을 메모했습니다.
+**만들면서 기억할만한 것들을 메모했습니다.**
 
 ### js, mjs 확장자 이슈
 

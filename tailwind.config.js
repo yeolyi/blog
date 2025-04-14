@@ -17,6 +17,9 @@ module.exports = {
               width: 'calc(100% + 2.2857143em)',
               display: 'inline-block',
             },
+            p: {
+              wordBreak: 'keep-all',
+            },
           },
         },
       },

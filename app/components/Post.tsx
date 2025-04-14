@@ -29,8 +29,8 @@ const PostItem = ({ href, date, title, className = '' }: PostItemProps) => {
     <li
       className={`group cursor-pointer hover:bg-white active:bg-white text-xl font-semibold py-2 ${className}`}
     >
-      <Link href={href} className="flex w-full gap-2 no-underline">
-        <span className="text-xl font-semibold text-white group-hover:text-black group-active:text-black">
+      <Link href={href} className="flex flex-wrap w-full no-underline">
+        <span className="text-xl font-semibold text-white group-hover:text-black group-active:text-black mr-2 break-keep">
           {title}
         </span>
         <span className="text-xl text-[#666]">{date}</span>
