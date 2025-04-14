@@ -3,15 +3,23 @@
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
 
-export async function signInWithGithub() {
+export async function signInWithGithub(redirectUrl?: string) {
   const supabase = await createClient();
   const isLocalEnv = process.env.NODE_ENV === 'development';
+
+  const callbackUrl = isLocalEnv
+    ? 'http://localhost:3000/auth/callback'
+    : 'https://yeolyi.com/auth/callback';
+
+  // 리다이렉트 URL이 있다면 next 파라미터로 추가
+  const redirectTo = redirectUrl
+    ? `${callbackUrl}?next=${encodeURIComponent(redirectUrl)}`
+    : callbackUrl;
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'github',
     options: {
-      redirectTo: isLocalEnv
-        ? 'http://localhost:3000/auth/callback'
-        : 'https://yeolyi.com/auth/callback',
+      redirectTo,
     },
   });
 

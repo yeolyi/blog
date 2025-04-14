@@ -20,6 +20,9 @@ module.exports = {
             p: {
               wordBreak: 'keep-all',
             },
+            h1: {
+              wordBreak: 'keep-all',
+            },
           },
         },
       },

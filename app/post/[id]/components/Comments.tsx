@@ -12,7 +12,7 @@ interface CommentsProps {
 
 export default function Comments({ postId }: CommentsProps) {
   return (
-    <div className="pt-8 space-y-4">
+    <div className="space-y-4">
       <Suspense fallback={<EmojiResponseFallback />}>
         <EmojiReactionsList postId={postId} />
       </Suspense>
