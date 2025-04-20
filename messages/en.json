@@ -19,5 +19,8 @@
     "blog": "Blog",
     "connect": "Connect",
     "email": "Email"
+  },
+  "HomePage": {
+    "bio": "Hello👋 I'm Seongyeol Yi, a developer. I participated in the renewal project of <snuLink>SNU CSE website</snuLink> as a frontend developer. Currently, I work at Kakao developing <edocLink>edoc</edocLink>. I share content for developers on my <instagramLink>Instagram</instagramLink>."
   }
 }
