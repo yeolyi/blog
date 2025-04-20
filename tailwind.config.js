@@ -41,6 +41,10 @@ module.exports = {
               fontWeight: 'inherit',
               // fontSize: 'inherit',
             },
+            'code span': {
+              whiteSpace: 'pre-wrap',
+              wordBreak: 'keep-all',
+            },
           },
         },
       },
