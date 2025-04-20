@@ -47,12 +47,16 @@ export default async function PostPage({
 
 export const generateStaticParams = async () => {
   const locales = routing.locales;
-  return await Promise.all(
-    locales.flatMap(async (locale) => {
-      const postIds = await getPostIds(locale);
-      return postIds.map((postId) => ({ id: postId, locale }));
-    }),
-  );
+  const result = [];
+
+  for (const locale of locales) {
+    const postIds = await getPostIds(locale);
+    for (const postId of postIds) {
+      result.push({ id: postId, locale });
+    }
+  }
+
+  return result;
 };
 
 export const dynamicParams = false;
