@@ -1,0 +1,131 @@
+export const title = 'Building a Full-Stack Blog with Cursor';
+export const date = '2025-04-13';
+
+import Image from '@/app/[locale]/components/Image';
+import cursor from './assets/cursor.png';
+import error from './assets/error.png';
+import Comments from '@/app/[locale]/post/[id]/components/Comments';
+import vibe from './assets/vibe.png';
+import action from './assets/action.png';
+
+I'm a frontend developer who's still a bit uncomfortable with the backend. Even
+when building my previous blog, I mostly handled parts requiring backend
+knowledge indirectly, like using [giscus](https://giscus.app/en) for the comment
+feature.
+
+However, I felt the need for my own space where I could freely display content,
+and for that, I needed a blog backend. This was because while running my
+[developer Instagram account](https://instagram.com/yeol.dev) and occasionally
+posting development content, I faced many limitations due to it being an
+image/video-centric platform.
+
+As this need for a blog with a backend arose, AI editors like the recently
+emerged Cursor showed me the potential for a full-stack blog. After all, now
+there's a backend developer inside the editor I can ask various things.
+
+<Image src={cursor} alt="cursor" />
+
+So, I decided to take on the challenge. I dedicated two weekends to completing
+the blog, and I want to share that process. First, check out the comment
+component I built myself 🙌 ~~Tested only with my account, so there might be
+bugs~~
+
+<Comments postId="blog-cursor" />
+
+## Implementing What You Know with Cursor
+
+It was quite interesting how differently I utilized Cursor when writing familiar
+frontend code versus unfamiliar backend code.
+
+For the frontend, I mainly tasked Cursor with the tedious parts. For example, it
+did a pretty good job creating non-complex components like the comment viewer.
+**The biggest advantage was having Cursor handle tasks I already knew how to
+do.** Thanks to this, I could focus on the details.
+
+For instance, Cursor adequately implemented common error handling like network
+errors or non-logged-in states. This allowed me to spend more time thinking
+about how to structure the error handlers and what messages to show the user,
+rather than just the error handling code itself (try-catch, if...).
+
+<Image src={error} alt="error" className="aspect-[16/9] object-contain" />
+
+Did you know that even basic components like modals are hard to build correctly
+if you consider accessibility, focus handling, etc.? That's why I wanted to try
+[radix-ui](https://www.radix-ui.com/), but **I was too lazy to study it, so I
+asked Cursor!** ~~So proud~~. It created the comment deletion confirmation modal
+quite well. You probably shouldn't do this in a professional setting, but if
+there's a technology you want to try in a side project and you don't feel up to
+reading the documentation, this seems like a good way to take the first step.
+
+Another point to note is that when I made abstract and large requests like
+'implement the comment feature,' Cursor often churned out a whole bunch of
+unintended code. Therefore, I had to work by **breaking down the requirements
+into smaller, component-level tasks**. This also made code review much easier.
+Plus, you can save tokens that would otherwise be wasted on nonsensical output.
+
+While it used to feel like coding alone, using Cursor felt like doing a code
+review, even though it was a solo side project.
+
+## Implementing What You Don't Know with Cursor
+
+Since many backend tasks were unfamiliar to me, I used Cursor by explaining the
+features and requesting it to write the corresponding queries or server action
+code. For example, when I described, "I want to manage comments per user, please
+create a table to store this," it generated appropriate table schemas and
+queries.
+
+Occasionally, when creating tables, it included fields unnecessary for my blog,
+so I requested modifications. Honestly, they were fields that would likely be
+included in a full-fledged service, but I wanted to keep things as simple as
+possible, so I removed them.
+
+<Image src={action} alt="action" className="aspect-[16/9] object-contain" />
+
+_(Developing with a backend certainly makes server actions convenient. It would
+have been more tedious if I had to create all the REST endpoints...)_
+
+Although I roughly understood concepts like primary and foreign keys, allowing
+me to grasp the table design, I still wasn't sure how DB functions or triggers
+worked. I realized that if things like this accumulate, the project could become
+incomprehensible and unmanageable. Thus, I thought it would be crucial **to
+properly encapsulate, manage, and study these parts.**
+
+Since I used Supabase, security settings like RLS (Row Level Security) also
+needed configuration. Cursor automatically generated this code, which was
+extremely convenient. I had heard that 'RLS setup is cumbersome' is a downside
+of Supabase, but thanks to Cursor, I managed to get through it without much
+stress.
+
+## Reflections
+
+Overall, it feels like my role was to handle the details in frontend
+development, while in backend development, it was to verify if Cursor correctly
+understood the requirements.
+
+**I strongly felt that "knowing what is possible" is crucial for creating good
+results.** Since I'm not very familiar with the backend, there were times when
+Cursor wrote strange or inefficient code, and I couldn't even notice it.
+
+For example, for the emoji reaction feature, I initially implemented it using
+server actions by fetching the count (request 1) and then incrementing the count
+(request 2). However, by utilizing a DB function, the database handles this
+operation, reducing it to a single request. I only realized this later and
+optimized it. I believe this issue arises because **Cursor, not knowing the
+service's specific requirements as well as I do, has to write code that
+generally works well.**
+
+I also felt that **optimization requires both an understanding of the
+requirements and technical understanding.** In this instance, I knew the
+requirements, and Cursor knew the technology, but I realized that backend study
+is essential to use Cursor more proactively and efficiently in the future.
+
+Lastly, **troubleshooting related to environment setup**, like Supabase
+configuration or GitHub Auth, was difficult to resolve solely with Cursor. It
+would be great if AI that understands the entire development environment becomes
+commercially available soon.
+
+<Image src={vibe} alt="vibe" className="aspect-[16/9] object-contain" />
+
+I'm usually hesitant to post memes with this kind of slang on Instagram, but
+here I can post freely 😉. In the next post, I'll share the tech stack I used
+and the troubleshooting I encountered.

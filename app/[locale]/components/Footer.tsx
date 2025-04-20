@@ -8,8 +8,8 @@ export default function Footer() {
   return (
     <footer className="w-full py-6 mt-12 border-t border-[#5e5e5e]">
       <div className="container mx-auto px-4">
-        <div className="flex flex-row justify-between items-center">
-          <div>
+        <div className="flex flex-row items-center">
+          <div className="mr-auto">
             <Link href="/" className="text-[#e0e0e0] font-bold no-underline">
               {t('title')}
             </Link>
@@ -18,7 +18,7 @@ export default function Footer() {
             </p>
           </div>
 
-          <ul className="flex flex-row gap-4">
+          <ul className="flex flex-row gap-4 mr-4">
             <li>
               <a
                 href="https://github.com/"

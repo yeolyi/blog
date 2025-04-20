@@ -1,14 +1,16 @@
 import { getPostIds } from '@/utils/post';
+import { getLocale } from 'next-intl/server';
 import Link from 'next/link';
 import type React from 'react';
 
 export default async function PostList() {
-  const ids = await getPostIds();
+  const locale = await getLocale();
+  const ids = await getPostIds(locale);
 
   return (
     <ul className="list-none p-0">
       {ids.map(async (id) => {
-        const { title, date } = await import(`@/mdx/${id}/page.mdx`);
+        const { title, date } = await import(`@/mdx/${id}/${locale}.mdx`);
         return (
           <PostItem key={id} href={`/post/${id}`} date={date} title={title} />
         );

@@ -8,7 +8,7 @@ import Header from './components/Header';
 import '@/app/[locale]/globals.css';
 
 import { routing } from '@/i18n/routing';
-import { NextIntlClientProvider, hasLocale } from 'next-intl';
+import { type Locale, NextIntlClientProvider, hasLocale } from 'next-intl';
 import { notFound } from 'next/navigation';
 import type * as React from 'react';
 
@@ -27,7 +27,7 @@ export default async function RootLayout({
   params,
 }: Readonly<{
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: Locale }>;
 }>) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) {
