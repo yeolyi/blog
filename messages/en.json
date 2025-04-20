@@ -4,7 +4,7 @@
     "loading": "Loading...",
     "developer": "Developer #{number}",
     "logout": "Logout",
-    "changeLocale": "Change Locale"
+    "changeLocale": "Change locale"
   },
   "LocaleSwitcher": {
     "label": "Language",
@@ -21,6 +21,9 @@
     "email": "Email"
   },
   "HomePage": {
-    "bio": "Hello👋 I'm Seongyeol Yi, a developer. I participated in the renewal project of <snuLink>SNU CSE website</snuLink> as a frontend developer. Currently, I work at Kakao developing <edocLink>edoc</edocLink>. I share content for developers on my <instagramLink>Instagram</instagramLink>."
+    "bio": "Hi there👋 I'm Seongyeol, a developer. I worked as a frontend developer for the <snuLink>SNU CSE website</snuLink> renewal project. Now I'm working at Kakao, developing <edocLink>electronic documents</edocLink>. I share developer content on <instagramLink>Instagram</instagramLink>."
+  },
+  "NotFound": {
+    "backHome": "Back to Home"
   }
 }

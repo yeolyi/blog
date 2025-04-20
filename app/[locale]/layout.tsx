@@ -48,7 +48,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} className={`${ibmPlexSans.variable}`}>
-      <body>
+      <body className="min-h-screen flex flex-col">
         <NextIntlClientProvider>
           {children}
           <Header />
