@@ -18,11 +18,21 @@ const ibmPlexSans = IBM_Plex_Sans_KR({
   weight: ['400', '600', '700'],
 });
 
-export const metadata: Metadata = {
-  title: 'seongyeol Yi | 이성열',
-  description:
-    '프론트엔드 개발자 이성열입니다. 개발하면서 기록할만한 것들을 여기 기록해요!',
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = await params;
+
+  return {
+    title: locale === 'ko' ? '이성열' : 'seongyeol Yi',
+    description:
+      locale === 'ko'
+        ? '프론트엔드 개발자 이성열입니다. 개발하면서 기록할만한 것들을 여기 기록해요!'
+        : 'Frontend developer seongyeol Yi. I record noteworthy things while developing!',
+  };
+}
 
 export default async function RootLayout({
   children,
