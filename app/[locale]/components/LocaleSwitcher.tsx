@@ -39,16 +39,16 @@ export default function LocaleSwitcher() {
         value={locale}
         onValueChange={onValueChange}
         disabled={isPending}
-        className="inline-flex"
+        className="inline-flex border border-white"
       >
         {routing.locales.map((cur) => (
           <ToggleGroup.Item
             key={cur}
             value={cur}
             className={clsx(
-              'text-[#5e5e5e] px-2 py-1 text-md font-semibold cursor-pointer',
-              'data-[state=on]:bg-black data-[state=on]:text-white',
-              'hover:bg-black hover:text-white',
+              'text-white px-2 py-1 text-sm font-semibold cursor-pointer',
+              'data-[state=on]:bg-white data-[state=on]:text-black',
+              'hover:bg-white hover:text-black',
               isPending && 'opacity-30',
             )}
           >
