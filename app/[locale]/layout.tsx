@@ -2,6 +2,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
 import { IBM_Plex_Sans_KR } from 'next/font/google';
+import Footer from './components/Footer';
 import Header from './components/Header';
 
 import '@/app/[locale]/globals.css';
@@ -29,7 +30,6 @@ export default async function RootLayout({
   params: Promise<{ locale: string }>;
 }>) {
   const { locale } = await params;
-  console.log(locale);
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
@@ -40,6 +40,7 @@ export default async function RootLayout({
         <NextIntlClientProvider>
           {children}
           <Header />
+          <Footer />
         </NextIntlClientProvider>
         <Analytics />
         <SpeedInsights />

@@ -1,21 +1,25 @@
 import { signOut } from '@/app/[locale]/actions';
 import { createClient } from '@/utils/supabase/server';
+import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import NextLink from 'next/link';
 import { Suspense } from 'react';
 import Button from './Button';
 import LoginButton from './LoginButton';
 
 export default function Header() {
+  const t = useTranslations('Header');
+
   return (
     <header className="fixed top-0 left-0 right-0 flex justify-between items-center p-4">
       <NextLink
         href="/"
         className="text-[#e0e0e0] text-2xl font-bold no-underline"
       >
-        seongyeol
+        {t('title')}
       </NextLink>
       <div className="flex items-center gap-4">
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div>{t('loading')}</div>}>
           <AuthButton />
         </Suspense>
       </div>
@@ -26,6 +30,7 @@ export default function Header() {
 const AuthButton = async () => {
   const supabase = await createClient();
   const { data: user } = await supabase.auth.getUser();
+  const t = await getTranslations('Header');
 
   if (user.user) {
     // 사용자의 프로필 정보와 등록 번호 가져오기
@@ -39,10 +44,10 @@ const AuthButton = async () => {
       <div className="flex items-center gap-4">
         {profile && (
           <span className="text-[#e0e0e0] text-sm">
-            #{profile.registration_number}번째 개발자님
+            {t('developer', { number: profile.registration_number })}
           </span>
         )}
-        <Button onClick={signOut}>로그아웃</Button>
+        <Button onClick={signOut}>{t('logout')}</Button>
       </div>
     );
   }

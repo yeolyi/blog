@@ -3,6 +3,21 @@
     "title": "seongyeol",
     "loading": "로딩 중...",
     "developer": "#{number}번째 개발자님",
-    "logout": "로그아웃"
+    "logout": "로그아웃",
+    "changeLocale": "언어 변경"
+  },
+  "LocaleSwitcher": {
+    "label": "언어",
+    "locale": "{locale}"
+  },
+  "Footer": {
+    "title": "seongyeol",
+    "copyright": "© {year} 모든 권리 보유.",
+    "navigation": "네비게이션",
+    "home": "홈",
+    "works": "작업물",
+    "blog": "블로그",
+    "connect": "연결하기",
+    "email": "이메일"
   }
 }

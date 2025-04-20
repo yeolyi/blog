@@ -3,6 +3,21 @@
     "title": "seongyeol",
     "loading": "Loading...",
     "developer": "Developer #{number}",
-    "logout": "Logout"
+    "logout": "Logout",
+    "changeLocale": "Change Locale"
+  },
+  "LocaleSwitcher": {
+    "label": "Language",
+    "locale": "{locale}"
+  },
+  "Footer": {
+    "title": "seongyeol",
+    "copyright": "© {year} All rights reserved.",
+    "navigation": "Navigation",
+    "home": "Home",
+    "works": "Works",
+    "blog": "Blog",
+    "connect": "Connect",
+    "email": "Email"
   }
 }
