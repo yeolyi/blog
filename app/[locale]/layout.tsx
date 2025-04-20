@@ -19,7 +19,9 @@ const ibmPlexSans = IBM_Plex_Sans_KR({
 });
 
 export const metadata: Metadata = {
-  title: '개발자 성열',
+  title: 'seongyeol Yi | 이성열',
+  description:
+    '프론트엔드 개발자 이성열입니다. 개발하면서 기록할만한 것들을 여기 기록해요!',
 };
 
 export default async function RootLayout({
