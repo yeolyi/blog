@@ -1,4 +1,5 @@
 import PostList from '@/app/[locale]/components/Post';
+import { routing } from '@/i18n/routing';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -61,4 +62,8 @@ export default function Home() {
       </Suspense>
     </div>
   );
+}
+
+export async function generateStaticParams() {
+  return routing.locales.map((locale) => ({ locale }));
 }

@@ -18,11 +18,11 @@ export default function Header() {
       >
         {t('title')}
       </NextLink>
-      <div className="flex items-center gap-4">
+      {/* <div className="flex items-center gap-4">
         <Suspense fallback={<div>{t('loading')}</div>}>
           <AuthButton />
         </Suspense>
-      </div>
+      </div> */}
     </header>
   );
 }
