@@ -1,3 +1,4 @@
+import TableOfContents from '@/app/post/[id]/components/TableOfContents';
 import { getPostIds } from '@/utils/post';
 import Comments from './components/Comments';
 
@@ -7,12 +8,14 @@ export default async function PostPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const {
-    default: Component,
-    title,
-    date,
-  } = await import(`@/mdx/${id}/page.mdx`);
-  return <Component />;
+  const { default: Component, title } = await import(`@/mdx/${id}/page.mdx`);
+  return (
+    <>
+      <h1>{title}</h1>
+      <Component />
+      <Comments postId={id} />
+    </>
+  );
 }
 
 export const dynamicParams = false;

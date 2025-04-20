@@ -23,6 +23,12 @@ module.exports = {
             h1: {
               wordBreak: 'keep-all',
             },
+            h2: {
+              scrollMarginTop: '10vh',
+            },
+            h3: {
+              scrollMarginTop: '10vh',
+            },
           },
         },
       },

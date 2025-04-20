@@ -1,4 +1,5 @@
 import Comments from '@/app/post/[id]/components/Comments';
+import TableOfContents from '@/app/post/[id]/components/TableOfContents';
 import localFont from 'next/font/local';
 
 const monoplexKR = localFont({
@@ -23,6 +24,9 @@ export default async function PostLayout({
     >
       <div className="prose prose-invert mb-12">{children}</div>
       <Comments postId={id} />
+      <div className="fixed top-[15vh] left-[calc(50vw+24rem)] hidden xl:block">
+        <TableOfContents />
+      </div>
     </div>
   );
 }
