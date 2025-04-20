@@ -4,6 +4,7 @@ import {
   transformerNotationFocus,
   transformerNotationHighlight,
 } from '@shikijs/transformers';
+import createNextIntlPlugin from 'next-intl/plugin';
 import rehypeSlug from 'rehype-slug';
 import remarkGfm from 'remark-gfm';
 
@@ -50,4 +51,6 @@ const withMDX = createMDX({
   },
 });
 
-export default withMDX(nextConfig);
+const withNextIntl = createNextIntlPlugin();
+
+export default withMDX(withNextIntl(nextConfig));

@@ -1,0 +1,8 @@
+{
+  "Header": {
+    "title": "seongyeol",
+    "loading": "Loading...",
+    "developer": "Developer #{number}",
+    "logout": "Logout"
+  }
+}

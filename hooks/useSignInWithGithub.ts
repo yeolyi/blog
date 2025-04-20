@@ -1,6 +1,6 @@
 'use client';
 
-import { signInWithGithub } from '@/app/actions';
+import { signInWithGithub } from '@/app/[locale]/actions';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 

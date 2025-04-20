@@ -1,0 +1,8 @@
+{
+  "Header": {
+    "title": "seongyeol",
+    "loading": "로딩 중...",
+    "developer": "#{number}번째 개발자님",
+    "logout": "로그아웃"
+  }
+}
