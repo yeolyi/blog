@@ -9,7 +9,7 @@ export default function Home() {
   const t = useTranslations('HomePage');
 
   return (
-    <div className="max-w-2xl mx-auto mt-24 mb-[30vh] px-4 flex flex-col gap-16">
+    <div className="max-w-2xl mx-auto my-24 px-4 flex flex-col gap-16">
       <div className="relative w-full aspect-square mx-auto">
         <Image src={me} alt="me" className="object-cover w-full h-full" />
         <div className="flex flex-col gap-2 absolute bottom-5 left-5">
@@ -27,7 +27,7 @@ export default function Home() {
           </Link>
         </div>
       </div>
-      <p className="text-xl font-semibold text-white break-keep">
+      <p className="text-xl font-normal text-white break-keep">
         {t.rich('bio', {
           snuLink: (chunks) => (
             <Link

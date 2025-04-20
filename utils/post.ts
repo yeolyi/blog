@@ -1,9 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type { Locale } from 'next-intl';
-import { unstable_cache } from 'next/cache';
 
-// 실제 포스트 ID를 가져오는 함수
 const fetchPostIds = async (locale: Locale) => {
   const postsDirectory = path.join(process.cwd(), 'mdx');
   const directories = fs.readdirSync(postsDirectory, { withFileTypes: true });
@@ -18,6 +16,6 @@ const fetchPostIds = async (locale: Locale) => {
     .map((dirent) => dirent.name);
 };
 
-export const getPostIds = unstable_cache(async (locale: Locale) => {
+export const getPostIds = async (locale: Locale) => {
   return await fetchPostIds(locale);
-});
+};

@@ -1,6 +1,7 @@
 import { routing } from '@/i18n/routing';
 import { getPostIds } from '@/utils/post';
 import type { Metadata, ResolvingMetadata } from 'next';
+import { ROUTES_MANIFEST } from 'next/dist/shared/lib/constants';
 import { notFound } from 'next/navigation';
 
 type Props = {
@@ -43,5 +44,15 @@ export default async function PostPage({
     notFound();
   }
 }
+
+export const generateStaticParams = async () => {
+  const locales = routing.locales;
+  return await Promise.all(
+    locales.flatMap(async (locale) => {
+      const postIds = await getPostIds(locale);
+      return postIds.map((postId) => ({ id: postId, locale }));
+    }),
+  );
+};
 
 export const dynamicParams = false;
