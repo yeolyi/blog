@@ -1,6 +1,7 @@
 import { routing } from '@/i18n/routing';
 import { getPostIds } from '@/utils/post';
 import type { Metadata, ResolvingMetadata } from 'next';
+import { notFound } from 'next/navigation';
 
 type Props = {
   params: Promise<{ id: string; locale: string }>;
@@ -27,15 +28,20 @@ export default async function PostPage({
   params: Promise<{ id: string; locale: string }>;
 }) {
   const { id, locale } = await params;
-  const { default: Component, title } = await import(
-    `@/mdx/${id}/${locale}.mdx`
-  );
-  return (
-    <>
-      <h1>{title}</h1>
-      <Component />
-    </>
-  );
+
+  try {
+    const { default: Component, title } = await import(
+      `@/mdx/${id}/${locale}.mdx`
+    );
+    return (
+      <>
+        <h1>{title}</h1>
+        <Component />
+      </>
+    );
+  } catch (error) {
+    notFound();
+  }
 }
 
 export const dynamicParams = false;

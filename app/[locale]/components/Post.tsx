@@ -6,15 +6,21 @@ import type React from 'react';
 export default async function PostList() {
   const locale = await getLocale();
   const ids = await getPostIds(locale);
+  const metadataList = await Promise.all(
+    ids.map(async (id) => {
+      const { title, date } = await import(`@/mdx/${id}/${locale}.mdx`);
+      return { id, title, date };
+    }),
+  );
+  const sortedMetadataList = metadataList.sort((a, b) => {
+    return new Date(b.date).getTime() - new Date(a.date).getTime();
+  });
 
   return (
     <ul className="list-none p-0">
-      {ids.map(async (id) => {
-        const { title, date } = await import(`@/mdx/${id}/${locale}.mdx`);
-        return (
-          <PostItem key={id} href={`/post/${id}`} date={date} title={title} />
-        );
-      })}
+      {sortedMetadataList.map(({ id, title, date }) => (
+        <PostItem key={id} href={`/post/${id}`} date={date} title={title} />
+      ))}
     </ul>
   );
 }

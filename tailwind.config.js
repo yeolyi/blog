@@ -29,6 +29,18 @@ module.exports = {
             h3: {
               scrollMarginTop: '10vh',
             },
+            'code::before': {
+              content: 'none',
+            },
+            'code::after': {
+              content: 'none',
+            },
+            code: {
+              // backgroundColor: 'white',
+              // color: 'black',
+              fontWeight: 'inherit',
+              // fontSize: 'inherit',
+            },
           },
         },
       },
