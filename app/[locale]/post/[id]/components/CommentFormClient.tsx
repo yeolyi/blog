@@ -36,13 +36,11 @@ export function CommentFormClient({ postId }: CommentFormClientProps) {
   const content = watch('content');
 
   useEffect(() => {
-    const updatePreview = async () => {
-      if (content && showPreview) {
-        const renderedContent = await renderMarkdown(content);
-        setPreview(renderedContent);
-      }
-    };
-    updatePreview();
+    if (!content || !showPreview) return;
+    (async () => {
+      const renderedContent = await renderMarkdown(content);
+      setPreview(renderedContent);
+    })();
   }, [content, showPreview]);
 
   const isSingleEmoji = (text: string): boolean => {
