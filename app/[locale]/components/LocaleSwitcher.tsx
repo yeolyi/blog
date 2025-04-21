@@ -13,22 +13,19 @@ export default function LocaleSwitcher() {
   const t = useTranslations('LocaleSwitcher');
   const locale = useLocale();
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
   const pathname = usePathname();
   const params = useParams();
 
   function onValueChange(nextLocale: string) {
     if (!nextLocale) return;
 
-    startTransition(() => {
-      router.replace(
-        // @ts-expect-error -- TypeScript will validate that only known `params`
-        // are used in combination with a given `pathname`. Since the two will
-        // always match for the current route, we can skip runtime checks.
-        { pathname, params },
-        { locale: nextLocale as Locale },
-      );
-    });
+    router.replace(
+      // @ts-expect-error -- TypeScript will validate that only known `params`
+      // are used in combination with a given `pathname`. Since the two will
+      // always match for the current route, we can skip runtime checks.
+      { pathname, params },
+      { locale: nextLocale as Locale },
+    );
   }
 
   return (
@@ -38,7 +35,6 @@ export default function LocaleSwitcher() {
         type="single"
         value={locale}
         onValueChange={onValueChange}
-        disabled={isPending}
         className="inline-flex border border-white"
       >
         {routing.locales.map((cur) => (
@@ -49,7 +45,6 @@ export default function LocaleSwitcher() {
               'text-white px-2 py-1 text-sm font-semibold cursor-pointer',
               'data-[state=on]:bg-white data-[state=on]:text-black',
               'hover:bg-white hover:text-black',
-              isPending && 'opacity-30',
             )}
           >
             {t('locale', { locale: cur })}
