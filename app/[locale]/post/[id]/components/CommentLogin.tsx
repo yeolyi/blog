@@ -1,9 +1,16 @@
 'use client';
 
 import { useSignInWithGithub } from '@/hooks/useSignInWithGithub';
+import { useTranslations } from 'next-intl';
+import type { ReactNode } from 'react';
 
-export default function CommentLogin() {
+interface CommentLoginProps {
+  children?: ReactNode;
+}
+
+export default function CommentLogin({ children }: CommentLoginProps) {
   const signInWithGithub = useSignInWithGithub();
+  const t = useTranslations('Comment');
 
   return (
     <button
@@ -11,7 +18,7 @@ export default function CommentLogin() {
       type="button"
       onClick={signInWithGithub}
     >
-      로그인
+      {children || t('login')}
     </button>
   );
 }

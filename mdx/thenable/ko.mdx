@@ -16,9 +16,9 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 delay(1000); // await 유무와 무관하게 여기서 바로 1초를 세기 시작
 ```
 
-하지만 supabase에서는 await 이전까지는 비동기 요청을 하지 않으며 이 특성 덕분에
-조건부로 쿼리를 추가한다음 쿼리가 완성되면 await로 비동기 요청을 시작할 수도
-있습니다.
+하지만 supabase를 사용할 때는 await 이전까지는 비동기 요청을 하지 않습니다. 이
+특성 덕분에 조건부로 쿼리를 추가한다음 쿼리가 완성되면 await로 비동기 요청을
+시작할 수도 있습니다.
 
 ```ts
 let query = supabase.from('...').select('...');

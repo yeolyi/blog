@@ -25,5 +25,22 @@
   },
   "NotFound": {
     "backHome": "홈으로 돌아가기"
+  },
+  "Comment": {
+    "loginRequired": "댓글을 작성하려면 <loginLink>로그인</loginLink>이 필요합니다.",
+    "login": "로그인",
+    "placeholder": "마크다운 댓글이나 이모지를 남겨보세요.",
+    "submit": "댓글 작성",
+    "submitting": "작성 중...",
+    "noComments": "아직 댓글이 없습니다. 첫 댓글을 남겨보세요!",
+    "loading": "로딩 중...",
+    "deleteComment": "댓글 삭제",
+    "deleteConfirm": "정말 이 댓글을 삭제하시겠습니까?",
+    "deleting": "삭제 중...",
+    "delete": "삭제",
+    "cancel": "취소",
+    "deleteError": "댓글 삭제 중 오류가 발생했습니다.",
+    "submitError": "댓글 작성 중 오류가 발생했습니다.",
+    "dateFormat": "YYYY년 MM월 DD일 HH:mm"
   }
 }

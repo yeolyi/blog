@@ -5,6 +5,7 @@ import {
   toggleEmojiReaction,
 } from '@/app/[locale]/post/[id]/actions';
 import { Paintbrush } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { type UseFormRegisterReturn, useForm } from 'react-hook-form';
 import { renderMarkdown } from '../utils/markdown';
@@ -18,6 +19,7 @@ interface CommentFormValues {
 }
 
 export function CommentFormClient({ postId }: CommentFormClientProps) {
+  const t = useTranslations('Comment');
   const [serverError, setServerError] = useState<string | null>(null);
   const [preview, setPreview] = useState<string>('');
   const [showPreview, setShowPreview] = useState<boolean>(false);
@@ -99,7 +101,7 @@ export function CommentFormClient({ postId }: CommentFormClientProps) {
         }
       }
     } catch (e) {
-      setServerError('댓글 작성 중 오류가 발생했습니다.');
+      setServerError(t('submitError'));
       console.error('댓글 작성 에러:', e);
     }
   };
@@ -159,7 +161,7 @@ export function CommentFormClient({ postId }: CommentFormClientProps) {
         disabled={isSubmitting}
         className="w-full px-4 py-2 bg-white text-black hover:bg-black hover:text-white focus:outline-none focus:ring-1 focus:ring-gray-500 focus:ring-offset-1 disabled:opacity-50 disabled:bg-gray-100 disabled:cursor-not-allowed cursor-pointer"
       >
-        {isSubmitting ? '작성 중...' : '댓글 작성'}
+        {isSubmitting ? t('submitting') : t('submit')}
       </button>
     </form>
   );
@@ -169,6 +171,8 @@ const FitTextArea = (
   props: React.TextareaHTMLAttributes<HTMLTextAreaElement> &
     UseFormRegisterReturn,
 ) => {
+  const t = useTranslations('Comment');
+
   return (
     <textarea
       {...props}
@@ -192,7 +196,7 @@ const FitTextArea = (
         ref.addEventListener('input', handleInput);
         return () => ref.removeEventListener('input', handleInput);
       }}
-      placeholder="댓글이나 이모지를 남겨보세요."
+      placeholder={t('placeholder')}
       className="block w-full resize-none min-h-32 p-3 border border-[#5E5E5E] focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 dark:text-gray-100 overflow-hidden"
     />
   );

@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server';
+import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
 import { deleteComment, getComments } from '../actions';
 import { CommentItem } from './CommentItem';
@@ -9,6 +10,7 @@ interface CommentListProps {
 
 export default async function CommentList({ postId }: CommentListProps) {
   const supabase = await createClient();
+  const t = await getTranslations('Comment');
 
   // 현재 사용자 정보 가져오기
   const {
@@ -21,11 +23,9 @@ export default async function CommentList({ postId }: CommentListProps) {
   return (
     <>
       {comments.length === 0 ? (
-        <p className="text-gray-500 dark:text-gray-400">
-          아직 댓글이 없습니다. 첫 댓글을 남겨보세요!
-        </p>
+        <p className="text-gray-500 dark:text-gray-400">{t('noComments')}</p>
       ) : (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div>{t('loading')}</div>}>
           {comments.map((comment) => (
             <CommentItem
               key={comment.id}

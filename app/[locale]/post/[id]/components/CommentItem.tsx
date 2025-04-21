@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { getTranslations } from 'next-intl/server';
 import { renderMarkdown } from '../utils/markdown';
 import { DeleteButton } from './DeleteButton';
 
@@ -31,6 +32,8 @@ export async function CommentItem({
   currentUserId,
   deleteAction,
 }: CommentItemProps) {
+  const headerT = await getTranslations('Header');
+  const commentT = await getTranslations('Comment');
   const githubId = comment.profiles?.github_id;
   const githubUrl = githubId ? `https://github.com/${githubId}` : '#';
   const developerNumber = comment.developerNumber;
@@ -49,10 +52,10 @@ export async function CommentItem({
             rel="noopener noreferrer"
             className="font-medium text-gray-700 hover:underline dark:text-gray-300"
           >
-            #{developerNumber}번째 개발자님
+            {headerT('developer', { number: developerNumber })}
           </a>
           <span className="text-xs text-gray-500 mt-2 whitespace-pre">
-            {dayjs(comment.created_at).format('  YYYY년 MM월 DD일 HH:mm')}
+            {`  ${dayjs(comment.created_at).format(commentT('dateFormat'))}`}
           </span>
         </p>
         {currentUserId === comment.author_id && (
