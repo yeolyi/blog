@@ -1,0 +1,205 @@
+export const title = 'Deferring Asynchronous Requests with PromiseLike';
+export const date = '2025-04-20';
+
+While writing code to query a database using Supabase, I became curious about
+the exact moment an asynchronous request is made. It felt different from my
+usual experience using Promise objects.
+
+## The Curiosity
+
+Generally, the point at which a Promise object is created and the point at which
+the asynchronous request begins are the same. Think about using `Workspace` or
+`setTimeout`. For example, the `delay` function below, created using
+`setTimeout`, starts its asynchronous operation immediately when the Promise
+object is created.
+
+```js
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+delay(1000); // Starts counting 1 second right here, regardless of await
+```
+
+However, with Supabase, the asynchronous request isn't made until `await` is
+used. Thanks to this characteristic, you can conditionally add clauses to the
+query and then initiate the asynchronous request with `await` once the query is
+fully constructed.
+
+```ts
+let query = supabase.from('...').select('...');
+if (tagIds) query = query.in('id', tagIds);
+
+// [!code highlight]
+const { data, error } = await query; // The request happens here
+```
+
+Another peculiar point is that even if you use `await` multiple times on the
+same builder object (after modifying it), it correctly sends requests
+corresponding to the query's state at that moment.
+
+```ts
+let query = supabase.from('...').select('...');
+// [!code highlight]
+let { data, error } = await query; // ✅ Request 1
+
+query = query.order('created_at', { ascending: true });
+// [!code highlight]
+{ data, error } = await query; // ✅ Request 2 with ordering applied
+```
+
+If you look at the types of methods like `select` or `order`, they return custom
+objects like `PostgrestTransformBuilder` or `PostgrestFilterBuilder`, not
+Promises. I understand they utilized the
+[Builder pattern](https://refactoring.guru/design-patterns/builder) to construct
+queries step-by-step, but how can you `await` an object that isn't a Promise?
+
+## Research
+
+Checking the
+[Supabase source code](https://www.google.com/search?q=https://github.com/supabase/postgrest-js/blob/master/src/PostgrestBuilder.ts%23L15),
+both `PostgrestTransformBuilder` and `PostgrestFilterBuilder` are classes that
+extend (`extends`) `PostgrestBuilder`. And `PostgrestBuilder` implements
+(`implements`) `PromiseLike`.
+
+```ts
+export default abstract class PostgrestBuilder<
+  Result,
+  ThrowOnError extends boolean = false,
+> implements
+    PromiseLike<
+      ThrowOnError extends true
+        ? PostgrestResponseSuccess<Result>
+        : PostgrestSingleResponse<Result>
+    > {
+  // ...
+}
+```
+
+Looking at the
+[TypeScript source code](https://www.google.com/search?q=https://github.com/microsoft/TypeScript/blob/main/src/lib/es5.d.ts%23L1512),
+`PromiseLike` refers to an object that implements a `then` method.
+
+```ts
+interface PromiseLike<T> {
+  /**
+   * Attaches callbacks for the resolution and/or rejection of the Promise.
+   * @param onfulfilled The callback to execute when the Promise is resolved.
+   * @param onrejected The callback to execute when the Promise is rejected.
+   * @returns A Promise for the completion of which ever callback is executed.
+   */
+  then<TResult1 = T, TResult2 = never>(
+    onfulfilled?:
+      | ((value: T) => TResult1 | PromiseLike<TResult1>)
+      | undefined
+      | null,
+    onrejected?:
+      | ((reason: any) => TResult2 | PromiseLike<TResult2>)
+      | undefined
+      | null,
+  ): PromiseLike<TResult1 | TResult2>;
+}
+```
+
+Therefore, `PostgrestBuilder` must implement the `then` method. Let's examine
+it.
+
+```ts
+// Some code omitted
+export default abstract class PostgrestBuilder {
+  constructor(builder: PostgrestBuilder) {
+    //...
+    if (builder.fetch) {
+      this.fetch = builder.fetch;
+    } else if (typeof fetch === 'undefined') {
+      // Use node-fetch in Node.js environments
+      this.fetch = nodeFetch;
+    } else {
+      // Use the global fetch in browser environments
+      this.fetch = fetch;
+    }
+  }
+
+  // [!code highlight:14]
+  then<TResult1 = Result, TResult2 = never>(
+    onfulfilled?:
+      | ((
+          value: ThrowOnError extends true
+            ? PostgrestResponseSuccess<Result>
+            : PostgrestSingleResponse<Result>,
+        ) => TResult1 | PromiseLike<TResult1>)
+      | undefined
+      | null,
+    onrejected?:
+      | ((reason: any) => TResult2 | PromiseLike<TResult2>)
+      | undefined
+      | null,
+  ): PromiseLike<TResult1 | TResult2> {
+    // Add schema profile header if needed
+    // ...
+    const _fetch = this.fetch; // Use the fetch determined in the constructor
+
+    // Perform the actual fetch request
+    let res = _fetch(this.url.toString(), {
+      method: this.method,
+      headers: this.headers,
+      body: JSON.stringify(this.body),
+      signal: this.signal,
+    }).then(async (res) => {
+      // Process the response...
+      // ...
+    });
+    // More response processing...
+    // ...
+    // Chain the user's callbacks
+    return res.then(onfulfilled, onrejected);
+  }
+}
+```
+
+We can confirm that the actual network request is made within the `then` method.
+It's also quite impressive how the constructor sets up the appropriate
+`Workspace` function depending on the environment where Supabase is being used.
+
+## Conclusion
+
+I need to abandon the fixed idea that the target of `await` must always be a
+Promise object. The code below works perfectly fine:
+
+```js
+const obj = {
+  then(resolve, reject) {
+    // This object behaves like a Promise because it has a 'then' method
+    console.log('then method called by await');
+    resolve('hello from thenable');
+  },
+};
+
+async function test() {
+  console.log('Before await');
+  const res = await obj; // 'await' calls the 'then' method
+  console.log('After await:', res);
+}
+
+test();
+// Output:
+// Before await
+// then method called by await
+// After await: hello from thenable
+```
+
+There's also relevant information on the MDN
+[Promise](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
+page, which I'll quote here:
+
+> The JavaScript ecosystem had made multiple Promise implementations long before
+> it became part of the language. Despite being represented differently
+> internally, at the minimum, all Promise-like objects implement the Thenable
+> interface. A thenable implements the .then() method, which is called with two
+> callbacks: one for when the promise is fulfilled, one for when it's rejected.
+> Promises are thenables as well.
+
+> To interoperate with the existing Promise implementations, the language allows
+> using thenables in place of promises. For example, Promise.resolve will not
+> only resolve promises, but also trace thenables.
+
+This explains how `await` (which essentially works with Promises) can operate on
+objects like Supabase's query builders, as long as they implement the `then`
+method, making them "thenable" or `PromiseLike`.
