@@ -18,8 +18,9 @@ export default async function OGImage({
   const mdxModule = await import(`@/mdx/${id}/${locale}.mdx`);
   const { title } = mdxModule;
 
-  const headerText = locale === 'ko' ? '개발자 성열' : 'seongyeol Yi';
-  const fontText = `${headerText} ${title} 개발자 성열 seongyeol Yi`;
+  const headerText =
+    locale === 'ko' ? '성열 | yeolyi.com' : 'seongyeol Yi | yeolyi.com';
+  const fontText = `${headerText} ${title}`;
   const fontData = await loadGoogleFont(
     'IBM+Plex+Sans+KR:wght@700;800',
     fontText,
@@ -112,8 +113,6 @@ function HeaderArea({
           style={{
             fontSize: '42px',
             fontWeight: 700,
-            backgroundColor: 'white',
-            color: 'black',
           }}
         >
           {headerText}
