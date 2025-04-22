@@ -112,6 +112,8 @@ function HeaderArea({
           style={{
             fontSize: '42px',
             fontWeight: 700,
+            backgroundColor: 'white',
+            color: 'black',
           }}
         >
           {headerText}
