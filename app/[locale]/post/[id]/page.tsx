@@ -8,19 +8,10 @@ type Props = {
   params: Promise<{ id: string; locale: string }>;
 };
 
-export async function generateMetadata(
-  { params }: Props,
-  parent: ResolvingMetadata,
-): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id, locale } = await params;
-
-  // MDX 파일에서 title과 기타 메타데이터를 가져옵니다
   const { title, description } = await import(`@/mdx/${id}/${locale}.mdx`);
-
-  return {
-    title,
-    description: description || (await parent).description,
-  };
+  return { title, description };
 }
 
 export default async function PostPage({
