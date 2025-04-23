@@ -1,0 +1,281 @@
+import { Sandpack } from '@codesandbox/sandpack-react';
+import Lane from './Lane.js';
+
+export const title = 'React Internals Deep Dive';
+export const date = '2025-04-22';
+
+<Lane />
+
+---
+
+ReactSharedInternals.H는 초기에는 null이지만 React 렌더링 과정에서 설정됩니다.
+주로 두 곳에서 설정됩니다:
+
+1. **ReactFiberWorkLoop.js**의 `pushDispatcher` 함수:
+
+```js
+function pushDispatcher(container: any) {
+  const prevDispatcher = ReactSharedInternals.H;
+  ReactSharedInternals.H = ContextOnlyDispatcher;
+  // ...
+}
+```
+
+이 함수는 렌더링 시작 시 호출됩니다.
+
+2. **ReactFiberHooks.js**에서는 컴포넌트의 렌더링 단계에 따라 다른 디스패처로
+   설정됩니다:
+
+```js
+// 컴포넌트가 처음 마운트될 때
+ReactSharedInternals.H = HooksDispatcherOnMount;
+// 컴포넌트가 업데이트될 때
+ReactSharedInternals.H = HooksDispatcherOnUpdate;
+// 컴포넌트가 재렌더링될 때
+ReactSharedInternals.H = HooksDispatcherOnRerender;
+```
+
+이런 디스패처 전환은 `renderWithHooks` 함수 내에서 이루어지며, 이것이 같은 훅
+호출이 컴포넌트 상태에 따라 다른 동작을 하게 만듭니다.
+
+---
+
+# React 프로젝트 주요 패키지 설명
+
+## 1. packages/react
+
+- 리액트의 핵심 패키지
+- 컴포넌트 정의, 훅 API, createElement 등 핵심 기능 포함
+- 플랫폼에 의존적이지 않은 코드만 포함
+
+## 2. packages/react-reconciler
+
+- 리액트의 재조정(Reconciliation) 알고리즘 구현
+- 가상 DOM 비교와 업데이트 결정
+- Fiber 아키텍처 구현
+- 훅의 실제 내부 구현이 여기 있음
+
+## 3. packages/react-dom
+
+- 웹 환경에서 리액트를 렌더링하는 패키지
+- createRoot, render 메서드 등 제공
+- DOM 조작을 담당
+
+## 4. packages/react-server
+
+- 서버 사이드 렌더링 기능 구현
+- React 18의 새로운 SSR 아키텍처인 React Server Components 기능 포함
+
+## 5. packages/scheduler
+
+- 작업 스케줄링을 위한 패키지
+- 동시성 모드(Concurrent Mode)에서 작업 우선순위 지정
+- 렌더링 작업을 청크로 나누고 브라우저 idle 타임에 실행
+
+## 6. packages/shared
+
+- 여러 패키지에서 공유하는 유틸리티 코드
+- 내부적으로 사용되는 상수, 타입, 헬퍼 함수 등
+
+## 7. packages/react-cache
+
+- 데이터 캐싱 메커니즘 구현
+- Suspense와 함께 사용하여 비동기 데이터 로딩 지원
+
+## 8. packages/react-is
+
+- 리액트 엘리먼트 타입 확인을 위한 유틸리티
+- 다른 라이브러리에서 리액트 요소 식별에 사용
+
+## 9. packages/react-client
+
+- React 18부터 추가된 클라이언트 컴포넌트 관련 기능
+
+## 10. packages/react-devtools
+
+- 개발자 도구 구현
+- 컴포넌트 트리 검사, 프로파일링 기능
+
+---
+
+```js
+export const ContextOnlyDispatcher: Dispatcher = {
+  useEffect: throwInvalidHookError,
+};
+
+const HooksDispatcherOnMount: Dispatcher = {
+  useEffect: mountEffect,
+};
+
+const HooksDispatcherOnUpdate: Dispatcher = {
+  useEffect: updateEffect,
+};
+
+const HooksDispatcherOnRerender: Dispatcher = {
+  useEffect: updateEffect,
+};
+```
+
+---
+
+1. After state changes, paths to target Fiber Node are marked with lanes and
+   childLanes, to indicate if they or their subtree need to be re-rendered.
+2. React re-render the whole Fiber Tree, with optimization of bailout to avoid
+   re-rendering unnecessarily.
+3. Once a component re-renders, it generates new React elements, its children
+   all get new props even though they are equal, so React re-renders the whole
+   Fiber Tree by default. Here is why you might need useMemo().
+   - deepEqual로 바꾸고 리렌더링되는지 확인해보자.
+4. By "re-render", React creates a new Fiber Tree out of current one, also marks
+   the Fiber Node with flags of Placement ChildDeletion and Update if needed.
+5. Once the new Fiber Tree is done, React processes Fiber Nodes with above flags
+   and apply the changes to Host DOM in Commit phase.
+6. Then the new Fiber Tree is pointed to as the current Fiber Tree. The nodes on
+   previous Fiber Tree could be reused for next render.
+
+## 1. Re-render in Trigger phase
+
+### 1.1 lanes and childLanes
+
+- lanes => for the pending work of itself
+- childLanes => for the pending work of its subtree
+
+lanes가 컴포넌트까지만 체크되고 그 아래에는 없네?
+
+Priority of event determines the priority of the update.
+
+리액트의 lane은 비트 플래그 시스템으로 구현되어 있으며, 주요 값은 다음과
+같습니다:
+
+- **NoLanes (0)**: 작업이 없음
+- **SyncLane (1)**: 가장 높은 우선순위, 동기적으로 처리해야 하는 작업
+- **InputContinuousLane**: 사용자 입력 처리를 위한 lane
+- **DefaultLane**: 일반적인 상태 업데이트에 사용
+- **TransitionLanes**: 트랜지션 API 사용 시 적용되는 낮은 우선순위
+- **RetryLanes**: 에러 발생 후 재시도 작업
+- **IdleLane**: 가장 낮은 우선순위, 브라우저 유휴 시간에 처리
+- **OffscreenLane**: 화면 밖의 컴포넌트 처리
+
+## 2. Re-render in Render phase
+
+### 2.1 Basic rendering logic is the same as initial mount
+
+```js
+do {
+  try {
+    workLoopSync();
+    break;
+  } catch (thrownValue) {
+    handleError(root, thrownValue);
+  }
+} while (true);
+
+function workLoopSync() {
+  while (workInProgress !== null) {
+    performUnitOfWork(workInProgress);
+  }
+}
+
+function performUnitOfWork(unitOfWork: Fiber): void {
+  const current = unitOfWork.alternate;
+  next = beginWork(current, unitOfWork, subtreeRenderLanes);
+  // This line is important, we'll cover it in 2.5 memoizedProps vs pendingProps
+  unitOfWork.memoizedProps = unitOfWork.pendingProps;
+
+  if (next === null) {
+    // If this doesn't spawn new work, complete the current work.
+    completeUnitOfWork(unitOfWork);
+  } else {
+    workInProgress = next;
+  }
+}
+```
+
+React traverse the Fiber Tree and updates the fiber if necessary.
+
+### 2.2 React reuses redundant Fiber Nodes before creating new ones
+
+재활용 되게 열심히한다. every Fiber Node that is not on the current tree could
+be reused.
+
+### 2.3 The Update branch in beginWork()
+
+updateFunctionComponent, updateHostComponent, updateHostText를 사용한다.
+
+### 2.4 Bailout logic inside attemptEarlyBailoutIfNoScheduledUpdate()
+
+따로 게시물도 있어서 간단하게만...
+
+### 2.5 memoizedProps vs pendingProps
+
+We can think of memoizedProps as current props while pendingProps as next
+version.
+
+`<Component />` has lanes of 1 meaning React has to re-render and reconcile its
+children.
+
+### 2.6 updateFunctionComponent() re-renders function components and reconciles
+
+컴포넌트를 통으로 렌더링하는듯?
+
+reconcileSingleElement, reconcileChildrenArray, reconcileSingleTextNode를
+사용한다.
+
+### 2.7 reconcileSingleElement()
+
+And in useFiber, React creates or reuse the previous version. As mentioned
+before, the pendingProps(which contains children) will be set. 뒤에서도 나오니
+기억하기.
+
+### 2.8 Once a component is re-rendered, their subtree is re-rendered by default
+
+스케쥴되어있지 않아도(lane이 0이어도?) 프롭이 다르면 렌더링된다.
+
+### 2.9 updateHostComponent()
+
+https://ko.react.dev/reference/react/createElement 그냥 한 번 복습하면 유용할 것
+같음
+
+### 2.10 reconcileChildrenArray() creates and deletes fibers as needed
+
+We see that fibers that should be deleted are put temporarily in an array of its
+parent. This is needed because they don’t exist in the new fiber tree any longer
+after deletion, but they are to be processed in Commit phase, so we need to put
+them somewhere.
+
+그림에서 빨간색 화살표로 표현되어있다. placement와 update와는 달리
+'child'Deletion이라는 플래그이다.
+
+### 2.11 placeChild() and deleteChild() marks fiber with flags
+
+### 2.12 updateHostText()
+
+Again it doesn’t nothing, because the updates are marked in complete phase -
+completeWork(). This is also explained in initial mount.
+
+### 2.13 completeWork() marks the update of HostComponent and creates DOM nodes if necessary
+
+One thing I’d like to point out is that prepareUpdate() is run for both button
+and its parent div, yet it generates null for div but [] for button. It is some
+tricky edge case handling that we won’t dive into here. 뭔소리???
+
+One thing I’d like to point out is that prepareUpdate() is run for both button
+and its parent div, yet it generates null for div but [] for button. It is some
+tricky edge case handling that we won’t dive into here. 여기서 다루지는 않는다고
+합니다...
+
+## 3. Re-render in Commit Phase
+
+### 3.1 commitMutationEffectsOnFiber() kicks off the commit of Insertion/Deletion/Update
+
+FunctionComponent / HostComponent / HostText 이렇게 세 개로 계속 나뉜다.
+
+자식노드까지 가며 삭제하고 삽입하고 수정한다.
+
+### 3.2 Deletion are processed first, before processing children and self
+
+### 3.3 Insertions are processed next
+
+### 3.4 Updates are handled the last
+
+## 4. Summary

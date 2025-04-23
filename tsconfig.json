@@ -30,7 +30,8 @@
     ".next/types/**/*.ts",
     "script/crawling.mjs",
     "app/[locale]/post/react-internal/page.mdx",
-    "next.config.mjs"
+    "next.config.mjs",
+    "mdx/react-internal/Lane.js"
   ],
   "exclude": ["node_modules"]
 }

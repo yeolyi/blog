@@ -1,4 +1,4 @@
-import type React from 'react';
+import type { ReactNode } from 'react';
 
 const Button = ({
   onClick,
@@ -6,7 +6,7 @@ const Button = ({
   className = '',
 }: {
   onClick?: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
 }) => {
   return (
