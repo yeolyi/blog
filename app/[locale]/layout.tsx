@@ -8,6 +8,7 @@ import '@/app/[locale]/globals.css';
 
 import { routing } from '@/i18n/routing';
 import { type Locale, NextIntlClientProvider, hasLocale } from 'next-intl';
+import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import type * as React from 'react';
 
@@ -44,6 +45,9 @@ export default async function RootLayout({
   if (!hasLocale(routing.locales, locale)) {
     notFound();
   }
+
+  // Enable static rendering
+  setRequestLocale(locale);
 
   return (
     <html lang={locale} className={`${ibmPlexSans.variable}`}>

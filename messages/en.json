@@ -21,7 +21,7 @@
     "email": "Email"
   },
   "HomePage": {
-    "bio": "Hi there👋 I'm Seongyeol, a developer. I worked as a frontend developer for the <snuLink>SNU CSE website</snuLink> renewal project. Now I'm working at Kakao, developing <edocLink>electronic documents</edocLink>. I share developer content on <instagramLink>Instagram</instagramLink>."
+    "bio": "Hi there👋 I'm Seongyeol, a developer. I worked as a frontend developer for the <snuLink>SNU CSE website</snuLink> renewal project. Now I'm working at <kakaoLink>Kakao</kakaoLink>. I share developer content on <instagramLink>Instagram</instagramLink>."
   },
   "NotFound": {
     "backHome": "Back to Home"

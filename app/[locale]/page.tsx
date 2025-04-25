@@ -1,12 +1,21 @@
 import PostList from '@/app/[locale]/components/Post';
-import { useTranslations } from 'next-intl';
+import type { Locale } from 'next-intl';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Suspense } from 'react';
 import me from './assets/me.jpg';
 
-export default function Home() {
-  const t = useTranslations('HomePage');
+export default async function Home({
+  params,
+}: {
+  params: Promise<{ locale: Locale }>;
+}) {
+  const { locale } = await params;
+  // Enable static rendering
+  setRequestLocale(locale);
+
+  const t = await getTranslations('HomePage');
 
   return (
     <div className="max-w-2xl mx-auto my-24 px-4 flex flex-col gap-16">
@@ -37,9 +46,9 @@ export default function Home() {
               {chunks}
             </Link>
           ),
-          edocLink: (chunks) => (
+          kakaoLink: (chunks) => (
             <Link
-              href="https://edoc.kakao.com/desktop"
+              href="https://kakaocorp.com"
               className="text-white hover:text-black hover:bg-white underline active:text-black active:bg-white"
             >
               {chunks}
