@@ -1,14 +1,14 @@
 import { createClient } from '@/utils/supabase/server';
 import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
-import { deleteComment, getComments } from '../actions';
-import { CommentItem } from './CommentItem';
+import { deleteComment, getComments } from '../../../actions';
+import { CommentItem } from './Item';
 
 interface CommentListProps {
   postId: string;
 }
 
-export default async function CommentList({ postId }: CommentListProps) {
+export default async function CommentViewer({ postId }: CommentListProps) {
   const supabase = await createClient();
   const t = await getTranslations('Comment');
 

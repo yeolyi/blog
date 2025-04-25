@@ -1,27 +1,13 @@
-import EmojiButton from '@/app/[locale]/post/[id]/components/EmojiButton';
+import EmojiButton from '@/app/[locale]/post/[id]/components/Comment/Emoji/EmojiButton';
 import { getIsAuthenticated } from '@/utils/auth';
 import React from 'react';
-import { getEmojiReactions } from '../actions';
+import { getEmojiReactions } from '../../../actions';
 
 interface EmojiReactionsListProps {
   postId: string;
 }
 
-export const EmojiResponseFallback = () => {
-  return (
-    <div className="flex flex-wrap gap-2 mt-2">
-      <EmojiButton
-        emoji="👍"
-        count={0}
-        postId=""
-        userReacted={false}
-        isAuthenticated={false}
-      />
-    </div>
-  );
-};
-
-export async function EmojiReactionsList({ postId }: EmojiReactionsListProps) {
+export async function Emoji({ postId }: EmojiReactionsListProps) {
   try {
     const isAuthenticated = await getIsAuthenticated();
 
@@ -60,3 +46,21 @@ export async function EmojiReactionsList({ postId }: EmojiReactionsListProps) {
     );
   }
 }
+
+const EmojiResponseFallback = () => {
+  return (
+    <div className="flex flex-wrap gap-2 mt-2">
+      <EmojiButton
+        emoji="👍"
+        count={0}
+        postId=""
+        userReacted={false}
+        isAuthenticated={false}
+      />
+    </div>
+  );
+};
+
+export default Object.assign(Emoji, {
+  Fallback: EmojiResponseFallback,
+});

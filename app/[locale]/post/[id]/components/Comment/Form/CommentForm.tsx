@@ -4,21 +4,24 @@ import {
   createComment,
   toggleEmojiReaction,
 } from '@/app/[locale]/post/[id]/actions';
+import { renderMarkdown } from '@/app/[locale]/post/[id]/utils/markdown';
+import { isSingleEmoji } from '@/utils/string';
 import { Paintbrush } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
-import { type UseFormRegisterReturn, useForm } from 'react-hook-form';
-import { renderMarkdown } from '../utils/markdown';
+import { type UseFormRegisterReturn, useForm, useWatch } from 'react-hook-form';
+import LoginButton from './LoginButton';
 
-interface CommentFormClientProps {
+type CommentFormProps = {
   postId: string;
-}
+  isLoggedIn: boolean;
+};
 
-interface CommentFormValues {
+type FormData = {
   content: string;
-}
+};
 
-export function CommentFormClient({ postId }: CommentFormClientProps) {
+export default function CommentForm({ postId, isLoggedIn }: CommentFormProps) {
   const t = useTranslations('Comment');
   const [serverError, setServerError] = useState<string | null>(null);
   const [preview, setPreview] = useState<string>('');
@@ -27,15 +30,11 @@ export function CommentFormClient({ postId }: CommentFormClientProps) {
     register,
     handleSubmit,
     reset,
-    watch,
+    control,
     formState: { isSubmitting, errors },
-  } = useForm<CommentFormValues>({
-    defaultValues: {
-      content: '',
-    },
-  });
+  } = useForm<{ content: string }>({ defaultValues: { content: '' } });
 
-  const content = watch('content');
+  const content = useWatch({ control, name: 'content' });
 
   useEffect(() => {
     if (!content || !showPreview) return;
@@ -45,25 +44,7 @@ export function CommentFormClient({ postId }: CommentFormClientProps) {
     })();
   }, [content, showPreview]);
 
-  const isSingleEmoji = (text: string): boolean => {
-    // Intl.Segmenter를 사용하여 그래픽 클러스터로 텍스트 분할
-    const segmenter = new Intl.Segmenter('ko', { granularity: 'grapheme' });
-    const segments = [...segmenter.segment(text.trim())];
-
-    // 정확히 하나의 그래픽 클러스터만 있는지 확인
-    if (segments.length !== 1) return false;
-
-    // 이모지 유니코드 범위 확인
-    const segment = segments[0].segment;
-
-    // 이모지 감지 정규식
-    const emojiRegex = /\p{Emoji}/u;
-
-    // 텍스트가 이모지인지 확인
-    return emojiRegex.test(segment);
-  };
-
-  const onSubmit = async (values: CommentFormValues) => {
+  const onSubmit = async (values: FormData) => {
     const trimmedContent = values.content.trim();
     if (!trimmedContent) return;
 
@@ -111,6 +92,10 @@ export function CommentFormClient({ postId }: CommentFormClientProps) {
       handleSubmit(onSubmit)();
     }
   };
+
+  if (!isLoggedIn) {
+    return <AskLoginLabel />;
+  }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 relative">
@@ -199,5 +184,17 @@ const FitTextArea = (
       placeholder={t('placeholder')}
       className="block w-full resize-none min-h-32 p-3 border border-[#5E5E5E] focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 dark:text-gray-100 overflow-hidden"
     />
+  );
+};
+
+const AskLoginLabel = () => {
+  const t = useTranslations('Comment');
+
+  return (
+    <p className="p-4 border border-[#5E5E5E] dark:border-[#5E5E5E] text-gray-700 dark:text-gray-300">
+      {t.rich('loginRequired', {
+        loginLink: (chunks) => <LoginButton>{chunks}</LoginButton>,
+      })}
+    </p>
   );
 };

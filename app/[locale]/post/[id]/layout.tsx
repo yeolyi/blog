@@ -1,4 +1,4 @@
-import Comments from '@/app/[locale]/post/[id]/components/Comments';
+import Comments from '@/app/[locale]/post/[id]/components/Comment';
 import TableOfContents from '@/app/[locale]/post/[id]/components/TableOfContents';
 import localFont from 'next/font/local';
 

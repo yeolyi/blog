@@ -1,8 +1,9 @@
 import { routing } from '@/i18n/routing';
 import { getPostIds } from '@/utils/post';
-import type { Metadata, ResolvingMetadata } from 'next';
-import { ROUTES_MANIFEST } from 'next/dist/shared/lib/constants';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+
+export const dynamic = 'force-dynamic';
 
 type Props = {
   params: Promise<{ id: string; locale: string }>;

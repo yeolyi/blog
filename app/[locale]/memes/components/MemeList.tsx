@@ -1,7 +1,7 @@
 'use client';
 
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import type { Meme, Tag } from '@/types/meme';
-import { useInfiniteScroll } from '@/utils/useInfiniteScroll';
 import { useCallback, useState } from 'react';
 import { getMemes } from '../actions';
 import { MemeItem } from './MenuItem';

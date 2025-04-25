@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { getTranslations } from 'next-intl/server';
-import { renderMarkdown } from '../utils/markdown';
+import { renderMarkdown } from '../../../utils/markdown';
 import { DeleteButton } from './DeleteButton';
 
 interface Comment {
