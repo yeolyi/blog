@@ -1,0 +1,42 @@
+import { ControlButton, Controls, Panel } from '@xyflow/react';
+import { Folder, Save } from 'lucide-react';
+
+const MyControls = ({
+  onClickAddNumber,
+  onClickAddNand,
+  onSave,
+  onRestore,
+}: {
+  onClickAddNumber: () => void;
+  onClickAddNand: () => void;
+  onSave: () => void;
+  onRestore: () => void;
+}) => {
+  return (
+    <>
+      <Panel position="top-left">
+        <ControlButton type="button" onClick={onClickAddNand}>
+          <div className="border border-white w-[80%] h-[60%] rounded-r-full" />
+        </ControlButton>
+        <ControlButton
+          type="button"
+          onClick={onClickAddNumber}
+          className="text-xs"
+        >
+          01
+        </ControlButton>
+      </Panel>
+      <Controls showInteractive={false} fitViewOptions={{ padding: 2 }} />
+      <Panel position="top-right">
+        <ControlButton type="button" onClick={onSave}>
+          <Save className="w-[12px] h-[12px]" style={{ fill: 'none' }} />
+        </ControlButton>
+        <ControlButton type="button" onClick={onRestore}>
+          <Folder className="w-[12px] h-[12px]" style={{ fill: 'none' }} />
+        </ControlButton>
+      </Panel>
+    </>
+  );
+};
+
+export default MyControls;

@@ -1,11 +1,15 @@
-import type { NandNodeAtoms } from '@/mdx/it-was-all-nand/Nand/NandNode';
-import type { NumberNodeAtoms } from '@/mdx/it-was-all-nand/Nand/NumberNode';
+import type { NandNodeAtoms } from '@/mdx/it-was-all-nand/Nand/node/NandNode';
+import type { NumberNodeAtoms } from '@/mdx/it-was-all-nand/Nand/node/NumberNode';
 import { atom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
 
 type AtomMap = Map<string, NumberNodeAtoms | NandNodeAtoms>;
 
-export const createNandAtoms = (map: AtomMap) => {
+export const isCustomNode = (type?: string): type is 'nand' | 'number' => {
+  return type === 'nand' || type === 'number';
+};
+
+const createNandAtoms = (map: AtomMap) => {
   const in1Atom = atom<string | null>(null);
   const in2Atom = atom<string | null>(null);
 
@@ -56,10 +60,21 @@ export const createNandAtoms = (map: AtomMap) => {
   };
 };
 
-export const createNumberAtoms = (map: AtomMap) => {
+const createNumberAtoms = (map: AtomMap) => {
   const outAtom = atom<boolean>(false);
   return {
     type: 'number' as const,
     out: outAtom,
   };
+};
+
+export const createAtoms = (type: string, map: AtomMap) => {
+  switch (type) {
+    case 'nand':
+      return createNandAtoms(map);
+    case 'number':
+      return createNumberAtoms(map);
+    default:
+      throw new Error(`Unknown type: ${type}`);
+  }
 };

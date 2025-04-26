@@ -1,12 +1,6 @@
 import { Handle, Position, useNodeConnections } from '@xyflow/react';
 import clsx from 'clsx';
-import {
-  type Atom,
-  type PrimitiveAtom,
-  useAtom,
-  useAtomValue,
-  useSetAtom,
-} from 'jotai';
+import { type Atom, type PrimitiveAtom, useAtom, useAtomValue } from 'jotai';
 
 export type NandNodeAtoms = {
   type: 'nand';
