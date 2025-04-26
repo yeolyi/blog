@@ -3,7 +3,6 @@ import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Suspense } from 'react';
 import me from './assets/me.jpg';
 
 export default async function Home({
@@ -65,9 +64,7 @@ export default async function Home({
         })}
       </p>
 
-      <Suspense>
-        <PostList />
-      </Suspense>
+      <PostList />
     </div>
   );
 }

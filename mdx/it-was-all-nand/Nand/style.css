@@ -1,0 +1,30 @@
+img,
+picture,
+video,
+canvas,
+svg {
+  display: unset;
+  max-width: unset;
+}
+
+@keyframes flow {
+  from {
+    stroke-dashoffset: 20;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.react-flow__edge-path {
+  stroke: #ffffff;
+  stroke-width: 2;
+  stroke-dasharray: 5;
+}
+:root {
+  --xy-handle-background-color: #ffffff;
+  --xy-handle-border-color: transparent;
+}
+.react-flow__handle {
+  width: 10px;
+  height: 10px;
+}

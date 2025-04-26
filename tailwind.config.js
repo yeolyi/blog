@@ -2,6 +2,9 @@
 module.exports = {
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['var(--font-ibm-plex-sans)'],
+      },
       typography: {
         DEFAULT: {
           css: {
