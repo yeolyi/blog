@@ -14,12 +14,11 @@ import {
   applyEdgeChanges,
   applyNodeChanges,
 } from '@xyflow/react';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import '@xyflow/react/dist/style.css';
 import './style.css';
 import { createAtoms } from '@/mdx/it-was-all-nand/Nand/atom';
-import type { NandNodeAtoms } from '@/mdx/it-was-all-nand/Nand/node/NandNode';
-import type { NumberNodeAtoms } from '@/mdx/it-was-all-nand/Nand/node/NumberNode';
+import type { CustomNodeAtoms } from '@/mdx/it-was-all-nand/Nand/node';
 
 import MyControls from '@/mdx/it-was-all-nand/Nand/components/MyControl';
 import MyReactFlow from '@/mdx/it-was-all-nand/Nand/components/MyReactFlow';
@@ -28,23 +27,37 @@ import { useNewId } from '@/mdx/it-was-all-nand/Nand/utils/useNewId';
 import { saveJSONToFile, selectJSONFromFile } from '@/utils/string';
 import { Provider, createStore } from 'jotai';
 
-export const nandStore = createStore();
-
 // 처음에는 NAND의 값은 atom으로 해보겠는데 연결이 바뀌는건 어떻게 표현하지? 그때는 어떻게 리렌더링하지? 했었는데
 // 연결도 atom으로 표현하면 되겠더라
 // 생각보다 모든걸 atom으로 표현한다는 사고방식이 어렵다.
-function Flow() {
+function Flow({
+  id,
+  initialJSON,
+}: {
+  id: string;
+  initialJSON?: ReactFlowJsonObject<Node, Edge>;
+}) {
+  const store = useMemo(() => createStore(), []);
+
   const createNodeId = useNewId();
   const createEdgeId = useNewId();
-
-  const [nodes, setNodes] = useState<Node[]>([]);
-  const [edges, setEdges] = useState<Edge[]>([]);
-
-  const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
-
-  const atomMap = useRef<Map<string, NumberNodeAtoms | NandNodeAtoms>>(
-    new Map(),
+  const atomMap = useRef<Map<string, CustomNodeAtoms>>(new Map());
+  const initialFlow = useMemo(
+    () =>
+      initialJSON &&
+      restoreFlow(
+        store,
+        initialJSON,
+        atomMap.current,
+        createNodeId,
+        createEdgeId,
+      ),
+    [initialJSON, createNodeId, createEdgeId, store],
   );
+
+  const [nodes, setNodes] = useState<Node[]>(initialFlow?.nodes ?? []);
+  const [edges, setEdges] = useState<Edge[]>(initialFlow?.edges ?? []);
+  const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
 
   const onNodesChange = useCallback((changes: NodeChange[]) => {
     // 노드 삭제 대응
@@ -56,54 +69,58 @@ function Flow() {
     setNodes((nds) => applyNodeChanges(changes, nds));
   }, []);
 
-  const onEdgesChange = useCallback((changes: EdgeChange[]) => {
-    setEdges((eds) => {
-      for (const change of changes) {
-        if (change.type !== 'remove') continue;
+  const onEdgesChange = useCallback(
+    (changes: EdgeChange[]) => {
+      setEdges((eds) => {
+        for (const change of changes) {
+          if (change.type !== 'remove') continue;
 
-        // 엣지 삭제 대응
-        const edge = eds.find((e) => e.id === change.id);
-        if (!edge) continue;
-        const targetHandle = edge.targetHandle;
+          // 엣지 삭제 대응
+          const edge = eds.find((e) => e.id === change.id);
+          if (!edge) continue;
+          const targetHandle = edge.targetHandle;
 
-        const targetAtoms = atomMap.current.get(edge.target);
-        if (!targetAtoms) continue;
+          const targetAtoms = atomMap.current.get(edge.target);
+          if (!targetAtoms) continue;
 
-        if (targetAtoms.type === 'nand') {
-          nandStore.set(
-            targetHandle === 'in1' ? targetAtoms.in1 : targetAtoms.in2,
-            null,
-          );
+          if (targetAtoms.type === 'nand') {
+            store.set(
+              targetHandle === 'in1' ? targetAtoms.in1 : targetAtoms.in2,
+              null,
+            );
+          }
         }
-      }
 
-      return applyEdgeChanges(changes, eds);
-    });
-  }, []);
+        return applyEdgeChanges(changes, eds);
+      });
+    },
+    [store],
+  );
 
   // 처음에는 노드 컴포넌트에서 했는데 jotai에서 store라는걸 지원함
   // 문서보니 안쓰는게 좋다는거같은데 뭐...
+  const onConnect = useCallback(
+    (connection: Connection) => {
+      // 노드 연결 대응
+      const atoms = atomMap.current.get(connection.target);
+      if (!atoms) return;
 
-  const onConnect = useCallback((connection: Connection) => {
-    // 노드 연결 대응
-    const atoms = atomMap.current.get(connection.target);
-    if (!atoms) return;
-
-    if (atoms.type === 'nand') {
-      nandStore.set(
-        connection.targetHandle === 'in1' ? atoms.in1 : atoms.in2,
-        connection.source,
-      );
-    }
-    setEdges((eds) => addEdge(connection, eds));
-  }, []);
+      if (atoms.type === 'nand') {
+        store.set(
+          connection.targetHandle === 'in1' ? atoms.in1 : atoms.in2,
+          connection.source,
+        );
+      }
+      setEdges((eds) => addEdge(connection, eds));
+    },
+    [store],
+  );
 
   const addNode = (type: string) => () => {
     const id = createNodeId();
-
     const atoms = createAtoms(type, atomMap.current);
     atomMap.current.set(id, atoms);
-    const position = { x: 0, y: nodes.length * 75 };
+    const position = { x: 0, y: nodes.length * 5 };
 
     const item = { id, type, position, data: { atoms } };
     setNodes((nds) => [...nds, item]);
@@ -116,25 +133,32 @@ function Flow() {
     saveJSONToFile(json, 'nand.json');
   };
 
+  const restoreJSON = useCallback(
+    async (flow: ReactFlowJsonObject<Node, Edge>) => {
+      const { nodes: restoredNodes, edges: restoredEdges } = restoreFlow(
+        store,
+        flow,
+        atomMap.current,
+        createNodeId,
+        createEdgeId,
+      );
+      setNodes((nds) => [...nds, ...restoredNodes]);
+      setEdges((eds) => [...eds, ...restoredEdges]);
+    },
+    [createNodeId, createEdgeId, store],
+  );
+
   const onRestore = async () => {
     const json = await selectJSONFromFile();
     const flow = JSON.parse(json) as ReactFlowJsonObject<Node, Edge>;
-    const { nodes, edges } = restoreFlow(
-      flow,
-      atomMap.current,
-      createNodeId,
-      createEdgeId,
-    );
-    setNodes((nds) => [...nds, ...nodes]);
-    setEdges((eds) => [...eds, ...edges]);
+    restoreJSON(flow);
   };
 
-  console.log(edges);
-
   return (
-    <Provider store={nandStore}>
-      <div className="h-[400px] w-[500px] relative not-prose font-sans">
+    <Provider store={store}>
+      <div className="h-[400px] w-[500px] relative not-prose font-sans overflow-hidden">
         <MyReactFlow
+          id={id}
           nodes={nodes}
           edges={edges}
           onNodesChange={onNodesChange}
@@ -148,7 +172,7 @@ function Flow() {
             onSave={onSave}
             onRestore={onRestore}
           />
-          <Background variant={BackgroundVariant.Dots} />
+          <Background variant={BackgroundVariant.Dots} id={id} />
         </MyReactFlow>
       </div>
     </Provider>

@@ -1,17 +1,19 @@
 import { ControlButton, Controls, Panel } from '@xyflow/react';
 import { Folder, Save } from 'lucide-react';
 
+interface MyControlsProps {
+  onClickAddNumber: () => void;
+  onClickAddNand: () => void;
+  onSave: () => void;
+  onRestore: () => void;
+}
+
 const MyControls = ({
   onClickAddNumber,
   onClickAddNand,
   onSave,
   onRestore,
-}: {
-  onClickAddNumber: () => void;
-  onClickAddNand: () => void;
-  onSave: () => void;
-  onRestore: () => void;
-}) => {
+}: MyControlsProps) => {
   return (
     <>
       <Panel position="top-left">

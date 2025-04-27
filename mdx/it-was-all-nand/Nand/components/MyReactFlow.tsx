@@ -7,28 +7,35 @@ import {
   type ReactFlowProps,
 } from '@xyflow/react';
 
-const MyReactFlow = (
-  props: ReactFlowProps & {
-    setRefInstance: (instance: ReactFlowInstance) => void;
-  },
-) => {
+interface MyReactFlowProps extends ReactFlowProps {
+  setRefInstance: (instance: ReactFlowInstance) => void;
+}
+
+const nodeTypes = {
+  nand: NandNode,
+  number: NumberNode,
+};
+
+const defaultEdgeOptions = {
+  type: 'smoothstep' as const,
+  animated: true,
+  selectable: true,
+};
+
+const connectionLineStyle = { stroke: 'lightgray' };
+
+const MyReactFlow = (props: MyReactFlowProps) => {
   const { setRefInstance, ...rest } = props;
+
   return (
     <ReactFlow
       {...rest}
       onInit={setRefInstance}
       colorMode="dark"
-      nodeTypes={{
-        nand: NandNode,
-        number: NumberNode,
-      }}
-      defaultEdgeOptions={{
-        type: 'smoothstep',
-        animated: true,
-        selectable: true,
-      }}
+      nodeTypes={nodeTypes}
+      defaultEdgeOptions={defaultEdgeOptions}
       connectionLineType={ConnectionLineType.SmoothStep}
-      connectionLineStyle={{ stroke: 'lightgray' }}
+      connectionLineStyle={connectionLineStyle}
       fitView
       fitViewOptions={{ padding: 2 }}
       proOptions={{ hideAttribution: true }}

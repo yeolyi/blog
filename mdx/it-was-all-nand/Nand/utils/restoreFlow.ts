@@ -1,9 +1,11 @@
-import { nandStore } from '@/mdx/it-was-all-nand/Nand';
 import { createAtoms, isCustomNode } from '@/mdx/it-was-all-nand/Nand/atom';
 import type { CustomNodeAtoms } from '@/mdx/it-was-all-nand/Nand/node';
 import type { Edge, Node, ReactFlowJsonObject } from '@xyflow/react';
+import type { createStore } from 'jotai';
 
 export const restoreFlow = (
+  // 이게 최선?
+  store: ReturnType<typeof createStore>,
   flow: ReactFlowJsonObject<Node, Edge>,
   atomMap: Map<string, CustomNodeAtoms>,
   createNodeId: () => string,
@@ -33,10 +35,7 @@ export const restoreFlow = (
     if (!atoms) return edge;
 
     if (atoms.type === 'nand') {
-      nandStore.set(
-        edge.targetHandle === 'in1' ? atoms.in1 : atoms.in2,
-        source,
-      );
+      store.set(edge.targetHandle === 'in1' ? atoms.in1 : atoms.in2, source);
     }
 
     const id = createEdgeId();

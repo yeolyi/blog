@@ -1,0 +1,72 @@
+{
+  "nodes": [
+    {
+      "id": "node-0",
+      "type": "nand",
+      "position": { "x": -44, "y": -134 },
+      "data": {
+        "atoms": {
+          "type": "nand",
+          "in1": { "init": null },
+          "in2": { "init": null },
+          "out": { "init": null }
+        },
+        "map": {}
+      },
+      "measured": { "width": 98, "height": 66 },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "node-1",
+      "type": "number",
+      "position": { "x": -148.25252251422125, "y": -169.6497938049336 },
+      "data": {
+        "atoms": { "type": "number", "out": { "init": false } },
+        "map": {}
+      },
+      "measured": { "width": 48, "height": 48 },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "node-2",
+      "type": "number",
+      "position": { "x": -154.36602859728194, "y": -100.87285037050107 },
+      "data": {
+        "atoms": { "type": "number", "out": { "init": false } },
+        "map": {}
+      },
+      "measured": { "width": 48, "height": 48 },
+      "selected": false,
+      "dragging": false
+    }
+  ],
+  "edges": [
+    {
+      "type": "smoothstep",
+      "animated": true,
+      "selectable": true,
+      "source": "node-1",
+      "sourceHandle": "out",
+      "target": "node-0",
+      "targetHandle": "in1",
+      "id": "xy-edge__node-1out-node-0in1"
+    },
+    {
+      "type": "smoothstep",
+      "animated": true,
+      "selectable": true,
+      "source": "node-2",
+      "sourceHandle": "out",
+      "target": "node-0",
+      "targetHandle": "in2",
+      "id": "xy-edge__node-2out-node-0in2"
+    }
+  ],
+  "viewport": {
+    "x": 253.2643590148964,
+    "y": 282.271320030627,
+    "zoom": 0.6542890357275046
+  }
+}
