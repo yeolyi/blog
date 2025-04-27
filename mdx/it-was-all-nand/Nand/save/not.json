@@ -1,0 +1,51 @@
+{
+  "nodes": [
+    {
+      "id": "f1e28c21-9c46-4ad9-856c-6f63a7b7fc3a",
+      "type": "number",
+      "position": { "x": 0, "y": 0 },
+      "data": { "atoms": { "type": "number", "out": { "init": false } } },
+      "measured": { "width": 48, "height": 48 }
+    },
+    {
+      "id": "c4bd91e4-810b-4b73-94b8-f1c403d4b4f0",
+      "type": "nand",
+      "position": { "x": 88.94766516079098, "y": -7.3851179337810215 },
+      "data": {
+        "atoms": {
+          "type": "nand",
+          "in1": { "init": null },
+          "in2": { "init": null },
+          "out": { "init": null },
+          "outEffect": {}
+        }
+      },
+      "measured": { "width": 98, "height": 66 },
+      "selected": false,
+      "dragging": false
+    }
+  ],
+  "edges": [
+    {
+      "type": "smoothstep",
+      "animated": true,
+      "selectable": true,
+      "source": "f1e28c21-9c46-4ad9-856c-6f63a7b7fc3a",
+      "sourceHandle": "out",
+      "target": "c4bd91e4-810b-4b73-94b8-f1c403d4b4f0",
+      "targetHandle": "in1",
+      "id": "xy-edge__f1e28c21-9c46-4ad9-856c-6f63a7b7fc3aout-c4bd91e4-810b-4b73-94b8-f1c403d4b4f0in1"
+    },
+    {
+      "type": "smoothstep",
+      "animated": true,
+      "selectable": true,
+      "source": "f1e28c21-9c46-4ad9-856c-6f63a7b7fc3a",
+      "sourceHandle": "out",
+      "target": "c4bd91e4-810b-4b73-94b8-f1c403d4b4f0",
+      "targetHandle": "in2",
+      "id": "xy-edge__f1e28c21-9c46-4ad9-856c-6f63a7b7fc3aout-c4bd91e4-810b-4b73-94b8-f1c403d4b4f0in2"
+    }
+  ],
+  "viewport": { "x": 166, "y": 176.98125738332394, "zoom": 0.8986472222346593 }
+}

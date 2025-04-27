@@ -16,7 +16,6 @@ const createNandAtoms = (map: AtomMap) => {
   const immediateAtom = atom<boolean | null>((get) => {
     const in1 = get(in1Atom);
     const in2 = get(in2Atom);
-    console.log('in1', in1, 'in2', in2);
 
     if (in1 === null || in2 === null) {
       return null;
@@ -42,7 +41,6 @@ const createNandAtoms = (map: AtomMap) => {
   // effect로 연결되어있는거라서 사이클이 아니디.
   const outEffect = atomEffect((get, set) => {
     const out = get(immediateAtom);
-    console.log('observe', out);
 
     const id = setTimeout(() => {
       set.recurse(outAtom, out);

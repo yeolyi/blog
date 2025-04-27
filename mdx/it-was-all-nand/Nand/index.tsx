@@ -10,6 +10,7 @@ import {
   type NodeChange,
   type ReactFlowInstance,
   type ReactFlowJsonObject,
+  ReactFlowProvider,
   addEdge,
   applyEdgeChanges,
   applyNodeChanges,
@@ -41,6 +42,7 @@ function Flow({
 
   const createNodeId = useNewId();
   const createEdgeId = useNewId();
+  // 왜 dev에서 내용이 두 배가 되지??
   const atomMap = useRef<Map<string, CustomNodeAtoms>>(new Map());
   const initialFlow = useMemo(
     () =>
@@ -156,25 +158,27 @@ function Flow({
 
   return (
     <Provider store={store}>
-      <div className="h-[400px] w-[500px] relative not-prose font-sans overflow-hidden">
-        <MyReactFlow
-          id={id}
-          nodes={nodes}
-          edges={edges}
-          onNodesChange={onNodesChange}
-          onEdgesChange={onEdgesChange}
-          onConnect={onConnect}
-          setRefInstance={setRfInstance}
-        >
-          <MyControls
-            onClickAddNumber={addNode('number')}
-            onClickAddNand={addNode('nand')}
-            onSave={onSave}
-            onRestore={onRestore}
-          />
-          <Background variant={BackgroundVariant.Dots} id={id} />
-        </MyReactFlow>
-      </div>
+      <ReactFlowProvider>
+        <div className="h-[400px] w-[500px] relative not-prose font-sans overflow-hidden">
+          <MyReactFlow
+            id={id}
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            setRefInstance={setRfInstance}
+          >
+            <MyControls
+              onClickAddNumber={addNode('number')}
+              onClickAddNand={addNode('nand')}
+              onSave={onSave}
+              onRestore={onRestore}
+            />
+            <Background variant={BackgroundVariant.Dots} id={id} />
+          </MyReactFlow>
+        </div>
+      </ReactFlowProvider>
     </Provider>
   );
 }

@@ -1,0 +1,120 @@
+export const title = 'Building a Computer Using !(x&y) Part 1';
+export const date = '2025-04-27'; // Note: This date is in the future. Adjust if needed.
+
+import Image from '@/app/[locale]/components/Image';
+
+import Nand from './Nand/index.tsx'; // Or adjust path if needed
+import nand from './Nand/save/nand.json';
+import memory from './Nand/save/memory.json';
+import not from './Nand/save/not.json';
+import and from './Nand/save/and.json';
+
+One fascinating fact in computer science is that you can build an entire
+computer just by combining simple logic gates called NAND. Check out the
+behavior of a NAND gate in the component below. You can change its input values
+by clicking the squares.
+
+<Nand initialJSON={nand} id="nand" />
+
+You can see that when both inputs are <span className="text-green-500">1</span>,
+the NAND gate's output is
+
+<span className="text-red-500">0</span>, and in all other cases, the output is
+<span className="text-green-500">1</span>.
+
+Isn't it amazing that you can assemble these NAND gates to create computers,
+CPUs, and memory? Understanding this might also help you grasp how computers can
+be implemented in games like Minecraft.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/3gBZHXqnleU?si=JY6APEHvk5K22GmQ"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+></iframe>
+
+## NOT Gate
+
+Let's build a NOT gate, which outputs the **opposite** of the input, using NAND
+gates.
+
+<Nand initialJSON={not} id="not" />
+
+We implemented NOT using a NAND gate by feeding the same value into both inputs.
+
+## AND Gate
+
+Now, let's build an AND gate, which outputs 1 only when **both** inputs are 1,
+using NAND gates.
+
+<Nand initialJSON={and} id="and" />
+
+Since we have NAND and NOT, creating AND is simple. A NAND gate followed by a
+NOT gate results in an AND gate (NAND + NOT = AND).
+
+## OR Gate
+
+Let's try building an OR gate, which outputs 1 when **at least one** input is 1.
+
+Try building the OR gate yourself in the component below. Hint:
+<span className="blur-xs hover:blur-none transition-all">De Morgan's Laws</span>
+
+<Nand id="tmp" />
+
+If that was too easy, try building an XOR gate (Exclusive OR), which outputs 1
+only when **exactly one** input is 1.
+
+## The Significance of AND, OR, and NOT
+
+So, we've confirmed that we can create AND, OR, and NOT gates using only NAND
+gates. But why are these specific gates (AND, OR, NOT) so important?
+
+First, let's consider the meaning of **0 and 1**. Computers store and process
+all data—photos, videos, text—as collections of 0s and 1s in memory. Therefore,
+operations like photo editing or text modification can be seen internally as
+operations on these 0s and 1s. You can think of these operations as **functions
+that take 0s and 1s as input and produce transformed 0s and 1s as output**.
+
+Here's the crucial point: **With just AND, OR, and NOT gates, we can create
+_any_ possible function** that operates on binary inputs. For example, consider
+the XOR function, which has the following input/output behavior:
+
+|  A  |  B  | A XOR B |
+| :-: | :-: | :-----: |
+|  0  |  0  |    0    |
+|  0  |  1  |    1    |
+|  1  |  0  |    1    |
+|  1  |  1  |    0    |
+
+Let's focus on the cases where the output is 1:
+
+- The case (A=0, B=1) can be represented as `(NOT A) AND B`.
+- The case (A=1, B=0) can be represented as `(A) AND (NOT B)`.
+
+By combining these two AND terms (called minterms) with an OR operation, the XOR
+function can be expressed as:
+
+`((NOT A) AND B) OR (A AND (NOT B))`
+
+This method, where you identify the input combinations that produce a 1, express
+each as an AND term (using NOT where the input is 0), and then combine these
+terms with OR (known as the sum-of-products form), allows you to construct any
+desired Boolean function.
+
+As we've demonstrated that NAND can be used to create AND, OR, and NOT, it means
+NAND alone is sufficient. This property is called
+[functional completeness](https://en.wikipedia.org/wiki/Functional_completeness).
+Other functionally complete sets besides \{ NAND } include \{ NOR }, and the set
+\{ AND, NOT } (which we effectively derived from NAND).
+
+## What's Next
+
+However, there are tasks that cannot be represented solely by these types of
+functions (known as combinational logic). For example, tasks like counting how
+many times a button has been pressed require a system that can handle temporal
+order or remember previous events (maintain state). In the next post, we'll
+explore **memory** and sequential logic.

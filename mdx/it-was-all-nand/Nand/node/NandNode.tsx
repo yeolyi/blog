@@ -47,7 +47,7 @@ export const NandNode = (props: {
   return (
     <div
       className={clsx(
-        'relative w-24 h-16 border rounded-r-full border-white box-content',
+        'relative w-24 h-16 border rounded-r-full border-white box-content flex items-center justify-center',
         backgroundColor,
         props.selected && 'scale-110',
       )}
@@ -79,6 +79,10 @@ export const NandNode = (props: {
           backgroundColor: 'transparent',
         }}
       />
+      {/* 생긴게 치우치게 생겨서 중심 미세조정 */}
+      <p className="text-white text-2xl font-semibold mr-[5px]">
+        {out ? 1 : 0}
+      </p>
     </div>
   );
 };

@@ -1,14 +1,110 @@
-export const title = 'NAND';
-export const description = 'NAND로 직접 컴퓨터 만들어보기';
-export const date = '2025-04-25';
+export const title = '!(x&y)만으로 컴퓨터 만들기 Part 1';
+export const date = '2025-04-27';
+
+import Image from '@/app/[locale]/components/Image';
 
 import Nand from './Nand/index.tsx';
 import nand from './Nand/save/nand.json';
+import memory from './Nand/save/memory.json';
+import not from './Nand/save/not.json';
+import and from './Nand/save/and.json';
 
-블라블라 nand가 어쩌구저쩌구
+컴퓨터공학에서 기억에 남는 사실 중 하나는 NAND라는 간단한 함수를 모아 컴퓨터를
+만들 수 있다는 것입니다. 아래 컴포넌트에서 NAND의 동작을 확인해보세요. 사각형을
+클릭해 NAND의 입력값을 바꿀 수 있습니다.
 
-<Nand id="nand" />
+<Nand initialJSON={nand} id="nand" />
 
-ㅁ너암니어ㅏㅁ
+두 입력이 모두 <span className="text-green-500">1</span>일 때 NAND의 출력은
 
-<Nand initialJSON={nand} id="nand2" />
+<span className="text-red-500">0</span>, 나머지 경우에
+<span className="text-green-500">1</span>임을 확인할 수 있습니다.
+
+이런 NAND를 모으고 모아 컴퓨터를, CPU를, 메모리를 만들 수 있다는게 신기하지
+않나요? 이 내용을 알면 마인크래프트같은 게임에서 어떻게 컴퓨터가 구현이 가능한지
+이해하는 데 도움이 될 거예요.
+
+<iframe
+  width="560"
+  height="315"
+  src="https://www.youtube.com/embed/3gBZHXqnleU?si=JY6APEHvk5K22GmQ"
+  title="YouTube video player"
+  frameBorder="0"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+  referrerPolicy="strict-origin-when-cross-origin"
+  allowFullScreen
+></iframe>
+
+## NOT
+
+입력의 **반대값**을 출력하는 NOT을 NAND로 만들어볼게요.
+
+<Nand initialJSON={not} id="not" />
+
+두 입력에 동일한 값을 넣어 NAND로 NOT을 구현했습니다.
+
+## AND
+
+두 입력이 **모두** 1일 때만 1을 출력하는 AND를 NAND로 만들어볼게요.
+
+<Nand initialJSON={and} id="and" />
+
+NAND와 NOT이 있으니 AND는 간단합니다. 부정의 부정은 긍정이니 NAND에 아까 만든
+NOT을 붙이면 AND가 됩니다.
+
+## OR
+
+두 입력이 **적어도 하나** 1일 때 1을 출력하는 OR를 만들어볼게요.
+
+OR은 고민해서 아래 만들어보세요😚. 힌트:
+<span className="blur-xs hover:blur-none transition-all">드모르간 법칙</span>
+
+<Nand id="tmp" />
+
+너무 쉬우셨다면 두 입력이 **하나만** 1일 때 1을 출력하는 XOR도 만들어보세요.
+
+## AND OR NOT의 의미
+
+이렇게 NAND로 AND, OR, NOT을 만들 수 있음을 확인했습니다. 그런데 왜 하필 AND OR
+NOT이고 이들이 중요할까요?
+
+우선 컴퓨터에서 **0과 1의 의미**를 살펴볼 필요가 있습니다. 컴퓨터는 사진, 영상,
+텍스트 등 모든 데이터를 0과 1의 조합으로 저장하고 처리합니다. 따라서 사진 편집,
+텍스트 수정 같은 작업은 모두 내부적으로 0과 1에 대한 연산이라고 볼 수 있습니다.
+이런 작업들은 **0과 1을 입력받고 변환된 0과 1을 출력하는 함수**라고 생각할 수도
+있지요.
+
+그런데! **AND OR NOT만 있으면 모든 가능한 함수를 만들 수 있습니다**. 예를 들어
+XOR 함수는 아래와 같은 입출력을 가집니다.
+
+|  A  |  B  | A XOR B |
+| :-: | :-: | :-----: |
+|  0  |  0  |    0    |
+|  0  |  1  |    1    |
+|  1  |  0  |    1    |
+|  1  |  1  |    0    |
+
+출력이 1인 경우에 집중해봅시다.
+
+- (A=0, B=1)인 경우는 (NOT A) AND (B) 로 표현됩니다.
+- (A=1, B=0)인 경우는 (A) AND (NOT B) 로 표현됩니다.
+
+이 두 개의 논리곱들을 논리합(OR)으로 연결하면 XOR 함수는 다음과 같이 표현됩니다:
+
+- (A AND (NOT B)) OR ((NOT A) AND B)
+
+이렇게 출력이 1인 경우만 모아서, 각 경우를 NOT과 AND로 묶고, 전체를 OR로 합치면
+원하는 함수를 만들 수 있습니다.
+
+지금까지 살펴봤듯 NAND만으로 모든 함수를 만들 수 있는 성질을 NAND로 구성된
+집합의
+[functional completeness](https://en.wikipedia.org/wiki/Functional_completeness)라고
+합니다. Functional complete한 집합으로는 \{ NAND } 외에도 \{ NOR }, \{ AND, NOT
+} 등이 있습니다.
+
+## 다음 내용
+
+하지만 세상에는 이런 조합 논리(combinational logic)만으로 표현할 수 없는 작업이
+있습니다. 예를 들어 버튼을 눌렀을 때 몇 번 눌렀는지 세는 등의 작업인데요, 이런
+작업에는 시간적 순서나 이전 사건의 기록을 할 수 있는 시스템이 필요합니다. 다음
+게시물에서는 **메모리**에 대해 살펴볼게요.
