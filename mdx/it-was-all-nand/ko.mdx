@@ -24,16 +24,17 @@ import and from './Nand/save/and.json';
 않나요? 이 내용을 알면 마인크래프트같은 게임에서 어떻게 컴퓨터가 구현이 가능한지
 이해하는 데 도움이 될 거예요.
 
-<iframe
-  width="560"
-  height="315"
-  src="https://www.youtube.com/embed/3gBZHXqnleU?si=JY6APEHvk5K22GmQ"
-  title="YouTube video player"
-  frameBorder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  referrerPolicy="strict-origin-when-cross-origin"
-  allowFullScreen
-></iframe>
+<div className="relative w-full aspect-video">
+  <iframe
+    className="absolute top-0 left-0 w-full h-full"
+    src="https://www.youtube.com/embed/3gBZHXqnleU?si=JY6APEHvk5K22GmQ"
+    title="YouTube video player"
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerPolicy="strict-origin-when-cross-origin"
+    allowFullScreen
+  ></iframe>
+</div>
 
 ## NOT
 
@@ -57,6 +58,7 @@ NOT을 붙이면 AND가 됩니다.
 두 입력이 **적어도 하나** 1일 때 1을 출력하는 OR를 만들어볼게요.
 
 OR은 고민해서 아래 만들어보세요😚. 힌트:
+
 <span className="blur-xs hover:blur-none transition-all">드모르간 법칙</span>
 
 <Nand id="tmp" />

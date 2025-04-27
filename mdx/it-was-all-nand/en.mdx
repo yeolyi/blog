@@ -26,16 +26,17 @@ Isn't it amazing that you can assemble these NAND gates to create computers,
 CPUs, and memory? Understanding this might also help you grasp how computers can
 be implemented in games like Minecraft.
 
-<iframe
-  width="560"
-  height="315"
-  src="https://www.youtube.com/embed/3gBZHXqnleU?si=JY6APEHvk5K22GmQ"
-  title="YouTube video player"
-  frameBorder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-  referrerPolicy="strict-origin-when-cross-origin"
-  allowFullScreen
-></iframe>
+<div className="relative w-full aspect-video">
+  <iframe
+    className="absolute top-0 left-0 w-full h-full"
+    src="https://www.youtube.com/embed/3gBZHXqnleU?si=JY6APEHvk5K22GmQ"
+    title="YouTube video player"
+    frameBorder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerPolicy="strict-origin-when-cross-origin"
+    allowFullScreen
+  ></iframe>
+</div>
 
 ## NOT Gate
 
@@ -61,6 +62,7 @@ NOT gate results in an AND gate (NAND + NOT = AND).
 Let's try building an OR gate, which outputs 1 when **at least one** input is 1.
 
 Try building the OR gate yourself in the component below. Hint:
+
 <span className="blur-xs hover:blur-none transition-all">De Morgan's Laws</span>
 
 <Nand id="tmp" />

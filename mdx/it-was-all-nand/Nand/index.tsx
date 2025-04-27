@@ -159,7 +159,7 @@ function Flow({
   return (
     <Provider store={store}>
       <ReactFlowProvider>
-        <div className="h-[400px] w-[500px] relative not-prose font-sans overflow-hidden">
+        <div className="h-[400px] not-prose font-sans overflow-hidden">
           <MyReactFlow
             id={id}
             nodes={nodes}
