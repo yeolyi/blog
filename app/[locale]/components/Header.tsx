@@ -1,8 +1,8 @@
 import { signOut } from '@/app/[locale]/actions';
+import { Link } from '@/i18n/navigation';
 import { createClient } from '@/utils/supabase/server';
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
-import NextLink from 'next/link';
 import { Suspense } from 'react';
 import Button from './Button';
 import LoginButton from './LoginButton';
@@ -12,12 +12,9 @@ export default function Header() {
 
   return (
     <header className="fixed top-0 left-0 right-0 flex justify-between items-center p-4">
-      <NextLink
-        href="/"
-        className="text-[#e0e0e0] text-2xl font-bold no-underline"
-      >
+      <Link href="/" className="text-[#e0e0e0] text-2xl font-bold no-underline">
         {t('title')}
-      </NextLink>
+      </Link>
       {/* <div className="flex items-center gap-4">
         <Suspense fallback={<div>{t('loading')}</div>}>
           <AuthButton />

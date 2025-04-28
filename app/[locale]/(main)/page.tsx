@@ -3,7 +3,7 @@ import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
 import Link from 'next/link';
-import me from './assets/me.jpg';
+import me from '../assets/me.jpg';
 
 export default async function Home({
   params,
