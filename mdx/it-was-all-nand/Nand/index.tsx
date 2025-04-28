@@ -15,7 +15,7 @@ import {
   applyEdgeChanges,
   applyNodeChanges,
 } from '@xyflow/react';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import '@xyflow/react/dist/style.css';
 import './style.css';
 import { createAtoms } from '@/mdx/it-was-all-nand/Nand/atom';
@@ -61,12 +61,16 @@ function Flow({
   const [nodes, setNodes] = useState<Node[]>(initialFlow?.nodes ?? []);
   const [edges, setEdges] = useState<Edge[]>(initialFlow?.edges ?? []);
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
-  const [panOnDrag, setPanOnDrag] = useState(() => {
-    // 서버값을 false로 하면 로컬에서 개발할 때 hydration 오류가 뜸...
-    // 편의를 위해 true로 기본값 설정
-    if (typeof window === 'undefined') return true;
-    return !isTouchDevice();
-  });
+
+  const [panOnDrag, setPanOnDrag] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const isTouch = isTouchDevice();
+    if (isTouch) {
+      setPanOnDrag(false);
+    }
+  }, []);
 
   const onNodesChange = useCallback((changes: NodeChange[]) => {
     // 노드 삭제 대응
@@ -175,7 +179,7 @@ function Flow({
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             setRefInstance={setRfInstance}
-            panOnDrag={panOnDrag}
+            panOnDrag={panOnDrag ?? true}
           >
             <MyControls
               onClickAddNumber={addNode('number')}

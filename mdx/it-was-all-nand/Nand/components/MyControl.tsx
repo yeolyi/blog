@@ -1,12 +1,12 @@
 import { ControlButton, Controls, Panel } from '@xyflow/react';
-import { Folder, Lock, Save, Unlock } from 'lucide-react';
+import { Folder, Lock, Move, Save, Unlock } from 'lucide-react';
 
 interface MyControlsProps {
   onClickAddNumber: () => void;
   onClickAddNand: () => void;
   onSave: () => void;
   onRestore: () => void;
-  panOnDrag: boolean;
+  panOnDrag: boolean | null;
   setPanOnDrag: (panOnDrag: boolean) => void;
 }
 
@@ -33,17 +33,18 @@ const MyControls = ({
         </ControlButton>
       </Panel>
       <Controls showInteractive={false} fitViewOptions={{ padding: 2 }}>
-        <ControlButton
-          type="button"
-          onClick={() => setPanOnDrag(!panOnDrag)}
-          className="text-xs"
-        >
-          {panOnDrag ? (
-            <Lock style={{ fill: 'none' }} />
-          ) : (
-            <Unlock style={{ fill: 'none' }} />
-          )}
-        </ControlButton>
+        {panOnDrag !== null && (
+          <ControlButton
+            type="button"
+            onClick={() => setPanOnDrag(!panOnDrag)}
+            className="text-xs"
+          >
+            <Move
+              style={{ fill: 'none', opacity: panOnDrag ? 1 : 0.5 }}
+              className="w-[12px] h-[12px]"
+            />
+          </ControlButton>
+        )}
       </Controls>
       <Panel position="top-right">
         <ControlButton type="button" onClick={onSave}>
