@@ -42,6 +42,7 @@ const MyReactFlow = (props: MyReactFlowProps & { panOnDrag: boolean }) => {
       zoomOnScroll={false}
       preventScrolling={false}
       panOnDrag={panOnDrag}
+      nodesDraggable={panOnDrag}
     />
   );
 };
