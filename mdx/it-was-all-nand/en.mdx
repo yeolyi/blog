@@ -3,14 +3,11 @@ export const date = '2025-04-27'; // Note: This date is in the future. Adjust if
 
 import Image from '@/app/[locale]/components/Image';
 
-import Nand from './Nand/index.tsx'; // Or adjust path if needed
+import Nand from './Nand/index.tsx';  // Or adjust path if needed
 import nand from './Nand/save/nand.json';
 import memory from './Nand/save/memory.json';
 import not from './Nand/save/not.json';
 import and from './Nand/save/and.json';
-
-import '@xyflow/react/dist/style.css';
-import './Nand/style.css';
 
 One fascinating fact in computer science is that you can build an entire
 computer just by combining simple logic gates called NAND. Check out the
@@ -20,10 +17,8 @@ by clicking the squares.
 <Nand initialJSON={nand} id="nand" />
 
 You can see that when both inputs are <span className="text-green-500">1</span>,
-the NAND gate's output is
-
-<span className="text-red-500">0</span>, and in all other cases, the output is
-<span className="text-green-500">1</span>.
+the NAND gate's output is <span className="text-red-500">0</span>, and in all
+other cases, the output is <span className="text-green-500">1</span>.
 
 Isn't it amazing that you can assemble these NAND gates to create computers,
 CPUs, and memory? Understanding this might also help you grasp how computers can
@@ -63,8 +58,6 @@ NOT gate results in an AND gate (NAND + NOT = AND).
 ## OR Gate
 
 Let's try building an OR gate, which outputs 1 when **at least one** input is 1.
-
-Try building the OR gate yourself in the component below. Hint:
 
 <span className="blur-xs hover:blur-none transition-all">De Morgan's Laws</span>
 
