@@ -25,6 +25,7 @@ import MyControls from '@/mdx/it-was-all-nand/Nand/components/MyControl';
 import MyReactFlow from '@/mdx/it-was-all-nand/Nand/components/MyReactFlow';
 import { restoreFlow } from '@/mdx/it-was-all-nand/Nand/utils/restoreFlow';
 import { useNewId } from '@/mdx/it-was-all-nand/Nand/utils/useNewId';
+import { isTouchDevice } from '@/utils/isTouchDevice';
 import { saveJSONToFile, selectJSONFromFile } from '@/utils/string';
 import { Provider, createStore } from 'jotai';
 
@@ -60,6 +61,12 @@ function Flow({
   const [nodes, setNodes] = useState<Node[]>(initialFlow?.nodes ?? []);
   const [edges, setEdges] = useState<Edge[]>(initialFlow?.edges ?? []);
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
+  const [panOnDrag, setPanOnDrag] = useState(() => {
+    // 서버값을 false로 하면 로컬에서 개발할 때 hydration 오류가 뜸...
+    // 편의를 위해 true로 기본값 설정
+    if (typeof window === 'undefined') return true;
+    return !isTouchDevice();
+  });
 
   const onNodesChange = useCallback((changes: NodeChange[]) => {
     // 노드 삭제 대응
@@ -168,12 +175,15 @@ function Flow({
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
             setRefInstance={setRfInstance}
+            panOnDrag={panOnDrag}
           >
             <MyControls
               onClickAddNumber={addNode('number')}
               onClickAddNand={addNode('nand')}
               onSave={onSave}
               onRestore={onRestore}
+              panOnDrag={panOnDrag}
+              setPanOnDrag={setPanOnDrag}
             />
             <Background variant={BackgroundVariant.Dots} id={id} />
           </MyReactFlow>

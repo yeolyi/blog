@@ -24,8 +24,8 @@ const defaultEdgeOptions = {
 
 const connectionLineStyle = { stroke: 'lightgray' };
 
-const MyReactFlow = (props: MyReactFlowProps) => {
-  const { setRefInstance, ...rest } = props;
+const MyReactFlow = (props: MyReactFlowProps & { panOnDrag: boolean }) => {
+  const { setRefInstance, panOnDrag, ...rest } = props;
 
   return (
     <ReactFlow
@@ -41,6 +41,7 @@ const MyReactFlow = (props: MyReactFlowProps) => {
       proOptions={{ hideAttribution: true }}
       zoomOnScroll={false}
       preventScrolling={false}
+      panOnDrag={panOnDrag}
     />
   );
 };
