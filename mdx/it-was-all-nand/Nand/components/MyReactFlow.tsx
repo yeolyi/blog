@@ -39,6 +39,8 @@ const MyReactFlow = (props: MyReactFlowProps) => {
       fitView
       fitViewOptions={{ padding: 2 }}
       proOptions={{ hideAttribution: true }}
+      zoomOnScroll={false}
+      preventScrolling={false}
     />
   );
 };
