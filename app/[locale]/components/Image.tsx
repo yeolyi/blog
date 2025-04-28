@@ -8,6 +8,7 @@ export default function Image(props: React.ComponentProps<typeof NextImage>) {
   return (
     <NextImage
       {...props}
+      className="object-contain w-full"
       ref={(ref) => {
         if (!ref) return;
         const zoom = mediumZoom(ref, {

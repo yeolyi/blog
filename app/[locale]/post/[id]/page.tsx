@@ -1,3 +1,5 @@
+import Comments from '@/app/[locale]/post/[id]/components/Comment';
+import TableOfContents from '@/app/[locale]/post/[id]/components/TableOfContents';
 import { routing } from '@/i18n/routing';
 import { getPostIds } from '@/utils/post';
 import type { Metadata } from 'next';
@@ -26,10 +28,17 @@ export default async function PostPage({
     const { default: Component, title } = await import(
       `@/mdx/${id}/${locale}.mdx`
     );
+
     return (
       <>
-        <h1>{title}</h1>
-        <Component />
+        <div className="prose prose-invert mb-12">
+          <h1>{title}</h1>
+          <Component />
+        </div>
+        <Comments postId={id} />
+        <div className="fixed top-[15vh] left-[calc(50vw+24rem)] hidden xl:block">
+          <TableOfContents />
+        </div>
       </>
     );
   } catch (error) {

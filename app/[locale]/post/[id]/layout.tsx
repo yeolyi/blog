@@ -1,5 +1,3 @@
-import Comments from '@/app/[locale]/post/[id]/components/Comment';
-import TableOfContents from '@/app/[locale]/post/[id]/components/TableOfContents';
 import localFont from 'next/font/local';
 
 import '@xyflow/react/dist/style.css';
@@ -12,24 +10,15 @@ const monoplexKR = localFont({
 
 export default async function PostLayout({
   children,
-  params,
 }: {
   children: React.ReactNode;
-  params: Promise<{
-    id: string;
-  }>;
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = await params;
-
   return (
     <div
-      className={`${monoplexKR.variable} max-w-2xl mx-auto mt-[12vh] mb-32 px-4`}
+      className={`${monoplexKR.variable} max-w-2xl mx-auto mt-[12vh] mb-32 px-4 grow`}
     >
-      <div className="prose prose-invert mb-12">{children}</div>
-      <Comments postId={id} />
-      <div className="fixed top-[15vh] left-[calc(50vw+24rem)] hidden xl:block">
-        <TableOfContents />
-      </div>
+      {children}
     </div>
   );
 }
