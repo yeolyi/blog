@@ -1,9 +1,6 @@
 import { BooleanNode } from '@/mdx/it-was-all-nand/Nand/components/BooleanNode';
 import { NandNode } from '@/mdx/it-was-all-nand/Nand/components/NandNode';
-import type {
-  Registry,
-  RegistryAtoms,
-} from '@/mdx/it-was-all-nand/Nand/model/registry';
+import type { RegistryAtoms } from '@/mdx/it-was-all-nand/Nand/model/registry';
 import type { RegistryKey } from '@/mdx/it-was-all-nand/Nand/model/registry';
 import type { ComponentType } from 'react';
 

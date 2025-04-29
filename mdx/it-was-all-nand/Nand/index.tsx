@@ -20,7 +20,7 @@ import {
   applyEdgeChanges,
   applyNodeChanges,
 } from '@xyflow/react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import '@xyflow/react/dist/style.css';
 import './style.css';
 
@@ -222,7 +222,7 @@ function Flow({
               </ControlButton>
               <ControlButton
                 type="button"
-                onClick={addNode('boolean')}
+                onClick={addNode('number')}
                 className="text-xs"
               >
                 01

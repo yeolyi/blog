@@ -1,9 +1,9 @@
 import type { NodeProps } from '@/mdx/it-was-all-nand/Nand/components';
 import { Handle, Position } from '@xyflow/react';
 import clsx from 'clsx';
-import { type PrimitiveAtom, useAtom } from 'jotai';
+import { useAtom } from 'jotai';
 
-export const BooleanNode = (props: NodeProps<'boolean'>) => {
+export const BooleanNode = (props: NodeProps<'number'>) => {
   const { atoms } = props.data;
   const [out, setOut] = useAtom(atoms.outputAtoms.out);
 
