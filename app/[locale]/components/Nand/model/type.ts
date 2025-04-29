@@ -11,7 +11,16 @@ export type NodeCreator<T extends NodeAtoms> = (
 
 // 출력을 derived atom이 아닌 별도 상태로 관리
 // 사이클 방지 + 딜레이 구현을 위함
-export type OutputAtom = PrimitiveAtom<boolean | null>;
+export type OutputValue =
+  // true/false
+  | boolean
+  // 4bit 8bit 16bit...
+  | number
+  // 미정
+  | null;
+
+export type OutputAtom = PrimitiveAtom<OutputValue>;
+
 export type InputAtom = PrimitiveAtom<OutputAtom | null>;
 
 // 특정 노드의 상태를 표현
@@ -27,8 +36,10 @@ export type NodeAtoms<
   effectAtom: HasEffect extends true ? Atom<void> : undefined;
 };
 
-export type NodeOutput = Record<string, boolean | null>;
+export type NodeOutput = Record<string, OutputValue>;
+
 export type NodeOutputs = Record<string, NodeOutput>;
+
 export type SaveFile = ReactFlowJsonObject<Node, Edge> & {
   nodeOutputs: NodeOutputs;
 };

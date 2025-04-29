@@ -70,7 +70,7 @@ export const NandNode = (props: NodeProps<'nand'>) => {
       />
       {/* 생긴게 치우치게 생겨서 중심 미세조정 */}
       <p className="text-white text-2xl font-semibold mr-[5px]">
-        {out ? 1 : 0}
+        {out === true ? 1 : out === false ? 0 : ''}
       </p>
     </div>
   );

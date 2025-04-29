@@ -5,13 +5,10 @@ import {
   BackgroundVariant,
   type Connection,
   ConnectionLineType,
-  ControlButton,
-  Controls,
   type Edge,
   type EdgeChange,
   type Node,
   type NodeChange,
-  Panel,
   ReactFlow,
   type ReactFlowInstance,
   type ReactFlowJsonObject,
@@ -26,12 +23,12 @@ import './style.css';
 
 import type { RegistryKey } from '@/app/[locale]/components/Nand/atoms';
 import { nodeTypes } from '@/app/[locale]/components/Nand/components';
+import { Controls } from '@/app/[locale]/components/Nand/components/Controls';
 import { useTouchDeviceState } from '@/app/[locale]/components/Nand/hooks/useMobileState';
 import type { SaveFile } from '@/app/[locale]/components/Nand/model/type';
 import { useNodeAtom } from '@/app/[locale]/components/Nand/model/useNodeAtom';
 import { saveJSONToFile, selectJSONFromFile } from '@/utils/string';
 import { Provider, createStore } from 'jotai';
-import { Folder, Move, Save } from 'lucide-react';
 
 const defaultEdgeOptions = {
   type: 'smoothstep' as const,
@@ -178,43 +175,14 @@ function Flow({
             panOnDrag={panOnDrag ?? true}
             nodesDraggable={panOnDrag ?? true}
           >
-            <Panel position="top-left">
-              <ControlButton type="button" onClick={addNode('nand')}>
-                <div className="border border-white w-[80%] h-[60%] rounded-r-full" />
-              </ControlButton>
-              <ControlButton
-                type="button"
-                onClick={addNode('number')}
-                className="text-xs"
-              >
-                01
-              </ControlButton>
-            </Panel>
-            <Controls showInteractive={false} fitViewOptions={{ padding: 2 }}>
-              {panOnDrag !== null && (
-                <ControlButton
-                  type="button"
-                  onClick={() => setPanOnDrag(!panOnDrag)}
-                  className="text-xs"
-                >
-                  <Move
-                    style={{ fill: 'none', opacity: panOnDrag ? 1 : 0.5 }}
-                    className="w-[12px] h-[12px]"
-                  />
-                </ControlButton>
-              )}
-            </Controls>
-            <Panel position="top-right">
-              <ControlButton type="button" onClick={onSave}>
-                <Save className="w-[12px] h-[12px]" style={{ fill: 'none' }} />
-              </ControlButton>
-              <ControlButton type="button" onClick={onRestore}>
-                <Folder
-                  className="w-[12px] h-[12px]"
-                  style={{ fill: 'none' }}
-                />
-              </ControlButton>
-            </Panel>
+            <Controls
+              rfInstance={rfInstance}
+              panOnDrag={panOnDrag}
+              setPanOnDrag={setPanOnDrag}
+              addNode={addNode}
+              onSave={onSave}
+              onRestore={onRestore}
+            />
             <Background variant={BackgroundVariant.Dots} id={id} />
           </ReactFlow>
         </div>

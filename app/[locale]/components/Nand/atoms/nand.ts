@@ -2,6 +2,7 @@ import type {
   NodeAtoms,
   NodeCreator,
   OutputAtom,
+  OutputValue,
 } from '@/app/[locale]/components/Nand/model/type';
 import { atom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
@@ -26,7 +27,7 @@ export const createNandAtoms: NodeCreator<NandAtoms> = (initialValues) => {
     return !(in1Value && in2Value);
   });
 
-  const outAtom = atom<boolean | null>(initialValues?.out ?? null);
+  const outAtom = atom<OutputValue>(initialValues?.out ?? null);
 
   const outEffect = atomEffect((get, set) => {
     const out = get(nandAtom);
