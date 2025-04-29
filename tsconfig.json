@@ -32,7 +32,7 @@
     "app/[locale]/post/react-internal/page.mdx",
     "next.config.mjs",
     "mdx/react-internal/Lane.js",
-    "mdx/it-was-all-nand/Nand/index.tsx"
+    "app/[locale]/components/Nand/index.tsx"
   ],
   "exclude": ["node_modules"]
 }

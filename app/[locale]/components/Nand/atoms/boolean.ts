@@ -1,7 +1,7 @@
 import type {
   NodeAtoms,
   NodeCreator,
-} from '@/mdx/it-was-all-nand/Nand/model/type';
+} from '@/app/[locale]/components/Nand/model/type';
 import { atom } from 'jotai';
 
 export type BooleanAtoms = NodeAtoms<never, 'out', false>;

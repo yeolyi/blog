@@ -24,10 +24,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import '@xyflow/react/dist/style.css';
 import './style.css';
 
-import type { RegistryKey } from '@/mdx/it-was-all-nand/Nand/atoms';
-import { nodeTypes } from '@/mdx/it-was-all-nand/Nand/components';
-import { useNodeAtom } from '@/mdx/it-was-all-nand/Nand/model/useNodeAtom';
-import { isTouchDevice } from '@/utils/isTouchDevice';
+import type { RegistryKey } from '@/app/[locale]/components/Nand/atoms';
+import { nodeTypes } from '@/app/[locale]/components/Nand/components';
+import { useTouchDeviceState } from '@/app/[locale]/components/Nand/hooks/useMobileState';
+import type { SaveFile } from '@/app/[locale]/components/Nand/model/type';
+import { useNodeAtom } from '@/app/[locale]/components/Nand/model/useNodeAtom';
 import { saveJSONToFile, selectJSONFromFile } from '@/utils/string';
 import { Provider, createStore } from 'jotai';
 import { Folder, Move, Save } from 'lucide-react';
@@ -42,7 +43,7 @@ const connectionLineStyle = { stroke: 'lightgray' };
 
 // 처음에는 NAND의 값은 atom으로 해보겠는데 연결이 바뀌는건 어떻게 표현하지? 그때는 어떻게 리렌더링하지? 했었는데
 // 연결도 atom으로 표현하면 되겠더라
-// 생각보다 모든걸 atom으로 표현한다는 사고방식이 어렵다.
+// 모든걸 atom으로 표현한다는 사고방식이 생각보다 어렵다.
 function Flow({
   id,
   initialJSON,
@@ -57,27 +58,22 @@ function Flow({
     connect: connectAtom,
     disconnect: disconnectAtom,
     restore: restoreAtom,
+    stringify: stringifyAtom,
   } = useNodeAtom(store);
 
-  // 왜 dev에서 내용이 두 배가 되지??
-  const initialFlow = useMemo(() => {
-    if (!initialJSON) return;
-    return restoreAtom(initialJSON);
-  }, [initialJSON, restoreAtom]);
-
-  const [nodes, setNodes] = useState<Node[]>(initialFlow?.nodes ?? []);
-  const [edges, setEdges] = useState<Edge[]>(initialFlow?.edges ?? []);
+  const [nodes, setNodes] = useState<Node[]>([]);
+  const [edges, setEdges] = useState<Edge[]>([]);
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
 
-  const [panOnDrag, setPanOnDrag] = useState<boolean | null>(null);
+  const [panOnDrag, setPanOnDrag] = useTouchDeviceState();
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const isTouch = isTouchDevice();
-    if (isTouch) {
-      setPanOnDrag(false);
+    if (initialJSON) {
+      const { nodes, edges } = restoreAtom(initialJSON as SaveFile);
+      setNodes(nodes);
+      setEdges(edges);
     }
-  }, []);
+  }, [initialJSON, restoreAtom]);
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
@@ -94,6 +90,7 @@ function Flow({
 
   const onEdgesChange = useCallback(
     (changes: EdgeChange[]) => {
+      // 콜백도 두 번 불린다 아...
       setEdges((eds) => {
         for (const change of changes) {
           if (change.type !== 'remove') continue;
@@ -141,16 +138,19 @@ function Flow({
   const onSave = () => {
     if (!rfInstance) return;
     const flow = rfInstance.toObject();
-    const json = JSON.stringify(flow);
-    saveJSONToFile(json, 'nand.json');
+    const save: SaveFile = { ...flow, nodeOutputs: stringifyAtom() };
+    const json = JSON.stringify(save);
+    saveJSONToFile(json, 'save.json');
   };
 
   const onRestore = async () => {
     const json = await selectJSONFromFile();
-    const flow = JSON.parse(json) as ReactFlowJsonObject<Node, Edge>;
+    const flow = JSON.parse(json) as SaveFile;
+
     const { nodes, edges } = restoreAtom(flow);
-    setNodes(nodes);
-    setEdges(edges);
+
+    setNodes((nds) => [...nds, ...nodes]);
+    setEdges((eds) => [...eds, ...edges]);
   };
 
   return (

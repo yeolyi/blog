@@ -1,3 +1,4 @@
+import type { Edge, Node, ReactFlowJsonObject } from '@xyflow/react';
 import type { Atom, PrimitiveAtom, createStore } from 'jotai';
 
 export type JotaiStore = ReturnType<typeof createStore>;
@@ -24,4 +25,10 @@ export type NodeAtoms<
   outputAtoms: { [key in OutputKeys]: OutputAtom };
   // 사이클 방지 + 딜레이 구현을 위함
   effectAtom: HasEffect extends true ? Atom<void> : undefined;
+};
+
+export type NodeOutput = Record<string, boolean | null>;
+export type NodeOutputs = Record<string, NodeOutput>;
+export type SaveFile = ReactFlowJsonObject<Node, Edge> & {
+  nodeOutputs: NodeOutputs;
 };

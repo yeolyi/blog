@@ -1,4 +1,4 @@
-import type { NodeProps } from '@/mdx/it-was-all-nand/Nand/components/type';
+import type { NodeProps } from '@/app/[locale]/components/Nand/components/type';
 import { Handle, Position } from '@xyflow/react';
 import clsx from 'clsx';
 import { useAtom } from 'jotai';

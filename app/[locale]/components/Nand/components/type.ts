@@ -1,7 +1,7 @@
 import type {
   RegistryAtoms,
   RegistryKey,
-} from '@/mdx/it-was-all-nand/Nand/atoms';
+} from '@/app/[locale]/components/Nand/atoms';
 
 export type NodeProps<T extends RegistryKey> = {
   id: string;

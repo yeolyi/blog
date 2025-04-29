@@ -2,15 +2,18 @@ import {
   type RegistryKey,
   isRegistryKey,
   registry,
-} from '@/mdx/it-was-all-nand/Nand/atoms';
+} from '@/app/[locale]/components/Nand/atoms';
 import type {
   JotaiStore,
   NodeAtoms,
-} from '@/mdx/it-was-all-nand/Nand/model/type';
-import type { Edge } from '@xyflow/react';
-import type { Node, ReactFlowJsonObject } from '@xyflow/react';
+  NodeOutput,
+  NodeOutputs,
+  SaveFile,
+} from '@/app/[locale]/components/Nand/model/type';
 import { useCallback, useRef } from 'react';
 
+// setState 콜백이 두 번 불리기에 일단 에러 처리는 간단하게만 한다.
+// TODO: 더 나은 방법
 export const useNodeAtom = (store: JotaiStore) => {
   const map = useRef<Map<string, NodeAtoms>>(new Map());
 
@@ -25,15 +28,12 @@ export const useNodeAtom = (store: JotaiStore) => {
 
   const remove = useCallback(
     (id: string) => {
+      console.log('remove', id);
       const atom = map.current.get(id);
-      if (!atom) {
-        throw new Error('Node atom not found');
-      }
+      if (!atom) return;
 
       const inputAtoms = Object.values(atom.inputAtoms);
-      if (inputAtoms.some((input) => store.get(input))) {
-        throw new Error('Input atom is still connected');
-      }
+      if (inputAtoms.some((input) => store.get(input))) return;
 
       map.current.delete(id);
     },
@@ -62,9 +62,7 @@ export const useNodeAtom = (store: JotaiStore) => {
       const sourceHandleAtom = sourceNode.outputAtoms?.[sourceHandle];
       const targetHandleAtom = targetNode.inputAtoms?.[targetHandle];
 
-      if (!sourceHandleAtom || !targetHandleAtom) {
-        throw new Error('Source or target atom not found');
-      }
+      if (!sourceHandleAtom || !targetHandleAtom) return;
 
       // 처음에는 노드 컴포넌트에서 했는데 jotai에서 store라는걸 지원함
       // 문서보니 안쓰는게 좋다는거같은데 뭐...
@@ -76,15 +74,10 @@ export const useNodeAtom = (store: JotaiStore) => {
   const disconnect = useCallback(
     ({ target, targetHandle }: { target: string; targetHandle: string }) => {
       const targetNode = map.current.get(target);
-      if (!targetNode) {
-        throw new Error('Target node not found');
-      }
+      if (!targetNode) return;
 
       const targetHandleAtom = targetNode.inputAtoms[targetHandle];
-
-      if (!targetHandleAtom) {
-        throw new Error('Target handle atom not found');
-      }
+      if (!targetHandleAtom) return;
 
       store.set(targetHandleAtom, null);
     },
@@ -92,23 +85,26 @@ export const useNodeAtom = (store: JotaiStore) => {
   );
 
   const restore = useCallback(
-    (flow: ReactFlowJsonObject<Node, Edge>) => {
-      const idMap = new Map<string, string>();
+    ({ nodes: prevNodes, edges: prevEdges, nodeOutputs }: SaveFile) => {
+      const idMap = new Map<
+        string,
+        { id: string; data: { atoms: NodeAtoms } }
+      >();
 
-      const nodes = flow.nodes.map((node) => {
+      const nodes = prevNodes.map((node) => {
         if (isRegistryKey(node.type)) {
           const atoms = add(node.type);
-          idMap.set(node.id, atoms.id);
+          idMap.set(node.id, { id: atoms.id, data: { atoms } });
           return { ...node, id: atoms.id, data: { atoms } };
         }
         return node;
       });
 
-      const edges = flow.edges.map((edge) => {
+      const edges = prevEdges.map((edge) => {
         if (!edge.sourceHandle || !edge.targetHandle) return edge;
 
-        const source = idMap.get(edge.source);
-        const target = idMap.get(edge.target);
+        const source = idMap.get(edge.source)?.id;
+        const target = idMap.get(edge.target)?.id;
         if (!source || !target) return edge;
 
         connect({
@@ -118,17 +114,43 @@ export const useNodeAtom = (store: JotaiStore) => {
           targetHandle: edge.targetHandle,
         });
 
-        return { ...edge, source, target };
+        return { ...edge, id: crypto.randomUUID(), source, target };
       });
+
+      if (nodeOutputs) {
+        for (const [prevId, handles] of Object.entries(nodeOutputs)) {
+          const newId = idMap.get(prevId)?.id;
+          if (!newId) continue;
+
+          const atom = map.current.get(newId);
+          if (!atom) continue;
+
+          for (const [handle, value] of Object.entries(handles)) {
+            store.set(atom.outputAtoms[handle], value);
+          }
+        }
+      }
 
       return { nodes, edges };
     },
-    [add, connect],
+    [add, connect, store],
   );
 
-  const save = useCallback(() => {
-    // TODO
-  }, []);
+  const stringify = useCallback(() => {
+    return map.current
+      .entries()
+      .reduce<NodeOutputs>((acc, [nodeId, nodeAtom]) => {
+        acc[nodeId] = Object.entries(nodeAtom.outputAtoms).reduce<NodeOutput>(
+          (outputs, [outputId, outputAtom]) => {
+            outputs[outputId] = store.get(outputAtom);
+            return outputs;
+          },
+          {},
+        );
 
-  return { registry, add, remove, connect, disconnect, restore, save };
+        return acc;
+      }, {});
+  }, [store]);
+
+  return { add, remove, connect, disconnect, restore, stringify };
 };

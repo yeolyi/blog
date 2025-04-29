@@ -1,7 +1,7 @@
 import localFont from 'next/font/local';
 
 import '@xyflow/react/dist/style.css';
-import '../../../../mdx/it-was-all-nand/Nand/style.css';
+import '../../components/Nand/style.css';
 
 const monoplexKR = localFont({
   src: './assets/MonoplexKR-Text.ttf',

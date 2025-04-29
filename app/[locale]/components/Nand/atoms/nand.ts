@@ -2,7 +2,7 @@ import type {
   NodeAtoms,
   NodeCreator,
   OutputAtom,
-} from '@/mdx/it-was-all-nand/Nand/model/type';
+} from '@/app/[locale]/components/Nand/model/type';
 import { atom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
 
