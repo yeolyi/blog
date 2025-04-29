@@ -4,10 +4,15 @@ import {
   Background,
   BackgroundVariant,
   type Connection,
+  ConnectionLineType,
+  ControlButton,
+  Controls,
   type Edge,
   type EdgeChange,
   type Node,
   type NodeChange,
+  Panel,
+  ReactFlow,
   type ReactFlowInstance,
   type ReactFlowJsonObject,
   ReactFlowProvider,
@@ -18,16 +23,61 @@ import {
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import '@xyflow/react/dist/style.css';
 import './style.css';
-import { createAtoms } from '@/mdx/it-was-all-nand/Nand/atom';
-import type { CustomNodeAtoms } from '@/mdx/it-was-all-nand/Nand/node';
 
-import MyControls from '@/mdx/it-was-all-nand/Nand/components/MyControl';
-import MyReactFlow from '@/mdx/it-was-all-nand/Nand/components/MyReactFlow';
-import { restoreFlow } from '@/mdx/it-was-all-nand/Nand/utils/restoreFlow';
-import { useNewId } from '@/mdx/it-was-all-nand/Nand/utils/useNewId';
+import { nodeTypes } from '@/mdx/it-was-all-nand/Nand/components';
+import {
+  type RegistryKey,
+  isRegistryKey,
+} from '@/mdx/it-was-all-nand/Nand/model/registry';
+import { useNodeAtom } from '@/mdx/it-was-all-nand/Nand/model/useNodeAtom';
 import { isTouchDevice } from '@/utils/isTouchDevice';
 import { saveJSONToFile, selectJSONFromFile } from '@/utils/string';
 import { Provider, createStore } from 'jotai';
+import { Folder, Move, Save } from 'lucide-react';
+
+const defaultEdgeOptions = {
+  type: 'smoothstep' as const,
+  animated: true,
+  selectable: true,
+};
+
+const connectionLineStyle = { stroke: 'lightgray' };
+
+const restoreJSON = (
+  flow: ReactFlowJsonObject<Node, Edge>,
+  addAtom: ReturnType<typeof useNodeAtom>['add'],
+  connectAtom: ReturnType<typeof useNodeAtom>['connect'],
+) => {
+  const idMap = new Map<string, string>();
+
+  const nodes = flow.nodes.map((node) => {
+    if (isRegistryKey(node.type)) {
+      const atoms = addAtom(node.type);
+      idMap.set(node.id, atoms.id);
+      return { ...node, id: atoms.id, data: { atoms } };
+    }
+    return node;
+  });
+
+  const edges = flow.edges.map((edge) => {
+    if (!edge.sourceHandle || !edge.targetHandle) return edge;
+
+    const source = idMap.get(edge.source);
+    const target = idMap.get(edge.target);
+    if (!source || !target) return edge;
+
+    connectAtom({
+      source,
+      target,
+      sourceHandle: edge.sourceHandle,
+      targetHandle: edge.targetHandle,
+    });
+
+    return { ...edge, source, target };
+  });
+
+  return { nodes, edges };
+};
 
 // 처음에는 NAND의 값은 atom으로 해보겠는데 연결이 바뀌는건 어떻게 표현하지? 그때는 어떻게 리렌더링하지? 했었는데
 // 연결도 atom으로 표현하면 되겠더라
@@ -40,23 +90,18 @@ function Flow({
   initialJSON?: ReactFlowJsonObject<Node, Edge>;
 }) {
   const store = useMemo(() => createStore(), []);
+  const {
+    add: addAtom,
+    remove: removeAtom,
+    connect: connectAtom,
+    disconnect: disconnectAtom,
+  } = useNodeAtom(store);
 
-  const createNodeId = useNewId();
-  const createEdgeId = useNewId();
   // 왜 dev에서 내용이 두 배가 되지??
-  const atomMap = useRef<Map<string, CustomNodeAtoms>>(new Map());
-  const initialFlow = useMemo(
-    () =>
-      initialJSON &&
-      restoreFlow(
-        store,
-        initialJSON,
-        atomMap.current,
-        createNodeId,
-        createEdgeId,
-      ),
-    [initialJSON, createNodeId, createEdgeId, store],
-  );
+  const initialFlow = useMemo(() => {
+    if (!initialJSON) return;
+    return restoreJSON(initialJSON, addAtom, connectAtom);
+  }, [initialJSON, addAtom, connectAtom]);
 
   const [nodes, setNodes] = useState<Node[]>(initialFlow?.nodes ?? []);
   const [edges, setEdges] = useState<Edge[]>(initialFlow?.edges ?? []);
@@ -72,15 +117,18 @@ function Flow({
     }
   }, []);
 
-  const onNodesChange = useCallback((changes: NodeChange[]) => {
-    // 노드 삭제 대응
-    for (const change of changes) {
-      if (change.type === 'remove') {
-        atomMap.current.delete(change.id);
+  const onNodesChange = useCallback(
+    (changes: NodeChange[]) => {
+      // 노드 삭제 대응
+      for (const change of changes) {
+        if (change.type === 'remove') {
+          removeAtom(change.id);
+        }
       }
-    }
-    setNodes((nds) => applyNodeChanges(changes, nds));
-  }, []);
+      setNodes((nds) => applyNodeChanges(changes, nds));
+    },
+    [removeAtom],
+  );
 
   const onEdgesChange = useCallback(
     (changes: EdgeChange[]) => {
@@ -90,52 +138,41 @@ function Flow({
 
           // 엣지 삭제 대응
           const edge = eds.find((e) => e.id === change.id);
-          if (!edge) continue;
-          const targetHandle = edge.targetHandle;
+          if (!edge || !edge.targetHandle) continue;
 
-          const targetAtoms = atomMap.current.get(edge.target);
-          if (!targetAtoms) continue;
-
-          if (targetAtoms.type === 'nand') {
-            store.set(
-              targetHandle === 'in1' ? targetAtoms.in1 : targetAtoms.in2,
-              null,
-            );
-          }
+          disconnectAtom({
+            target: edge.target,
+            targetHandle: edge.targetHandle,
+          });
         }
 
         return applyEdgeChanges(changes, eds);
       });
     },
-    [store],
+    [disconnectAtom],
   );
 
-  // 처음에는 노드 컴포넌트에서 했는데 jotai에서 store라는걸 지원함
-  // 문서보니 안쓰는게 좋다는거같은데 뭐...
   const onConnect = useCallback(
     (connection: Connection) => {
       // 노드 연결 대응
-      const atoms = atomMap.current.get(connection.target);
-      if (!atoms) return;
-
-      if (atoms.type === 'nand') {
-        store.set(
-          connection.targetHandle === 'in1' ? atoms.in1 : atoms.in2,
-          connection.source,
-        );
+      if (connection.sourceHandle && connection.targetHandle) {
+        connectAtom({
+          source: connection.source,
+          target: connection.target,
+          sourceHandle: connection.sourceHandle,
+          targetHandle: connection.targetHandle,
+        });
       }
+
       setEdges((eds) => addEdge(connection, eds));
     },
-    [store],
+    [connectAtom],
   );
 
-  const addNode = (type: string) => () => {
-    const id = createNodeId();
-    const atoms = createAtoms(type, atomMap.current);
-    atomMap.current.set(id, atoms);
+  const addNode = (type: RegistryKey) => () => {
+    const atoms = addAtom(type);
     const position = { x: 0, y: nodes.length * 5 };
-
-    const item = { id, type, position, data: { atoms } };
+    const item = { id: atoms.id, type, position, data: { atoms } };
     setNodes((nds) => [...nds, item]);
   };
 
@@ -146,51 +183,78 @@ function Flow({
     saveJSONToFile(json, 'nand.json');
   };
 
-  const restoreJSON = useCallback(
-    async (flow: ReactFlowJsonObject<Node, Edge>) => {
-      const { nodes: restoredNodes, edges: restoredEdges } = restoreFlow(
-        store,
-        flow,
-        atomMap.current,
-        createNodeId,
-        createEdgeId,
-      );
-      setNodes((nds) => [...nds, ...restoredNodes]);
-      setEdges((eds) => [...eds, ...restoredEdges]);
-    },
-    [createNodeId, createEdgeId, store],
-  );
-
   const onRestore = async () => {
     const json = await selectJSONFromFile();
     const flow = JSON.parse(json) as ReactFlowJsonObject<Node, Edge>;
-    restoreJSON(flow);
+    const { nodes, edges } = restoreJSON(flow, addAtom, connectAtom);
+    setNodes(nodes);
+    setEdges(edges);
   };
 
   return (
     <Provider store={store}>
       <ReactFlowProvider>
         <div className="h-[400px] not-prose font-sans overflow-hidden">
-          <MyReactFlow
+          <ReactFlow
+            onInit={setRfInstance}
             id={id}
             nodes={nodes}
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
-            setRefInstance={setRfInstance}
+            colorMode="dark"
+            nodeTypes={nodeTypes}
+            defaultEdgeOptions={defaultEdgeOptions}
+            connectionLineType={ConnectionLineType.SmoothStep}
+            connectionLineStyle={connectionLineStyle}
+            fitView
+            fitViewOptions={{ padding: 2 }}
+            proOptions={{ hideAttribution: true }}
+            zoomOnScroll={false}
+            preventScrolling={false}
             panOnDrag={panOnDrag ?? true}
+            nodesDraggable={panOnDrag ?? true}
           >
-            <MyControls
-              onClickAddNumber={addNode('number')}
-              onClickAddNand={addNode('nand')}
-              onSave={onSave}
-              onRestore={onRestore}
-              panOnDrag={panOnDrag}
-              setPanOnDrag={setPanOnDrag}
-            />
+            <Panel position="top-left">
+              <ControlButton type="button" onClick={addNode('nand')}>
+                <div className="border border-white w-[80%] h-[60%] rounded-r-full" />
+              </ControlButton>
+              <ControlButton
+                type="button"
+                onClick={addNode('boolean')}
+                className="text-xs"
+              >
+                01
+              </ControlButton>
+            </Panel>
+            <Controls showInteractive={false} fitViewOptions={{ padding: 2 }}>
+              {panOnDrag !== null && (
+                <ControlButton
+                  type="button"
+                  onClick={() => setPanOnDrag(!panOnDrag)}
+                  className="text-xs"
+                >
+                  <Move
+                    style={{ fill: 'none', opacity: panOnDrag ? 1 : 0.5 }}
+                    className="w-[12px] h-[12px]"
+                  />
+                </ControlButton>
+              )}
+            </Controls>
+            <Panel position="top-right">
+              <ControlButton type="button" onClick={onSave}>
+                <Save className="w-[12px] h-[12px]" style={{ fill: 'none' }} />
+              </ControlButton>
+              <ControlButton type="button" onClick={onRestore}>
+                <Folder
+                  className="w-[12px] h-[12px]"
+                  style={{ fill: 'none' }}
+                />
+              </ControlButton>
+            </Panel>
             <Background variant={BackgroundVariant.Dots} id={id} />
-          </MyReactFlow>
+          </ReactFlow>
         </div>
       </ReactFlowProvider>
     </Provider>

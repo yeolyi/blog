@@ -1,0 +1,25 @@
+import type { Atom, PrimitiveAtom, createStore } from 'jotai';
+
+export type JotaiStore = ReturnType<typeof createStore>;
+
+export type NodeCreator<
+  T extends NodeAtoms<string | never, string | never, boolean>,
+> = (store: JotaiStore) => Omit<T, 'id'>;
+
+// 출력을 derived atom이 아닌 별도 상태로 관리
+// 사이클 방지 + 딜레이 구현을 위함
+export type OutputAtom = PrimitiveAtom<boolean | null>;
+export type InputAtom = PrimitiveAtom<OutputAtom | null>;
+
+// 특정 노드의 상태를 표현
+export type NodeAtoms<
+  InputKeys extends string | never,
+  OutputKeys extends string | never,
+  HasEffect extends boolean = false,
+> = {
+  id: string;
+  inputAtoms: { [key in InputKeys]: InputAtom };
+  outputAtoms: { [key in OutputKeys]: OutputAtom };
+  // 사이클 방지 + 딜레이 구현을 위함
+  effectAtom: HasEffect extends true ? Atom<void> : undefined;
+};

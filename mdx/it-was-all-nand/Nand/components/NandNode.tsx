@@ -1,24 +1,14 @@
+import type { NodeProps } from '@/mdx/it-was-all-nand/Nand/components';
 import { Handle, Position, useNodeConnections } from '@xyflow/react';
 import clsx from 'clsx';
-import { type Atom, type PrimitiveAtom, useAtom, useAtomValue } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 
-export type NandNodeAtoms = {
-  type: 'nand';
-  in1: PrimitiveAtom<string | null>;
-  in2: PrimitiveAtom<string | null>;
-  out: PrimitiveAtom<boolean | null>;
-  outEffect: Atom<void>;
-};
-
-export const NandNode = (props: {
-  id: string;
-  data: { atoms: NandNodeAtoms };
-  selected: boolean;
-}) => {
+export const NandNode = (props: NodeProps<'nand'>) => {
   const { atoms } = props.data;
 
-  const out = useAtomValue(atoms.out);
-  useAtom(atoms.outEffect);
+  console.log(atoms);
+  const out = useAtomValue(atoms.outputAtoms.out);
+  useAtom(atoms.effectAtom);
 
   const connections = useNodeConnections();
 
