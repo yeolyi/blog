@@ -1,39 +1,36 @@
 import {
   type RegistryKey,
+  isRegistryKey,
   registry,
-} from '@/mdx/it-was-all-nand/Nand/model/registry';
+} from '@/mdx/it-was-all-nand/Nand/atoms';
 import type {
   JotaiStore,
   NodeAtoms,
 } from '@/mdx/it-was-all-nand/Nand/model/type';
+import type { Edge } from '@xyflow/react';
+import type { Node, ReactFlowJsonObject } from '@xyflow/react';
 import { useCallback, useRef } from 'react';
 
 export const useNodeAtom = (store: JotaiStore) => {
-  const map = useRef<
-    Map<string, NodeAtoms<string | never, string | never, boolean>>
-  >(new Map());
+  const map = useRef<Map<string, NodeAtoms>>(new Map());
 
-  const add = useCallback(
-    (type: RegistryKey) => {
-      const getAtom = registry[type];
-      if (!getAtom) {
-        throw new Error(`Node type ${type} not found`);
-      }
+  const add = useCallback((type: RegistryKey) => {
+    const getAtom = registry[type];
+    const id = crypto.randomUUID();
+    const atom = { ...getAtom(), id };
+    map.current.set(id, atom);
 
-      const id = crypto.randomUUID();
-      const atom = { ...getAtom(store), id };
-      map.current.set(id, atom);
-
-      return atom;
-    },
-    [store],
-  );
+    return atom;
+  }, []);
 
   const remove = useCallback(
     (id: string) => {
       const atom = map.current.get(id);
+      if (!atom) {
+        throw new Error('Node atom not found');
+      }
 
-      const inputAtoms = Object.values(atom?.inputAtoms ?? {});
+      const inputAtoms = Object.values(atom.inputAtoms);
       if (inputAtoms.some((input) => store.get(input))) {
         throw new Error('Input atom is still connected');
       }
@@ -94,5 +91,44 @@ export const useNodeAtom = (store: JotaiStore) => {
     [store],
   );
 
-  return { registry, add, remove, connect, disconnect };
+  const restore = useCallback(
+    (flow: ReactFlowJsonObject<Node, Edge>) => {
+      const idMap = new Map<string, string>();
+
+      const nodes = flow.nodes.map((node) => {
+        if (isRegistryKey(node.type)) {
+          const atoms = add(node.type);
+          idMap.set(node.id, atoms.id);
+          return { ...node, id: atoms.id, data: { atoms } };
+        }
+        return node;
+      });
+
+      const edges = flow.edges.map((edge) => {
+        if (!edge.sourceHandle || !edge.targetHandle) return edge;
+
+        const source = idMap.get(edge.source);
+        const target = idMap.get(edge.target);
+        if (!source || !target) return edge;
+
+        connect({
+          source,
+          target,
+          sourceHandle: edge.sourceHandle,
+          targetHandle: edge.targetHandle,
+        });
+
+        return { ...edge, source, target };
+      });
+
+      return { nodes, edges };
+    },
+    [add, connect],
+  );
+
+  const save = useCallback(() => {
+    // TODO
+  }, []);
+
+  return { registry, add, remove, connect, disconnect, restore, save };
 };

@@ -24,11 +24,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import '@xyflow/react/dist/style.css';
 import './style.css';
 
+import type { RegistryKey } from '@/mdx/it-was-all-nand/Nand/atoms';
 import { nodeTypes } from '@/mdx/it-was-all-nand/Nand/components';
-import {
-  type RegistryKey,
-  isRegistryKey,
-} from '@/mdx/it-was-all-nand/Nand/model/registry';
 import { useNodeAtom } from '@/mdx/it-was-all-nand/Nand/model/useNodeAtom';
 import { isTouchDevice } from '@/utils/isTouchDevice';
 import { saveJSONToFile, selectJSONFromFile } from '@/utils/string';
@@ -42,42 +39,6 @@ const defaultEdgeOptions = {
 };
 
 const connectionLineStyle = { stroke: 'lightgray' };
-
-const restoreJSON = (
-  flow: ReactFlowJsonObject<Node, Edge>,
-  addAtom: ReturnType<typeof useNodeAtom>['add'],
-  connectAtom: ReturnType<typeof useNodeAtom>['connect'],
-) => {
-  const idMap = new Map<string, string>();
-
-  const nodes = flow.nodes.map((node) => {
-    if (isRegistryKey(node.type)) {
-      const atoms = addAtom(node.type);
-      idMap.set(node.id, atoms.id);
-      return { ...node, id: atoms.id, data: { atoms } };
-    }
-    return node;
-  });
-
-  const edges = flow.edges.map((edge) => {
-    if (!edge.sourceHandle || !edge.targetHandle) return edge;
-
-    const source = idMap.get(edge.source);
-    const target = idMap.get(edge.target);
-    if (!source || !target) return edge;
-
-    connectAtom({
-      source,
-      target,
-      sourceHandle: edge.sourceHandle,
-      targetHandle: edge.targetHandle,
-    });
-
-    return { ...edge, source, target };
-  });
-
-  return { nodes, edges };
-};
 
 // 처음에는 NAND의 값은 atom으로 해보겠는데 연결이 바뀌는건 어떻게 표현하지? 그때는 어떻게 리렌더링하지? 했었는데
 // 연결도 atom으로 표현하면 되겠더라
@@ -95,13 +56,14 @@ function Flow({
     remove: removeAtom,
     connect: connectAtom,
     disconnect: disconnectAtom,
+    restore: restoreAtom,
   } = useNodeAtom(store);
 
   // 왜 dev에서 내용이 두 배가 되지??
   const initialFlow = useMemo(() => {
     if (!initialJSON) return;
-    return restoreJSON(initialJSON, addAtom, connectAtom);
-  }, [initialJSON, addAtom, connectAtom]);
+    return restoreAtom(initialJSON);
+  }, [initialJSON, restoreAtom]);
 
   const [nodes, setNodes] = useState<Node[]>(initialFlow?.nodes ?? []);
   const [edges, setEdges] = useState<Edge[]>(initialFlow?.edges ?? []);
@@ -186,7 +148,7 @@ function Flow({
   const onRestore = async () => {
     const json = await selectJSONFromFile();
     const flow = JSON.parse(json) as ReactFlowJsonObject<Node, Edge>;
-    const { nodes, edges } = restoreJSON(flow, addAtom, connectAtom);
+    const { nodes, edges } = restoreAtom(flow);
     setNodes(nodes);
     setEdges(edges);
   };

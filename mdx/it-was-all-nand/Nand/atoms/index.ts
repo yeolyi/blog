@@ -1,4 +1,4 @@
-import { createNandAtoms } from '@/mdx/it-was-all-nand/Nand/model/nand';
+import { createNandAtoms } from '@/mdx/it-was-all-nand/Nand/atoms/nand';
 import { createBooleanAtoms } from './boolean';
 
 export const registry = {

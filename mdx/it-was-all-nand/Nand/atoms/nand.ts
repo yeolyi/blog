@@ -8,7 +8,7 @@ import { atomEffect } from 'jotai-effect';
 
 export type NandAtoms = NodeAtoms<'in1' | 'in2', 'out', true>;
 
-export const createNandAtoms: NodeCreator<NandAtoms> = () => {
+export const createNandAtoms: NodeCreator<NandAtoms> = (initialValues) => {
   const in1Atom = atom<OutputAtom | null>(null);
   const in2Atom = atom<OutputAtom | null>(null);
 
@@ -26,7 +26,7 @@ export const createNandAtoms: NodeCreator<NandAtoms> = () => {
     return !(in1Value && in2Value);
   });
 
-  const outAtom = atom<boolean | null>(null);
+  const outAtom = atom<boolean | null>(initialValues?.out ?? null);
 
   const outEffect = atomEffect((get, set) => {
     const out = get(nandAtom);
