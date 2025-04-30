@@ -1,5 +1,10 @@
 import { minZoomOptions } from '@/app/[locale]/components/Nand';
-import type { ReactFlowInstance } from '@xyflow/react';
+import {
+  type Edge,
+  type Node,
+  type ReactFlowInstance,
+  useOnSelectionChange,
+} from '@xyflow/react';
 import {
   Folder,
   Lock,
@@ -8,8 +13,9 @@ import {
   Minus,
   Plus,
   Save,
+  Trash,
 } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { type ReactNode, useCallback, useState } from 'react';
 import type { RegistryKey } from '../atoms';
 
 interface MobileControlButtonProps {
@@ -42,6 +48,8 @@ interface ControlsProps {
   addNode: (type: RegistryKey) => () => void;
   onSave: () => void;
   onRestore: () => void;
+  onDeleteNode: (id: string) => void;
+  onDeleteEdge: (id: string) => void;
 }
 
 export function Controls({
@@ -51,7 +59,31 @@ export function Controls({
   addNode,
   onSave,
   onRestore,
+  onDeleteNode,
+  onDeleteEdge,
 }: ControlsProps) {
+  const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
+  const [selectedEdges, setSelectedEdges] = useState<string[]>([]);
+
+  const onChange = useCallback(
+    ({ nodes, edges }: { nodes: Node[]; edges: Edge[] }) => {
+      setSelectedNodes(nodes.map((node) => node.id));
+      setSelectedEdges(edges.map((edge) => edge.id));
+    },
+    [],
+  );
+
+  useOnSelectionChange({ onChange });
+
+  const onDelete = () => {
+    for (const node of selectedNodes) {
+      onDeleteNode(node);
+    }
+    for (const edge of selectedEdges) {
+      onDeleteEdge(edge);
+    }
+  };
+
   return (
     <>
       <div className="absolute top-0 left-0 right-0 flex justify-center z-10">
@@ -74,15 +106,20 @@ export function Controls({
               <Maximize className="w-5 h-5 stroke-1 fill-none text-white" />
             </MobileControlButton>
             {touchOnlyState !== null && (
-              <MobileControlButton
-                onClick={() => setTouchOnlyState(!touchOnlyState)}
-              >
-                {touchOnlyState ? (
-                  <LockOpen className="w-5 h-5 stroke-1 fill-none" />
-                ) : (
-                  <Lock className="w-5 h-5 stroke-1 fill-none" />
-                )}
-              </MobileControlButton>
+              <>
+                <MobileControlButton
+                  onClick={() => setTouchOnlyState(!touchOnlyState)}
+                >
+                  {touchOnlyState ? (
+                    <LockOpen className="w-5 h-5 stroke-1 fill-none" />
+                  ) : (
+                    <Lock className="w-5 h-5 stroke-1 fill-none" />
+                  )}
+                </MobileControlButton>
+                <MobileControlButton onClick={onDelete}>
+                  <Trash className="w-5 h-5 stroke-1 fill-none text-white" />
+                </MobileControlButton>
+              </>
             )}
           </div>
 

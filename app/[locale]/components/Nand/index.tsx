@@ -182,6 +182,8 @@ function Flow({
               addNode={addNode}
               onSave={onSave}
               onRestore={onRestore}
+              onDeleteNode={(id) => onNodesChange([{ type: 'remove', id }])}
+              onDeleteEdge={(id) => onEdgesChange([{ type: 'remove', id }])}
             />
             <Background variant={BackgroundVariant.Dots} id={id} />
           </ReactFlow>
