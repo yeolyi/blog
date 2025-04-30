@@ -134,7 +134,10 @@ export function Controls({
             {touchOnlyState.type === 'mobile' && (
               <MobileControlButton
                 onClick={onDelete}
-                disabled={!touchOnlyState.value}
+                disabled={
+                  !touchOnlyState.value ||
+                  (selectedNodes.length === 0 && selectedEdges.length === 0)
+                }
               >
                 <Trash className="w-5 h-5 stroke-1 fill-none text-white" />
               </MobileControlButton>
