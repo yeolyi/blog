@@ -89,8 +89,8 @@ export function Controls({
 
   return (
     <>
-      <div className="absolute top-0 left-0 right-0 flex justify-center z-10">
-        <div className="flex gap-5 m-2 p-2 bg-black/50">
+      <div className="absolute top-0 left-0 right-0 flex justify-center z-10 pointer-events-none">
+        <div className="flex gap-5 m-2 p-2 bg-black/50 pointer-events-auto">
           {touchOnlyState.type === 'mobile' && (
             <div className="flex">
               <MobileControlButton
@@ -155,8 +155,8 @@ export function Controls({
         </div>
       </div>
 
-      <div className="absolute top-0 left-0 bottom-0 flex flex-col justify-center z-10">
-        <div className="flex flex-col gap-4 p-2 m-2 bg-black/50">
+      <div className="absolute top-0 left-0 bottom-0 flex flex-col justify-center z-10 pointer-events-none">
+        <div className="flex flex-col gap-4 p-2 m-2 bg-black/50 pointer-events-auto">
           <div className="flex flex-col">
             <MobileControlButton
               onClick={addNode('number')}
