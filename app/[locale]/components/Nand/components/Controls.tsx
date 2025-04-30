@@ -19,7 +19,7 @@ import {
 import { type ButtonHTMLAttributes, useCallback, useState } from 'react';
 import type { RegistryKey } from '../atoms';
 import type { TouchDeviceState } from '../hooks/useMobileState';
-// 모바일 친화적인 컨트롤 버튼 컴포넌트
+
 function MobileControlButton({
   children,
   className = '',
@@ -93,7 +93,14 @@ export function Controls({
         <div className="flex gap-5 m-2 p-2 bg-black/50 pointer-events-auto">
           {touchOnlyState.type === 'mobile' && (
             <div className="flex">
-              <MobileControlButton
+              <button
+                type="button"
+                className="w-8 h-8 flex items-center justify-center m-1 cursor-pointer"
+                style={{
+                  backgroundColor: touchOnlyState.value
+                    ? 'rgb(43,43,43)'
+                    : 'white',
+                }}
                 onClick={() =>
                   setTouchOnlyState({
                     type: 'mobile',
@@ -102,11 +109,11 @@ export function Controls({
                 }
               >
                 {touchOnlyState.value ? (
-                  <LockOpen className="w-5 h-5 stroke-1 fill-none" />
+                  <LockOpen className="w-5 h-5 stroke-1 fill-none text-white" />
                 ) : (
-                  <Lock className="w-5 h-5 stroke-1 fill-none" />
+                  <Lock className="w-5 h-5 stroke-1 fill-none text-black" />
                 )}
-              </MobileControlButton>
+              </button>
             </div>
           )}
 
