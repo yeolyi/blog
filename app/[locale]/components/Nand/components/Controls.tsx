@@ -1,3 +1,4 @@
+import { minZoomOptions } from '@/app/[locale]/components/Nand';
 import type { ReactFlowInstance } from '@xyflow/react';
 import {
   Folder,
@@ -68,7 +69,7 @@ export function Controls({
             )}
 
             <MobileControlButton
-              onClick={() => rfInstance?.fitView({ padding: 2 })}
+              onClick={() => rfInstance?.fitView(minZoomOptions)}
             >
               <Maximize className="w-5 h-5 stroke-1 fill-none text-white" />
             </MobileControlButton>

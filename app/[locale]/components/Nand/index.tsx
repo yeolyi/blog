@@ -30,6 +30,8 @@ import { useNodeAtom } from '@/app/[locale]/components/Nand/model/useNodeAtom';
 import { saveJSONToFile, selectJSONFromFile } from '@/utils/string';
 import { Provider, createStore } from 'jotai';
 
+export const minZoomOptions = { padding: 2, minZoom: 0.8 };
+
 // 처음에는 NAND의 값은 atom으로 해보겠는데 연결이 바뀌는건 어떻게 표현하지? 그때는 어떻게 리렌더링하지? 했었는데
 // 연결도 atom으로 표현하면 되겠더라
 // 모든걸 atom으로 표현한다는 사고방식이 생각보다 어렵다.
@@ -164,7 +166,7 @@ function Flow({
             connectionLineType={ConnectionLineType.Step}
             connectionLineStyle={{ stroke: 'lightgray' }}
             fitView
-            fitViewOptions={{ padding: 2 }}
+            fitViewOptions={minZoomOptions}
             proOptions={{ hideAttribution: true }}
             zoomOnScroll={false}
             preventScrolling={false}
