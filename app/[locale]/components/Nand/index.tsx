@@ -177,6 +177,7 @@ function Flow({
             panOnDrag={isInteractionEnabled}
             nodesDraggable={isInteractionEnabled}
             nodesConnectable={isInteractionEnabled}
+            zoomOnDoubleClick={false}
             snapToGrid
             snapGrid={[8, 8]}
           >
