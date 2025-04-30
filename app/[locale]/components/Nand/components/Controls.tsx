@@ -89,101 +89,104 @@ export function Controls({
 
   return (
     <>
-      <div className="absolute top-0 left-0 right-0 flex justify-center z-10 pointer-events-none">
-        <div className="flex gap-5 m-2 p-2 bg-black/50 pointer-events-auto">
-          {touchOnlyState.type === 'mobile' && (
-            <div className="flex">
-              <button
-                type="button"
-                className="w-8 h-8 flex items-center justify-center m-1 cursor-pointer"
-                style={{
-                  backgroundColor: touchOnlyState.value
-                    ? 'rgb(43,43,43)'
-                    : 'white',
-                }}
-                onClick={() =>
-                  setTouchOnlyState({
-                    type: 'mobile',
-                    value: !touchOnlyState.value,
-                  })
-                }
-              >
-                {touchOnlyState.value ? (
-                  <LockOpen className="w-5 h-5 stroke-1 fill-none text-white" />
-                ) : (
-                  <Lock className="w-5 h-5 stroke-1 fill-none text-black" />
+      {(touchOnlyState.type === 'desktop' ||
+        (touchOnlyState.type === 'mobile' && touchOnlyState.value)) && (
+        <>
+          <div className="absolute top-0 left-0 right-0 flex justify-center z-10 pointer-events-none">
+            <div className="flex gap-5 m-2 p-2 bg-black/50 pointer-events-auto">
+              <div className="flex">
+                {touchOnlyState.type === 'desktop' && (
+                  <>
+                    <MobileControlButton onClick={() => rfInstance?.zoomIn()}>
+                      <Plus className="w-5 h-5 stroke-1 fill-none text-white" />
+                    </MobileControlButton>
+                    <MobileControlButton onClick={() => rfInstance?.zoomOut()}>
+                      <Minus className="w-5 h-5 stroke-1 fill-none text-white" />
+                    </MobileControlButton>
+                  </>
                 )}
-              </button>
+
+                <MobileControlButton
+                  onClick={() => rfInstance?.fitView(minZoomOptions)}
+                  disabled={
+                    touchOnlyState.type === 'mobile' && !touchOnlyState.value
+                  }
+                >
+                  <Maximize className="w-5 h-5 stroke-1 fill-none text-white" />
+                </MobileControlButton>
+
+                {touchOnlyState.type === 'mobile' && (
+                  <MobileControlButton
+                    onClick={onDelete}
+                    disabled={
+                      !touchOnlyState.value ||
+                      (selectedNodes.length === 0 && selectedEdges.length === 0)
+                    }
+                  >
+                    <Trash className="w-5 h-5 stroke-1 fill-none text-white" />
+                  </MobileControlButton>
+                )}
+              </div>
+
+              <div className="flex">
+                <MobileControlButton onClick={onSave}>
+                  <Save className="w-5 h-5 stroke-1 fill-none text-white" />
+                </MobileControlButton>
+                <MobileControlButton onClick={onRestore}>
+                  <Folder className="w-5 h-5 stroke-1 fill-none text-white" />
+                </MobileControlButton>
+              </div>
             </div>
-          )}
+          </div>
 
-          <div className="flex">
-            {touchOnlyState.type === 'desktop' && (
-              <>
-                <MobileControlButton onClick={() => rfInstance?.zoomIn()}>
-                  <Plus className="w-5 h-5 stroke-1 fill-none text-white" />
+          <div className="absolute top-0 left-0 bottom-0 flex flex-col justify-center z-10 pointer-events-none">
+            <div className="flex flex-col gap-4 p-2 m-2 bg-black/50 pointer-events-auto">
+              <div className="flex flex-col">
+                <MobileControlButton
+                  onClick={addNode('number')}
+                  disabled={
+                    touchOnlyState.type === 'mobile' && !touchOnlyState.value
+                  }
+                >
+                  0/1
                 </MobileControlButton>
-                <MobileControlButton onClick={() => rfInstance?.zoomOut()}>
-                  <Minus className="w-5 h-5 stroke-1 fill-none text-white" />
+                <MobileControlButton
+                  onClick={addNode('nand')}
+                  disabled={
+                    touchOnlyState.type === 'mobile' && !touchOnlyState.value
+                  }
+                >
+                  NAND
                 </MobileControlButton>
-              </>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
+
+      {touchOnlyState.type === 'mobile' && (
+        <div className="absolute right-0 bottom-0 z-10 m-2">
+          <button
+            type="button"
+            className="w-8 h-8 flex items-center justify-center m-1 cursor-pointer"
+            style={{
+              backgroundColor: touchOnlyState.value ? 'rgb(43,43,43)' : 'white',
+            }}
+            onClick={() =>
+              setTouchOnlyState({
+                type: 'mobile',
+                value: !touchOnlyState.value,
+              })
+            }
+          >
+            {touchOnlyState.value ? (
+              <LockOpen className="w-5 h-5 stroke-1 fill-none text-white" />
+            ) : (
+              <Lock className="w-5 h-5 stroke-1 fill-none text-black" />
             )}
-
-            <MobileControlButton
-              onClick={() => rfInstance?.fitView(minZoomOptions)}
-              disabled={
-                touchOnlyState.type === 'mobile' && !touchOnlyState.value
-              }
-            >
-              <Maximize className="w-5 h-5 stroke-1 fill-none text-white" />
-            </MobileControlButton>
-
-            {touchOnlyState.type === 'mobile' && (
-              <MobileControlButton
-                onClick={onDelete}
-                disabled={
-                  !touchOnlyState.value ||
-                  (selectedNodes.length === 0 && selectedEdges.length === 0)
-                }
-              >
-                <Trash className="w-5 h-5 stroke-1 fill-none text-white" />
-              </MobileControlButton>
-            )}
-          </div>
-
-          <div className="flex">
-            <MobileControlButton onClick={onSave}>
-              <Save className="w-5 h-5 stroke-1 fill-none text-white" />
-            </MobileControlButton>
-            <MobileControlButton onClick={onRestore}>
-              <Folder className="w-5 h-5 stroke-1 fill-none text-white" />
-            </MobileControlButton>
-          </div>
+          </button>
         </div>
-      </div>
-
-      <div className="absolute top-0 left-0 bottom-0 flex flex-col justify-center z-10 pointer-events-none">
-        <div className="flex flex-col gap-4 p-2 m-2 bg-black/50 pointer-events-auto">
-          <div className="flex flex-col">
-            <MobileControlButton
-              onClick={addNode('number')}
-              disabled={
-                touchOnlyState.type === 'mobile' && !touchOnlyState.value
-              }
-            >
-              0/1
-            </MobileControlButton>
-            <MobileControlButton
-              onClick={addNode('nand')}
-              disabled={
-                touchOnlyState.type === 'mobile' && !touchOnlyState.value
-              }
-            >
-              NAND
-            </MobileControlButton>
-          </div>
-        </div>
-      </div>
+      )}
     </>
   );
 }
