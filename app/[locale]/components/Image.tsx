@@ -2,7 +2,6 @@
 
 import mediumZoom from 'medium-zoom/dist/pure';
 import NextImage from 'next/image';
-import 'medium-zoom/dist/style.css';
 
 export default function Image(props: React.ComponentProps<typeof NextImage>) {
   return (
