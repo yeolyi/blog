@@ -10,9 +10,9 @@ export const BooleanNode = (props: NodeProps<'number'>) => {
   return (
     <button
       className={clsx(
-        'flex flex-col items-center justify-center relative w-12 h-12 border border-white cursor-pointer',
+        'flex flex-col items-center justify-center relative w-12 h-12 outline outline-white cursor-pointer',
         out ? 'bg-green-500' : 'bg-red-500',
-        props.selected && 'scale-110',
+        props.selected ? 'outline-2' : 'outline-1',
       )}
       onClick={() => setOut(!out)}
       type="button"

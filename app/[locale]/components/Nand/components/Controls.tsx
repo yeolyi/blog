@@ -1,5 +1,13 @@
 import type { ReactFlowInstance } from '@xyflow/react';
-import { Folder, Maximize, Minus, Move, Plus, Save } from 'lucide-react';
+import {
+  Folder,
+  Lock,
+  LockOpen,
+  Maximize,
+  Minus,
+  Plus,
+  Save,
+} from 'lucide-react';
 import type { ReactNode } from 'react';
 import type { RegistryKey } from '../atoms';
 
@@ -28,8 +36,8 @@ function MobileControlButton({
 
 interface ControlsProps {
   rfInstance: ReactFlowInstance | null;
-  panOnDrag: boolean | null;
-  setPanOnDrag: (value: boolean) => void;
+  touchOnlyState: boolean | null;
+  setTouchOnlyState: (value: boolean) => void;
   addNode: (type: RegistryKey) => () => void;
   onSave: () => void;
   onRestore: () => void;
@@ -37,8 +45,8 @@ interface ControlsProps {
 
 export function Controls({
   rfInstance,
-  panOnDrag,
-  setPanOnDrag,
+  touchOnlyState,
+  setTouchOnlyState,
   addNode,
   onSave,
   onRestore,
@@ -48,23 +56,31 @@ export function Controls({
       <div className="absolute top-0 left-0 right-0 flex justify-center z-10">
         <div className="flex gap-5 m-2 p-2 bg-black/50">
           <div className="flex">
-            <MobileControlButton onClick={() => rfInstance?.zoomIn()}>
-              <Plus className="w-5 h-5 stroke-1 fill-none text-white" />
-            </MobileControlButton>
-            <MobileControlButton onClick={() => rfInstance?.zoomOut()}>
-              <Minus className="w-5 h-5 stroke-1 fill-none text-white" />
-            </MobileControlButton>
+            {touchOnlyState === null && (
+              <>
+                <MobileControlButton onClick={() => rfInstance?.zoomIn()}>
+                  <Plus className="w-5 h-5 stroke-1 fill-none text-white" />
+                </MobileControlButton>
+                <MobileControlButton onClick={() => rfInstance?.zoomOut()}>
+                  <Minus className="w-5 h-5 stroke-1 fill-none text-white" />
+                </MobileControlButton>
+              </>
+            )}
+
             <MobileControlButton
               onClick={() => rfInstance?.fitView({ padding: 2 })}
             >
               <Maximize className="w-5 h-5 stroke-1 fill-none text-white" />
             </MobileControlButton>
-            {panOnDrag !== null && (
-              <MobileControlButton onClick={() => setPanOnDrag(!panOnDrag)}>
-                <Move
-                  className="w-5 h-5 stroke-1 fill-none"
-                  style={{ opacity: panOnDrag ? 1 : 0.5 }}
-                />
+            {touchOnlyState !== null && (
+              <MobileControlButton
+                onClick={() => setTouchOnlyState(!touchOnlyState)}
+              >
+                {touchOnlyState ? (
+                  <LockOpen className="w-5 h-5 stroke-1 fill-none" />
+                ) : (
+                  <Lock className="w-5 h-5 stroke-1 fill-none" />
+                )}
               </MobileControlButton>
             )}
           </div>

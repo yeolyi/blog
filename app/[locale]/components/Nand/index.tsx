@@ -30,14 +30,6 @@ import { useNodeAtom } from '@/app/[locale]/components/Nand/model/useNodeAtom';
 import { saveJSONToFile, selectJSONFromFile } from '@/utils/string';
 import { Provider, createStore } from 'jotai';
 
-const defaultEdgeOptions = {
-  type: 'smoothstep' as const,
-  animated: true,
-  selectable: true,
-};
-
-const connectionLineStyle = { stroke: 'lightgray' };
-
 // 처음에는 NAND의 값은 atom으로 해보겠는데 연결이 바뀌는건 어떻게 표현하지? 그때는 어떻게 리렌더링하지? 했었는데
 // 연결도 atom으로 표현하면 되겠더라
 // 모든걸 atom으로 표현한다는 사고방식이 생각보다 어렵다.
@@ -62,7 +54,7 @@ function Flow({
   const [edges, setEdges] = useState<Edge[]>([]);
   const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
 
-  const [panOnDrag, setPanOnDrag] = useTouchDeviceState();
+  const [touchOnlyState, setTouchOnlyState] = useTouchDeviceState();
 
   useEffect(() => {
     if (initialJSON) {
@@ -164,21 +156,27 @@ function Flow({
             onConnect={onConnect}
             colorMode="dark"
             nodeTypes={nodeTypes}
-            defaultEdgeOptions={defaultEdgeOptions}
-            connectionLineType={ConnectionLineType.SmoothStep}
-            connectionLineStyle={connectionLineStyle}
+            defaultEdgeOptions={{
+              type: ConnectionLineType.Step,
+              animated: true,
+              selectable: true,
+            }}
+            connectionLineType={ConnectionLineType.Step}
+            connectionLineStyle={{ stroke: 'lightgray' }}
             fitView
             fitViewOptions={{ padding: 2 }}
             proOptions={{ hideAttribution: true }}
             zoomOnScroll={false}
             preventScrolling={false}
-            panOnDrag={panOnDrag ?? true}
-            nodesDraggable={panOnDrag ?? true}
+            panOnDrag={touchOnlyState ?? true}
+            nodesDraggable={touchOnlyState ?? true}
+            snapToGrid
+            snapGrid={[8, 8]}
           >
             <Controls
               rfInstance={rfInstance}
-              panOnDrag={panOnDrag}
-              setPanOnDrag={setPanOnDrag}
+              touchOnlyState={touchOnlyState}
+              setTouchOnlyState={setTouchOnlyState}
               addNode={addNode}
               onSave={onSave}
               onRestore={onRestore}

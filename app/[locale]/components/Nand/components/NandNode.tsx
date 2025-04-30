@@ -36,9 +36,9 @@ export const NandNode = (props: NodeProps<'nand'>) => {
   return (
     <div
       className={clsx(
-        'relative w-24 h-16 border rounded-r-full border-white box-content flex items-center justify-center',
+        'relative w-24 h-16 rounded-r-full box-content flex items-center justify-center outline outline-white',
         backgroundColor,
-        props.selected && 'scale-110',
+        props.selected ? 'outline-2' : 'outline-1',
       )}
     >
       <Handle
