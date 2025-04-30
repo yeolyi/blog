@@ -1,17 +1,26 @@
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 
 import { isTouchDevice } from '@/utils/isTouchDevice';
-import { useEffect } from 'react';
+
+export type TouchDeviceState =
+  | {
+      type: 'loading';
+    }
+  | {
+      type: 'desktop';
+    }
+  | {
+      type: 'mobile';
+      value: boolean;
+    };
 
 export const useTouchDeviceState = () => {
-  const [state, setState] = useState<boolean | null>(null);
+  const [state, setState] = useState<TouchDeviceState>({ type: 'loading' });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (typeof window === 'undefined') return;
     const isTouch = isTouchDevice();
-    if (isTouch) {
-      setState(false);
-    }
+    setState(isTouch ? { type: 'mobile', value: false } : { type: 'desktop' });
   }, []);
 
   return [state, setState] as const;

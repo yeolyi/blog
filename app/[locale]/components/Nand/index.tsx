@@ -144,6 +144,10 @@ function Flow({
     setEdges((eds) => [...eds, ...edges]);
   };
 
+  const isInteractionEnabled =
+    touchOnlyState.type === 'desktop' ||
+    (touchOnlyState.type === 'mobile' && touchOnlyState.value);
+
   return (
     <Provider store={store}>
       <ReactFlowProvider>
@@ -168,10 +172,11 @@ function Flow({
             fitView
             fitViewOptions={minZoomOptions}
             proOptions={{ hideAttribution: true }}
-            zoomOnScroll={false}
             preventScrolling={false}
-            panOnDrag={touchOnlyState ?? true}
-            nodesDraggable={touchOnlyState ?? true}
+            // TODO: 노드가 모바일 드래그를 막는 문제 해결
+            panOnDrag={isInteractionEnabled}
+            nodesDraggable={isInteractionEnabled}
+            nodesConnectable={isInteractionEnabled}
             snapToGrid
             snapGrid={[8, 8]}
           >
