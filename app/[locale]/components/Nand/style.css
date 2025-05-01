@@ -1,8 +1,6 @@
-img,
-picture,
-video,
-canvas,
-svg {
+/* 왜 넣었더라?? */
+/* react flow 폭 조절 안되는거 떄문이었나 */
+.rf__wrapper svg {
   display: unset;
   max-width: unset;
 }

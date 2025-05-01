@@ -1,29 +1,15 @@
-import type { PostType } from '../data/curriculumData';
+import type { PartType } from '@/app/[locale]/data/curriculumData';
 import CurriculumPost from './CurriculumPost';
 
-type CurriculumSectionProps = {
-  title: string;
-  posts: PostType[];
-};
-
-export default function CurriculumSection({
-  title,
-  posts,
-}: CurriculumSectionProps) {
+export default function CurriculumSection({ title, image, posts }: PartType) {
   return (
-    <div className="mb-8">
-      <h4 className="text-white text-lg font-medium mb-2">{title}</h4>
-      <ul className="space-y-4">
+    <>
+      <h3>{title}</h3>
+      <ul>
         {posts.map((post) => (
-          <CurriculumPost
-            key={post.id}
-            title={post.title}
-            description={post.description}
-            isPublished={post.isPublished}
-            slug={post.slug}
-          />
+          <CurriculumPost key={post.id} {...post} />
         ))}
       </ul>
-    </div>
+    </>
   );
 }

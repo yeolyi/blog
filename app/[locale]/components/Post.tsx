@@ -18,27 +18,18 @@ export default async function PostList() {
   });
 
   return (
-    <ul className="list-none p-0">
+    <ul>
       {sortedMetadataList.map(({ id, title, date, description }) => (
-        <li
-          key={id}
-          className="group cursor-pointer hover:bg-white active:bg-white text-xl font-semibold py-2"
-        >
+        <li key={id} className="group hover:bg-white">
           <Link
             href={`/post/${id}`}
             className="flex flex-col w-full no-underline"
           >
-            <div className="flex flex-wrap">
-              <span className="text-xl font-semibold text-white group-hover:text-black group-active:text-black mr-2 break-keep">
-                {title}
-              </span>
-              <span className="text-xl text-[#666]">{date}</span>
-            </div>
+            <h3 className="text-white group-hover:text-black">{title}</h3>
             {description && (
-              <span className="text-xl text-[#999] group-hover:text-[#666] group-active:text-[#666]">
-                {description}
-              </span>
+              <p className="text-sm text-gray-300">{description}</p>
             )}
+            <span className="text-sm text-gray-500">{date}</span>
           </Link>
         </li>
       ))}

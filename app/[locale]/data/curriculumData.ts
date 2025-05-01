@@ -1,14 +1,24 @@
+import chapter1 from '@/app/[locale]/assets/chapter1.png';
+import type { StaticImageData } from 'next/image';
+
 export type PostType = {
   id: number;
   title: string;
-  description: string;
-  slug?: string;
-  isPublished: boolean;
-};
+  description?: string;
+} & (
+  | {
+      isPublished: false;
+    }
+  | {
+      isPublished: true;
+      slug: string;
+    }
+);
 
 export type PartType = {
   id: string;
   title: string;
+  image?: StaticImageData;
   posts: PostType[];
 };
 
@@ -16,55 +26,41 @@ export const curriculumData: PartType[] = [
   {
     id: 'hardware',
     title: '파트 1: 컴퓨터 하드웨어의 기초',
+    image: chapter1,
     posts: [
       {
         id: 1,
         title: '컴퓨터의 첫 언어: 0과 1, 그리고 스위치의 마법',
-        description:
-          '모든 복잡한 연산의 시작은 아주 단순합니다. 컴퓨터가 세상을 0과 1이라는 두 가지 상태로 어떻게 표현하고 이해하는지, 그 근본 원리인 비트와 디지털 신호의 세계로 함께 떠나볼까요?',
-        slug: '/posts/computer-science/binary-and-switches',
-        isPublished: true,
+        isPublished: false,
       },
       {
         id: 2,
         title: '논리 게이트 첫걸음: AND, OR, NOT으로 생각하는 법 배우기',
-        description:
-          "컴퓨터는 어떻게 '결정'을 내릴까요? 가장 기본적인 논리 연산자인 AND, OR, NOT 게이트의 작동 원리를 이해하고, 불 대수를 통해 이들이 어떻게 결합되어 더 복잡한 연산을 만드는지 알아봅시다.",
         isPublished: false,
       },
       {
         id: 3,
         title: '만능 재료 NAND 게이트: 이것 하나로 모든 논리를 만든다고?',
-        description:
-          '레고 블록처럼, NAND 게이트 하나만 있으면 어떤 논리 회로든 만들 수 있다는 사실, 믿어지시나요? NAND 게이트의 놀라운 보편성을 직접 확인하고, 인터랙티브 컴포넌트로 직접 다른 게이트를 만들어보며 원리를 체득해 보세요!',
         isPublished: false,
       },
       {
         id: 4,
         title: '1 + 1 = 10? 컴퓨터 덧셈의 비밀, 가산기 만들기',
-        description:
-          '컴퓨터는 어떻게 덧셈이라는 기본적인 연산을 수행할까요? 우리가 배운 논리 게이트들을 조합하여, 한 자리 덧셈(반가산기)부터 자리올림까지 처리하는 완전한 덧셈기(전가산기)를 직접 설계하고 원리를 파헤쳐 봅시다.',
         isPublished: false,
       },
       {
         id: 5,
         title: '컴퓨터의 기억력: 플립플롭과 메모리는 어떻게 정보를 저장할까?',
-        description:
-          "계산만 해서는 컴퓨터가 아니죠! 정보를 '기억'하는 능력은 어떻게 생겨날까요? 상태를 저장하는 순차 논리회로의 기본 단위인 플립플롭부터 시작해서, 레지스터와 메모리가 정보를 붙잡아두는 원리를 알아봅니다.",
         isPublished: false,
       },
       {
         id: 6,
         title: '컴퓨터의 두뇌 CPU 파헤치기: 폰 노이만 구조와 명령어 사이클',
-        description:
-          '컴퓨터의 핵심, 중앙처리장치(CPU)는 어떤 구조로 되어 있고 무슨 일을 할까요? 현대 컴퓨터 구조의 근간인 폰 노이만 구조를 이해하고, CPU가 명령어를 가져와 해석하고 실행하는 기본 사이클을 따라가 봅니다.',
         isPublished: false,
       },
       {
         id: 7,
         title: '데이터 고속도로 개통! 버스와 메모리 계층의 비밀',
-        description:
-          "CPU는 엄청 빠른데 왜 컴퓨터는 가끔 느릴까요? CPU와 메모리, 그리고 다른 장치들 사이에서 데이터가 오가는 통로인 '버스'와, 빠르고 비싼 저장장치부터 느리고 값싼 저장장치까지 계층을 이루는 '메모리 계층 구조'의 비밀을 파헤쳐 봅시다.",
         isPublished: false,
       },
     ],
@@ -76,57 +72,41 @@ export const curriculumData: PartType[] = [
       {
         id: 8,
         title: '내 코드는 왜 느릴까? Big O로 알고리즘 성능 측정하기',
-        description:
-          '똑같은 기능을 구현해도 어떤 코드는 빠르고 어떤 코드는 느립니다. 그 차이는 어디서 올까요? 알고리즘의 효율성을 객관적으로 분석하고 표현하는 강력한 도구, Big O 표기법을 배우고 내 코드의 성능을 예측하고 개선하는 첫걸음을 내딛어 봅시다.',
         isPublished: false,
       },
       {
         id: 9,
         title: '데이터 정리의 기본: 배열 vs 연결 리스트, 언제 뭘 써야 할까?',
-        description:
-          '데이터를 순서대로 저장하는 가장 기본적인 방법, 배열과 연결 리스트! 비슷해 보이지만 장단점이 명확합니다. 각 자료구조의 특징과 연산 방식을 비교 분석하고, 어떤 상황에 어떤 구조를 선택하는 것이 유리할지 알아봅시다.',
         isPublished: false,
       },
       {
         id: 10,
         title: '마지막 접시가 먼저? 줄 선 순서대로! 스택과 큐 파헤치기',
-        description:
-          "데이터를 넣고 빼는 방식에 규칙이 있다면? '마지막에 들어온 것이 먼저 나가는' 스택과 '먼저 들어온 것이 먼저 나가는' 큐는 컴퓨터 과학에서 정말 많이 쓰이는 자료구조입니다. 이들의 원리와 활용법을 인터랙티브 예제로 재미있게 배워봅시다.",
         isPublished: false,
       },
       {
         id: 11,
         title: '관계와 계층 표현의 달인: 트리와 그래프 기초 다지기',
-        description:
-          '파일 시스템 폴더 구조부터 소셜 네트워크 친구 관계까지, 세상의 많은 것들은 계층이나 관계로 표현될 수 있습니다. 이를 컴퓨터에서 표현하는 강력한 도구인 트리와 그래프의 기본 개념과 용어를 익혀봅시다.',
         isPublished: false,
       },
       {
         id: 12,
         title: '미로 탐험처럼! 트리와 그래프를 누비는 DFS & BFS',
-        description:
-          "복잡하게 얽힌 트리나 그래프의 모든 노드를 방문하려면 어떻게 해야 할까요? '한 우물만 파는' 깊이 우선 탐색(DFS)과 '주변부터 살피는' 너비 우선 탐색(BFS)의 원리를 배우고, 어떤 상황에 어떤 탐색법이 유용한지 알아봅시다.",
         isPublished: false,
       },
       {
         id: 13,
         title: '정렬 알고리즘 동물원: 버블, 선택, 삽입부터 퀵 정렬까지!',
-        description:
-          "데이터를 원하는 순서대로 나열하는 '정렬'은 컴퓨터 과학의 기본 중의 기본입니다. 이름도 재미있는 버블 정렬, 선택 정렬, 삽입 정렬부터 조금 더 효율적인 병합 정렬, 퀵 정렬까지! 다양한 정렬 알고리즘들의 작동 원리를 시각적인 예제와 함께 알아봅니다.",
         isPublished: false,
       },
       {
         id: 14,
         title: '그래서 어떤 정렬/탐색이 제일 좋나요? 성능 비교 분석',
-        description:
-          '세상에 완벽한 알고리즘은 없습니다. 데이터의 상태나 원하는 결과에 따라 최적의 선택은 달라지죠. 앞에서 배운 정렬 알고리즘들의 성능(시간 복잡도)을 Big O 표기법으로 비교 분석하고, 언제 어떤 알고리즘을 써야 할지 판단하는 기준을 세워봅시다.',
         isPublished: false,
       },
       {
         id: 15,
         title: 'O(1) 검색의 마법! 해시 테이블은 어떻게 작동할까?',
-        description:
-          '원하는 데이터를 거의 즉시 찾아낼 수 있다면 얼마나 좋을까요? 해시 테이블은 평균적으로 O(1)이라는 놀라운 검색 속도를 제공하는 자료구조입니다. 해시 함수와 충돌 해결 전략 등 해시 테이블의 핵심 원리를 파헤쳐 봅시다.',
         isPublished: false,
       },
     ],
@@ -138,36 +118,26 @@ export const curriculumData: PartType[] = [
       {
         id: 16,
         title: '운영체제(OS)는 왜 필요할까? 시스템 프로그래밍 첫걸음',
-        description:
-          '우리가 만든 프로그램은 어떻게 하드웨어 위에서 실행될 수 있을까요? 그 중간 다리 역할을 하는 운영체제의 필요성과 핵심 기능을 알아보고, 프로그램이 실행 가능한 파일로 변환되는 컴파일 과정도 간략히 살펴봅니다.',
         isPublished: false,
       },
       {
         id: 17,
         title: '멀티태스킹의 비밀: 프로세스와 스레드는 뭐가 다를까?',
-        description:
-          "컴퓨터는 어떻게 여러 프로그램을 동시에 실행하는 것처럼 보일까요? 운영체제가 프로그램을 관리하는 단위인 '프로세스'와, 프로세스 내에서 실행 흐름을 나누는 '스레드'의 개념을 배우고 그 차이점을 명확히 이해해 봅시다.",
         isPublished: false,
       },
       {
         id: 18,
         title: '내 컴퓨터 RAM은 왜 항상 부족할까? 가상 메모리의 마법',
-        description:
-          "실제 RAM 용량보다 더 큰 프로그램을 실행하는 비결은? 운영체제가 메모리를 효율적으로 관리하고 프로그램 실행 환경을 안정적으로 만드는 핵심 기술, '가상 메모리'와 '페이징'의 원리를 알아봅니다.",
         isPublished: false,
       },
       {
         id: 19,
         title: '인터넷 서핑의 뒷단: TCP/IP와 HTTP는 어떻게 통신할까?',
-        description:
-          '웹사이트 버튼 하나 누르면 어떻게 화면이 바뀔까요? 우리가 매일 사용하는 인터넷 통신의 근간을 이루는 TCP/IP 프로토콜 스택과 웹 통신의 핵심인 HTTP의 기본 동작 원리를 알아보고 데이터가 네트워크를 통해 전달되는 여정을 따라가 봅시다.',
         isPublished: false,
       },
       {
         id: 20,
         title: '드디어 완성! 하드웨어부터 앱까지, 모든 조각 맞추기',
-        description:
-          '0과 1에서 시작된 긴 여정의 마무리! 지금까지 배운 하드웨어, 자료구조, 알고리즘, 운영체제, 네트워크 지식들이 어떻게 서로 맞물려 우리가 사용하는 웹 브라우저, 게임 같은 응용 프로그램을 가능하게 하는지 큰 그림을 완성해 봅시다.',
         isPublished: false,
       },
     ],
@@ -179,8 +149,6 @@ export const curriculumData: PartType[] = [
       {
         id: 21,
         title: '게임 속 컴퓨터? 마인크래프트 레드스톤으로 논리 회로 만들기!',
-        description:
-          '컴퓨터 공학 원리가 게임 속에도 숨어있다? 인기 게임 마인크래프트의 레드스톤 시스템을 이용해 우리가 배웠던 논리 게이트와 간단한 회로를 직접 만들어보며 컴퓨터의 기본 작동 원리를 재미있게 복습해 봅시다!',
         isPublished: false,
       },
     ],
