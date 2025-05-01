@@ -1,7 +1,6 @@
 import { Link } from '@/i18n/navigation';
 import { getPostIds } from '@/utils/post';
 import { getLocale } from 'next-intl/server';
-import type React from 'react';
 
 export default async function PostList() {
   const locale = await getLocale();
