@@ -6,6 +6,7 @@ import Link from 'next/link';
 import chasing from './assets/chasing.png';
 import me from './assets/me.jpg';
 import CurriculumSection from './components/CurriculumSection';
+import EmailSubscribe from './components/EmailSubscribe';
 import { curriculumData } from './data/curriculumData';
 
 export default async function Home({
@@ -100,6 +101,10 @@ export default async function Home({
           </a>
           를 만들어보고 싶으신 분들 모두 환영합니다 🙌
         </p>
+
+        <div className="my-8 border-t border-white/20 pt-6">
+          <EmailSubscribe />
+        </div>
 
         {curriculumData.map((part) => (
           <CurriculumSection key={part.id} {...part} />
