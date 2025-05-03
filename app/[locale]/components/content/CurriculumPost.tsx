@@ -1,7 +1,7 @@
 import type { PostType } from '@/app/[locale]/data/curriculumData';
+import { Link } from '@/i18n/navigation';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
-import Link from 'next/link';
 
 export default function CurriculumPost(post: PostType) {
   const t = useTranslations('Curriculum');

@@ -1,8 +1,8 @@
 'use client';
 
-import { Cursor } from '@/app/[locale]/components/Cursor';
 import { useRealtimeCursors } from '@/hooks/useRealTimeCursors';
 import { useRef } from 'react';
+import { Cursor } from './Cursor';
 
 const THROTTLE_MS = 50;
 const ROOM_NAME = 'main-page';

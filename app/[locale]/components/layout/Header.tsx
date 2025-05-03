@@ -3,9 +3,8 @@ import { Link } from '@/i18n/navigation';
 import { createClient } from '@/utils/supabase/server';
 import { useTranslations } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
-import { Suspense } from 'react';
-import Button from './Button';
-import LoginButton from './LoginButton';
+import LoginButton from '../content/LoginButton';
+import Button from '../ui/Button';
 
 export default function Header() {
   const t = useTranslations('Header');

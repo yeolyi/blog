@@ -1,8 +1,8 @@
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { IBM_Plex_Sans_KR } from 'next/font/google';
-import Footer from './components/Footer';
-import Header from './components/Header';
+import Footer from './components/layout/Footer';
+import Header from './components/layout/Header';
 
 import '@/app/[locale]/globals.css';
 

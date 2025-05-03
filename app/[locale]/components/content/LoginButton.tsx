@@ -1,7 +1,7 @@
 'use client';
 
 import { useSignInWithGithub } from '@/hooks/useSignInWithGithub';
-import Button from './Button';
+import Button from '../ui/Button';
 
 export default function LoginButton() {
   const signInWithGithub = useSignInWithGithub();

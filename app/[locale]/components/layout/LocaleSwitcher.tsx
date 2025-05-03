@@ -7,7 +7,6 @@ import clsx from 'clsx';
 import { useLocale, useTranslations } from 'next-intl';
 import type { Locale } from 'next-intl';
 import { useParams } from 'next/navigation';
-import { useTransition } from 'react';
 
 export default function LocaleSwitcher() {
   const t = useTranslations('LocaleSwitcher');

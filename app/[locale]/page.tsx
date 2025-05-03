@@ -1,12 +1,12 @@
-import PostList from '@/app/[locale]/components/Post';
+import PostList from '@/app/[locale]/components/content/PostList';
 import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
 import Link from 'next/link';
 import chasing from './assets/chasing.png';
 import me from './assets/me.jpg';
-import CurriculumSection from './components/CurriculumSection';
-import EmailSubscribe from './components/EmailSubscribe';
+import CurriculumSection from './components/content/CurriculumSection';
+import EmailSubscribe from './components/content/EmailSubscribe';
 import { curriculumDataRaw } from './data/curriculumData';
 
 export default async function Home({

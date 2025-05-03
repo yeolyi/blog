@@ -1,6 +1,5 @@
-import Tile from '@/app/[locale]/components/Tile';
+import Tile from '@/app/[locale]/components/ui/Tile';
 import { getRandomMeme } from '@/app/[locale]/memes/actions';
-import type { Meme } from '@/types/meme';
 import { getMediaTypeFromUrl } from '@/utils/form';
 import Image from 'next/image';
 import Link from 'next/link';
