@@ -35,7 +35,8 @@ export const curriculumDataRaw: PartType[] = [
       {
         titleKey: 'hw1Title',
         descriptionKey: 'hw1Description',
-        isPublished: false,
+        isPublished: true,
+        slug: '/cs/zero-and-one',
       },
       {
         titleKey: 'hw2Title',

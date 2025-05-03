@@ -1,5 +1,5 @@
-import Comments from '@/app/[locale]/post/[id]/components/Comment';
-import TableOfContents from '@/app/[locale]/post/[id]/components/TableOfContents';
+import Comments from '@/app/[locale]/(mdx)/post/[id]/components/Comment';
+import TableOfContents from '@/app/[locale]/(mdx)/post/[id]/components/TableOfContents';
 import { routing } from '@/i18n/routing';
 import { getPostIds } from '@/utils/post';
 import type { Metadata } from 'next';
@@ -13,7 +13,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id, locale } = await params;
-  const { title, description } = await import(`@/mdx/${id}/${locale}.mdx`);
+  const { title, description } = await import(`@/mdx/cs/${id}/${locale}.mdx`);
   return { title, description };
 }
 
@@ -24,9 +24,11 @@ export default async function PostPage({
 }) {
   const { id, locale } = await params;
 
+  console.log(id, locale);
+
   try {
     const { default: Component, title } = await import(
-      `@/mdx/${id}/${locale}.mdx`
+      `@/mdx/cs/${id}/${locale}.mdx`
     );
 
     return (
@@ -51,7 +53,7 @@ export const generateStaticParams = async () => {
   const result = [];
 
   for (const locale of locales) {
-    const postIds = await getPostIds(locale);
+    const postIds = await getPostIds(locale, 'cs');
     for (const postId of postIds) {
       result.push({ id: postId, locale });
     }

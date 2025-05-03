@@ -1,4 +1,4 @@
-import { generateStaticParams as generateStaticPostParams } from '@/app/[locale]/post/[id]/page';
+import { generateStaticParams as generateStaticPostParams } from '@/app/[locale]/(mdx)/post/[id]/page';
 import { routing } from '@/i18n/routing';
 import type { MetadataRoute } from 'next';
 

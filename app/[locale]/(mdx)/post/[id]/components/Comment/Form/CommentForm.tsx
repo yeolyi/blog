@@ -3,8 +3,8 @@
 import {
   createComment,
   toggleEmojiReaction,
-} from '@/app/[locale]/post/[id]/actions';
-import { renderMarkdown } from '@/app/[locale]/post/[id]/utils/markdown';
+} from '@/app/[locale]/(mdx)/post/[id]/actions';
+import { renderMarkdown } from '@/app/[locale]/(mdx)/post/[id]/utils/markdown';
 import { isSingleEmoji } from '@/utils/string';
 import { Paintbrush } from 'lucide-react';
 import { useTranslations } from 'next-intl';

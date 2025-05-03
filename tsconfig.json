@@ -29,7 +29,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "script/crawling.mjs",
-    "app/[locale]/post/react-internal/page.mdx",
+    "app/[locale]/(mdx)/post/react-internal/page.mdx",
     "next.config.mjs",
     "mdx/react-internal/Lane.js",
     "app/[locale]/components/Nand/index.tsx"

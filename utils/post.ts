@@ -2,8 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { Locale } from 'next-intl';
 
-const fetchPostIds = async (locale: Locale) => {
-  const postsDirectory = path.join(process.cwd(), 'mdx');
+const fetchPostIds = async (locale: Locale, subDir?: string) => {
+  const postsDirectory = path.join(process.cwd(), 'mdx', subDir ?? '');
   const directories = fs.readdirSync(postsDirectory, { withFileTypes: true });
 
   return directories
@@ -16,6 +16,6 @@ const fetchPostIds = async (locale: Locale) => {
     .map((dirent) => dirent.name);
 };
 
-export const getPostIds = async (locale: Locale) => {
-  return await fetchPostIds(locale);
+export const getPostIds = async (locale: Locale, subDir?: string) => {
+  return await fetchPostIds(locale, subDir);
 };

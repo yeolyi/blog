@@ -1,29 +1,39 @@
 import type { PostType } from '@/app/[locale]/data/curriculumData';
+import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
 export default function CurriculumPost(post: PostType) {
   const t = useTranslations('Curriculum');
 
-  return (
-    <li className="list-decimal text-gray-400 list-inside">
-      {post.isPublished ? (
-        <Link href={post.slug}>{post.title}</Link>
-      ) : (
-        <h4 className="font-medium inline text-base text-pretty break-keep text-gray-400">
-          {post.title}
-          <span className="bg-gray-700 ml-2 px-1 text-xs text-white">
-            {t('comingSoon')}
-          </span>
-        </h4>
-      )}
-      {post.description && (
-        <p
-          className={`${post.isPublished ? 'text-gray-200' : 'text-gray-400'} text-base`}
+  if (post.isPublished) {
+    return (
+      <li
+        className={clsx(
+          'list-decimal text-gray-400 list-inside group cursor-pointer hover:border-l-2 hover:border-white hover:pl-2',
+        )}
+      >
+        <Link
+          href={post.slug}
+          className="font-semibold inline text-base text-pretty break-keep text-white"
         >
-          {post.description}
-        </p>
-      )}
+          {post.title}
+        </Link>
+        {post.description && (
+          <p className="text-white text-base">{post.description}</p>
+        )}
+      </li>
+    );
+  }
+  return (
+    <li className="list-decimal text-gray-500 list-inside">
+      <h4 className="font-semibold inline text-base text-pretty break-keep">
+        {post.title}
+        <span className="bg-gray-700 ml-2 px-1 text-xs text-white">
+          {t('comingSoon')}
+        </span>
+      </h4>
+      {post.description && <p className="text-base">{post.description}</p>}
     </li>
   );
 }

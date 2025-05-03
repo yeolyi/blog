@@ -1,6 +1,5 @@
-import EmojiButton from '@/app/[locale]/post/[id]/components/Comment/Emoji/EmojiButton';
+import EmojiButton from '@/app/[locale]/(mdx)/post/[id]/components/Comment/Emoji/EmojiButton';
 import { getIsAuthenticated } from '@/utils/auth';
-import React from 'react';
 import { getEmojiReactions } from '../../../actions';
 
 interface EmojiReactionsListProps {

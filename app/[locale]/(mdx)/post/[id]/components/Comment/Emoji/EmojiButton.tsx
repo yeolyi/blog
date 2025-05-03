@@ -1,6 +1,6 @@
 'use client';
 
-import { toggleEmojiReaction } from '@/app/[locale]/post/[id]/actions';
+import { toggleEmojiReaction } from '@/app/[locale]/(mdx)/post/[id]/actions';
 
 type EmojiButtonProps = {
   emoji: string;

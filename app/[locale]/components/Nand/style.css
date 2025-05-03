@@ -1,6 +1,5 @@
-/* 왜 넣었더라?? */
-/* react flow 폭 조절 안되는거 떄문이었나 */
-.rf__wrapper svg {
+/* 전역 스타일시트때문에 엣지가 안보이는 문제가 있어 삽입 */
+svg {
   display: unset;
   max-width: unset;
 }

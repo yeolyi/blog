@@ -23,9 +23,11 @@ export default async function PostList() {
         <li key={id} className="group hover:bg-white py-2">
           <Link
             href={`/post/${id}`}
-            className="flex w-full no-underline text-base flex-wrap gap-2"
+            className="flex w-full no-underline text-base flex-wrap"
           >
-            <span className="text-gray-500 shrink-0 font-normal">{date}</span>
+            <span className="text-gray-500 shrink-0 font-normal mr-2">
+              {date}
+            </span>
             <h3 className="text-white group-hover:text-black font-semibold shrink-0">
               {title}
             </h3>

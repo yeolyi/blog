@@ -1,4 +1,3 @@
-import meImage from '@/app/[locale]/assets/me.jpg';
 import { ImageResponse } from 'next/og';
 
 export const alt = '블로그 포스트 오픈그래프 이미지';
@@ -8,14 +7,16 @@ export const size = {
   height: 630,
 };
 
-export default async function OGImage({
-  params,
+export default async function getOG({
+  id,
+  locale,
+  subDir,
 }: {
-  params: { id: string; locale: string };
+  id: string;
+  locale: string;
+  subDir?: string;
 }) {
-  const { id, locale } = params;
-
-  const mdxModule = await import(`@/mdx/${id}/${locale}.mdx`);
+  const mdxModule = await import(`@/mdx/${subDir}/${id}/${locale}.mdx`);
   const { title } = mdxModule;
 
   const headerText =
