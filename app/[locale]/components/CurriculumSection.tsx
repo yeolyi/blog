@@ -4,24 +4,26 @@ import CurriculumPost from './CurriculumPost';
 
 export default function CurriculumSection({ title, image, posts }: PartType) {
   return (
-    <>
-      <div className="relative prose-h3:m-0">
-        {image ? (
-          <>
-            <Image src={image} alt={title} className="w-[75%] max-w-[384px]" />
-            <h3 className="absolute bottom-2 left-2 text-white bg-black ">
-              {title}
-            </h3>
-          </>
-        ) : (
-          <h3>{title}</h3>
-        )}
-      </div>
-      <ul>
+    <div>
+      {image ? (
+        <div className="relative">
+          <Image
+            src={image}
+            alt={title}
+            className="w-[100%] max-w-[384px] mb-8"
+          />
+          <h3 className="absolute bottom-2 left-2 text-white bg-black font-semibold text-xl pr-4">
+            {title}
+          </h3>
+        </div>
+      ) : (
+        <h3 className="text-white font-semibold text-xl mb-8">{title}</h3>
+      )}
+      <ul className="mb-16 space-y-4">
         {posts.map((post) => (
           <CurriculumPost key={post.title} {...post} />
         ))}
       </ul>
-    </>
+    </div>
   );
 }

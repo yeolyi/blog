@@ -64,15 +64,13 @@ export default function EmailSubscribe() {
   };
 
   return (
-    <>
-      <h3>새로운 컨텐츠 알림 받기 💌</h3>
-      <p>이메일로 새 글과 업데이트 소식을 받아보세요.</p>
+    <div className="mb-8">
+      <h3 className="text-white font-semibold text-xl mt-[1.6em] mb-[0.6em]">
+        새로운 컨텐츠 알림 받기 💌
+      </h3>
 
-      <div className="relative mt-3">
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col sm:flex-row gap-2"
-        >
+      <div>
+        <form onSubmit={handleSubmit} className="relative w-full">
           <input
             type="email"
             value={email}
@@ -82,7 +80,7 @@ export default function EmailSubscribe() {
             }
             required
             className={clsx(
-              'bg-transparent text-white border px-3 py-2 flex-grow focus:outline-none focus:border-white',
+              'bg-transparent text-white border px-3 py-2 flex-grow focus:outline-none focus:border-white w-full',
               error && 'border-red-300 placeholder:text-red-300',
               success &&
                 !error &&
@@ -94,7 +92,7 @@ export default function EmailSubscribe() {
           <button
             type="submit"
             disabled={isPending}
-            className="px-4 py-2 bg-white text-black font-medium hover:bg-black hover:text-white hover:outline hover:outline-white transition-colors disabled:opacity-50 cursor-pointer"
+            className="border-white border bg-white text-black font-medium hover:bg-black hover:text-white disabled:opacity-50 cursor-pointer absolute right-0 top-0 bottom-0 px-2"
           >
             {isPending ? '구독중...' : '구독하기'}
           </button>
@@ -103,9 +101,9 @@ export default function EmailSubscribe() {
       <div className="flex items-center gap-4 mt-4">
         <span
           id="confetti-label"
-          className="text-sm text-white/60 whitespace-nowrap"
+          className="text-sm text-[oklch(87.2%_0.01_258.338)] whitespace-nowrap"
         >
-          🎉 폭죽 개수
+          폭죽 개수
         </span>
         <Slider.Root
           className="relative flex items-center select-none touch-none w-[200px] h-5"
@@ -128,6 +126,6 @@ export default function EmailSubscribe() {
           {confettiNumber}
         </span>
       </div>
-    </>
+    </div>
   );
 }

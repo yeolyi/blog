@@ -69,41 +69,35 @@ export default async function Home({
         })}
       </p>
 
-      <div className="prose prose-invert prose-h3:m-0 prose-h3:text-base">
-        <h2>게시글</h2>
+      <div>
+        <h2 className="text-2xl font-bold mb-[1em] text-white">게시글</h2>
         <PostList />
       </div>
 
-      <div className="prose prose-invert prose-a:m-0 prose-p:mt-0 prose-h4:text-base prose-h4:m-0 prose-h3:text-pretty prose-h4:text-pretty prose-h4:break-keep">
-        <h2>만들면서 배우는 컴퓨터공학</h2>
+      <div>
+        <h2 className="text-2xl font-bold mb-[1em] text-white">
+          만들면서 배우는 컴퓨터공학
+        </h2>
         <Image
           src={chasing}
           alt="컴퓨터 이미지"
-          className="w-full max-w-[512px]"
+          className="w-full max-w-[512px] mb-8"
         />
-        <p>
+        <p className="my-5 text-[oklch(87.2%_0.01_258.338)] text-base text-pretty break-keep">
           컴퓨터공학을 배우며 느꼈던 경이로움을 나누고자 만든 시리즈입니다. 작은
           것들이 모여 컴퓨터가 만들어지는 과정을 함께 따라가봐요!
         </p>
-        <p>
+        <p className="my-5 text-[oklch(87.2%_0.01_258.338)] text-base text-pretty break-keep">
           알고리즘, 컴퓨터 구조, 운영체제, 네트워크 등 CS 지식들을 하나의 큰
           그림으로 연결합니다. 책이나 영상에서는 볼 수 없는 인터렉티브한 예제를
           통해 웹에서 바로 실습해볼 수 있도록 구성했습니다.
         </p>
-        <p>
+        <p className="my-5 text-[oklch(87.2%_0.01_258.338)] text-base text-pretty break-keep">
           CS 공부를 미루고 계신 개발자 분들, 컴퓨터가 어떻게 동작하는지 궁금하신
-          분들... 그리고 마인크래프트에서{' '}
-          <a
-            href="https://www.youtube.com/watch?v=-BP7DhHTU-I"
-            className="text-white underline"
-          >
-            컴퓨터
-          </a>
-          를 만들어보고 싶으신 분들 모두 환영합니다 🙌
+          모든 분들을 환영합니다 🙌
         </p>
 
         <EmailSubscribe />
-
         <div className="border-t border-white/20 my-8" />
 
         {curriculumData.map((part) => (
