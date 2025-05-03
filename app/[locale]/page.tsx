@@ -104,6 +104,8 @@ export default async function Home({
 
         <EmailSubscribe />
 
+        <div className="border-t border-white/20 my-8" />
+
         {curriculumData.map((part) => (
           <CurriculumSection key={part.id} {...part} />
         ))}

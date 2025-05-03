@@ -1,12 +1,16 @@
 'use client';
 
 import { subscribeEmail } from '@/app/actions/subscriber';
+import JSConfetti from 'js-confetti';
 import { useState, useTransition } from 'react';
+
+let jsConfetti: InstanceType<typeof JSConfetti> | null = null;
 
 export default function EmailSubscribe() {
   const [email, setEmail] = useState('');
   const [isPending, startTransition] = useTransition();
   const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -20,15 +24,22 @@ export default function EmailSubscribe() {
 
     startTransition(async () => {
       try {
-        // 서버 액션 호출
         const result = await subscribeEmail(email);
 
         if (result.success) {
           setSuccess(true);
+          setSuccessMessage(result.message);
           setEmail('');
-          // 3초 후 성공 메시지 숨기기
+
+          if (!jsConfetti) jsConfetti = new JSConfetti();
+
+          jsConfetti.addConfetti({
+            confettiNumber: 1000,
+          });
+
           setTimeout(() => {
             setSuccess(false);
+            setSuccessMessage('');
           }, 3000);
         } else {
           setError(result.message);
@@ -45,41 +56,44 @@ export default function EmailSubscribe() {
       <h3>새로운 컨텐츠 알림 받기 💌</h3>
       <p>이메일로 새 글과 업데이트 소식을 받아보세요.</p>
 
-      {success ? (
-        <div className="bg-green-900/30 border border-green-700 text-white p-3 rounded mt-3">
-          구독해주셔서 감사합니다!
-        </div>
-      ) : (
-        <form
-          onSubmit={handleSubmit}
-          className="mt-3 flex flex-col sm:flex-row gap-2"
-        >
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="이메일 주소"
-            required
-            className={`bg-transparent text-white border ${
-              error ? 'border-red-500' : 'border-white/40'
-            } px-3 py-2 flex-grow focus:outline-none focus:border-white`}
-            disabled={isPending}
-          />
-          <button
-            type="submit"
-            disabled={isPending}
-            className="px-4 py-2 bg-white text-black font-medium hover:bg-black hover:text-white hover:border hover:border-white transition-colors disabled:opacity-50 cursor-pointer"
+      <div
+        className="relative mt-3"
+        style={{ minHeight: 56 }} // 메시지 박스 높이 고정 (56px 정도, 필요시 조절)
+      >
+        {success ? (
+          <div className="absolute inset-0 flex items-center bg-green-900/30 border border-green-700 text-white p-3 transition-all duration-200 outline outline-2 outline-green-700">
+            {successMessage}
+          </div>
+        ) : error ? (
+          <div className="absolute inset-0 flex items-center bg-red-900/30 border border-red-700 text-white p-3 transition-all duration-200 outline outline-2 outline-red-700">
+            {error}
+          </div>
+        ) : (
+          <form
+            onSubmit={handleSubmit}
+            className="absolute inset-0 flex flex-col sm:flex-row gap-2"
           >
-            {isPending ? '구독중...' : '구독하기'}
-          </button>
-        </form>
-      )}
-
-      {error && (
-        <div className="bg-red-900/30 border border-red-700 text-white p-3 rounded mt-3">
-          {error}
-        </div>
-      )}
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="이메일 주소"
+              required
+              className={`bg-transparent text-white border ${
+                error ? 'border-red-500' : 'border-white/40'
+              } px-3 py-2 flex-grow focus:outline-none focus:border-white`}
+              disabled={isPending}
+            />
+            <button
+              type="submit"
+              disabled={isPending}
+              className="px-4 py-2 bg-white text-black font-medium hover:bg-black hover:text-white hover:border hover:border-white transition-colors disabled:opacity-50 cursor-pointer"
+            >
+              {isPending ? '구독중...' : '구독하기'}
+            </button>
+          </form>
+        )}
+      </div>
     </>
   );
 }

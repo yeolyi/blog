@@ -28,8 +28,8 @@ export async function subscribeEmail(email: string): Promise<SubscribeResult> {
 
     if (existingSubscriber) {
       return {
-        success: false,
-        message: '이미 구독 중인 이메일입니다',
+        success: true,
+        message: '이미 구독 중이시네요! 감사합니다 :)',
       };
     }
 
