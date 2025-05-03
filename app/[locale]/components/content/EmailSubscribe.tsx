@@ -1,6 +1,6 @@
 'use client';
 
-import { subscribeEmail } from '@/app/actions/subscriber';
+import { subscribeEmail } from '@/app/[locale]/actions';
 import * as Slider from '@radix-ui/react-slider';
 import clsx from 'clsx';
 import JSConfetti from 'js-confetti';

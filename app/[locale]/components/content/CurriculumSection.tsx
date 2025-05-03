@@ -1,4 +1,4 @@
-import type { PartType } from '@/app/[locale]/data/curriculumData';
+import type { PartType } from '@/app/[locale]/page';
 import Image from 'next/image';
 import CurriculumPost from './CurriculumPost';
 

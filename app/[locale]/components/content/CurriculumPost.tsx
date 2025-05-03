@@ -1,4 +1,4 @@
-import type { PostType } from '@/app/[locale]/data/curriculumData';
+import type { PostType } from '@/app/[locale]/page';
 import { Link } from '@/i18n/navigation';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
