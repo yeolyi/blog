@@ -52,6 +52,8 @@ export default function EmailSubscribe() {
           setTimeout(() => {
             setSuccess(false);
             setSuccessMessage('');
+            // 폭죽 가지고 놀 수 있게 이메일 남겨두기
+            setEmail(email);
           }, 3000);
         } else {
           setError(result.message);

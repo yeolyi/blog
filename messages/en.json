@@ -21,7 +21,66 @@
     "email": "Email"
   },
   "HomePage": {
-    "bio": "Hi there👋 I'm Seongyeol, a developer. I worked as a frontend developer for the <snuLink>SNU CSE website</snuLink> renewal project. Now I'm working at <kakaoLink>Kakao</kakaoLink>. I share developer content on <instagramLink>Instagram</instagramLink>."
+    "bio": "Hi there👋 I'm Seongyeol, a developer. I worked as a frontend developer for the <snuLink>SNU CSE website</snuLink> renewal project. Now I'm working at <kakaoLink>Kakao</kakaoLink>. I share developer content on <instagramLink>Instagram</instagramLink>.",
+    "posts": "Posts",
+    "curriculum": "Learning Computer Science by Building",
+    "curriculumIntro1": "This is a series created to share the wonder I felt while learning computer science. Let's follow the process of how small things come together to create a computer!",
+    "curriculumIntro2": "It connects CS knowledge like algorithms, computer architecture, operating systems, and networks into one big picture. I've designed it with interactive examples that you can practice right in your browser, unlike books or videos.",
+    "curriculumIntro3": "Welcome to all developers who've been putting off CS studies, and anyone curious about how computers work 🙌"
+  },
+  "Curriculum": {
+    "part1Title": "Part 1: Building a Computer from 0s and 1s",
+    "hw1Title": "Why Computers See the World in Only 0s and 1s",
+    "hw1Description": "Bits, Binary Numbers, Truth Tables",
+    "hw2Title": "Computers are Made of Whether Mom or Dad is Better",
+    "hw2Description": "Basic Logic Gates (AND, OR, NOT)",
+    "hw3Title": "Computers That Didn't Actually Like Both Mom and Dad",
+    "hw3Description": "Universality of NAND",
+    "hw4Title": "Now You Can Build a Calculator (For Real)",
+    "hw4Description": "Half Adder, Full Adder",
+    "hw5Title": "Fixing a Computer with Amnesia",
+    "hw5Description": "Latch, Flip-flop, RAM, ROM",
+    "hw6Title": "If It Only Calculates, Is It a Calculator or a Computer?",
+    "hw6Description": "Von Neumann Architecture",
+    "hw7Title": "The Routine CPU Does Billions of Times per Second",
+    "hw7Description": "Instruction Cycle (Fetch-Decode-Execute)",
+    "hw8Title": "No Mom, It's Not a Messy Room, It's Cache!",
+    "hw8Description": "Memory Hierarchy",
+
+    "part2Title": "Part 2: Solving Problems Like a Computer",
+    "ds1Title": "You Won't Clean Your Room, So At Least Organize Your Data Well",
+    "ds1Description": "Arrays and Linked Lists",
+    "ds2Title": "A Restaurant Where Late Arrivals Enter First",
+    "ds2Description": "Stacks and Queues",
+    "ds3Title": "Social Mobility Isn't Easy in the Algorithm World",
+    "ds3Description": "Time Complexity",
+    "ds4Title": "The Sorting Algorithm Hierarchy",
+    "ds4Description": "Bubble, Selection, Insertion, Merge, Quick, Heap Sort",
+    "ds5Title": "CS Students Don't Know What Real Trees Look Like",
+    "ds5Description": "Trees",
+    "ds6Title": "The Focused One vs. The Scattered One",
+    "ds6Description": "DFS, BFS",
+    "ds7Title": "A Data Structure That Keeps Trying and Gets Good Results",
+    "ds7Description": "Hash Tables",
+
+    "part3Title": "Part 3: Making Computers More User-Friendly",
+    "os1Title": "Created by Ruthless Developers Who Can't Stand Idle CPUs",
+    "os1Description": "Background of Operating Systems",
+    "os2Title": "Why I Can't Use All the Functions of My Computer",
+    "os2Description": "System Calls",
+    "os3Title": "I Studied C Diligently, But Computers Don't Actually Understand It",
+    "os3Description": "Compilers",
+    "os4Title": "Let's Learn Task Management from Efficient Computers",
+    "os4Description": "Processes and Threads",
+    "os5Title": "\"If a Game Install Is 50GB, Do I Need 50GB of RAM Too?\"",
+    "os5Description": "Virtual Memory",
+    "os6Title": "How This Text Reaches You",
+    "os6Description": "Networks",
+
+    "appendixTitle": "Appendix",
+    "appendix1Title": "Building a Computer in Minecraft",
+
+    "comingSoon": "Coming Soon"
   },
   "NotFound": {
     "backHome": "Back to Home"

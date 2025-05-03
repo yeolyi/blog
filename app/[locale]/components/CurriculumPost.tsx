@@ -1,26 +1,27 @@
 import type { PostType } from '@/app/[locale]/data/curriculumData';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 
-export default function CurriculumPost(postType: PostType) {
-  const { title, description, isPublished } = postType;
+export default function CurriculumPost(post: PostType) {
+  const t = useTranslations('Curriculum');
 
   return (
     <li className="list-decimal text-gray-400 list-inside">
-      {isPublished ? (
-        <Link href={postType.slug}>{title}</Link>
+      {post.isPublished ? (
+        <Link href={post.slug}>{post.title}</Link>
       ) : (
-        <h4 className="font-medium inline text-xl text-pretty break-keep text-white">
-          {title}
-          <span className="bg-gray-700 ml-2 px-1 text-sm text-white">
-            준비중
+        <h4 className="font-medium inline text-base text-pretty break-keep text-gray-400">
+          {post.title}
+          <span className="bg-gray-700 ml-2 px-1 text-xs text-white">
+            {t('comingSoon')}
           </span>
         </h4>
       )}
-      {description && (
+      {post.description && (
         <p
-          className={`${isPublished ? 'text-gray-200' : 'text-gray-400'} text-base`}
+          className={`${post.isPublished ? 'text-gray-200' : 'text-gray-400'} text-base`}
         >
-          {description}
+          {post.description}
         </p>
       )}
     </li>

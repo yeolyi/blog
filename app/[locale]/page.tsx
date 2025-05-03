@@ -7,7 +7,7 @@ import chasing from './assets/chasing.png';
 import me from './assets/me.jpg';
 import CurriculumSection from './components/CurriculumSection';
 import EmailSubscribe from './components/EmailSubscribe';
-import { curriculumData } from './data/curriculumData';
+import { curriculumDataRaw } from './data/curriculumData';
 
 export default async function Home({
   params,
@@ -19,6 +19,23 @@ export default async function Home({
   setRequestLocale(locale);
 
   const t = await getTranslations('HomePage');
+  const tCurriculum = await getTranslations('Curriculum');
+
+  // 번역이 적용된 curriculumData 생성
+  const curriculumData = curriculumDataRaw.map((part) => ({
+    ...part,
+    // @ts-expect-error 어떻게 고치지
+    title: tCurriculum(part.titleKey),
+    posts: part.posts.map((post) => ({
+      ...post,
+      // @ts-expect-error 어떻게 고치지
+      title: tCurriculum(post.titleKey),
+      description: post.descriptionKey
+        ? // @ts-expect-error 어떻게 고치지
+          tCurriculum(post.descriptionKey)
+        : undefined,
+    })),
+  }));
 
   return (
     <div className="max-w-2xl mx-auto my-24 px-4 flex flex-col gap-16">
@@ -70,13 +87,13 @@ export default async function Home({
       </p>
 
       <div>
-        <h2 className="text-2xl font-bold mb-[1em] text-white">게시글</h2>
+        <h2 className="text-2xl font-bold mb-[1em] text-white">{t('posts')}</h2>
         <PostList />
       </div>
 
       <div>
         <h2 className="text-2xl font-bold mb-[1em] text-white">
-          만들면서 배우는 컴퓨터공학
+          {t('curriculum')}
         </h2>
         <Image
           src={chasing}
@@ -84,17 +101,13 @@ export default async function Home({
           className="w-full max-w-[512px] mb-8"
         />
         <p className="my-5 text-[oklch(87.2%_0.01_258.338)] text-base text-pretty break-keep">
-          컴퓨터공학을 배우며 느꼈던 경이로움을 나누고자 만든 시리즈입니다. 작은
-          것들이 모여 컴퓨터가 만들어지는 과정을 함께 따라가봐요!
+          {t('curriculumIntro1')}
         </p>
         <p className="my-5 text-[oklch(87.2%_0.01_258.338)] text-base text-pretty break-keep">
-          알고리즘, 컴퓨터 구조, 운영체제, 네트워크 등 CS 지식들을 하나의 큰
-          그림으로 연결합니다. 책이나 영상에서는 볼 수 없는 인터렉티브한 예제를
-          통해 웹에서 바로 실습해볼 수 있도록 구성했습니다.
+          {t('curriculumIntro2')}
         </p>
         <p className="my-5 text-[oklch(87.2%_0.01_258.338)] text-base text-pretty break-keep">
-          CS 공부를 미루고 계신 개발자 분들, 컴퓨터가 어떻게 동작하는지 궁금하신
-          모든 분들을 환영합니다 🙌
+          {t('curriculumIntro3')}
         </p>
 
         <EmailSubscribe />

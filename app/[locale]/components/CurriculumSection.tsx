@@ -9,7 +9,7 @@ export default function CurriculumSection({ title, image, posts }: PartType) {
         <div className="relative">
           <Image
             src={image}
-            alt={title}
+            alt={title || ''}
             className="w-[100%] max-w-[384px] mb-8"
           />
           <h3 className="absolute bottom-2 left-2 text-white bg-black font-semibold text-xl pr-4">
@@ -21,7 +21,7 @@ export default function CurriculumSection({ title, image, posts }: PartType) {
       )}
       <ul className="mb-16 space-y-4">
         {posts.map((post) => (
-          <CurriculumPost key={post.title} {...post} />
+          <CurriculumPost key={post.titleKey} {...post} />
         ))}
       </ul>
     </div>
