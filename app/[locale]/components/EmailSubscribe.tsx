@@ -41,11 +41,9 @@ export default function EmailSubscribe() {
   };
 
   return (
-    <div className="prose prose-invert w-full">
-      <h3 className="text-lg font-semibold">새로운 컨텐츠 알림 받기</h3>
-      <p className="text-sm mt-1">
-        이메일로 새 글과 업데이트 소식을 받아보세요.
-      </p>
+    <>
+      <h3>새로운 컨텐츠 알림 받기 💌</h3>
+      <p>이메일로 새 글과 업데이트 소식을 받아보세요.</p>
 
       {success ? (
         <div className="bg-green-900/30 border border-green-700 text-white p-3 rounded mt-3">
@@ -70,7 +68,7 @@ export default function EmailSubscribe() {
           <button
             type="submit"
             disabled={isPending}
-            className="px-4 py-2 bg-white text-black font-medium hover:bg-black hover:text-white hover:border hover:border-white transition-colors disabled:opacity-50"
+            className="px-4 py-2 bg-white text-black font-medium hover:bg-black hover:text-white hover:border hover:border-white transition-colors disabled:opacity-50 cursor-pointer"
           >
             {isPending ? '구독중...' : '구독하기'}
           </button>
@@ -82,6 +80,6 @@ export default function EmailSubscribe() {
           {error}
         </div>
       )}
-    </div>
+    </>
   );
 }

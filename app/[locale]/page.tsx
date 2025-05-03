@@ -74,7 +74,7 @@ export default async function Home({
         <PostList />
       </div>
 
-      <div className="prose prose-invert prose-a:m-0 prose-p:mt-0 prose-h4:text-base prose-h4:m-0">
+      <div className="prose prose-invert prose-a:m-0 prose-p:mt-0 prose-h4:text-base prose-h4:m-0 prose-h3:text-pretty prose-h4:text-pretty prose-h4:break-keep">
         <h2>만들면서 배우는 컴퓨터공학</h2>
         <Image
           src={chasing}
@@ -102,9 +102,7 @@ export default async function Home({
           를 만들어보고 싶으신 분들 모두 환영합니다 🙌
         </p>
 
-        <div className="my-8 border-t border-white/20 pt-6">
-          <EmailSubscribe />
-        </div>
+        <EmailSubscribe />
 
         {curriculumData.map((part) => (
           <CurriculumSection key={part.id} {...part} />

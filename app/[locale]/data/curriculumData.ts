@@ -1,8 +1,9 @@
 import chapter1 from '@/app/[locale]/assets/chapter1.png';
+import chapter2 from '@/app/[locale]/assets/chapter2.png';
+import chapter3 from '@/app/[locale]/assets/chapter3.png';
 import type { StaticImageData } from 'next/image';
 
 export type PostType = {
-  id: number;
   title: string;
   description?: string;
 } & (
@@ -29,38 +30,43 @@ export const curriculumData: PartType[] = [
     image: chapter1,
     posts: [
       {
-        id: 1,
-        title: '컴퓨터의 첫 언어: 0과 1, 그리고 스위치의 마법',
+        title: '0과 1만 쓰는 컴퓨터가 세상을 표현하는 방법',
+        description: '비트, 이진수, 진리표',
         isPublished: false,
       },
       {
-        id: 2,
-        title: '논리 게이트 첫걸음: AND, OR, NOT으로 생각하는 법 배우기',
+        title: '컴퓨터는 엄마가 좋은지 아빠가 좋은지로 구성됨',
+        description: '기본 논리 게이트 (AND, OR, NOT)',
         isPublished: false,
       },
       {
-        id: 3,
-        title: '만능 재료 NAND 게이트: 이것 하나로 모든 논리를 만든다고?',
+        title: '사실 엄마 아빠가 둘 다 좋지는 않았던 컴퓨터',
+        description: 'NAND의 보편성(Universality)',
         isPublished: false,
       },
       {
-        id: 4,
-        title: '1 + 1 = 10? 컴퓨터 덧셈의 비밀, 가산기 만들기',
+        title: '이제 여러분들은 계산기를 만들 수 있어요 (진짜로)',
+        description: '반가산기, 전가산기',
         isPublished: false,
       },
       {
-        id: 5,
-        title: '컴퓨터의 기억력: 플립플롭과 메모리는 어떻게 정보를 저장할까?',
+        title: '기억상실증 걸린 컴퓨터를 고쳐줍시다',
+        description: '래치, 플립플롭, RAM, ROM',
         isPublished: false,
       },
       {
-        id: 6,
-        title: '컴퓨터의 두뇌 CPU 파헤치기: 폰 노이만 구조와 명령어 사이클',
+        title: '계산만 할 줄 알면 계산기지 그게 컴퓨터니?',
+        description: '폰 노이만 구조',
         isPublished: false,
       },
       {
-        id: 7,
-        title: '데이터 고속도로 개통! 버스와 메모리 계층의 비밀',
+        title: 'CPU가 일초에 몇억 번 넘게 반복하는 일',
+        description: '명령어 사이클 (Fetch-Decode-Execute)',
+        isPublished: false,
+      },
+      {
+        title: '아니 엄마 이건 방정리를 안한게 아니라 캐시라니까?',
+        description: '메모리 계층 구조',
         isPublished: false,
       },
     ],
@@ -68,45 +74,42 @@ export const curriculumData: PartType[] = [
   {
     id: 'data-structures',
     title: '파트 2: 자료구조와 알고리즘',
+    image: chapter2,
     posts: [
       {
-        id: 8,
-        title: '내 코드는 왜 느릴까? Big O로 알고리즘 성능 측정하기',
+        title: '저희 방 정리는 안하니 데이터 정리라도 잘해봐요',
+        description: '배열과 연결 리스트',
         isPublished: false,
       },
       {
-        id: 9,
-        title: '데이터 정리의 기본: 배열 vs 연결 리스트, 언제 뭘 써야 할까?',
+        title: '놀이기구 줄을 스택으로 서면 사람들이 싫어하겠지?',
+        description: '스택과 큐',
         isPublished: false,
       },
       {
-        id: 10,
-        title: '마지막 접시가 먼저? 줄 선 순서대로! 스택과 큐 파헤치기',
+        title: '신분 상승이 불가능한 알고리즘 세계',
+        description: '시간 복잡도',
         isPublished: false,
       },
       {
-        id: 11,
-        title: '관계와 계층 표현의 달인: 트리와 그래프 기초 다지기',
+        title: '정렬 알고리즘 계급도',
+        description: '버블, 선택, 삽입, 머지, 퀵, 힙',
         isPublished: false,
       },
       {
-        id: 12,
-        title: '미로 탐험처럼! 트리와 그래프를 누비는 DFS & BFS',
+        title:
+          '개발자들은 나무가 어떻게 생겼는지도 몰라 바깥 구경도 좀 하고 그래',
+        description: '트리',
         isPublished: false,
       },
       {
-        id: 13,
-        title: '정렬 알고리즘 동물원: 버블, 선택, 삽입부터 퀵 정렬까지!',
+        title: '하나만 파는 애 vs 정신이 좀 산만한 애',
+        description: 'DFS, BFS',
         isPublished: false,
       },
       {
-        id: 14,
-        title: '그래서 어떤 정렬/탐색이 제일 좋나요? 성능 비교 분석',
-        isPublished: false,
-      },
-      {
-        id: 15,
-        title: 'O(1) 검색의 마법! 해시 테이블은 어떻게 작동할까?',
+        title: '될 때까지 해보고 성과도 내는 자료구조',
+        description: '해시 테이블',
         isPublished: false,
       },
     ],
@@ -114,30 +117,36 @@ export const curriculumData: PartType[] = [
   {
     id: 'os-network',
     title: '파트 3: 운영체제와 네트워크',
+    image: chapter3,
     posts: [
       {
-        id: 16,
-        title: '운영체제(OS)는 왜 필요할까? 시스템 프로그래밍 첫걸음',
+        title: 'CPU 쉬는 꼴을 못보는 악랄한 개발자들이 만든 것',
+        description: '운영체제의 등장 배경',
         isPublished: false,
       },
       {
-        id: 17,
-        title: '멀티태스킹의 비밀: 프로세스와 스레드는 뭐가 다를까?',
+        title: '내가 내 컴퓨터의 모든 기능을 쓸 수 없는 이유',
+        description: '시스템 콜',
         isPublished: false,
       },
       {
-        id: 18,
-        title: '내 컴퓨터 RAM은 왜 항상 부족할까? 가상 메모리의 마법',
+        title: '컴퓨터가 사실 C언어를 알아듣지 못하는 이유',
+        description: '컴파일러',
         isPublished: false,
       },
       {
-        id: 19,
-        title: '인터넷 서핑의 뒷단: TCP/IP와 HTTP는 어떻게 통신할까?',
+        title: '일잘러 컴퓨터의 할 일 관리법을 배워보자',
+        description: '프로세스와 스레드',
         isPublished: false,
       },
       {
-        id: 20,
-        title: '드디어 완성! 하드웨어부터 앱까지, 모든 조각 맞추기',
+        title: "'게임 설치 용량이 50기가인데 램도 50기가 사야하나요?'",
+        description: '가상 메모리',
+        isPublished: false,
+      },
+      {
+        title: '여러분들이 이 블로그 글을 읽을 수 있는 이유',
+        description: '네트워크',
         isPublished: false,
       },
     ],
@@ -147,8 +156,7 @@ export const curriculumData: PartType[] = [
     title: '부록',
     posts: [
       {
-        id: 21,
-        title: '게임 속 컴퓨터? 마인크래프트 레드스톤으로 논리 회로 만들기!',
+        title: '마인크래프트 레드스톤으로 컴퓨터 만들기',
         isPublished: false,
       },
     ],

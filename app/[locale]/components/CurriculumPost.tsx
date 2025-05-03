@@ -5,19 +5,16 @@ export default function CurriculumPost(postType: PostType) {
   const { title, description, isPublished } = postType;
 
   return (
-    <li>
+    <li className="mb-4 list-decimal">
       {isPublished ? (
         <Link href={postType.slug}>{title}</Link>
       ) : (
-        <h4 className="font-medium text-gray-400">
-          {title}{' '}
-          <span className="ml-2 bg-gray-700 px-2 py-0.5 rounded text-sm">
-            게시 예정
-          </span>
-        </h4>
+        <h4 className="font-medium text-gray-400">{title}</h4>
       )}
       {description && (
-        <p className={`${isPublished ? 'text-gray-300' : 'text-gray-400'}`}>
+        <p
+          className={`${isPublished ? 'text-gray-200' : 'text-gray-400'} text-sm`}
+        >
           {description}
         </p>
       )}
