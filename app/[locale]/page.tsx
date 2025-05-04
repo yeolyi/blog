@@ -101,7 +101,7 @@ export default async function Home({
           <Image
             src={cs}
             alt="cs"
-            className="w-[384px] max-w-full aspect-video object-cover"
+            className="w-[512px] max-w-full aspect-video object-cover"
           />
         </Tile.Item>
       </Tile>

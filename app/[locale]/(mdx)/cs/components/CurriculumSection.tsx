@@ -6,13 +6,13 @@ export default function CurriculumSection({ title, image, posts }: PartType) {
   return (
     <div>
       {image ? (
-        <div className="relative">
+        <div className="relative w-fit">
           <Image
             src={image}
             alt={title || ''}
             className="w-[100%] max-w-[384px] mb-8"
           />
-          <h3 className="absolute bottom-2 left-2 text-white bg-black font-semibold text-xl pr-4">
+          <h3 className="absolute bottom-2 left-2 text-white font-semibold text-xl pr-4 max-w-full bg-black mr-2">
             {title}
           </h3>
         </div>
