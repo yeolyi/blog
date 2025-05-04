@@ -1,16 +1,12 @@
-import chapter1 from '@/app/[locale]/assets/chapter1.png';
-import chapter2 from '@/app/[locale]/assets/chapter2.png';
-import chapter3 from '@/app/[locale]/assets/chapter3.png';
+import cs from '@/app/[locale]/(mdx)/cs/assets/chasing.png';
 import PostList from '@/app/[locale]/components/content/PostList';
+import Tile from '@/app/[locale]/components/ui/Tile';
 import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import Link from 'next/link';
-import chasing from './assets/chasing.png';
 import me from './assets/me.jpg';
-import CurriculumSection from './components/content/CurriculumSection';
-import EmailSubscribe from './components/content/EmailSubscribe';
 
 export type PostType = {
   titleKey: string;
@@ -45,23 +41,6 @@ export default async function Home({
   setRequestLocale(locale);
 
   const t = await getTranslations('HomePage');
-  const tCurriculum = await getTranslations('Curriculum');
-
-  // 번역이 적용된 curriculumData 생성
-  const curriculumData = curriculumDataRaw.map((part) => ({
-    ...part,
-    // @ts-expect-error 어떻게 고치지
-    title: tCurriculum(part.titleKey),
-    posts: part.posts.map((post) => ({
-      ...post,
-      // @ts-expect-error 어떻게 고치지
-      title: tCurriculum(post.titleKey),
-      description: post.descriptionKey
-        ? // @ts-expect-error 어떻게 고치지
-          tCurriculum(post.descriptionKey)
-        : undefined,
-    })),
-  }));
 
   return (
     <div className="max-w-2xl mx-auto my-24 px-4 flex flex-col gap-16">
@@ -117,171 +96,15 @@ export default async function Home({
         <PostList />
       </div>
 
-      <div>
-        <h2 className="text-2xl font-bold mb-[1em] text-white">
-          {t('curriculum')}
-        </h2>
-        <Image
-          src={chasing}
-          alt="컴퓨터 이미지"
-          className="w-full max-w-[512px] mb-8"
-        />
-        <p className="my-5 text-[oklch(87.2%_0.01_258.338)] text-base text-pretty break-keep">
-          {t('curriculumIntro1')}
-        </p>
-        <p className="my-5 text-[oklch(87.2%_0.01_258.338)] text-base text-pretty break-keep">
-          {t('curriculumIntro2')}
-        </p>
-        <p className="my-5 text-[oklch(87.2%_0.01_258.338)] text-base text-pretty break-keep">
-          {t('curriculumIntro3')}
-        </p>
-
-        <EmailSubscribe />
-        <div className="border-t border-white/20 my-8" />
-
-        {curriculumData.map((part) => (
-          <CurriculumSection key={part.id} {...part} />
-        ))}
-      </div>
+      <Tile>
+        <Tile.Item title="만들면서 배우는 컴퓨터공학" href="/cs">
+          <Image
+            src={cs}
+            alt="cs"
+            className="w-[384px] max-w-full aspect-video object-cover"
+          />
+        </Tile.Item>
+      </Tile>
     </div>
   );
 }
-
-const curriculumDataRaw: PartType[] = [
-  {
-    id: 'hardware',
-    titleKey: 'part1Title',
-    image: chapter1,
-    posts: [
-      {
-        titleKey: 'hw1Title',
-        descriptionKey: 'hw1Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'hw2Title',
-        descriptionKey: 'hw2Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'hw3Title',
-        descriptionKey: 'hw3Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'hw4Title',
-        descriptionKey: 'hw4Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'hw5Title',
-        descriptionKey: 'hw5Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'hw6Title',
-        descriptionKey: 'hw6Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'hw7Title',
-        descriptionKey: 'hw7Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'hw8Title',
-        descriptionKey: 'hw8Description',
-        isPublished: false,
-      },
-    ],
-  },
-  {
-    id: 'data-structures',
-    titleKey: 'part2Title',
-    image: chapter2,
-    posts: [
-      {
-        titleKey: 'ds1Title',
-        descriptionKey: 'ds1Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'ds2Title',
-        descriptionKey: 'ds2Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'ds3Title',
-        descriptionKey: 'ds3Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'ds4Title',
-        descriptionKey: 'ds4Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'ds5Title',
-        descriptionKey: 'ds5Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'ds6Title',
-        descriptionKey: 'ds6Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'ds7Title',
-        descriptionKey: 'ds7Description',
-        isPublished: false,
-      },
-    ],
-  },
-  {
-    id: 'os-network',
-    titleKey: 'part3Title',
-    image: chapter3,
-    posts: [
-      {
-        titleKey: 'os1Title',
-        descriptionKey: 'os1Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'os2Title',
-        descriptionKey: 'os2Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'os3Title',
-        descriptionKey: 'os3Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'os4Title',
-        descriptionKey: 'os4Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'os5Title',
-        descriptionKey: 'os5Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'os6Title',
-        descriptionKey: 'os6Description',
-        isPublished: false,
-      },
-    ],
-  },
-  {
-    id: 'appendix',
-    titleKey: 'appendixTitle',
-    posts: [
-      {
-        titleKey: 'appendix1Title',
-        isPublished: false,
-      },
-    ],
-  },
-];

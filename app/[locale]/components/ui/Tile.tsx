@@ -1,3 +1,4 @@
+import { Link } from '@/i18n/navigation';
 import type React from 'react';
 
 type TileProps = {
@@ -12,19 +13,21 @@ const Tile = ({ children, className = '' }: TileProps) => {
 type TileItemProps = {
   title: string;
   children: React.ReactNode;
+  href: string;
   className?: string;
 };
 
-const TileItem = ({ title, children, className = '' }: TileItemProps) => {
+const TileItem = ({ title, children, href, className = '' }: TileItemProps) => {
   return (
-    <div
+    <Link
+      href={href}
       className={`group border border-[#5e5e5e] hover:bg-white cursor-pointer relative ${className}`}
     >
       {children}
       <h3 className="absolute bottom-[10px] left-[10px] bg-black text-xl font-semibold text-white group-hover:text-black group-hover:bg-white">
         {title}
       </h3>
-    </div>
+    </Link>
   );
 };
 
