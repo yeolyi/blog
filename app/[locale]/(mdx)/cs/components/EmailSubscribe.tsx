@@ -32,7 +32,6 @@ export default function EmailSubscribe() {
         if (result.success) {
           setSuccess(true);
           setSuccessMessage(result.message);
-          setEmail('');
 
           if (!jsConfetti) jsConfetti = new JSConfetti();
 
@@ -52,8 +51,6 @@ export default function EmailSubscribe() {
           setTimeout(() => {
             setSuccess(false);
             setSuccessMessage('');
-            // 폭죽 가지고 놀 수 있게 이메일 남겨두기
-            setEmail(email);
           }, 3000);
         } else {
           setError(result.message);
@@ -78,7 +75,7 @@ export default function EmailSubscribe() {
         <form onSubmit={handleSubmit} className="relative w-full">
           <input
             type="email"
-            value={email}
+            value={success ? '' : email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder={
               error ? error : success ? successMessage : '이메일 주소'
@@ -92,7 +89,7 @@ export default function EmailSubscribe() {
                 'border-green-400 placeholder:text-green-400',
               !error && !success && 'border-white/40',
             )}
-            disabled={isPending}
+            disabled={isPending || success}
           />
           <button
             type="submit"
