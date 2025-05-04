@@ -3,11 +3,25 @@ import EmailSubscribe from '@/app/[locale]/(mdx)/cs/components/EmailSubscribe';
 import chapter1 from '@/app/[locale]/assets/chapter1.png';
 import chapter2 from '@/app/[locale]/assets/chapter2.png';
 import chapter3 from '@/app/[locale]/assets/chapter3.png';
+import type { Metadata } from 'next';
 import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
 import chasing from './assets/chasing.png';
+
+export const metadata: Metadata = {
+  title: '만들면서 배우는 컴퓨터공학',
+  description: '작은 것들이 모여 컴퓨터가 만들어지는 과정을 함께 따라가봐요!',
+  keywords: [
+    '논리설계',
+    '컴퓨터 구조',
+    '자료구조',
+    '알고리즘',
+    '운영체제',
+    '네트워크',
+  ],
+};
 
 export type PostType = {
   titleKey: string;
