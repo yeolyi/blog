@@ -6,8 +6,10 @@ import {
   transformerNotationHighlight,
 } from '@shikijs/transformers';
 import createNextIntlPlugin from 'next-intl/plugin';
+import rehypeKatex from 'rehype-katex';
 import rehypeSlug from 'rehype-slug';
 import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
 
 const nextConfig = {
   images: {
@@ -33,9 +35,10 @@ const nextConfig = {
 
 const withMDX = createMDX({
   options: {
-    remarkPlugins: [remarkGfm],
+    remarkPlugins: [remarkGfm, remarkMath],
     rehypePlugins: [
       rehypeSlug,
+      rehypeKatex,
       [
         rehypeShiki,
         {

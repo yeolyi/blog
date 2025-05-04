@@ -1,7 +1,8 @@
 export const title = '컴퓨터가 세상을 0과 1로만 보는 이유'
 
 import RGBSlider from './components/RGBSlider';
-
+import Image from '@/app/[locale]/components/ui/Image';
+import cover from './assets/cover.png';
 
 안녕하세요! "만들면서 배우는 컴퓨터 공학" 시리즈에 오신 것을 환영합니다.
 
@@ -10,6 +11,8 @@ import RGBSlider from './components/RGBSlider';
 자, 그럼 컴퓨터 세상을 이루는 가장 기본적인 벽돌, '비트' 이야기부터 시작해 볼까요?
 
 ### 정보는 어떻게 측정될까? 비트와 정보 이론의 만남
+
+<Image src={cover} alt="computer wearing sunglasses"/>
 
 컴퓨터가 사용하는 0과 1, 이 가장 작은 정보 단위를 **비트(Bit)**라고 부른다고 했죠. 그런데 이 '비트'는 단순히 'Binary Digit(이진 숫자)'의 줄임말을 넘어, 정보 그 자체를 측정하는 단위이기도 합니다. 이 개념은 '정보 이론의 아버지'라 불리는 **클로드 섀넌(Claude Shannon)**에 의해 정립되었습니다.
 
