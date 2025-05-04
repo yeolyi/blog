@@ -1,7 +1,6 @@
 'use server';
 
 import { createClient } from '@/utils/supabase/server';
-import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 export async function signInWithGithub(redirectUrl?: string) {
@@ -57,38 +56,8 @@ export async function subscribeEmail(email: string): Promise<SubscribeResult> {
   }
 
   try {
-    // 이메일 중복 확인
-    const { data: existingSubscriber } = await supabase
-      .from('subscribers')
-      .select('id')
-      .eq('email', email)
-      .maybeSingle();
-
-    if (existingSubscriber) {
-      return {
-        success: true,
-        message: '이미 구독 중이시네요! 감사합니다 :)',
-      };
-    }
-
     // 새 구독자 추가
-    const { error } = await supabase.from('subscribers').insert([
-      {
-        email,
-        is_active: true,
-      },
-    ]);
-
-    if (error) {
-      console.error('구독 오류:', error);
-      return {
-        success: false,
-        message: '구독 처리 중 오류가 발생했습니다. 다시 시도해주세요.',
-      };
-    }
-
-    // 캐시 무효화
-    revalidatePath('/');
+    await supabase.rpc('insert_subscriber', { _email: email }).throwOnError();
 
     return {
       success: true,

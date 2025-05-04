@@ -67,9 +67,12 @@ export default function EmailSubscribe() {
 
   return (
     <div className="mb-8">
-      <h3 className="text-white font-semibold text-xl mt-[1.6em] mb-[0.6em]">
+      <h3 className="text-white font-semibold text-xl mt-[1.6em] mb-1">
         새로운 컨텐츠 알림 받기 💌
       </h3>
+      <p className="text-gray-400 text-sm mb-3">
+        컴퓨터가 어느정도 만들어질 때마다 이메일을 드릴게요. (무료)
+      </p>
 
       <div>
         <form onSubmit={handleSubmit} className="relative w-full">
@@ -100,6 +103,7 @@ export default function EmailSubscribe() {
           </button>
         </form>
       </div>
+
       <div className="flex items-center gap-3 mt-4 text-[oklch(87.2%_0.01_258.338)]">
         <span id="confetti-label" className="text-sm whitespace-nowrap">
           폭죽 개수
