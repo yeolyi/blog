@@ -100,7 +100,7 @@ export default function EmailSubscribe() {
           </button>
         </form>
       </div>
-      <div className="flex items-center gap-4 mt-4 text-[oklch(87.2%_0.01_258.338)]">
+      <div className="flex items-center gap-3 mt-4 text-[oklch(87.2%_0.01_258.338)]">
         <span id="confetti-label" className="text-sm whitespace-nowrap">
           폭죽 개수
         </span>
@@ -121,8 +121,8 @@ export default function EmailSubscribe() {
             aria-label="폭죽 개수"
           />
         </Slider.Root>
-        <span className="text-sm">
-          {confettiNumber} {'🌸 '.repeat(confettiNumber / 1000 + 1)}
+        <span className="text-sm shrink-0">
+          {'🌸 '.repeat(confettiNumber / 1000 + 1)}
         </span>
       </div>
     </div>

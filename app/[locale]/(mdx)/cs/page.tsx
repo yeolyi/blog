@@ -61,15 +61,11 @@ export default async function Home({
   }));
 
   return (
-    <div className="max-w-2xl mx-auto px-4">
-      <h1 className="text-3xl font-bold mb-[1em] text-white">
+    <>
+      <h1 className="text-3xl font-bold mb-[1em] text-white break-keep">
         {t('curriculum')}
       </h1>
-      <Image
-        src={chasing}
-        alt="컴퓨터 이미지"
-        className="w-full max-w-[512px] mb-8"
-      />
+      <Image src={chasing} alt="컴퓨터 이미지" className="w-full mb-8" />
       <p className="my-5 text-[oklch(87.2%_0.01_258.338)] text-base text-pretty break-keep">
         {t('curriculumIntro1')}
       </p>
@@ -86,7 +82,7 @@ export default async function Home({
       {curriculumData.map((part) => (
         <CurriculumSection key={part.id} {...part} />
       ))}
-    </div>
+    </>
   );
 }
 
