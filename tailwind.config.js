@@ -48,6 +48,13 @@ module.exports = {
               whiteSpace: 'pre-wrap',
               wordBreak: 'keep-all',
             },
+            // 따옴표 제거
+            'blockquote p:first-of-type::before': {
+              content: 'none',
+            },
+            'blockquote p:last-of-type::after': {
+              content: 'none',
+            },
           },
         },
       },

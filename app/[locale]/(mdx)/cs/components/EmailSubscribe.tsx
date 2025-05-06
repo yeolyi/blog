@@ -1,12 +1,25 @@
 'use client';
 
 import { subscribeEmail } from '@/app/[locale]/actions';
+import { createClient } from '@/utils/supabase/client';
 import * as Slider from '@radix-ui/react-slider';
 import clsx from 'clsx';
 import JSConfetti from 'js-confetti';
 import { useState, useTransition } from 'react';
+import useSWR, { mutate } from 'swr';
 
 let jsConfetti: InstanceType<typeof JSConfetti> | null = null;
+
+const fetchSubscriberCount = async () => {
+  try {
+    const supabase = createClient();
+    const { data } = await supabase.rpc('get_subscriber_count').throwOnError();
+    return data;
+  } catch (e) {
+    console.error('구독자 수 조회 실패:', e);
+    throw e;
+  }
+};
 
 export default function EmailSubscribe() {
   const [email, setEmail] = useState('');
@@ -15,6 +28,15 @@ export default function EmailSubscribe() {
   const [successMessage, setSuccessMessage] = useState('');
   const [error, setError] = useState('');
   const [confettiNumber, setConfettiNumber] = useState(1000);
+
+  const { data: subscriberCount } = useSWR(
+    'subscriber-count',
+    fetchSubscriberCount,
+    {
+      fallbackData: null,
+      revalidateOnFocus: true,
+    },
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,6 +54,9 @@ export default function EmailSubscribe() {
         if (result.success) {
           setSuccess(true);
           setSuccessMessage(result.message);
+
+          // 구독 성공 후 구독자 수 다시 가져오기
+          mutate('subscriber-count');
 
           if (!jsConfetti) jsConfetti = new JSConfetti();
 
@@ -68,7 +93,9 @@ export default function EmailSubscribe() {
         새로운 컨텐츠 알림 받기 💌
       </h3>
       <p className="text-gray-400 text-sm mb-3">
-        컴퓨터가 어느정도 만들어질 때마다 이메일을 드릴게요. (무료)
+        컴퓨터가 어느정도 만들어질 때마다 이메일을 드릴게요 (무료)
+        <br />
+        {subscriberCount?.toLocaleString() ?? '-'}명이 구독하고 있어요.
       </p>
 
       <div>

@@ -1,13 +1,15 @@
 'use client';
-
 import mediumZoom from 'medium-zoom/dist/pure';
 import NextImage from 'next/image';
 
-export default function Image(props: React.ComponentProps<typeof NextImage>) {
+export default function Image({
+  className,
+  ...props
+}: React.ComponentProps<typeof NextImage>) {
   return (
     <NextImage
       {...props}
-      className="object-contain w-full"
+      className={className ?? 'object-contain w-full'}
       ref={(ref) => {
         if (!ref) return;
         const zoom = mediumZoom(ref, {
