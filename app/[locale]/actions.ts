@@ -2,6 +2,14 @@
 
 import { createClient } from '@/utils/supabase/server';
 import { redirect } from 'next/navigation';
+import { Resend } from 'resend';
+
+// Resend 객체 생성
+const resend = new Resend(process.env.RESEND_API_KEY);
+
+// 오디언스 ID 설정 (Resend 대시보드에서 생성한 ID)
+// biome-ignore lint/style/noNonNullAssertion: 없으면 터지는게 맞음
+const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID!;
 
 export async function signInWithGithub(redirectUrl?: string) {
   const supabase = await createClient();
@@ -46,28 +54,21 @@ type SubscribeResult = {
 };
 
 export async function subscribeEmail(email: string): Promise<SubscribeResult> {
-  const supabase = await createClient();
-
-  if (!email || !email.includes('@')) {
+  const resp = await resend.contacts.create({ email, audienceId: AUDIENCE_ID });
+  if (resp.error) {
     return {
       success: false,
-      message: '유효한 이메일 주소를 입력해주세요',
+      message: `${resp.error.message}`,
     };
   }
+  return {
+    success: true,
+    message: '구독이 완료되었습니다. 감사합니다!',
+  };
+}
 
-  try {
-    // 새 구독자 추가
-    await supabase.rpc('insert_subscriber', { _email: email }).throwOnError();
-
-    return {
-      success: true,
-      message: '구독이 완료되었습니다. 감사합니다!',
-    };
-  } catch (error) {
-    console.error('구독 처리 오류:', error);
-    return {
-      success: false,
-      message: '서버 오류가 발생했습니다. 나중에 다시 시도해주세요.',
-    };
-  }
+// 구독자 수 조회 함수
+export async function getSubscriberCount() {
+  const response = await resend.contacts.list({ audienceId: AUDIENCE_ID });
+  return response.data?.data.length;
 }

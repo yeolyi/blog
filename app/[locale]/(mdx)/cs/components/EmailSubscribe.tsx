@@ -1,88 +1,73 @@
 'use client';
 
-import { subscribeEmail } from '@/app/[locale]/actions';
-import { createClient } from '@/utils/supabase/client';
+import { getSubscriberCount, subscribeEmail } from '@/app/[locale]/actions';
 import * as Slider from '@radix-ui/react-slider';
 import clsx from 'clsx';
+import { delay } from 'es-toolkit';
 import JSConfetti from 'js-confetti';
 import { useState, useTransition } from 'react';
 import useSWR, { mutate } from 'swr';
 
 let jsConfetti: InstanceType<typeof JSConfetti> | null = null;
 
-const fetchSubscriberCount = async () => {
-  try {
-    const supabase = createClient();
-    const { data } = await supabase.rpc('get_subscriber_count').throwOnError();
-    return data;
-  } catch (e) {
-    console.error('구독자 수 조회 실패:', e);
-    throw e;
-  }
-};
-
 export default function EmailSubscribe() {
   const [email, setEmail] = useState('');
+
   const [isPending, startTransition] = useTransition();
+
   const [success, setSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+
   const [error, setError] = useState('');
+
   const [confettiNumber, setConfettiNumber] = useState(1000);
 
   const { data: subscriberCount } = useSWR(
     'subscriber-count',
-    fetchSubscriberCount,
+    getSubscriberCount,
     {
-      fallbackData: null,
+      fallbackData: undefined,
       revalidateOnFocus: true,
     },
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !email.includes('@')) {
-      setError('유효한 이메일 주소를 입력해주세요');
-      return;
-    }
-
-    setError('');
+    if (isPending) return;
 
     startTransition(async () => {
-      try {
-        const result = await subscribeEmail(email);
+      setError('');
 
-        if (result.success) {
-          setSuccess(true);
-          setSuccessMessage(result.message);
+      const result = await subscribeEmail(email);
 
-          // 구독 성공 후 구독자 수 다시 가져오기
-          mutate('subscriber-count');
+      if (result.success) {
+        setSuccess(true);
+        setSuccessMessage(result.message);
 
-          if (!jsConfetti) jsConfetti = new JSConfetti();
+        // 구독 성공 후 구독자 수 다시 가져오기
+        mutate('subscriber-count');
 
-          jsConfetti.addConfetti({
-            confettiNumber,
-            confettiRadius: 4,
-            confettiColors: [
-              '#D94773',
-              '#D983A6',
-              '#DB94BE',
-              '#DFB0D3',
-              '#E4D0ED',
-              '#EEE6FB',
-            ],
-          });
+        if (!jsConfetti) jsConfetti = new JSConfetti();
 
-          setTimeout(() => {
-            setSuccess(false);
-            setSuccessMessage('');
-          }, 3000);
-        } else {
-          setError(result.message);
-        }
-      } catch (err) {
-        console.error('구독 요청 오류:', err);
-        setError('구독 처리 중 오류가 발생했습니다. 다시 시도해주세요.');
+        jsConfetti.addConfetti({
+          confettiNumber,
+          confettiRadius: 4,
+          confettiColors: [
+            '#D94773',
+            '#D983A6',
+            '#DB94BE',
+            '#DFB0D3',
+            '#E4D0ED',
+            '#EEE6FB',
+          ],
+        });
+
+        await delay(3000);
+
+        setSuccess(false);
+        setSuccessMessage('');
+      } else {
+        setError(result.message);
       }
     });
   };
@@ -104,17 +89,12 @@ export default function EmailSubscribe() {
             type="email"
             value={success ? '' : email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder={
-              error ? error : success ? successMessage : '이메일 주소'
-            }
+            placeholder={success ? successMessage : '이메일 주소'}
             required
             className={clsx(
               'bg-transparent text-white border px-3 py-2 flex-grow focus:outline-none focus:border-white w-full',
-              error && 'border-red-300 placeholder:text-red-300',
-              success &&
-                !error &&
-                'border-green-400 placeholder:text-green-400',
-              !error && !success && 'border-white/40',
+              success && 'border-green-400 placeholder:text-green-400',
+              !success && 'border-white/40',
             )}
             disabled={isPending || success}
           />
@@ -127,6 +107,8 @@ export default function EmailSubscribe() {
           </button>
         </form>
       </div>
+
+      {error && <p className="text-red-400 text-sm mt-2">{error}</p>}
 
       <div className="flex items-center gap-3 mt-4 text-[oklch(87.2%_0.01_258.338)]">
         <span id="confetti-label" className="text-sm whitespace-nowrap">

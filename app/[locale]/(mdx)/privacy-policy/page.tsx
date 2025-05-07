@@ -38,8 +38,8 @@ export default function PrivacyPolicy() {
           <strong>개인정보 처리 위탁</strong>
           <ul>
             <li>
-              수집된 개인정보는 Supabase(클라우드 데이터베이스 서비스)를 통해
-              안전하게 저장·관리됩니다.
+              수집된 개인정보는 Resend(이메일 서비스)를 통해 안전하게
+              저장·관리됩니다.
             </li>
           </ul>
         </li>
