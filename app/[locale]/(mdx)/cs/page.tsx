@@ -109,8 +109,8 @@ const curriculumDataRaw: PartType[] = [
       {
         titleKey: 'hw1Title',
         descriptionKey: 'hw1Description',
-        isPublished: false,
-        // slug: '/cs/zero-and-one',
+        isPublished: true,
+        slug: '/cs/zero-and-one',
       },
       {
         titleKey: 'hw2Title',
