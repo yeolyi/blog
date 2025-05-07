@@ -93,7 +93,7 @@ const ValueSelector: React.FC<ValueSelectorProps> = ({
   selectedValue,
   onChange,
 }) => (
-  <div className="flex flex-wrap gap-1 mb-4 h-19">
+  <div className="flex flex-wrap gap-1 mb-4 md:h-19">
     {values.map((num) => (
       <button
         key={num}
@@ -140,7 +140,8 @@ export default function SignalComparison(): React.ReactElement {
 
   // 값이 변경될 때 노이즈 적용 신호도 업데이트
   useEffect(() => {
-    applyRandomNoise();
+    const id = setInterval(applyRandomNoise, 500);
+    return () => clearInterval(id);
   }, [applyRandomNoise]);
 
   // 신호 값에서 2진법 해석
@@ -173,18 +174,9 @@ export default function SignalComparison(): React.ReactElement {
 
   return (
     <div className="mb-8 border border-[#5e5e5e] p-6 rounded-none not-prose bg-[#111111]">
-      <div className="flex items-center justify-between mb-4">
-        <p className="text-lg font-bold text-white">
-          신호 에러 비교: 2진법 vs 10진법
-        </p>
-        <button
-          type="button"
-          onClick={applyRandomNoise}
-          className="px-4 py-2 bg-[#333333] hover:bg-[#444444] text-white font-medium text-sm cursor-pointer"
-        >
-          랜덤 노이즈 적용
-        </button>
-      </div>
+      <p className="text-lg font-bold text-white">
+        신호 에러 비교: 2진법 vs 10진법
+      </p>
 
       <div className="flex flex-col md:flex-row items-start gap-6">
         {/* 2진법 표시 */}

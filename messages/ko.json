@@ -30,7 +30,7 @@
   },
   "Curriculum": {
     "part1Title": "파트 1: 0과 1로 컴퓨터 조립하기",
-    "hw1Title": "컴퓨터가 세상을 0과 1로만 보는 이유",
+    "hw1Title": "컴퓨터의 손가락이 두 개인 이유",
     "hw1Description": "비트, 이진수, 진리표",
     "hw2Title": "컴퓨터는 엄마가 좋은지 아빠가 좋은지로 구성됨",
     "hw2Description": "기본 논리 게이트 (AND, OR, NOT)",

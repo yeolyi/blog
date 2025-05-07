@@ -10,17 +10,19 @@ export default function CurriculumPost(post: PostType) {
     return (
       <li
         className={clsx(
-          'list-decimal text-gray-400 list-inside group cursor-pointer hover:border-l-2 hover:border-white hover:pl-2',
+          'list-decimal text-gray-400 list-inside group cursor-pointer',
         )}
       >
         <Link
           href={post.slug}
-          className="font-semibold inline text-base text-pretty break-keep text-white"
+          className="font-semibold inline text-base text-pretty break-keep text-white group-hover:text-white/80"
         >
           {post.title}
         </Link>
         {post.description && (
-          <p className="text-white text-base">{post.description}</p>
+          <p className="text-white text-base group-hover:text-white/80">
+            {post.description}
+          </p>
         )}
       </li>
     );

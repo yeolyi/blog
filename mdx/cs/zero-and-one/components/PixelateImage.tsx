@@ -29,31 +29,9 @@ export default function PixelateImage() {
 
   return (
     <div className="mb-8 border border-[#5e5e5e] p-6 rounded-none not-prose">
-      <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <span className="text-sm font-medium whitespace-nowrap">
-            N: {pixelSize}
-          </span>
-          <Slider.Root
-            className="relative flex items-center select-none touch-none w-full h-5"
-            value={[pixelSize]}
-            onValueChange={([value]) => setPixelSize(value)}
-            max={128}
-            min={2}
-            step={2}
-            aria-label="픽셀 크기"
-          >
-            <Slider.Track className="bg-white/20 relative grow rounded-full h-[3px]">
-              <Slider.Range className="absolute bg-blue-500 rounded-full h-full" />
-            </Slider.Track>
-            <Slider.Thumb className="block w-5 h-5 bg-white rounded-full hover:bg-gray-300 focus:bg-gray-300 cursor-pointer" />
-          </Slider.Root>
-        </div>
-      </div>
-
-      <div className="mt-8 flex flex-col md:flex-row items-start gap-6">
+      <div className="mb-8 flex flex-col md:flex-row items-start gap-6">
         <div className="w-full md:w-1/2">
-          <p className="text-sm font-medium mb-2">원본 이미지</p>
+          <p className="text-sm font-medium mb-2">아날로그 풍경</p>
           <div className="relative border border-[#5e5e5e]">
             <Image
               ref={setImageRef}
@@ -83,6 +61,26 @@ export default function PixelateImage() {
             )}
           </div>
         </div>
+      </div>
+
+      <div className="flex items-center gap-4">
+        <span className="text-sm font-medium whitespace-nowrap">
+          N: {pixelSize}
+        </span>
+        <Slider.Root
+          className="relative flex items-center select-none touch-none w-full h-5"
+          value={[pixelSize]}
+          onValueChange={([value]) => setPixelSize(value)}
+          max={256}
+          min={2}
+          step={2}
+          aria-label="픽셀 크기"
+        >
+          <Slider.Track className="bg-white/20 relative grow rounded-full h-[3px]">
+            <Slider.Range className="absolute bg-blue-500 rounded-full h-full" />
+          </Slider.Track>
+          <Slider.Thumb className="block w-5 h-5 bg-white rounded-full hover:bg-gray-300 focus:bg-gray-300 cursor-pointer" />
+        </Slider.Root>
       </div>
 
       {/* 숨겨진 캔버스 */}
