@@ -5,6 +5,7 @@ import * as Slider from '@radix-ui/react-slider';
 import clsx from 'clsx';
 import { delay } from 'es-toolkit';
 import JSConfetti from 'js-confetti';
+import { useTranslations } from 'next-intl';
 import { useState, useTransition } from 'react';
 import useSWR, { mutate } from 'swr';
 
@@ -12,6 +13,7 @@ let jsConfetti: InstanceType<typeof JSConfetti> | null = null;
 
 export default function EmailSubscribe() {
   const [email, setEmail] = useState('');
+  const t = useTranslations('EmailSubscribe');
 
   const [isPending, startTransition] = useTransition();
 
@@ -75,12 +77,12 @@ export default function EmailSubscribe() {
   return (
     <div className="mb-8">
       <h3 className="text-white font-semibold text-xl mt-[1.6em] mb-1">
-        새로운 컨텐츠 알림 받기 💌
+        {t('title')}
       </h3>
       <p className="text-gray-400 text-sm mb-3">
-        컴퓨터가 어느정도 만들어질 때마다 이메일을 드릴게요 (무료)
+        {t('description')}
         <br />
-        {subscriberCount?.toLocaleString() ?? '-'}명이 구독하고 있어요.
+        {t('subscriberCount', { count: subscriberCount ?? 0 })}
       </p>
 
       <div>
@@ -89,7 +91,7 @@ export default function EmailSubscribe() {
             type="email"
             value={success ? '' : email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder={success ? successMessage : '이메일 주소'}
+            placeholder={success ? successMessage : t('emailPlaceholder')}
             required
             className={clsx(
               'bg-transparent text-white border px-3 py-2 flex-grow focus:outline-none focus:border-white w-full',
@@ -103,7 +105,7 @@ export default function EmailSubscribe() {
             disabled={isPending}
             className="border-white border bg-white text-black font-medium hover:bg-black hover:text-white disabled:opacity-50 cursor-pointer absolute right-0 top-0 bottom-0 px-2"
           >
-            {isPending ? '구독중...' : '구독하기'}
+            {isPending ? t('subscribingButton') : t('subscribeButton')}
           </button>
         </form>
       </div>
@@ -112,7 +114,7 @@ export default function EmailSubscribe() {
 
       <div className="flex items-center gap-3 mt-4 text-[oklch(87.2%_0.01_258.338)]">
         <span id="confetti-label" className="text-sm whitespace-nowrap">
-          폭죽 개수
+          {t('confettiLabel')}
         </span>
         <Slider.Root
           className="relative flex items-center select-none touch-none w-[200px] h-5"
@@ -128,7 +130,7 @@ export default function EmailSubscribe() {
           </Slider.Track>
           <Slider.Thumb
             className="block w-5 h-5 bg-white rounded-full hover:bg-gray-300 focus:bg-gray-300 cursor-pointer"
-            aria-label="폭죽 개수"
+            aria-label={t('confettiLabel')}
           />
         </Slider.Root>
         <span className="text-sm shrink-0">

@@ -24,8 +24,10 @@ const TileItem = ({ title, children, href, className = '' }: TileItemProps) => {
       className={`group border border-[#5e5e5e] hover:bg-white cursor-pointer relative ${className}`}
     >
       {children}
-      <h3 className="absolute bottom-[10px] left-[10px] bg-black text-xl font-semibold text-white group-hover:text-black group-hover:bg-white">
-        {title}
+      <h3 className="absolute bottom-[10px] left-[10px] text-xl font-semibold">
+        <span className="bg-black group-hover:text-black group-hover:bg-white text-white">
+          {title}
+        </span>
       </h3>
     </Link>
   );

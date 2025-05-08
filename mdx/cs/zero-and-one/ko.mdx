@@ -5,6 +5,7 @@ export const ogImage = 'cs/og1.png'
 import RGBSlider from './components/RGBSlider';
 import PixelateImage from './components/PixelateImage';
 import SignalComparison from './components/SignalComparison';
+import TruthTableDemo from './components/TruthTableDemo';
 import Image from '@/app/[locale]/components/ui/Image';
 import cover from './assets/cover.png';
 import zeroone from './assets/zeroone.png';
@@ -56,7 +57,7 @@ import shannon from './assets/shannon.png';
 
 <Image src={cover} alt="computer wearing sunglasses"/>
 
-앞서 컴퓨터가 0과 1이라는 두 가지 상태를 사용해 정보를 표현한다고 이야기했습니다. 바로 이 0 또는 1 하나하나, 즉 컴퓨터가 다루는 가장 작은 정보의 단위를 **'비트(bit)'** 라고 부릅니다. 우리가 컴퓨터로 하는 모든 정교한 작업은 결국 이 작은 비트들을 다루는 과정이라고 볼 수 있곘습니다.
+앞서 컴퓨터가 0과 1이라는 두 가지 상태를 사용해 정보를 표현한다고 이야기했습니다. 바로 이 0 또는 1 하나하나, 즉 컴퓨터가 다루는 가장 작은 정보의 단위를 **'비트(bit)'** 라고 부릅니다. 우리가 컴퓨터로 하는 모든 정교한 작업은 결국 이 작은 비트들을 다루는 과정이라고 볼 수 있습니다.
 
 ## 0과 1을 현실로 가져오기
 
@@ -91,12 +92,7 @@ import shannon from './assets/shannon.png';
 
 우리는 보통 '비 예보도 있고, 외출도 할 계획이 있을 때만' 우산을 챙길 겁니다. 이러한 규칙을 가진 불 함수를 진리표로 나타내면 다음과 같습니다.
 
-| 입력 A (비 예보) | 입력 B (외출 계획) | 출력 (우산 챙기기) |
-| :--------------: | :----------------: | :----------------: |
-|   0     |    0     |     0      |
-|   0     |    1     |     0      |
-|    1     |    0     |     0      |
-|    1     |    1     |      1       |
+<TruthTableDemo />
 
 이 진리표는 우리가 우산을 챙기는 논리적 결정 과정을 명확하게 보여줍니다. 오직 입력 A와 입력 B가 모두 '참(1)'일 때만 최종 출력 '우산 챙기기'가 '참(1)'이 되는 규칙인 것이죠. 이처럼 어떤 복잡한 조건이나 결정이라도 그 논리적 구조를 파악하면 불 함수와 진리표로 표현할 수 있습니다. **컴퓨터 내부에서는 이렇게 진리표로 정의될 수 있는 수많은 불 함수들이 다양한 판단과 연산을 수행하고 있습니다.**
 

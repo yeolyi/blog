@@ -97,7 +97,7 @@ export default async function Home({
       </div>
 
       <Tile>
-        <Tile.Item title="만들면서 배우는 컴퓨터공학" href="/cs">
+        <Tile.Item title={t('curriculum')} href="/cs">
           <Image
             src={cs}
             alt="cs"

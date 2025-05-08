@@ -3,14 +3,19 @@
 import * as Slider from '@radix-ui/react-slider';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
-import hanok from '../assets/hanok.png';
 
+// https://pixabay.com/photos/changdeokgung-palace-garden-786592/
+import changdeokgung from '../assets/changdeokgung.jpg';
+
+// TODO: 고해상도로 도전해보기
 export default function PixelateImage() {
-  const [pixelSize, setPixelSize] = useState(32);
+  const [pixelCntPow, setPixelCntPow] = useState(5);
   const [pixelatedImageSrc, setPixelatedImageSrc] = useState('');
   const [canvasRef, setCanvasRef] = useState<HTMLCanvasElement | null>(null);
   const [imageRef, setImageRef] = useState<HTMLImageElement | null>(null);
   const [originalLoaded, setOriginalLoaded] = useState(false);
+
+  const pixelCnt = 2 ** pixelCntPow;
 
   // 이미지가 로드되면 원본 로드 상태 변경
   const handleImageLoad = () => {
@@ -20,12 +25,12 @@ export default function PixelateImage() {
   // 픽셀 크기가 변경되거나 이미지가 로드되면 픽셀화 실행
   useEffect(() => {
     if (originalLoaded && canvasRef && imageRef) {
-      const pixelatedImageSrc = pixelateImage(canvasRef, imageRef, pixelSize);
+      const pixelatedImageSrc = pixelateImage(canvasRef, imageRef, pixelCnt);
       if (pixelatedImageSrc) {
         setPixelatedImageSrc(pixelatedImageSrc);
       }
     }
-  }, [originalLoaded, pixelSize, canvasRef, imageRef]);
+  }, [originalLoaded, pixelCnt, canvasRef, imageRef]);
 
   return (
     <div className="mb-8 border border-[#5e5e5e] p-6 rounded-none not-prose">
@@ -35,17 +40,18 @@ export default function PixelateImage() {
           <div className="relative border border-[#5e5e5e]">
             <Image
               ref={setImageRef}
-              src={hanok}
+              src={changdeokgung}
               alt="원본 이미지"
               className="w-full h-48 object-cover"
               onLoad={handleImageLoad}
+              unoptimized
             />
           </div>
         </div>
 
         <div className="w-full md:w-1/2">
           <p className="text-sm font-medium mb-2">
-            디지털화된 이미지 ({pixelSize}x{pixelSize})
+            디지털화된 이미지 ({pixelCnt}x{pixelCnt})
           </p>
           <div className="relative border border-[#5e5e5e]">
             {pixelatedImageSrc ? (
@@ -65,15 +71,15 @@ export default function PixelateImage() {
 
       <div className="flex items-center gap-4">
         <span className="text-sm font-medium whitespace-nowrap">
-          N: {pixelSize}
+          N: {pixelCnt}
         </span>
         <Slider.Root
           className="relative flex items-center select-none touch-none w-full h-5"
-          value={[pixelSize]}
-          onValueChange={([value]) => setPixelSize(value)}
-          max={256}
-          min={2}
-          step={2}
+          value={[pixelCntPow]}
+          onValueChange={([value]) => setPixelCntPow(value)}
+          max={9}
+          min={1}
+          step={1}
           aria-label="픽셀 크기"
         >
           <Slider.Track className="bg-white/20 relative grow rounded-full h-[3px]">
@@ -92,9 +98,11 @@ export default function PixelateImage() {
 const pixelateImage = (
   canvas: HTMLCanvasElement,
   img: HTMLImageElement,
-  pixelSize: number,
+  pixelCnt: number,
 ) => {
-  const ctx = canvas.getContext('2d');
+  // Canvas2D: Multiple readback operations using getImageData are
+  // faster with the willReadFrequently attribute set to true. See:
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
   if (!ctx) return;
 
   // 캔버스 크기를 이미지 크기로 설정
@@ -109,15 +117,15 @@ const pixelateImage = (
   const data = imageData.data;
 
   // 픽셀 블록 크기 계산
-  const blockWidth = Math.ceil(canvas.width / pixelSize);
-  const blockHeight = Math.ceil(canvas.height / pixelSize);
+  const blockWidth = Math.ceil(canvas.width / pixelCnt);
+  const blockHeight = Math.ceil(canvas.height / pixelCnt);
 
   // 이미지 데이터 초기화
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   // 각 픽셀 블록에 대해 평균 색상을 계산하고 그 블록을 해당 색상으로 채움
-  for (let y = 0; y < pixelSize; y++) {
-    for (let x = 0; x < pixelSize; x++) {
+  for (let y = 0; y < pixelCnt; y++) {
+    for (let x = 0; x < pixelCnt; x++) {
       let r = 0;
       let g = 0;
       let b = 0;

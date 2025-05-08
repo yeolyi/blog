@@ -35,7 +35,7 @@
     "hw2Title": "컴퓨터는 엄마가 좋은지 아빠가 좋은지로 구성됨",
     "hw2Description": "기본 논리 게이트 (AND, OR, NOT)",
     "hw3Title": "사실 엄마 아빠가 둘 다 좋지는 않았던 컴퓨터",
-    "hw3Description": "NAND의 보편성(Universality)",
+    "hw3Description": "NAND의 보편성",
     "hw4Title": "이제 여러분들은 계산기를 만들 수 있어요 (진짜로)",
     "hw4Description": "반가산기, 전가산기",
     "hw5Title": "기억상실증 걸린 컴퓨터 고쳐주기",
@@ -84,6 +84,16 @@
   },
   "NotFound": {
     "backHome": "홈으로 돌아가기"
+  },
+  "EmailSubscribe": {
+    "title": "새로운 컨텐츠 알림 받기 💌",
+    "description": "컴퓨터가 어느정도 만들어질 때마다 이메일을 드릴게요.",
+    "subscriberCount": "{count, number}명이 구독하고 있어요.",
+    "emailPlaceholder": "이메일 주소",
+    "successMessage": "구독이 완료되었습니다!",
+    "subscribeButton": "구독하기",
+    "subscribingButton": "구독중...",
+    "confettiLabel": "폭죽 개수"
   },
   "Comment": {
     "loginRequired": "댓글을 작성하려면 <loginLink>로그인</loginLink>이 필요합니다.",
