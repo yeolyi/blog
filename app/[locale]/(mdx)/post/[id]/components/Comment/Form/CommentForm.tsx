@@ -124,22 +124,16 @@ export default function CommentForm({ postId, isLoggedIn }: CommentFormProps) {
           <div
             // biome-ignore lint/security/noDangerouslySetInnerHtml: 마크다운 렌더링을 위해 필요
             dangerouslySetInnerHTML={{ __html: preview }}
-            className="prose prose-gray dark:prose-invert max-w-none"
+            className="prose prose-gray prose-invert max-w-none"
           />
         </div>
       )}
 
       {errors.content && (
-        <p className="text-gray-700 dark:text-gray-300 text-sm">
-          {errors.content.message}
-        </p>
+        <p className="text-gray-300 text-sm">{errors.content.message}</p>
       )}
 
-      {serverError && (
-        <p className="text-gray-700 dark:text-gray-300 text-sm">
-          {serverError}
-        </p>
-      )}
+      {serverError && <p className="text-gray-300 text-sm">{serverError}</p>}
 
       <button
         type="submit"
@@ -182,7 +176,7 @@ const FitTextArea = (
         return () => ref.removeEventListener('input', handleInput);
       }}
       placeholder={t('placeholder')}
-      className="block w-full resize-none min-h-32 p-3 border border-[#5E5E5E] focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 dark:text-gray-100 overflow-hidden"
+      className="block w-full resize-none min-h-32 p-3 border border-[#5E5E5E] focus:outline-none focus:ring-1 focus:ring-gray-500 focus:border-gray-500 text-gray-100 overflow-hidden"
     />
   );
 };
@@ -191,7 +185,7 @@ const AskLoginLabel = () => {
   const t = useTranslations('Comment');
 
   return (
-    <p className="p-4 border border-[#5E5E5E] dark:border-[#5E5E5E] text-gray-700 dark:text-gray-300">
+    <p className="p-4 border border-[#5E5E5E] text-gray-300">
       {t.rich('loginRequired', {
         loginLink: (chunks) => <LoginButton>{chunks}</LoginButton>,
       })}
