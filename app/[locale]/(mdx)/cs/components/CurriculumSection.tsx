@@ -6,14 +6,10 @@ export default function CurriculumSection({ title, image, posts }: PartType) {
   return (
     <div>
       {image ? (
-        <div className="relative w-fit">
-          <Image
-            src={image}
-            alt={title || ''}
-            className="w-[100%] max-w-[384px] mb-8"
-          />
-          <h3 className="absolute bottom-2 left-2 text-white font-semibold text-xl pr-4 max-w-full bg-black mr-2">
-            {title}
+        <div className="relative max-w-[384px]">
+          <Image src={image} alt={title || ''} className="w-[100%] mb-8" />
+          <h3 className="absolute bottom-2 left-2 text-white font-semibold text-xl pr-4 right-0 mr-2">
+            <span className="bg-black">{title}</span>
           </h3>
         </div>
       ) : (
