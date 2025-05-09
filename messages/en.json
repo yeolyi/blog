@@ -23,7 +23,7 @@
   "HomePage": {
     "bio": "Hi there👋 I'm Seongyeol, a developer based in South Korea. I worked as a frontend developer on the renewal project for the <snuLink>website of Seoul National University's Computer Science and Engineering department</snuLink>. I'm now working at <kakaoLink>Kakao</kakaoLink>, a Korean tech company known for services like KakaoTalk, Korea's most widely used messaging app. I also share developer content on <instagramLink>Instagram</instagramLink>.",
     "posts": "Posts",
-    "curriculum": "Learning Computer Science by Building Computers",
+    "curriculum": "Learn CS By Building a Computer",
     "curriculumIntro1": "This is a series created to share the wonder I felt while learning computer science. Let's follow the process of how small things come together to create a computer!",
     "curriculumIntro2": "It connects CS knowledge like algorithms, computer architecture, operating systems, and networks into one big picture. I've designed it with interactive examples that you can practice right in your browser, unlike books or videos.",
     "curriculumIntro3": "Welcome to all developers who've been putting off CS studies, and anyone curious about how computers work 🙌"
