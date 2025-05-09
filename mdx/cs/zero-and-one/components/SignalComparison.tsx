@@ -146,7 +146,7 @@ export default function SignalComparison(): React.ReactElement {
 
   // 값이 변경될 때 노이즈 적용 신호도 업데이트
   useEffect(() => {
-    const id = setInterval(applyRandomNoise, 500);
+    const id = setInterval(applyRandomNoise, 1000);
     return () => clearInterval(id);
   }, [applyRandomNoise]);
 
