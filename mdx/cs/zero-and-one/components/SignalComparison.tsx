@@ -20,7 +20,7 @@ const MeasurementResult: React.FC<MeasurementResultProps> = ({
 
   return (
     <div className="p-4 bg-[#222222] border border-[#5e5e5e] text-sm break-keep">
-      <p className="text-white">
+      <p className="text-white line-clamp-2">
         {t.rich('measurementResult', {
           signal: () => (
             <span className="font-mono">{noisySignal.toFixed(2)}</span>
@@ -38,7 +38,7 @@ const MeasurementResult: React.FC<MeasurementResultProps> = ({
             <span
               className={`font-bold ${isError ? 'text-[#ff7777]' : 'text-[#77ff77]'}`}
             >
-              {isError ? t('errorStatus') : t('successStatus')}
+              {isError ? '🚨' : '✅'}
             </span>
           ),
         })}

@@ -130,9 +130,7 @@
       "title": "신호 에러 비교: 2진법 vs 10진법",
       "binary": "2진법 (0 또는 1)",
       "decimal": "10진법 (0~9)",
-      "measurementResult": "<signal></signal>로 측정되었습니다. <value></value>로 해석되어 <status></status>",
-      "errorStatus": "에러가 발생했습니다!",
-      "successStatus": "정확하게 해석되었습니다."
+      "measurementResult": "<status></status> <signal></signal>이 <value></value>로 해석되었습니다."
     },
     "TruthTableDemo": {
       "rainForecast": "비 예보",

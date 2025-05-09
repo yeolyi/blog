@@ -130,9 +130,7 @@
       "title": "Signal Error Comparison: Binary vs Decimal",
       "binary": "Binary (0 or 1)",
       "decimal": "Decimal (0~9)",
-      "measurementResult": "<signal></signal> measured as <value></value>. <status></status>",
-      "errorStatus": "An error occurred!",
-      "successStatus": "Interpreted correctly."
+      "measurementResult": "<status></status> <signal></signal> is interpreted as <value></value>."
     },
     "TruthTableDemo": {
       "rainForecast": "Rain Forecast",
