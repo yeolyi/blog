@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -15,26 +16,32 @@ const MeasurementResult: React.FC<MeasurementResultProps> = ({
   interpretedValue,
   isError,
 }) => {
+  const t = useTranslations('ZeroAndOne.SignalComparison');
+
   return (
     <div className="p-4 bg-[#222222] border border-[#5e5e5e] text-sm break-keep">
       <p className="text-white">
-        <span className="font-mono">{noisySignal.toFixed(2)}</span>로
-        측정되었습니다.{' '}
-        <span
-          className={`font-bold ${isError ? 'text-[#ff7777]' : 'text-[#77ff77]'}`}
-        >
-          {interpretedValue}
-        </span>
-        로 해석되어
-        {isError ? (
-          <span className="text-[#ff7777] ml-1 font-bold">
-            에러가 발생했습니다!
-          </span>
-        ) : (
-          <span className="text-[#77ff77] ml-1 font-bold">
-            정확하게 해석되었습니다.
-          </span>
-        )}
+        {t.rich('measurementResult', {
+          signal: () => (
+            <span className="font-mono">{noisySignal.toFixed(2)}</span>
+          ),
+          value: () => (
+            <span
+              className={`font-bold ${
+                isError ? 'text-[#ff7777]' : 'text-[#77ff77]'
+              }`}
+            >
+              {interpretedValue}
+            </span>
+          ),
+          status: () => (
+            <span
+              className={`font-bold ${isError ? 'text-[#ff7777]' : 'text-[#77ff77]'}`}
+            >
+              {isError ? t('errorStatus') : t('successStatus')}
+            </span>
+          ),
+        })}
       </p>
     </div>
   );
@@ -52,8 +59,6 @@ const SignalVisualizer: React.FC<SignalVisualizerProps> = ({
   maxValue,
   threshold,
 }) => {
-  const isMultipleThresholds = Array.isArray(threshold);
-
   return (
     <div className="h-48 border border-[#5e5e5e] relative mb-4 bg-black">
       <div
@@ -112,6 +117,7 @@ const ValueSelector: React.FC<ValueSelectorProps> = ({
 );
 
 export default function SignalComparison(): React.ReactElement {
+  const t = useTranslations('ZeroAndOne.SignalComparison');
   const [binaryValue, setBinaryValue] = useState<number>(1);
   const [decimalValue, setDecimalValue] = useState<number>(5);
   const [noisyBinarySignal, setNoisyBinarySignal] = useState<number>(1);
@@ -174,14 +180,10 @@ export default function SignalComparison(): React.ReactElement {
 
   return (
     <div className="mb-8 border border-[#5e5e5e] p-6 rounded-none not-prose bg-[#111111]">
-      <p className="text-lg font-bold text-white">
-        신호 에러 비교: 2진법 vs 10진법
-      </p>
-
       <div className="flex flex-col md:flex-row items-start gap-6">
         {/* 2진법 표시 */}
         <div className="w-full md:w-1/2">
-          <p className="font-bold text-md mb-2 text-white">2진법 (0 또는 1)</p>
+          <p className="font-bold text-md mb-2 text-white">{t('binary')}</p>
 
           <ValueSelector
             values={[0, 1]}
@@ -204,7 +206,7 @@ export default function SignalComparison(): React.ReactElement {
 
         {/* 10진법 표시 */}
         <div className="w-full md:w-1/2">
-          <p className="font-bold text-md mb-2 text-white">10진법 (0~9)</p>
+          <p className="font-bold text-md mb-2 text-white">{t('decimal')}</p>
 
           <ValueSelector
             values={[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]}

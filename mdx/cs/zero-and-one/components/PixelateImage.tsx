@@ -1,6 +1,7 @@
 'use client';
 
 import * as Slider from '@radix-ui/react-slider';
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
@@ -9,6 +10,7 @@ import changdeokgung from '../assets/changdeokgung.jpg';
 
 // TODO: 고해상도로 도전해보기
 export default function PixelateImage() {
+  const t = useTranslations('ZeroAndOne.PixelateImage');
   const [pixelCntPow, setPixelCntPow] = useState(5);
   const [pixelatedImageSrc, setPixelatedImageSrc] = useState('');
   const [canvasRef, setCanvasRef] = useState<HTMLCanvasElement | null>(null);
@@ -36,7 +38,7 @@ export default function PixelateImage() {
     <div className="mb-8 border border-[#5e5e5e] p-6 rounded-none not-prose">
       <div className="mb-8 flex flex-col md:flex-row items-start gap-6">
         <div className="w-full md:w-1/2">
-          <p className="text-sm font-medium mb-2">아날로그 풍경</p>
+          <p className="text-sm font-medium mb-2">{t('analogLandscape')}</p>
           <div className="relative border border-[#5e5e5e]">
             <Image
               ref={setImageRef}
@@ -51,7 +53,7 @@ export default function PixelateImage() {
 
         <div className="w-full md:w-1/2">
           <p className="text-sm font-medium mb-2">
-            디지털화된 이미지 ({pixelCnt}x{pixelCnt})
+            {t('digitalizedImage')} ({pixelCnt}x{pixelCnt})
           </p>
           <div className="relative border border-[#5e5e5e]">
             {pixelatedImageSrc ? (
@@ -62,7 +64,7 @@ export default function PixelateImage() {
               />
             ) : (
               <div className="w-full h-48 flex items-center justify-center">
-                이미지 로드 중...
+                {t('loading')}
               </div>
             )}
           </div>
@@ -80,7 +82,7 @@ export default function PixelateImage() {
           max={9}
           min={1}
           step={1}
-          aria-label="픽셀 크기"
+          aria-label={t('pixelSize')}
         >
           <Slider.Track className="bg-white/20 relative grow rounded-full h-[3px]">
             <Slider.Range className="absolute bg-blue-500 rounded-full h-full" />

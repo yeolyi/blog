@@ -111,5 +111,33 @@
     "deleteError": "댓글 삭제 중 오류가 발생했습니다.",
     "submitError": "댓글 작성 중 오류가 발생했습니다.",
     "dateFormat": "YYYY년 MM월 DD일 HH:mm"
+  },
+  "ZeroAndOne": {
+    "RGBSlider": {
+      "title": "RGB 컬러 슬라이더",
+      "red": "빨간색",
+      "green": "초록색",
+      "blue": "파란색"
+    },
+    "PixelateImage": {
+      "title": "이미지 픽셀화",
+      "analogLandscape": "아날로그 풍경",
+      "digitalizedImage": "디지털화된 이미지",
+      "loading": "이미지 로드 중...",
+      "pixelSize": "픽셀 크기"
+    },
+    "SignalComparison": {
+      "title": "신호 에러 비교: 2진법 vs 10진법",
+      "binary": "2진법 (0 또는 1)",
+      "decimal": "10진법 (0~9)",
+      "measurementResult": "<signal></signal>로 측정되었습니다. <value></value>로 해석되어 <status></status>",
+      "errorStatus": "에러가 발생했습니다!",
+      "successStatus": "정확하게 해석되었습니다."
+    },
+    "TruthTableDemo": {
+      "rainForecast": "비 예보",
+      "goingOut": "외출 계획",
+      "takeUmbrella": "우산 챙기기"
+    }
   }
 }

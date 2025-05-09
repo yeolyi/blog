@@ -1,9 +1,11 @@
 'use client';
 
 import * as Slider from '@radix-ui/react-slider';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 export default function RGBSlider() {
+  const t = useTranslations('ZeroAndOne.RGBSlider');
   const [red, setRed] = useState(128);
   const [green, setGreen] = useState(128);
   const [blue, setBlue] = useState(128);
@@ -13,7 +15,7 @@ export default function RGBSlider() {
 
   return (
     <div className="mb-8 border border-[#5e5e5e] p-6 rounded-none not-prose">
-      <h3 className="text-xl font-semibold mb-6">RGB 컬러 슬라이더</h3>
+      <h3 className="text-xl font-semibold mb-6">{t('title')}</h3>
 
       <div className="space-y-6">
         <div className="flex items-center gap-4">
@@ -27,7 +29,7 @@ export default function RGBSlider() {
             max={255}
             min={0}
             step={1}
-            aria-label="빨간색"
+            aria-label={t('red')}
           >
             <Slider.Track className="bg-white/20 relative grow rounded-full h-[3px]">
               <Slider.Range className="absolute bg-red-500 rounded-full h-full" />
@@ -50,7 +52,7 @@ export default function RGBSlider() {
             max={255}
             min={0}
             step={1}
-            aria-label="초록색"
+            aria-label={t('green')}
           >
             <Slider.Track className="bg-white/20 relative grow rounded-full h-[3px]">
               <Slider.Range className="absolute bg-green-500 rounded-full h-full" />
@@ -73,7 +75,7 @@ export default function RGBSlider() {
             max={255}
             min={0}
             step={1}
-            aria-label="파란색"
+            aria-label={t('blue')}
           >
             <Slider.Track className="bg-white/20 relative grow rounded-full h-[3px]">
               <Slider.Range className="absolute bg-blue-500 rounded-full h-full" />

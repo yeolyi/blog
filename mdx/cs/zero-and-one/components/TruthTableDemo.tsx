@@ -1,9 +1,11 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 export default function TruthTableDemo() {
-  const [inputA, setInputA] = useState(false);
+  const t = useTranslations('ZeroAndOne.TruthTableDemo');
+  const [inputA, setInputA] = useState(true);
   const [inputB, setInputB] = useState(false);
 
   // 진리표 데이터
@@ -25,7 +27,7 @@ export default function TruthTableDemo() {
         <thead>
           <tr className="bg-white/10">
             <th className="border border-[#5e5e5e] p-2 text-center">
-              비 예보
+              {t('rainForecast')}
               <div className="flex justify-center mt-1">
                 <input
                   type="checkbox"
@@ -37,7 +39,7 @@ export default function TruthTableDemo() {
               </div>
             </th>
             <th className="border border-[#5e5e5e] p-2 text-center">
-              외출 계획
+              {t('goingOut')}
               <div className="flex justify-center mt-1">
                 <input
                   type="checkbox"
@@ -49,7 +51,7 @@ export default function TruthTableDemo() {
               </div>
             </th>
             <th className="border border-[#5e5e5e] p-2 text-center">
-              우산 챙기기
+              {t('takeUmbrella')}
             </th>
           </tr>
         </thead>
