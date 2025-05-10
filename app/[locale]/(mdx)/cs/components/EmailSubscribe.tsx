@@ -85,7 +85,7 @@ export default function EmailSubscribe() {
         {t('subscriberCount', { count: subscriberCount ?? -1 })}
       </p>
 
-      <div>
+      <div className="w-full flex gap-2">
         <form onSubmit={handleSubmit} className="relative w-full">
           <input
             type="email"
@@ -100,14 +100,14 @@ export default function EmailSubscribe() {
             )}
             disabled={isPending || success}
           />
-          <button
-            type="submit"
-            disabled={isPending}
-            className="border-white border bg-white text-black font-medium hover:bg-black hover:text-white disabled:opacity-50 cursor-pointer absolute right-0 top-0 bottom-0 px-2"
-          >
-            {isPending ? t('subscribingButton') : t('subscribeButton')}
-          </button>
         </form>
+        <button
+          type="submit"
+          disabled={isPending}
+          className="border-white shrink-0 border bg-white text-black font-medium hover:bg-black hover:text-white disabled:opacity-50 cursor-pointer px-2"
+        >
+          {isPending ? t('subscribingButton') : t('subscribeButton')}
+        </button>
       </div>
 
       {error && <p className="text-red-400 text-sm mt-2">{error}</p>}

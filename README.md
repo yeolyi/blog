@@ -1,3 +1,7 @@
+Sheikah Font from 
+
+# 메모
+
 https://supabase.com/docs/guides/auth
 
 - Authentication means checking that a user is who they say they are.
