@@ -4,7 +4,7 @@ import { Suspense } from 'react';
 
 export default async function MemesPage() {
   return (
-    <div className="mx-auto my-24 mb-[30vh] p-8 flex flex-col gap-4">
+    <div className="mx-auto my-24 mb-[30vh] p-8 flex flex-col gap-4 w-full">
       <Suspense>
         <Admin />
       </Suspense>

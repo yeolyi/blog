@@ -1,10 +1,15 @@
 'use client';
-
-import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
 import type { Meme, Tag } from '@/types/meme';
-import { useCallback, useState } from 'react';
+import { type MasonryProps, useInfiniteLoader } from 'masonic';
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { type ComponentType, useCallback, useState } from 'react';
 import { getMemes } from '../actions';
-import { MemeItem } from './MenuItem';
+
+const Masonry: ComponentType<MasonryProps<Meme>> = dynamic(
+  () => import('masonic').then((mod) => mod.Masonry),
+  { ssr: false },
+);
 
 interface MemeListProps {
   memes: Meme[];
@@ -67,15 +72,14 @@ export default function MemeList({
     }
   }, [loading, hasMore, page, selectedTag]);
 
-  // 무한 스크롤 훅 사용
-  const { setLastItemRef } = useInfiniteScroll({
-    loading,
-    hasMore,
-    onIntersect: loadMoreMemes,
+  const maybeLoadMore = useInfiniteLoader(loadMoreMemes, {
+    isItemLoaded: (index, items) => !!items[index],
+    minimumBatchSize: 1,
+    threshold: 3,
   });
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 w-full">
       <div className="flex flex-wrap gap-3 items-center">
         <button
           type="button"
@@ -96,14 +100,22 @@ export default function MemeList({
         ))}
       </div>
 
+      <Masonry
+        items={memes}
+        columnGutter={8}
+        columnWidth={300}
+        render={({ data: meme }) => (
+          <Link
+            href={`/memes/${meme.id}`}
+            className="no-underline hover:-translate-y-2 block"
+          >
+            <img src={meme.media_url} alt={meme.title} className="w-full" />
+          </Link>
+        )}
+        onRender={maybeLoadMore}
+      />
+
       <div className="flex flex-wrap gap-6">
-        {memes.map((meme, index) => (
-          <MemeItem
-            meme={meme}
-            key={meme.id}
-            ref={index === memes.length - 1 ? setLastItemRef : null}
-          />
-        ))}
         {loading && (
           <div className="text-center py-8 text-xl text-[#e0e0e0] w-full">
             로딩 중...
