@@ -2,9 +2,11 @@
 import type { Meme, Tag } from '@/types/meme';
 import { type MasonryProps, useInfiniteLoader } from 'masonic';
 import dynamic from 'next/dynamic';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { type ComponentType, useCallback, useState } from 'react';
 import { getMemes } from '../actions';
+import MemeEditForm from './MemeEditForm';
+import MemeModal from './MemeModal';
 
 const Masonry: ComponentType<MasonryProps<Meme>> = dynamic(
   () => import('masonic').then((mod) => mod.Masonry),
@@ -14,17 +16,21 @@ const Masonry: ComponentType<MasonryProps<Meme>> = dynamic(
 interface MemeListProps {
   memes: Meme[];
   allTags: Tag[];
+  isAdmin?: boolean;
 }
 
 export default function MemeList({
   memes: initialMemes,
   allTags,
+  isAdmin = false,
 }: MemeListProps) {
   const [memes, setMemes] = useState<Meme[]>(initialMemes);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [selectedTag, setSelectedTag] = useState<string | undefined>(undefined);
+  const [selectedMeme, setSelectedMeme] = useState<Meme | null>(null);
+  const router = useRouter();
 
   const changeTag = useCallback(
     (tag?: string) => {
@@ -34,6 +40,7 @@ export default function MemeList({
       setPage(1);
       setHasMore(true);
       setLoading(true);
+      setSelectedMeme(null);
 
       const fetchMemes = async () => {
         const result = await getMemes(tag, 1);
@@ -78,6 +85,23 @@ export default function MemeList({
     threshold: 3,
   });
 
+  const handleMemeClick = (meme: Meme) => {
+    console.log(meme);
+    setSelectedMeme(meme);
+  };
+
+  const handleFormSuccess = () => {
+    setSelectedMeme(null);
+  };
+
+  const handleModalOpenChange = (open: boolean) => {
+    if (!open) {
+      setSelectedMeme(null);
+    }
+  };
+
+  const isModalOpen = selectedMeme !== null;
+
   return (
     <div className="flex flex-col gap-8 w-full">
       <div className="flex flex-wrap gap-3 items-center">
@@ -101,27 +125,46 @@ export default function MemeList({
       </div>
 
       <Masonry
+        key={selectedTag}
+        itemKey={(item) => item.id}
         items={memes}
-        columnGutter={8}
+        columnGutter={16}
         columnWidth={300}
         render={({ data: meme }) => (
-          <Link
-            href={`/memes/${meme.id}`}
-            className="no-underline hover:-translate-y-2 block"
-          >
-            <img src={meme.media_url} alt={meme.title} className="w-full" />
-          </Link>
+          <div className="no-underline hover:-translate-y-1 block">
+            <button
+              type="button"
+              onClick={() => handleMemeClick(meme)}
+              className="cursor-pointer border-0 p-0 bg-transparent w-full"
+            >
+              <img src={meme.media_url} alt={meme.title} className="w-full" />
+            </button>
+          </div>
         )}
         onRender={maybeLoadMore}
       />
 
-      <div className="flex flex-wrap gap-6">
-        {loading && (
-          <div className="text-center py-8 text-xl text-[#e0e0e0] w-full">
-            로딩 중...
+      <MemeModal
+        isOpen={isModalOpen}
+        onOpenChange={handleModalOpenChange}
+        title="밈 수정"
+      >
+        {selectedMeme && (
+          <div className="flex flex-col gap-6">
+            <MemeEditForm
+              meme={selectedMeme}
+              onSuccess={handleFormSuccess}
+              onCancel={() => setSelectedMeme(null)}
+            />
           </div>
         )}
-      </div>
+      </MemeModal>
+
+      {loading && (
+        <div className="text-center py-8 text-xl text-[#e0e0e0] w-full">
+          로딩 중...
+        </div>
+      )}
     </div>
   );
 }
