@@ -1,37 +1,12 @@
+import { generateCSMetadata } from '@/app/[locale]/(mdx)/cs/utils/generateCSMetadata';
 import Comments from '@/app/[locale]/(mdx)/post/[id]/components/Comment';
 import TableOfContents from '@/app/[locale]/(mdx)/post/[id]/components/TableOfContents';
 import { routing } from '@/i18n/routing';
 import { getPostIds } from '@/utils/post';
-import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
-
-type Props = {
-  params: Promise<{ id: string; locale: string }>;
-};
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id, locale } = await params;
-  const { title, description, ogImage } = await import(
-    `@/mdx/cs/${id}/${locale}.mdx`
-  );
-  const vercelURL = process.env.VERCEL_PROJECT_PRODUCTION_URL;
-
-  return {
-    metadataBase:
-      process.env.NODE_ENV === 'development'
-        ? new URL('http://localhost:3000')
-        : new URL(vercelURL ? `https://${vercelURL}` : 'https://yeolyi.com'),
-    title,
-    description,
-    openGraph: {
-      title,
-      description,
-      images: ogImage ? [ogImage] : undefined,
-    },
-  };
-}
+export const generateMetadata = generateCSMetadata;
 
 export default async function PostPage({
   params,

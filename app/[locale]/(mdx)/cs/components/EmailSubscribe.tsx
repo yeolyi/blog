@@ -82,7 +82,7 @@ export default function EmailSubscribe() {
       <p className="text-gray-400 text-sm mb-3">
         {t('description')}
         <br />
-        {t('subscriberCount', { count: subscriberCount ?? 0 })}
+        {t('subscriberCount', { count: subscriberCount ?? -1 })}
       </p>
 
       <div>
