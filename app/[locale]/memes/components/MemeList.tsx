@@ -123,7 +123,7 @@ export default function MemeList({
         columnGutter={16}
         columnWidth={300}
         render={({ data: meme }) => (
-          <div className="no-underline hover:-translate-y-1 block">
+          <div className="no-underline hover:-translate-y-1 block border border-white/50">
             <button
               type="button"
               onClick={() => handleMemeClick(meme)}

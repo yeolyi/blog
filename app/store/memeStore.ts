@@ -2,8 +2,8 @@ import { getMemes } from '@/app/[locale]/memes/actions';
 import type { Meme, Tag } from '@/types/meme';
 import { create } from 'zustand';
 
-// 스토어 상태 타입 정의 (코드 생성용)
-type State = {
+export const useMemeStore = create<{
+  // 상태
   memes: Meme[];
   allTags: Tag[];
   page: number;
@@ -11,9 +11,25 @@ type State = {
   hasMore: boolean;
   selectedTag: string | undefined;
   selectedMeme: Meme | null;
-};
 
-export const useMemeStore = create<State>((set, get) => ({
+  // 상태 설정 함수
+  setAllTags: (tags: Tag[]) => void;
+  setMemes: (memes: Meme[]) => void;
+  setPage: (page: number) => void;
+  setLoading: (loading: boolean) => void;
+  setHasMore: (hasMore: boolean) => void;
+  setSelectedTag: (tag?: string) => void;
+  setSelectedMeme: (meme: Meme | null) => void;
+
+  // 밈 관리 함수
+  updateMeme: (updatedMeme: Meme) => void;
+  deleteMeme: (memeId: string) => void;
+
+  // 비즈니스 로직 함수
+  loadMoreMemes: () => Promise<void>;
+  changeTag: (tag?: string) => Promise<void>;
+  resetState: () => void;
+}>((set, get) => ({
   // 초기 상태 - 확인안함이 기본 선택
   memes: [],
   allTags: [],
@@ -24,17 +40,17 @@ export const useMemeStore = create<State>((set, get) => ({
   selectedMeme: null,
 
   // 상태 설정 함수
-  setAllTags: (tags: Tag[]) => set({ allTags: tags }),
-  setMemes: (memes: Meme[]) => set({ memes }),
-  setPage: (page: number) => set({ page }),
-  setLoading: (loading: boolean) => set({ loading }),
-  setHasMore: (hasMore: boolean) => set({ hasMore }),
-  setSelectedTag: (tag?: string) => set({ selectedTag: tag }),
-  setSelectedMeme: (meme: Meme | null) => set({ selectedMeme: meme }),
+  setAllTags: (tags) => set({ allTags: tags }),
+  setMemes: (memes) => set({ memes }),
+  setPage: (page) => set({ page }),
+  setLoading: (loading) => set({ loading }),
+  setHasMore: (hasMore) => set({ hasMore }),
+  setSelectedTag: (tag) => set({ selectedTag: tag }),
+  setSelectedMeme: (meme) => set({ selectedMeme: meme }),
 
-  updateMeme: (updatedMeme: Meme) =>
-    set((state: State) => ({
-      memes: state.memes.map((meme: Meme) =>
+  updateMeme: (updatedMeme) =>
+    set((state) => ({
+      memes: state.memes.map((meme) =>
         meme.id === updatedMeme.id ? updatedMeme : meme,
       ),
       selectedMeme:
@@ -42,9 +58,9 @@ export const useMemeStore = create<State>((set, get) => ({
           ? updatedMeme
           : state.selectedMeme,
     })),
-  deleteMeme: (memeId: string) =>
-    set((state: State) => ({
-      memes: state.memes.filter((meme: Meme) => meme.id !== memeId),
+  deleteMeme: (memeId) =>
+    set((state) => ({
+      memes: state.memes.filter((meme) => meme.id !== memeId),
       selectedMeme:
         state.selectedMeme?.id === memeId ? null : state.selectedMeme,
     })),
@@ -77,7 +93,7 @@ export const useMemeStore = create<State>((set, get) => ({
       if (result.data.length === 0) {
         set({ hasMore: false });
       } else {
-        set((state: State) => ({
+        set((state) => ({
           memes: [...state.memes, ...result.data],
           page: nextPage,
         }));
