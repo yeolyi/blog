@@ -346,7 +346,7 @@ export function ComplexLogicGate({
                 {inputALabel} AND (NOT {inputBLabel})
               </TableHeaderCell>
               <TableHeaderCell>
-                {inputALabel} XOR {inputBLabel}
+                ((NOT A) AND (NOT B)) OR (A AND B)
               </TableHeaderCell>
             </tr>
           </thead>
