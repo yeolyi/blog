@@ -13,7 +13,10 @@ export interface Meme {
   title: string;
   description: string | null;
   media_url: string;
+  width: number;
+  height: number;
   created_at: string;
+  updated_at: string;
   meme_tags: MemeTag[];
-  checked: boolean;
+  hidden: boolean;
 }

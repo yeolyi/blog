@@ -1,10 +1,10 @@
 'use client';
 
-import { useMemeStore } from '@/app/store/memeStore';
+import { useMemeStore } from '@/app/[locale]/memes/store/memeStore';
 import type { Meme } from '@/types/meme';
-import { Save, Trash2, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { deleteMeme, updateMeme } from '../actions';
+import { Save, X } from 'lucide-react';
+import { useState } from 'react';
+import { updateMeme } from '../actions';
 
 interface MemeEditFormProps {
   meme: Meme;
@@ -18,31 +18,15 @@ export default function MemeEditForm({
   onCancel,
 }: MemeEditFormProps) {
   const updateMemeInStore = useMemeStore((state) => state.updateMeme);
-  const deleteMemeInStore = useMemeStore((state) => state.deleteMeme);
 
   const [title, setTitle] = useState(meme.title);
   const [description, setDescription] = useState(meme.description || '');
   const [tagInput, setTagInput] = useState(
     meme.meme_tags.map((tag) => tag.tags.name).join(', '),
   );
-  const [isChecked, setIsChecked] = useState(meme.checked);
+  const [hidden, setHidden] = useState(meme.hidden);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  // 태그가 추가되면 자동으로 checked 처리
-  useEffect(() => {
-    const tags = tagInput
-      .split(',')
-      .map((tag) => tag.trim())
-      .filter((tag) => tag);
-
-    // 태그가 있고 확인 체크가 안 된 상태라면 체크
-    if (tags.length > 0 && !isChecked) {
-      setIsChecked(true);
-    }
-    // 태그를 지웠을 때는 checked 상태 유지
-  }, [tagInput, isChecked]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,12 +45,12 @@ export default function MemeEditForm({
         .map((tag) => tag.trim())
         .filter((tag) => tag);
 
-      const updatedMemeData = await updateMeme({
+      await updateMeme({
         id: meme.id,
         title: title.trim(),
         description: description.trim() || undefined,
         tags: tagsList,
-        checked: isChecked,
+        hidden,
       });
 
       // Zustand 스토어 업데이트
@@ -74,7 +58,7 @@ export default function MemeEditForm({
         ...meme,
         title: title.trim(),
         description: description.trim() || null,
-        checked: isChecked,
+        hidden: hidden,
         meme_tags: tagsList.map((tagName) => {
           // 기존 태그에서 같은 이름의 태그가 있으면 재사용, 아니면 새 태그로 취급
           const existingTag = meme.meme_tags.find(
@@ -107,32 +91,6 @@ export default function MemeEditForm({
       );
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!confirm('정말로 이 밈을 삭제하시겠습니까?')) {
-      return;
-    }
-
-    setIsDeleting(true);
-    setError(null);
-
-    try {
-      await deleteMeme(meme.id);
-
-      // Zustand 스토어 업데이트
-      deleteMemeInStore(meme.id);
-
-      // 성공적으로 삭제 후 모달 닫기
-      onSuccess();
-    } catch (err) {
-      console.error('삭제 중 오류:', err);
-      setError(
-        err instanceof Error ? err.message : '삭제 중 오류가 발생했습니다',
-      );
-    } finally {
-      setIsDeleting(false);
     }
   };
 
@@ -189,11 +147,11 @@ export default function MemeEditForm({
         <label className="flex items-center text-white">
           <input
             type="checkbox"
-            checked={isChecked}
-            onChange={(e) => setIsChecked(e.target.checked)}
+            checked={hidden}
+            onChange={(e) => setHidden(e.target.checked)}
             className="mr-2 h-4 w-4"
           />
-          <span className="font-bold">확인함</span>
+          <span className="font-bold">숨김</span>
         </label>
       </div>
 
@@ -205,20 +163,6 @@ export default function MemeEditForm({
             className="py-2 px-4 bg-[#555] text-white border-none rounded cursor-pointer flex items-center gap-2"
           >
             <X size={16} /> 취소
-          </button>
-          <button
-            type="button"
-            onClick={handleDelete}
-            disabled={isDeleting}
-            className="py-2 px-4 bg-[#d32f2f] text-white border-none rounded cursor-pointer flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {isDeleting ? (
-              '삭제 중...'
-            ) : (
-              <>
-                <Trash2 size={16} /> 삭제
-              </>
-            )}
           </button>
         </div>
         <button

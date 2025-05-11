@@ -478,7 +478,7 @@ https://biomejs.dev/linter/rules/use-nodejs-import-protocol/
 
 https://biomejs.dev/linter/rules/use-key-with-click-events/
 
-Husky is a widely-used hook manager in the JavaScript ecosystem. Husky doesn’t hide unstaged changes and is not able to provide the list of staged files. This is why it is often used in tandem with another tool such as lint-staged or git-format-staged.
+Husky is a widely-used hook manager in the JavaScript ecosystem. Husky doesn't hide unstaged changes and is not able to provide the list of staged files. This is why it is often used in tandem with another tool such as lint-staged or git-format-staged.
 
 마크다운 두 줄 띄는게 귀찮을 수 있는데, max width 포맷팅 생각하면 두 줄 띄는게 낫다. 글 쓸 때와 볼 때의 화면폭이 다를 수 있어서...
 
@@ -494,3 +494,42 @@ React cache vs Next.js unstable_cache 차이점
 설정: cache는 단순한 메모이제이션만 제공, unstable_cache는 유효기간, 태그 기반 무효화 등 다양한 옵션 제공
 무효화: cache는 자체 무효화 메커니즘 없음, unstable_cache는 태그 기반 무효화와 시간 기반 재검증 지원
 사용처: cache는 서버 컴포넌트 내부 최적화용, unstable_cach
+
+## 마이그레이션 실행
+
+새 마이그레이션 적용하기:
+
+```bash
+npx supabase migration up
+```
+
+## 이미지 크기 업데이트 스크립트 실행
+
+밈 이미지의 width와 height 정보를 업데이트하려면 다음 패키지를 설치하세요:
+
+```bash
+npm install @supabase/supabase-js probe-image-size node-fetch
+```
+
+그런 다음 환경 변수를 설정하고 스크립트를 실행합니다:
+
+```bash
+export SUPABASE_URL="https://your-project-url.supabase.co"
+export SUPABASE_SERVICE_KEY="your-service-key"
+node scripts/update-meme-dimensions.js
+```
+
+참고: `SUPABASE_SERVICE_KEY`는 Supabase 프로젝트 설정의 API 섹션에서 service_role 키를 사용해야 합니다.
+
+## 이미지 업로드 스크립트 사용하기
+
+새 이미지를 업로드할 때 width와 height 정보를 자동으로 추가하는 스크립트:
+
+```bash
+node scripts/upload-meme-with-dimensions.js <이미지_파일_경로> <제목> [설명] [태그1,태그2,...]
+```
+
+예시:
+```bash
+node scripts/upload-meme-with-dimensions.js ./meme.jpg "재밌는 밈" "밈 설명" "재미있는,코딩"
+```

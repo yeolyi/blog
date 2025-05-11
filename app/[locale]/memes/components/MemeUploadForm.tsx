@@ -1,14 +1,10 @@
 'use client';
-
-import { connectMemeToTag } from '@/actions/meme';
-import { uploadFileToSupabase } from '@/actions/supabase';
+import { uploadSingleMeme } from '@/app/[locale]/memes/actions';
 import { getMediaTypeFromFile } from '@/utils/form';
-import { createClient } from '@/utils/supabase/client';
 import { Save, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
-import { v4 as uuidv4 } from 'uuid';
 
 interface FormInputs {
   title: string;
@@ -22,10 +18,7 @@ interface MemeUploadFormProps {
   onCancel: () => void;
 }
 
-export default function MemeUploadForm({
-  onSuccess,
-  onCancel,
-}: MemeUploadFormProps) {
+export default function MemeUploadForm({ onCancel }: MemeUploadFormProps) {
   const {
     register,
     handleSubmit,
@@ -49,56 +42,6 @@ export default function MemeUploadForm({
     }
   };
 
-  const uploadForm = async (data: FormInputs) => {
-    const file = data.file[0];
-    const supabase = createClient();
-
-    // 파일 업로드
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${uuidv4()}.${fileExt}`;
-    const filePath = `${fileName}`;
-    const url = await uploadFileToSupabase(filePath, file);
-
-    // memes 테이블에 정보 저장
-    const { data: meme } = await supabase
-      .from('memes')
-      .insert([
-        {
-          title: data.title,
-          description: data.description,
-          media_url: url,
-        },
-      ])
-      .select()
-      .single()
-      .throwOnError();
-
-    // 태그 처리
-    const tagNames = data.tags
-      .split(',')
-      .map((tag) => tag.trim())
-      .filter((tag) => tag);
-
-    const memeTags = [];
-
-    if (tagNames.length > 0) {
-      for (const tagName of tagNames) {
-        // connectMemeToTag 함수는 값을 반환하지 않으므로 직접 태그 정보 생성
-        await connectMemeToTag(meme.id, tagName);
-        // 임시 ID로 태그 정보 생성
-        memeTags.push({
-          tag_id: `temp-${Date.now()}-${Math.random()}`,
-          tags: {
-            id: `temp-${Date.now()}-${Math.random()}`,
-            name: tagName,
-          },
-        });
-      }
-    }
-
-    router.refresh();
-  };
-
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
     const file = data.file[0];
 
@@ -117,9 +60,14 @@ export default function MemeUploadForm({
     }
 
     try {
-      await uploadForm(data);
-      // router.refresh() 제거, 대신 Zustand 스토어 사용
-      onSuccess();
+      const file = data.file[0];
+
+      await uploadSingleMeme({
+        title: data.title,
+        description: data.description,
+        file,
+        tags: data.tags,
+      });
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다.';

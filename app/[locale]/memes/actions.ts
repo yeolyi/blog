@@ -2,107 +2,36 @@
 
 import { connectMemeToTag } from '@/actions/meme';
 import { uploadFileToSupabase } from '@/actions/supabase';
-import type { Meme } from '@/types/meme';
 import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
+import probe from 'probe-image-size';
 import { v4 as uuidv4 } from 'uuid';
 
-export async function getMemes(
-  tag?: string,
-  page = 1,
-  pageSize = 30,
-  onlyUnchecked = false,
-  onlyChecked = false,
-) {
+export async function getMemes() {
   const supabase = await createClient();
 
-  // 오프셋 계산
-  const from = (page - 1) * pageSize;
-  const to = from + pageSize - 1;
-
-  let query = supabase.from('memes').select(
-    `
+  const query = supabase
+    .from('memes')
+    .select(
+      `
       *,
       meme_tags(
         tag_id,
         tags(id, name)
       )
     `,
-  );
+    )
+    .limit(10000); // 기본값이 1000임
 
-  // checked 필드 필터링 (일반 태그 선택 시에는 적용하지 않음)
-  if (onlyUnchecked && (!tag || tag === '확인안함')) {
-    query = query.eq('checked', false);
-  } else if (onlyChecked && (!tag || tag === '확인함')) {
-    query = query.eq('checked', true);
-  }
+  // 항상 모든 데이터 가져오기 (페이지네이션은 프론트엔드에서 처리)
+  const { data, error } = await query;
 
-  let tagId = null;
-
-  // 태그가 제공된 경우, 해당 태그를 가진 밈만 필터링
-  if (tag && tag !== '확인함' && tag !== '확인안함') {
-    // 먼저 태그 ID를 가져옵니다
-    const { data: tagData } = await supabase
-      .from('tags')
-      .select('id')
-      .eq('name', tag)
-      .single();
-
-    // 일치하는 태그가 없으면 빈 결과 반환
-    if (tagData?.id === undefined) {
-      return { data: [], count: 0 };
-    }
-
-    tagId = tagData.id;
-    // 해당 태그 ID를 가진 밈 ID 목록을 가져옵니다
-    const { data: memeIds } = await supabase
-      .from('meme_tags')
-      .select('meme_id')
-      .eq('tag_id', tagId);
-
-    // 일치하는 밈이 없으면 빈 결과 반환
-    if (!memeIds || memeIds.length === 0) {
-      return { data: [], count: 0 };
-    }
-
-    // 해당 밈 ID만 필터링
-    query = query.in(
-      'id',
-      memeIds.map((item) => item.meme_id),
-    );
-  }
-
-  // 정렬 적용
-  query = query.order('created_at', { ascending: true });
-
-  // 카운트 쿼리 생성 (checked 필터 포함)
-  let countQuery =
-    tag && tagId
-      ? supabase
-          .from('meme_tags')
-          .select('*', { count: 'exact' })
-          .eq('tag_id', tagId)
-      : supabase.from('memes').select('*', { count: 'exact', head: true });
-
-  // 카운트 쿼리에도 checked 필터 적용 (일반 태그 선택 시에는 적용하지 않음)
-  if (onlyUnchecked && (!tag || tag === '확인안함')) {
-    countQuery = countQuery.eq('checked', false);
-  } else if (onlyChecked && (!tag || tag === '확인함')) {
-    countQuery = countQuery.eq('checked', true);
-  }
-
-  // 페이지네이션 적용
-  query = query.range(from, to);
-
-  // 데이터와 총 개수를 병렬로 가져오기
-  const [{ data, error }, countResult] = await Promise.all([query, countQuery]);
-
-  if (error || countResult.error) {
-    console.error('밈 불러오기 오류:', error || countResult.error);
+  if (error) {
+    console.error('밈 불러오기 오류:', error);
     throw new Error('밈을 불러오는 중 오류가 발생했습니다');
   }
 
-  return { data: data || [], count: countResult.count || 0 };
+  return data;
 }
 
 export async function deleteMeme(id: string) {
@@ -185,43 +114,18 @@ export async function getAllTags() {
   return data;
 }
 
-export async function getMeme(id: string) {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase
-    .from('memes')
-    .select(
-      `
-      *,
-      meme_tags(
-        tag_id,
-        tags(id, name)
-      )
-    `,
-    )
-    .eq('id', id)
-    .single();
-
-  if (error) {
-    console.error('밈 상세 조회 오류:', error);
-    throw new Error('밈을 불러오는 중 오류가 발생했습니다');
-  }
-
-  return data;
-}
-
 export async function updateMeme({
   id,
   title,
   description,
   tags,
-  checked,
+  hidden,
 }: {
   id: string;
   title: string;
   description?: string;
   tags?: string[];
-  checked?: boolean;
+  hidden?: boolean;
 }) {
   const supabase = await createClient();
 
@@ -239,7 +143,7 @@ export async function updateMeme({
     .update({
       title,
       description: description || null,
-      checked: checked !== undefined ? checked : false,
+      hidden: hidden !== undefined ? hidden : false,
     })
     .eq('id', id)
     .throwOnError();
@@ -282,112 +186,68 @@ export async function updateMeme({
   return { success: true };
 }
 
-export async function getRandomMeme() {
-  const supabase = await createClient();
-
-  // RPC 함수를 사용하여 랜덤 밈 가져오기
-  const { data } = await supabase
-    .rpc('get_random_meme')
-    .single()
-    .throwOnError();
-
-  if (!data) {
-    return null;
-  }
-
-  return data as Meme;
-}
-
-const retry = async <T>(
-  fn: () => Promise<T>,
-  maxRetries = 5,
-  delay = 1000,
-): Promise<T> => {
-  let lastError: Error | null = null;
-
-  for (let attempt = 0; attempt <= maxRetries; attempt++) {
-    try {
-      if (attempt > 0) {
-        console.log(`재시도 중... (${attempt}/${maxRetries})`);
-      }
-      return await fn();
-    } catch (error) {
-      lastError = error as Error;
-      if (attempt < maxRetries) {
-        const waitTime = delay * 2 ** attempt;
-        console.log(`오류 발생, ${waitTime}ms 후 재시도...`);
-        console.log(error);
-        await new Promise((resolve) => setTimeout(resolve, waitTime));
-      }
-    }
-  }
-
-  throw lastError || new Error('최대 재시도 횟수 초과');
-};
-
-export async function uploadMemes(memes: Meme[]) {
+/**
+ * 단일 밈 업로드를 처리하는 서버 액션
+ */
+export async function uploadSingleMeme({
+  title,
+  description,
+  file,
+  tags,
+}: {
+  title: string;
+  description?: string;
+  file: File;
+  tags?: string;
+}) {
   try {
-    let progress = 0;
-    const blobList = await Promise.all(
-      memes.map(async (meme) => {
-        const mediaResponse = await retry(async () => {
-          const response = await fetch(meme.media_url);
-          if (!response.ok) {
-            throw new Error(`미디어 다운로드 실패 (${response.status})`);
-          }
-          return response;
-        });
-
-        progress++;
-        console.log(`${progress}번째 밈 다운로드 완료`);
-        return mediaResponse.blob();
-      }),
-    );
-
-    console.log('blobList 완료');
-    progress = 0;
-
-    const urlList = await Promise.all(
-      blobList.map(async (blob, idx) => {
-        const fileExt =
-          memes[idx].media_url.split('.').pop()?.split('?')[0] || '';
-        const fileName = `${uuidv4()}.${fileExt}`;
-
-        const publicUrl = await retry(async () => {
-          return await uploadFileToSupabase(fileName, blob);
-        });
-        progress++;
-        console.log(`${progress}번째 밈 업로드 완료`);
-        return publicUrl;
-      }),
-    );
-
-    console.log('urlList 완료');
-
     const supabase = await createClient();
 
-    for (let i = 0; i < memes.length; i++) {
-      const meme = memes[i];
-      const url = urlList[i];
+    // 파일 업로드
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${uuidv4()}.${fileExt}`;
+    const url = await uploadFileToSupabase(fileName, file);
 
-      await supabase
-        .from('memes')
-        .insert([
-          {
-            title: meme.title,
-            description: meme.description || null,
-            media_url: url,
-          },
-        ])
-        .select()
-        .single()
-        .throwOnError();
+    const { width, height } = await probe(url);
+    console.log(width, height);
+    console.log(tags);
 
-      console.log(`${i + 1}번째 밈 업로드 완료`);
+    // memes 테이블에 정보 저장
+    const memeData = {
+      title,
+      description: description || null,
+      media_url: url,
+      width,
+      height,
+    };
+
+    const { data: meme } = await supabase
+      .from('memes')
+      .insert([memeData])
+      .select()
+      .single()
+      .throwOnError();
+
+    // 태그 처리
+    if (tags) {
+      const tagNames = tags
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter((tag) => tag);
+
+      if (tagNames.length > 0) {
+        for (const tagName of tagNames) {
+          await connectMemeToTag(meme.id, tagName);
+        }
+      }
     }
 
-    revalidatePath('/memes');
+    return { success: true, meme };
   } catch (error) {
-    console.log(error);
+    console.error('밈 업로드 오류:', error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+    };
   }
 }
