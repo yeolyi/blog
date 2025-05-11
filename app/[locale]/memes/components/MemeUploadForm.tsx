@@ -73,17 +73,30 @@ export default function MemeUploadForm({
       .single()
       .throwOnError();
 
-    // 태그가 없다면 아래는 스킵
-    if (!data.tags.trim()) return;
-
+    // 태그 처리
     const tagNames = data.tags
       .split(',')
       .map((tag) => tag.trim())
       .filter((tag) => tag);
 
-    for (const tagName of tagNames) {
-      await connectMemeToTag(meme.id, tagName);
+    const memeTags = [];
+
+    if (tagNames.length > 0) {
+      for (const tagName of tagNames) {
+        // connectMemeToTag 함수는 값을 반환하지 않으므로 직접 태그 정보 생성
+        await connectMemeToTag(meme.id, tagName);
+        // 임시 ID로 태그 정보 생성
+        memeTags.push({
+          tag_id: `temp-${Date.now()}-${Math.random()}`,
+          tags: {
+            id: `temp-${Date.now()}-${Math.random()}`,
+            name: tagName,
+          },
+        });
+      }
     }
+
+    router.refresh();
   };
 
   const onSubmit: SubmitHandler<FormInputs> = async (data) => {
@@ -105,7 +118,7 @@ export default function MemeUploadForm({
 
     try {
       await uploadForm(data);
-      router.refresh();
+      // router.refresh() 제거, 대신 Zustand 스토어 사용
       onSuccess();
     } catch (err) {
       const errorMessage =

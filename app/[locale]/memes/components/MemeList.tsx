@@ -1,10 +1,11 @@
 'use client';
+import { useMemeStore } from '@/app/store/memeStore';
 import type { Meme, Tag } from '@/types/meme';
+import { Check, X } from 'lucide-react';
 import { type MasonryProps, useInfiniteLoader } from 'masonic';
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
-import { type ComponentType, useCallback, useState } from 'react';
-import { getMemes } from '../actions';
+import { type ComponentType, useCallback, useEffect, useMemo } from 'react';
 import MemeEditForm from './MemeEditForm';
 import MemeModal from './MemeModal';
 
@@ -24,60 +25,32 @@ export default function MemeList({
   allTags,
   isAdmin = false,
 }: MemeListProps) {
-  const [memes, setMemes] = useState<Meme[]>(initialMemes);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const [selectedTag, setSelectedTag] = useState<string | undefined>(undefined);
-  const [selectedMeme, setSelectedMeme] = useState<Meme | null>(null);
   const router = useRouter();
+  const {
+    memes,
+    loading,
+    hasMore,
+    selectedTag,
+    selectedMeme,
+    setMemes,
+    setAllTags,
+    loadMoreMemes,
+    changeTag,
+    setSelectedMeme,
+  } = useMemeStore();
 
-  const changeTag = useCallback(
-    (tag?: string) => {
-      if (loading) return;
-      setSelectedTag(tag);
-      setMemes([]);
-      setPage(1);
-      setHasMore(true);
-      setLoading(true);
-      setSelectedMeme(null);
+  // 초기 데이터 설정
+  useEffect(() => {
+    setMemes(initialMemes);
+    setAllTags(allTags);
+  }, [initialMemes, allTags, setMemes, setAllTags]);
 
-      const fetchMemes = async () => {
-        const result = await getMemes(tag, 1);
-        setMemes(result.data);
-        setLoading(false);
-      };
-
-      fetchMemes();
-
-      return () => {
-        setLoading(false);
-      };
-    },
-    [loading],
-  );
-
-  // 추가 밈 로드 함수
-  const loadMoreMemes = useCallback(async () => {
-    if (loading || !hasMore) return;
-
-    setLoading(true);
-    try {
-      const nextPage = page + 1;
-      const result = await getMemes(selectedTag, nextPage);
-
-      if (result.data.length === 0) {
-        setHasMore(false);
-      } else {
-        setMemes((prev) => [...prev, ...result.data]);
-        setPage(nextPage);
-      }
-    } catch (error) {
-      console.error('밈 추가 로딩 오류:', error);
-    } finally {
-      setLoading(false);
-    }
-  }, [loading, hasMore, page, selectedTag]);
+  // meme 아이템마다 고유한 키 생성
+  const uniqueMemesKey = useMemo(() => {
+    return memes.length > 0
+      ? `memes-${selectedTag || 'all'}-${Date.now()}`
+      : 'empty-memes';
+  }, [memes.length, selectedTag]);
 
   const maybeLoadMore = useInfiniteLoader(loadMoreMemes, {
     isItemLoaded: (index, items) => !!items[index],
@@ -85,38 +58,57 @@ export default function MemeList({
     threshold: 3,
   });
 
-  const handleMemeClick = (meme: Meme) => {
-    console.log(meme);
-    setSelectedMeme(meme);
-  };
+  const handleMemeClick = useCallback(
+    (meme: Meme) => {
+      setSelectedMeme(meme);
+    },
+    [setSelectedMeme],
+  );
 
-  const handleFormSuccess = () => {
+  const handleFormSuccess = useCallback(() => {
     setSelectedMeme(null);
-  };
+  }, [setSelectedMeme]);
 
-  const handleModalOpenChange = (open: boolean) => {
-    if (!open) {
-      setSelectedMeme(null);
-    }
-  };
+  const handleModalOpenChange = useCallback(
+    (open: boolean) => {
+      if (!open) {
+        setSelectedMeme(null);
+      }
+    },
+    [setSelectedMeme],
+  );
 
   const isModalOpen = selectedMeme !== null;
+
+  const handleTagChange = useCallback(
+    (tag?: string) => {
+      changeTag(tag);
+    },
+    [changeTag],
+  );
 
   return (
     <div className="flex flex-col gap-8 w-full">
       <div className="flex flex-wrap gap-3 items-center">
         <button
           type="button"
-          onClick={() => changeTag(undefined)}
-          className={`text-decoration-none py-2 px-4 bg-transparent border border-[#5e5e5e] text-[#e0e0e0] cursor-pointer hover:bg-white hover:text-black ${!selectedTag ? 'bg-white text-black border-white' : ''}`}
+          onClick={() => handleTagChange('확인안함')}
+          className={`text-decoration-none py-2 px-4 flex items-center gap-1 bg-transparent border border-[#f44336] text-[#f44336] rounded-full cursor-pointer hover:bg-[#f44336] hover:text-white ${selectedTag === '확인안함' ? 'bg-[#f44336] text-white' : ''}`}
         >
-          전체
+          <X size={16} /> 확인안함
+        </button>
+        <button
+          type="button"
+          onClick={() => handleTagChange('확인함')}
+          className={`text-decoration-none py-2 px-4 flex items-center gap-1 bg-transparent border border-[#4CAF50] text-[#4CAF50] rounded-full cursor-pointer hover:bg-[#4CAF50] hover:text-white ${selectedTag === '확인함' ? 'bg-[#4CAF50] text-white' : ''}`}
+        >
+          <Check size={16} /> 확인함
         </button>
         {allTags.map((tag) => (
           <button
             type="button"
             key={tag.id}
-            onClick={() => changeTag(tag.name)}
+            onClick={() => handleTagChange(tag.name)}
             className={`text-decoration-none py-2 px-4 bg-transparent border border-[#5e5e5e] text-[#e0e0e0] cursor-pointer hover:bg-white hover:text-black ${selectedTag === tag.name ? 'bg-white text-black border-white' : ''}`}
           >
             {tag.name}
@@ -125,7 +117,7 @@ export default function MemeList({
       </div>
 
       <Masonry
-        key={selectedTag}
+        key={uniqueMemesKey}
         itemKey={(item) => item.id}
         items={memes}
         columnGutter={16}

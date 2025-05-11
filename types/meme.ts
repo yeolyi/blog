@@ -15,4 +15,5 @@ export interface Meme {
   media_url: string;
   created_at: string;
   meme_tags: MemeTag[];
+  checked: boolean;
 }

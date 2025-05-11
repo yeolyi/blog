@@ -7,7 +7,13 @@ import { createClient } from '@/utils/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { v4 as uuidv4 } from 'uuid';
 
-export async function getMemes(tag?: string, page = 1, pageSize = 30) {
+export async function getMemes(
+  tag?: string,
+  page = 1,
+  pageSize = 30,
+  onlyUnchecked = false,
+  onlyChecked = false,
+) {
   const supabase = await createClient();
 
   // 오프셋 계산
@@ -24,10 +30,17 @@ export async function getMemes(tag?: string, page = 1, pageSize = 30) {
     `,
   );
 
+  // checked 필드 필터링 (일반 태그 선택 시에는 적용하지 않음)
+  if (onlyUnchecked && (!tag || tag === '확인안함')) {
+    query = query.eq('checked', false);
+  } else if (onlyChecked && (!tag || tag === '확인함')) {
+    query = query.eq('checked', true);
+  }
+
   let tagId = null;
 
   // 태그가 제공된 경우, 해당 태그를 가진 밈만 필터링
-  if (tag) {
+  if (tag && tag !== '확인함' && tag !== '확인안함') {
     // 먼저 태그 ID를 가져옵니다
     const { data: tagData } = await supabase
       .from('tags')
@@ -62,14 +75,21 @@ export async function getMemes(tag?: string, page = 1, pageSize = 30) {
   // 정렬 적용
   query = query.order('created_at', { ascending: true });
 
-  // 카운트 쿼리 생성
-  const countQuery =
+  // 카운트 쿼리 생성 (checked 필터 포함)
+  let countQuery =
     tag && tagId
       ? supabase
           .from('meme_tags')
           .select('*', { count: 'exact' })
           .eq('tag_id', tagId)
       : supabase.from('memes').select('*', { count: 'exact', head: true });
+
+  // 카운트 쿼리에도 checked 필터 적용 (일반 태그 선택 시에는 적용하지 않음)
+  if (onlyUnchecked && (!tag || tag === '확인안함')) {
+    countQuery = countQuery.eq('checked', false);
+  } else if (onlyChecked && (!tag || tag === '확인함')) {
+    countQuery = countQuery.eq('checked', true);
+  }
 
   // 페이지네이션 적용
   query = query.range(from, to);
@@ -195,11 +215,13 @@ export async function updateMeme({
   title,
   description,
   tags,
+  checked,
 }: {
   id: string;
   title: string;
   description?: string;
   tags?: string[];
+  checked?: boolean;
 }) {
   const supabase = await createClient();
 
@@ -217,6 +239,7 @@ export async function updateMeme({
     .update({
       title,
       description: description || null,
+      checked: checked !== undefined ? checked : false,
     })
     .eq('id', id)
     .throwOnError();
