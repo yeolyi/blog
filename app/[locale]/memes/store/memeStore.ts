@@ -55,9 +55,9 @@ export const useMemeStore = create<{
     get().shuffleMemes();
   },
   setSelectedTag: (selectedTag) => set({ selectedTag, key: get().key + 1 }),
-  setSelectedMeme: (selectedMeme) => set({ selectedMeme, key: get().key + 1 }),
+  setSelectedMeme: (selectedMeme) => set({ selectedMeme }),
 
-  updateMeme: (updatedMeme) =>
+  updateMeme: (updatedMeme) => {
     set((state) => ({
       memes: state.memes.map((meme) =>
         meme.id === updatedMeme.id ? updatedMeme : meme,
@@ -70,7 +70,9 @@ export const useMemeStore = create<{
           ? updatedMeme
           : state.selectedMeme,
       key: get().key + 1,
-    })),
+    }));
+  },
+
   deleteMeme: (memeId) =>
     set((state) => ({
       memes: state.memes.filter((meme) => meme.id !== memeId),
