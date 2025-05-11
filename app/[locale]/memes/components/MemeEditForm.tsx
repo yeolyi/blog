@@ -3,13 +3,20 @@
 import { useMemeStore } from '@/app/[locale]/memes/store/memeStore';
 import type { Meme } from '@/types/meme';
 import { Save, X } from 'lucide-react';
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { updateMeme } from '../actions';
 
 interface MemeEditFormProps {
   meme: Meme;
   onSuccess: () => void;
   onCancel: () => void;
+}
+
+interface FormValues {
+  title: string;
+  description: string;
+  tagInput: string;
+  hidden: boolean;
 }
 
 export default function MemeEditForm({
@@ -19,46 +26,46 @@ export default function MemeEditForm({
 }: MemeEditFormProps) {
   const updateMemeInStore = useMemeStore((state) => state.updateMeme);
 
-  const [title, setTitle] = useState(meme.title);
-  const [description, setDescription] = useState(meme.description || '');
-  const [tagInput, setTagInput] = useState(
-    meme.meme_tags.map((tag) => tag.tags.name).join(', '),
-  );
-  const [hidden, setHidden] = useState(meme.hidden);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setError: setFormError,
+  } = useForm<FormValues>({
+    defaultValues: {
+      title: meme.title,
+      description: meme.description || '',
+      tagInput: meme.meme_tags.map((tag) => tag.tags.name).join(', '),
+      hidden: meme.hidden,
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!title.trim()) {
-      setError('제목은 필수입니다');
+  const onSubmit = async (data: FormValues) => {
+    if (!data.title.trim()) {
+      setFormError('title', { message: '제목은 필수입니다' });
       return;
     }
 
-    setIsSubmitting(true);
-    setError(null);
-
     try {
-      const tagsList = tagInput
+      const tagsList = data.tagInput
         .split(',')
         .map((tag) => tag.trim())
         .filter((tag) => tag);
 
       await updateMeme({
         id: meme.id,
-        title: title.trim(),
-        description: description.trim() || undefined,
+        title: data.title.trim(),
+        description: data.description.trim() || undefined,
         tags: tagsList,
-        hidden,
+        hidden: data.hidden,
       });
 
       // Zustand 스토어 업데이트
       const updatedMemeWithDetails: Meme = {
         ...meme,
-        title: title.trim(),
-        description: description.trim() || null,
-        hidden: hidden,
+        title: data.title.trim(),
+        description: data.description.trim() || null,
+        hidden: data.hidden,
         meme_tags: tagsList.map((tagName) => {
           // 기존 태그에서 같은 이름의 태그가 있으면 재사용, 아니면 새 태그로 취급
           const existingTag = meme.meme_tags.find(
@@ -86,18 +93,19 @@ export default function MemeEditForm({
       onSuccess();
     } catch (err) {
       console.error('수정 중 오류:', err);
-      setError(
-        err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다',
-      );
-    } finally {
-      setIsSubmitting(false);
+      setFormError('root', {
+        message:
+          err instanceof Error ? err.message : '알 수 없는 오류가 발생했습니다',
+      });
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      {error && (
-        <div className="bg-[#ffebee] text-[#c62828] p-2 rounded">{error}</div>
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+      {errors.root && (
+        <div className="bg-[#ffebee] text-[#c62828] p-2 rounded">
+          {errors.root.message}
+        </div>
       )}
 
       <div className="mb-4">
@@ -107,11 +115,14 @@ export default function MemeEditForm({
         <input
           id="title"
           type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full p-2 rounded bg-[#333] text-white border border-[#555]"
-          required
+          className={`w-full p-2 rounded bg-[#333] text-white border ${
+            errors.title ? 'border-red-500' : 'border-[#555]'
+          }`}
+          {...register('title', { required: '제목은 필수입니다' })}
         />
+        {errors.title && (
+          <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
+        )}
       </div>
 
       <div className="mb-4">
@@ -123,23 +134,23 @@ export default function MemeEditForm({
         </label>
         <textarea
           id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
           className="w-full p-2 rounded bg-[#333] text-white border border-[#555] min-h-[100px]"
+          {...register('description')}
         />
       </div>
 
       <div className="mb-4">
-        <label htmlFor="tags" className="block mb-2 font-bold text-white">
+        <label htmlFor="tagInput" className="block mb-2 font-bold text-white">
           태그 (쉼표로 구분)
         </label>
         <input
-          id="tags"
+          id="tagInput"
           type="text"
-          value={tagInput}
-          onChange={(e) => setTagInput(e.target.value)}
           placeholder="태그1, 태그2, 태그3"
           className="w-full p-2 rounded bg-[#333] text-white border border-[#555]"
+          // biome-ignore lint/a11y/noAutofocus: 내가 쓸거임
+          autoFocus
+          {...register('tagInput')}
         />
       </div>
 
@@ -147,9 +158,8 @@ export default function MemeEditForm({
         <label className="flex items-center text-white">
           <input
             type="checkbox"
-            checked={hidden}
-            onChange={(e) => setHidden(e.target.checked)}
             className="mr-2 h-4 w-4"
+            {...register('hidden')}
           />
           <span className="font-bold">숨김</span>
         </label>
