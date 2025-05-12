@@ -1,10 +1,15 @@
 'use client';
 
-import { useMemeStore } from '@/app/[locale]/memes/store/memeStore';
+import {
+  allTagsAtom,
+  updateMemeAtom,
+} from '@/app/[locale]/memes/store/memeStore';
 import type { Meme } from '@/types/meme';
+import { useAtom, useSetAtom } from 'jotai';
 import { Save, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { updateMeme } from '../actions';
+import { updateMeme } from '../../actions';
 
 interface MemeEditFormProps {
   meme: Meme;
@@ -14,7 +19,6 @@ interface MemeEditFormProps {
 
 interface FormValues {
   title: string;
-  description: string;
   tagInput: string;
   hidden: boolean;
 }
@@ -24,21 +28,50 @@ export default function MemeEditForm({
   onSuccess,
   onCancel,
 }: MemeEditFormProps) {
-  const updateMemeInStore = useMemeStore((state) => state.updateMeme);
+  const updateMemeInStore = useSetAtom(updateMemeAtom);
+  const [allTags] = useAtom(allTagsAtom);
+  const [currentTags, setCurrentTags] = useState<string[]>([]);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     setError: setFormError,
+    setValue,
+    watch,
   } = useForm<FormValues>({
     defaultValues: {
       title: meme.title,
-      description: meme.description || '',
       tagInput: meme.meme_tags.map((tag) => tag.tags.name).join(', '),
       hidden: meme.hidden,
     },
   });
+
+  const tagInput = watch('tagInput');
+
+  useEffect(() => {
+    const tags = tagInput
+      .split(',')
+      .map((tag) => tag.trim())
+      .filter((tag) => tag);
+    setCurrentTags(tags);
+  }, [tagInput]);
+
+  const handleTagClick = (tagName: string) => {
+    // 이미 태그가 있는지 확인
+    if (currentTags.includes(tagName)) {
+      // 이미 태그가 있으면 제거
+      const filteredTags = currentTags.filter((tag) => tag !== tagName);
+      setValue('tagInput', filteredTags.join(', '));
+      return;
+    }
+
+    // 기존 태그에 새 태그 추가
+    const newTagInput =
+      currentTags.length > 0 ? `${tagInput.trim()}, ${tagName}` : tagName;
+
+    setValue('tagInput', newTagInput);
+  };
 
   const onSubmit = async (data: FormValues) => {
     if (!data.title.trim()) {
@@ -52,42 +85,17 @@ export default function MemeEditForm({
         .map((tag) => tag.trim())
         .filter((tag) => tag);
 
-      await updateMeme({
+      const result = await updateMeme({
         id: meme.id,
         title: data.title.trim(),
-        description: data.description.trim() || undefined,
         tags: tagsList,
         hidden: data.hidden,
       });
 
-      // Zustand 스토어 업데이트
-      const updatedMemeWithDetails: Meme = {
-        ...meme,
-        title: data.title.trim(),
-        description: data.description.trim() || null,
-        hidden: data.hidden,
-        meme_tags: tagsList.map((tagName) => {
-          // 기존 태그에서 같은 이름의 태그가 있으면 재사용, 아니면 새 태그로 취급
-          const existingTag = meme.meme_tags.find(
-            (t) => t.tags.name.toLowerCase() === tagName.toLowerCase(),
-          );
-
-          if (existingTag) {
-            return existingTag;
-          }
-
-          // 새 태그의 경우 임시 ID 생성 (API 응답에서 실제 ID를 가져와야 함)
-          return {
-            tag_id: `temp-${Date.now()}-${Math.random()}`,
-            tags: {
-              id: `temp-${Date.now()}-${Math.random()}`,
-              name: tagName,
-            },
-          };
-        }),
-      };
-
-      updateMemeInStore(updatedMemeWithDetails);
+      // 서버에서 반환된 데이터로 스토어 업데이트
+      if (result.meme) {
+        updateMemeInStore(result.meme);
+      }
 
       // UI 새로고침 없이 스토어의 상태만 업데이트
       onSuccess();
@@ -126,20 +134,6 @@ export default function MemeEditForm({
       </div>
 
       <div className="mb-4">
-        <label
-          htmlFor="description"
-          className="block mb-2 font-bold text-white"
-        >
-          설명
-        </label>
-        <textarea
-          id="description"
-          className="w-full p-2 rounded bg-[#333] text-white border border-[#555] min-h-[100px]"
-          {...register('description')}
-        />
-      </div>
-
-      <div className="mb-4">
         <label htmlFor="tagInput" className="block mb-2 font-bold text-white">
           태그 (쉼표로 구분)
         </label>
@@ -152,6 +146,27 @@ export default function MemeEditForm({
           autoFocus
           {...register('tagInput')}
         />
+
+        {/* 태그 목록 */}
+        <div className="mt-2">
+          <p className="text-sm text-gray-400 mb-1">기존 태그 클릭하여 추가</p>
+          <div className="flex flex-wrap gap-1">
+            {allTags.map((tag) => (
+              <button
+                key={tag.id}
+                type="button"
+                onClick={() => handleTagClick(tag.name)}
+                className={`text-xs px-2 py-1 rounded bg-[#444] hover:bg-[#555] ${
+                  currentTags.includes(tag.name)
+                    ? 'border border-blue-500 text-blue-300'
+                    : 'text-gray-300'
+                }`}
+              >
+                {tag.name}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
 
       <div className="mb-4">

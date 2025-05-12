@@ -2,13 +2,11 @@
 import { uploadSingleMeme } from '@/app/[locale]/memes/actions';
 import { getMediaTypeFromFile } from '@/utils/form';
 import { Save, X } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { type SubmitHandler, useForm } from 'react-hook-form';
 
 interface FormInputs {
   title: string;
-  description: string;
   file: FileList;
   tags: string;
 }
@@ -25,13 +23,8 @@ export default function MemeUploadForm({ onCancel }: MemeUploadFormProps) {
     formState: { errors, isSubmitting },
     setError: setFormError,
   } = useForm<FormInputs>({
-    defaultValues: {
-      title: '',
-      description: '',
-      tags: '',
-    },
+    defaultValues: { title: '', tags: '' },
   });
-  const router = useRouter();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -64,7 +57,6 @@ export default function MemeUploadForm({ onCancel }: MemeUploadFormProps) {
 
       await uploadSingleMeme({
         title: data.title,
-        description: data.description,
         file,
         tags: data.tags,
       });
@@ -101,21 +93,6 @@ export default function MemeUploadForm({ onCancel }: MemeUploadFormProps) {
         {errors.title && (
           <p className="text-[#ff4d4f] mt-1">{errors.title.message}</p>
         )}
-      </div>
-
-      <div className="mb-4">
-        <label
-          htmlFor="description"
-          className="block mb-2 font-bold text-white"
-        >
-          설명 (선택사항)
-        </label>
-        <textarea
-          id="description"
-          className="w-full p-2 rounded bg-[#333] text-white border border-[#555] min-h-[100px]"
-          {...register('description')}
-          rows={3}
-        />
       </div>
 
       <div className="mb-4">

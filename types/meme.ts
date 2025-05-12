@@ -11,7 +11,6 @@ export interface MemeTag {
 export interface Meme {
   id: string;
   title: string;
-  description: string | null;
   media_url: string;
   width: number;
   height: number;

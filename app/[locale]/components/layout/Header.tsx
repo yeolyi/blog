@@ -23,7 +23,7 @@ export default function Header() {
   );
 }
 
-const AuthButton = async () => {
+export const AuthButton = async () => {
   const supabase = await createClient();
   const { data: user } = await supabase.auth.getUser();
   const t = await getTranslations('Header');
@@ -37,7 +37,7 @@ const AuthButton = async () => {
       .single();
 
     return (
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 h-8">
         {profile && (
           <span className="text-[#e0e0e0] text-sm">
             {t('developer', { number: profile.registration_number })}

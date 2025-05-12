@@ -1,13 +1,26 @@
 'use client';
-import { useMemeStore } from '@/app/[locale]/memes/store/memeStore';
+import {
+  allTagsAtom,
+  changeTagAtom,
+  displayedMemesAtom,
+  isHiddenModeAtom,
+  keyAtom,
+  memesAtom,
+  selectedIdAtom,
+  selectedTagAtom,
+  shuffleMemesAtom,
+  toggleHiddenMemesAtom,
+} from '@/app/[locale]/memes/store/memeStore';
 import type { Meme, Tag } from '@/types/meme';
+import { useAtomValue, useSetAtom } from 'jotai';
+import { useHydrateAtoms } from 'jotai/utils';
 import { Eye, Shuffle } from 'lucide-react';
 import type { MasonryProps } from 'masonic';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
-import { type ComponentType, useCallback, useEffect } from 'react';
-import MemeEditForm from './MemeEditForm';
-import MemeModal from './MemeModal';
+import { type ComponentType, useCallback } from 'react';
+import MemeEditForm from './modals/MemeEditForm';
+import MemeModal from './modals/MemeModal';
 
 const Masonry: ComponentType<MasonryProps<Meme>> = dynamic(
   () => import('masonic').then((mod) => mod.Masonry),
@@ -23,46 +36,40 @@ export default function MemeList({
   memes: initialMemes,
   allTags,
 }: MemeListProps) {
-  const {
-    key,
-    displayedMemes,
-    selectedTag,
-    selectedMeme,
-    isHiddenMode,
-    initialize,
-    shuffleMemes,
-    changeTag,
-    setSelectedMeme,
-    showHiddenMemes,
-  } = useMemeStore();
+  useHydrateAtoms([
+    [memesAtom, initialMemes],
+    [allTagsAtom, allTags],
+  ]);
 
-  // 초기 데이터 설정 및 밈 로드
-  // biome-ignore lint/correctness/useExhaustiveDependencies: TODO
-  useEffect(() => {
-    initialize(initialMemes, allTags);
-  }, []);
+  // 읽기 전용 원자들
+  const key = useAtomValue(keyAtom);
+  const displayedMemes = useAtomValue(displayedMemesAtom);
+  const selectedTag = useAtomValue(selectedTagAtom);
+  const isHiddenMode = useAtomValue(isHiddenModeAtom);
+  const selectedId = useAtomValue(selectedIdAtom);
 
-  const handleMemeClick = useCallback(
-    (meme: Meme) => {
-      setSelectedMeme(meme);
-    },
-    [setSelectedMeme],
-  );
+  const selectedMeme = displayedMemes.find((meme) => meme.id === selectedId);
+
+  // 액션 원자들
+  const shuffleMemes = useSetAtom(shuffleMemesAtom);
+  const changeTag = useSetAtom(changeTagAtom);
+  const showHiddenMemes = useSetAtom(toggleHiddenMemesAtom);
+  const setSelectedMemeAction = useSetAtom(selectedIdAtom);
 
   const handleFormSuccess = useCallback(() => {
-    setSelectedMeme(null);
-  }, [setSelectedMeme]);
+    setSelectedMemeAction(null);
+  }, [setSelectedMemeAction]);
 
   const handleModalOpenChange = useCallback(
     (open: boolean) => {
       if (!open) {
-        setSelectedMeme(null);
+        setSelectedMemeAction(null);
       }
     },
-    [setSelectedMeme],
+    [setSelectedMemeAction],
   );
 
-  const isModalOpen = selectedMeme !== null;
+  const isModalOpen = selectedId !== null;
 
   return (
     <div className="flex flex-col gap-8 w-full">
@@ -99,23 +106,7 @@ export default function MemeList({
         items={displayedMemes}
         columnGutter={16}
         columnWidth={300}
-        render={({ data: meme }) => (
-          <div className="no-underline hover:-translate-y-1 block border border-white/50">
-            <button
-              type="button"
-              onClick={() => handleMemeClick(meme)}
-              className="cursor-pointer border-0 p-0 bg-transparent w-full"
-            >
-              <Image
-                width={meme.width}
-                height={meme.height}
-                src={meme.media_url}
-                alt={meme.title}
-                className="w-full"
-              />
-            </button>
-          </div>
-        )}
+        render={MemeCard}
       />
 
       <MemeModal
@@ -128,7 +119,7 @@ export default function MemeList({
             <MemeEditForm
               meme={selectedMeme}
               onSuccess={handleFormSuccess}
-              onCancel={() => setSelectedMeme(null)}
+              onCancel={() => setSelectedMemeAction(null)}
             />
           </div>
         )}
@@ -136,3 +127,25 @@ export default function MemeList({
     </div>
   );
 }
+
+const MemeCard = ({ data: meme }: { data: Meme }) => {
+  const setSelectedMemeAction = useSetAtom(selectedIdAtom);
+
+  return (
+    <div className="no-underline hover:-translate-y-1 block border border-white/50">
+      <button
+        type="button"
+        onClick={() => setSelectedMemeAction(meme.id)}
+        className="cursor-pointer border-0 p-0 bg-transparent w-full"
+      >
+        <Image
+          width={meme.width}
+          height={meme.height}
+          src={meme.media_url}
+          alt={meme.title}
+          className="w-full"
+        />
+      </button>
+    </div>
+  );
+};

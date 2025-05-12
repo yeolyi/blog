@@ -114,16 +114,38 @@ export async function getAllTags() {
   return data;
 }
 
+/**
+ * ID로 밈 데이터와 태그 정보를 조회하는 함수
+ */
+export async function getMemeById(id: string) {
+  const supabase = await createClient();
+
+  const { data: meme } = await supabase
+    .from('memes')
+    .select(
+      `
+      *,
+      meme_tags(
+        tag_id,
+        tags(id, name)
+      )
+    `,
+    )
+    .eq('id', id)
+    .single()
+    .throwOnError();
+
+  return meme;
+}
+
 export async function updateMeme({
   id,
   title,
-  description,
   tags,
   hidden,
 }: {
   id: string;
   title: string;
-  description?: string;
   tags?: string[];
   hidden?: boolean;
 }) {
@@ -140,11 +162,7 @@ export async function updateMeme({
   // 1. 밈 정보 업데이트
   await supabase
     .from('memes')
-    .update({
-      title,
-      description: description || null,
-      hidden: hidden !== undefined ? hidden : false,
-    })
+    .update({ title, hidden: hidden !== undefined ? hidden : false })
     .eq('id', id)
     .throwOnError();
 
@@ -178,12 +196,10 @@ export async function updateMeme({
     }
   }
 
-  // 5. 페이지 재검증
-  revalidatePath(`/memes/${id}`);
-  revalidatePath(`/memes/${id}/edit`);
-  revalidatePath('/memes');
+  // 5. 업데이트된 밈 데이터를 가져옴
+  const updatedMeme = await getMemeById(id);
 
-  return { success: true };
+  return { success: true, meme: updatedMeme };
 }
 
 /**
@@ -191,12 +207,10 @@ export async function updateMeme({
  */
 export async function uploadSingleMeme({
   title,
-  description,
   file,
   tags,
 }: {
   title: string;
-  description?: string;
   file: File;
   tags?: string;
 }) {
@@ -215,7 +229,6 @@ export async function uploadSingleMeme({
     // memes 테이블에 정보 저장
     const memeData = {
       title,
-      description: description || null,
       media_url: url,
       width,
       height,

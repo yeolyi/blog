@@ -1,23 +1,16 @@
 'use client';
 
-import { getIsAdmin } from '@/utils/auth';
 import { PlusCircle } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import MemeModal, { ModalTrigger } from './MemeModal';
-import MemeUploadForm from './MemeUploadForm';
+import { useState } from 'react';
+import MemeModal, { ModalTrigger } from './modals/MemeModal';
+import MemeUploadForm from './modals/MemeUploadForm';
 
-export default function Admin() {
-  const [isAdmin, setIsAdmin] = useState(false);
+interface AdminProps {
+  isAdmin: boolean;
+}
+
+export default function Admin({ isAdmin }: AdminProps) {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
-
-  useEffect(() => {
-    const checkAdmin = async () => {
-      const adminStatus = await getIsAdmin();
-      setIsAdmin(adminStatus);
-    };
-
-    checkAdmin();
-  }, []);
 
   const handleUploadSuccess = () => {
     setIsUploadOpen(false);
