@@ -146,7 +146,11 @@ function TruthTableRow({
   columns = [],
 }: TruthTableRowProps) {
   return (
-    <tr className={isActive ? 'bg-blue-500/30' : ''}>
+    <tr
+      className={
+        isActive ? (output === '1' ? 'bg-blue-500/30' : 'bg-red-500/30') : ''
+      }
+    >
       <td className="border border-[#5e5e5e] px-2 py-1 text-center whitespace-nowrap">
         {inputA}
       </td>
@@ -316,7 +320,6 @@ export function ComplexLogicGate({
 
   return (
     <div className="not-prose bg-black text-white flex flex-col gap-3 w-full">
-      {/* 진리표 섹션 - 모바일에서 가로 스크롤 가능하도록 */}
       <ScrollableTable>
         <table className="border-collapse">
           <thead className="text-sm font-semibold">
@@ -355,7 +358,7 @@ export function ComplexLogicGate({
             <TruthTableRow
               inputA="0"
               inputB="0"
-              output="0"
+              output="1"
               isActive={activeRowIndex === 0}
               columns={[
                 '1', // NOT A
@@ -369,7 +372,7 @@ export function ComplexLogicGate({
             <TruthTableRow
               inputA="0"
               inputB="1"
-              output="1"
+              output="0"
               isActive={activeRowIndex === 1}
               columns={[
                 '1', // NOT A
@@ -383,7 +386,7 @@ export function ComplexLogicGate({
             <TruthTableRow
               inputA="1"
               inputB="0"
-              output="1"
+              output="0"
               isActive={activeRowIndex === 2}
               columns={[
                 '0', // NOT A
@@ -397,7 +400,7 @@ export function ComplexLogicGate({
             <TruthTableRow
               inputA="1"
               inputB="1"
-              output="0"
+              output="1"
               isActive={activeRowIndex === 3}
               columns={[
                 '0', // NOT A

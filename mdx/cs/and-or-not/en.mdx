@@ -1,0 +1,137 @@
+export const title = 'Computers are Built on Simple Logical Decisions: AND, OR, and NOT Gates'
+export const description = 'Let\'s confirm that all boolean functions in the world can be expressed with AND, OR, and NOT gates.'
+export const ogImage = '/cs/and-or-not/og.png';
+
+import TransistorDemo from './components/TransistorDemo'
+import { TruthTableGate, NotGate, ComplexLogicGate } from './components/TruthTableGate'
+import Image from '@/app/[locale]/components/ui/Image';
+import circuit from './assets/circuit.jpg';
+import lego from './assets/lego.jpg';
+import zeroone from '../zero-and-one/assets/zeroone.png';
+import og from './assets/og.png';
+
+<Image src={zeroone} alt="zeroone" className="object-cover w-full h-[180px]"/>
+
+In the last post, we explored why computers represent the world using simple bits like 0 and 1, and how they can make logical decisions based on these bits. We also confirmed that rules like 'Bring an umbrella if it's raining and you plan to go out' can be represented with a truth table. But how can this be implemented in reality?
+
+<Image src={circuit} alt="circuit" className="object-cover w-full h-[180px]"/>
+
+For these logical rules which we defined with truth tables to actually work inside a computer, we need **electronic circuits that physically accept 0s and 1s and produce a predetermined result**. The hardware units that perform this role are called **logic gates**.
+
+<Image src={lego} alt="lego" className="object-cover w-full h-[180px]"/>
+
+Computers handle incredibly complex and diverse tasks. So, it's easy to think that the logic gates inside them would be extremely complicated. But surprisingly, all the complex logic circuits within a computer are built from **combinations of very simple basic logic gates**. Just like a large Lego masterpiece is constructed from small Lego blocks.
+
+In this post, we will explore three very simple basic logic gates: the **AND, OR, and NOT gates**. Let's see how these gates combine to implement complex truth tables!.
+
+## Then what are logic gates made of?
+
+A natural question might arise: 'If computers are made of logic gates, what are logic gates made of?'. It's like wondering what Lego blocks themselves are made of, even though you know you can build a house with them.
+
+This part is actually connected to the field of semiconductor physics. We will briefly touch upon the physical implementation in the following section.
+
+The core idea is to create **switches that control the flow of electrical signals**. As we mentioned, the 0s and 1s used by computers are represented by low and high electrical signals. The physical implementation of logic gates involves making these signals flow only when specific conditions are met.
+
+The most basic physical component acting as this switch is the **transistor**. A transistor functions like a switch that **opens** (turns on) the path for an electrical signal when a specific condition is met (e.g., a weak signal comes from elsewhere), and **blocks** (turns off) the path when the condition is not met. It acts like a faucet controlling the flow of electricity. Click the checkboxes to apply voltage to the Gate.
+
+<TransistorDemo />
+
+The most basic logical operations we briefly looked at last time, namely the **AND, OR, and NOT gates**, are created by connecting these physical switches, called transistors, in specific ways. **This process of abstract logic being implemented in the physical world** is one of the truly mysterious parts of computer science.
+
+## The AND Gate: When Both Mom AND Dad are good
+
+Now, let's look at the three representative gates: the AND, OR, and NOT gates.
+
+The result is true only when **both** conditions are true.
+
+<TruthTableGate
+  truthTable={[false, false, false, true]}
+  inputALabel="A"
+  inputBLabel="B"
+  outputLabel="A AND B"
+/>
+
+The AND gate is primarily used to determine if specific conditions are all met. For example, it can be used to check if two pieces of data are both ready before executing a command.
+
+## The OR Gate: When At Least One Parent is 'Good'
+
+The result is true if **at least one** of the two conditions is true.
+
+<TruthTableGate
+  truthTable={[false, true, true, true]}
+  inputALabel="A"
+  inputBLabel="B"
+  outputLabel="A OR B"
+/>
+
+It is used to make decisions when only one of several possible conditions needs to be satisfied. For instance, if there are emergency stop buttons at various locations on a factory machine, it can be used when pressing any one button should stop the entire system.
+
+## The NOT Gate
+
+**NOT** means 'not'. It is the logic that **inverts** the state of the input bit.
+
+<NotGate
+  inputLabel="A"
+  outputLabel="NOT A"
+/>
+
+It is used to reverse a state or to determine if a specific condition is *not* met. For example, it can be used in a circuit that turns on a stop light when a device is *not* 'operating (1)' (i.e., is 0).
+
+## Creating Any Function in the World with AND, OR, NOT
+
+In fact, with just AND, OR, and NOT gates, you can create any complex logic circuit that can be represented by a truth table. Let's look at one method.
+
+The core idea is simple. Find all input combinations where the output is true (1), create an AND gate for each of those combinations, and finally, combine the results of all these AND gates using an OR gate.
+
+This might sound a bit complicated just by reading, so let's take a closer look with an example. Let's build a gate where the **output is 1 when the two inputs are the same**, using only AND, OR, and NOT. First, let's look at the truth table:
+
+<TruthTableGate
+  truthTable={[true, false, false, true]}
+  inputALabel="A"
+  inputBLabel="B"
+  outputLabel="A == B"
+/>
+
+Now, we just need to follow three simple steps.
+
+1.  **Find all rows where the output value is 1.**
+    *   In the truth table above, the rows where the output is 1 are the first row (A=0, B=0) and the fourth row (A=1, B=1).
+
+2.  **Create an AND condition that represents each row.**
+    *   First row (A=0, B=0)
+        *   `Output is 1 when Input A is 0 AND Input B is 0`
+        *   `(Input A is 0) AND (Input B is 0)`
+        *   **(NOT A) AND (NOT B)**
+    *   Fourth row (A=1, B=1)
+        *   `Output is 1 when Input A is 1 AND Input B is 1`
+        *   **(A AND B)**
+
+3.  **Connect each of these created AND conditions using an OR gate.**
+
+The cases where the output is 1 are when 'the condition of the first row is met' **OR** 'the condition of the fourth row is met'. Therefore, we connect the two expressions created above with an OR.
+
+The final logical expression is **`((NOT A) AND (NOT B)) OR (A AND B)`**.
+
+<ComplexLogicGate
+  expression="((!A) & (!B)) | (A & B)"
+  inputALabel="A"
+  inputBLabel="B"
+/>
+
+A circuit that works exactly like the original truth table is complete!
+
+This is an important example showing that all digital circuits that perform complex calculations or decisions are ultimately made up of combinations of very basic AND, OR, and NOT gates. It's like a complex building being constructed from basic materials like bricks, cement, and wood.
+
+In this way, the truth table acts as a 'blueprint' defining the desired logical behavior, and the method just introduced shows the process of building this blueprint into an actual circuit using AND, OR, and NOT as 'basic components'.
+
+## Conclusion
+
+<Image src={og} alt="og"/>
+
+For humans, AND, OR, and NOT logic is very intuitive and easy to understand. It's also close to how we think through language. That's why we start by learning these three gates.
+
+However, for computer hardware engineers, it's a slightly different story. Computers are not beings with emotions, so 'intuitiveness' or 'ease of understanding' isn't important. Instead, what matters is how **efficient** and **simple** it is to implement them physically.
+
+Surprisingly, did you know that not only AND, OR, and NOT, but any complex logic gate in the world, can be built using only a single **NAND gate**? This is called the **completeness** or **universality** of NAND. It's like having a versatile Lego block that can be used to assemble all other shapes. NAND and NOR gates are exactly those versatile blocks.
+
+In the next post, we will delve deeper into how all logic circuits can be constructed using just a single NAND gate.
