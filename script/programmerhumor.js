@@ -1,5 +1,5 @@
-import { chromium } from 'playwright';
 import fs from 'node:fs';
+import { chromium } from 'playwright';
 
 async function openProgrammerHumor() {
   // 브라우저 실행

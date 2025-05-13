@@ -28,7 +28,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "script/crawling.mjs",
+    "script/programmerhumor.js",
     "app/[locale]/(mdx)/post/react-internal/page.mdx",
     "next.config.mjs",
     "mdx/react-internal/Lane.js",
