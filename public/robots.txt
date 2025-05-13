@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /memes
+
+Sitemap: https://www.yeolyi.com/sitemap.xml
