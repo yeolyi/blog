@@ -115,7 +115,8 @@ const curriculumDataRaw: PartType[] = [
       {
         titleKey: 'hw2Title',
         descriptionKey: 'hw2Description',
-        isPublished: false,
+        isPublished: true,
+        slug: '/cs/and-or-not',
       },
       {
         titleKey: 'hw3Title',
