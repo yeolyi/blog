@@ -31,6 +31,11 @@ const nextConfig = {
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   transpilePackages: ['shiki', '@shikijs/rehype'],
   eslint: { ignoreDuringBuilds: true },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '2mb',
+    },
+  },
 };
 
 const withMDX = createMDX({

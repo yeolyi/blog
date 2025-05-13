@@ -142,7 +142,7 @@ const MemeCard = ({ data: meme }: { data: Meme }) => {
           width={meme.width}
           height={meme.height}
           src={meme.media_url}
-          alt={meme.title}
+          alt={meme.title ?? ''}
           className="w-full"
         />
       </button>

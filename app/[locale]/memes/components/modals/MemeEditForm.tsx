@@ -41,7 +41,7 @@ export default function MemeEditForm({
     watch,
   } = useForm<FormValues>({
     defaultValues: {
-      title: meme.title,
+      title: meme.title ?? '',
       tagInput: meme.meme_tags.map((tag) => tag.tags.name).join(', '),
       hidden: meme.hidden,
     },
@@ -74,11 +74,6 @@ export default function MemeEditForm({
   };
 
   const onSubmit = async (data: FormValues) => {
-    if (!data.title.trim()) {
-      setFormError('title', { message: '제목은 필수입니다' });
-      return;
-    }
-
     try {
       const tagsList = data.tagInput
         .split(',')
@@ -118,7 +113,7 @@ export default function MemeEditForm({
 
       <div className="mb-4">
         <label htmlFor="title" className="block mb-2 font-bold text-white">
-          제목 *
+          제목
         </label>
         <input
           id="title"
@@ -126,7 +121,7 @@ export default function MemeEditForm({
           className={`w-full p-2 rounded bg-[#333] text-white border ${
             errors.title ? 'border-red-500' : 'border-[#555]'
           }`}
-          {...register('title', { required: '제목은 필수입니다' })}
+          {...register('title')}
         />
         {errors.title && (
           <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>

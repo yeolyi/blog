@@ -49,6 +49,7 @@ export const updateMemeAtom = atom(null, (get, set, updatedMeme: Meme) => {
 // 비즈니스 로직 함수들을 위한 원자들
 export const shuffleMemesAtom = atom(null, (get, set) => {
   set(memesAtom, shuffleArray(get(memesAtom)));
+  set(selectedTagAtom, undefined);
   set(keyAtom, get(keyAtom) + 1);
 });
 

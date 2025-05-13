@@ -82,13 +82,13 @@ export default function MemeUploadForm({ onCancel }: MemeUploadFormProps) {
 
       <div className="mb-4">
         <label htmlFor="title" className="block mb-2 font-bold text-white">
-          제목 *
+          제목
         </label>
         <input
           id="title"
           type="text"
           className="w-full p-2 rounded bg-[#333] text-white border border-[#555]"
-          {...register('title', { required: '제목을 입력해주세요' })}
+          {...register('title')}
         />
         {errors.title && (
           <p className="text-[#ff4d4f] mt-1">{errors.title.message}</p>
