@@ -73,7 +73,7 @@ async function crawlTopPosts(subreddit, startIndex = 0, endIndex = 100) {
     for (const post of filteredPosts) {
       results.push({
         title: post.title,
-        imageUrl: post.url,
+        imageURL: post.url,
         score: post.score,
         permalink: `https://reddit.com${post.permalink}`,
       });

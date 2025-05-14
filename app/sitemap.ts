@@ -8,7 +8,6 @@ const BASE_URL = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const postStaticParams = await generateStaticPostParams();
   const csStaticParams = await generateStaticCsParams();
-  const staticParams = [...postStaticParams, ...csStaticParams];
 
   return [
     {
@@ -35,7 +34,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'weekly',
       priority: 1,
     },
-    ...staticParams.map(({ id, locale }) => {
+    ...csStaticParams.map(({ id, locale }) => {
+      const localeUrl = locale === routing.defaultLocale ? '' : `${locale}/`;
+      return {
+        url: `${BASE_URL}/${localeUrl}cs/${id}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.8,
+      };
+    }),
+    ...postStaticParams.map(({ id, locale }) => {
       const localeUrl = locale === routing.defaultLocale ? '' : `${locale}/`;
       return {
         url: `${BASE_URL}/${localeUrl}post/${id}`,
