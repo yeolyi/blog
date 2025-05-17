@@ -1,20 +1,42 @@
-import type { ReactNode } from 'react';
+import clsx from 'clsx';
+import type { ButtonHTMLAttributes, ReactNode } from 'react';
+
+const themeMap = {
+  green: {
+    backgroundColor: 'bg-green-500',
+    color: 'text-white',
+  },
+  gray: {
+    backgroundColor: 'bg-gray-400',
+    color: 'text-white',
+  },
+};
 
 const Button = ({
+  theme,
   onClick,
+  icon,
   children,
-  className = '',
 }: {
+  theme: keyof typeof themeMap;
   onClick?: () => void;
+  icon?: ReactNode;
   children: ReactNode;
-  className?: string;
-}) => {
+} & ButtonHTMLAttributes<HTMLButtonElement>) => {
+  const { backgroundColor, color } = themeMap[theme];
+
   return (
     <button
       onClick={onClick}
-      className={`text-black h-8 bg-white border-none px-1 cursor-pointer text-md font-semibold hover:bg-black hover:text-white ${className}`}
+      className={clsx(
+        'py-2 px-4 border-none cursor-pointer hover:bg-black hover:text-white',
+        icon && 'flex items-center gap-2',
+        backgroundColor,
+        color,
+      )}
       type="button"
     >
+      {icon}
       {children}
     </button>
   );

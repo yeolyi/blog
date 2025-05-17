@@ -12,7 +12,7 @@ export default async function MemesPage() {
   ]);
 
   return (
-    <div className="mx-auto my-24 mb-[30vh] p-8 flex flex-col gap-4 w-full">
+    <div className="mx-auto my-24 mb-[30vh] flex flex-col gap-4 w-full">
       <Suspense>
         <Admin isAdmin={isAdmin} />
       </Suspense>

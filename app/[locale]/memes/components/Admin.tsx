@@ -6,8 +6,8 @@ import {
 } from '@/app/[locale]/memes/actions';
 import { PlusCircle, Upload } from 'lucide-react';
 import { useState } from 'react';
+import MemeModal, { ModalTrigger } from '../../components/ui/Modal';
 import BulkMemeUploadForm from './modals/BulkMemeUploadForm';
-import MemeModal, { ModalTrigger } from './modals/MemeModal';
 import MemeUploadForm from './modals/MemeUploadForm';
 
 interface AdminProps {
@@ -29,7 +29,7 @@ export default function Admin({ isAdmin }: AdminProps) {
   if (!isAdmin) return null;
 
   return (
-    <div className="flex gap-4 mb-4">
+    <div className="flex gap-4 mb-4 px-4">
       <ModalTrigger
         onClick={() => setIsUploadOpen(true)}
         className="text-white cursor-pointer flex items-center gap-1 bg-[#4caf50] hover:bg-[#66bb6a] py-2 px-4 rounded"

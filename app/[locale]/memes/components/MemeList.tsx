@@ -6,21 +6,18 @@ import {
   isHiddenModeAtom,
   keyAtom,
   memesAtom,
-  selectedIdAtom,
   selectedTagAtom,
   shuffleMemesAtom,
   toggleHiddenMemesAtom,
 } from '@/app/[locale]/memes/store/memeStore';
+import { Link } from '@/i18n/navigation';
 import type { Meme, Tag } from '@/types/meme';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 import { Eye, Shuffle } from 'lucide-react';
 import type { MasonryProps } from 'masonic';
 import dynamic from 'next/dynamic';
-import Image from 'next/image';
-import { type ComponentType, useCallback } from 'react';
-import MemeEditForm from './modals/MemeEditForm';
-import MemeModal from './modals/MemeModal';
+import type { ComponentType } from 'react';
 
 const Masonry: ComponentType<MasonryProps<Meme>> = dynamic(
   () => import('masonic').then((mod) => mod.Masonry),
@@ -46,34 +43,15 @@ export default function MemeList({
   const displayedMemes = useAtomValue(displayedMemesAtom);
   const selectedTag = useAtomValue(selectedTagAtom);
   const isHiddenMode = useAtomValue(isHiddenModeAtom);
-  const selectedId = useAtomValue(selectedIdAtom);
-
-  const selectedMeme = displayedMemes.find((meme) => meme.id === selectedId);
 
   // 액션 원자들
   const shuffleMemes = useSetAtom(shuffleMemesAtom);
   const changeTag = useSetAtom(changeTagAtom);
   const showHiddenMemes = useSetAtom(toggleHiddenMemesAtom);
-  const setSelectedMemeAction = useSetAtom(selectedIdAtom);
-
-  const handleFormSuccess = useCallback(() => {
-    setSelectedMemeAction(null);
-  }, [setSelectedMemeAction]);
-
-  const handleModalOpenChange = useCallback(
-    (open: boolean) => {
-      if (!open) {
-        setSelectedMemeAction(null);
-      }
-    },
-    [setSelectedMemeAction],
-  );
-
-  const isModalOpen = selectedId !== null;
 
   return (
     <div className="flex flex-col gap-8 w-full">
-      <div className="flex flex-wrap gap-3 items-center">
+      <div className="flex flex-wrap gap-3 items-center p-4">
         <button
           type="button"
           onClick={shuffleMemes}
@@ -108,44 +86,29 @@ export default function MemeList({
         columnWidth={300}
         render={MemeCard}
       />
-
-      <MemeModal
-        isOpen={isModalOpen}
-        onOpenChange={handleModalOpenChange}
-        title="밈 수정"
-      >
-        {selectedMeme && (
-          <div className="flex flex-col gap-6">
-            <MemeEditForm
-              meme={selectedMeme}
-              onSuccess={handleFormSuccess}
-              onCancel={() => setSelectedMemeAction(null)}
-            />
-          </div>
-        )}
-      </MemeModal>
     </div>
   );
 }
 
 const MemeCard = ({ data: meme }: { data: Meme }) => {
-  const setSelectedMemeAction = useSetAtom(selectedIdAtom);
-
   return (
     <div className="no-underline hover:-translate-y-1 block border border-white/50">
-      <button
-        type="button"
-        onClick={() => setSelectedMemeAction(meme.id)}
-        className="cursor-pointer border-0 p-0 bg-transparent w-full"
+      <Link
+        href={`/memes/${meme.id}`}
+        className="cursor-pointer block p-0 bg-transparent w-full"
       >
-        <Image
+        <img
           width={meme.width}
           height={meme.height}
-          src={meme.media_url}
+          src={
+            process.env.NODE_ENV === 'development'
+              ? `https://placehold.co/${meme.width}x${meme.height}`
+              : meme.media_url
+          }
           alt={meme.title ?? ''}
           className="w-full"
         />
-      </button>
+      </Link>
     </div>
   );
 };

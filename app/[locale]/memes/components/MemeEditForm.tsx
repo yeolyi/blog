@@ -1,5 +1,7 @@
 'use client';
 
+import Button from '@/app/[locale]/components/ui/Button';
+import LabelForm from '@/app/[locale]/memes/components/LabelForm';
 import {
   allTagsAtom,
   updateMemeAtom,
@@ -8,13 +10,13 @@ import type { Meme } from '@/types/meme';
 import { useAtom, useSetAtom } from 'jotai';
 import { Save, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { updateMeme } from '../../actions';
+import { FormProvider, useForm } from 'react-hook-form';
+import { updateMeme } from '../actions';
 
 interface MemeEditFormProps {
   meme: Meme;
-  onSuccess: () => void;
-  onCancel: () => void;
+  onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
 interface FormValues {
@@ -32,6 +34,14 @@ export default function MemeEditForm({
   const [allTags] = useAtom(allTagsAtom);
   const [currentTags, setCurrentTags] = useState<string[]>([]);
 
+  const formMethods = useForm<FormValues>({
+    defaultValues: {
+      title: meme.title ?? '',
+      tagInput: meme.meme_tags.map((tag) => tag.tags.name).join(', '),
+      hidden: meme.hidden,
+    },
+  });
+
   const {
     register,
     handleSubmit,
@@ -39,13 +49,7 @@ export default function MemeEditForm({
     setError: setFormError,
     setValue,
     watch,
-  } = useForm<FormValues>({
-    defaultValues: {
-      title: meme.title ?? '',
-      tagInput: meme.meme_tags.map((tag) => tag.tags.name).join(', '),
-      hidden: meme.hidden,
-    },
-  });
+  } = formMethods;
 
   const tagInput = watch('tagInput');
 
@@ -93,7 +97,7 @@ export default function MemeEditForm({
       }
 
       // UI 새로고침 없이 스토어의 상태만 업데이트
-      onSuccess();
+      onSuccess?.();
     } catch (err) {
       console.error('수정 중 오류:', err);
       setFormError('root', {
@@ -104,47 +108,18 @@ export default function MemeEditForm({
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-      {errors.root && (
-        <div className="bg-[#ffebee] text-[#c62828] p-2 rounded">
-          {errors.root.message}
-        </div>
-      )}
+    <FormProvider {...formMethods}>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-8">
+        <LabelForm title="제목" registerName="title" />
 
-      <div className="mb-4">
-        <label htmlFor="title" className="block mb-2 font-bold text-white">
-          제목
-        </label>
-        <input
-          id="title"
-          type="text"
-          className={`w-full p-2 rounded bg-[#333] text-white border ${
-            errors.title ? 'border-red-500' : 'border-[#555]'
-          }`}
-          {...register('title')}
-        />
-        {errors.title && (
-          <p className="text-red-500 text-sm mt-1">{errors.title.message}</p>
-        )}
-      </div>
+        <div className="flex gap-2 flex-col">
+          <LabelForm
+            title="태그"
+            placeholder="태그1, 태그2, 태그3"
+            registerName="tagInput"
+            autoFocus
+          />
 
-      <div className="mb-4">
-        <label htmlFor="tagInput" className="block mb-2 font-bold text-white">
-          태그 (쉼표로 구분)
-        </label>
-        <input
-          id="tagInput"
-          type="text"
-          placeholder="태그1, 태그2, 태그3"
-          className="w-full p-2 rounded bg-[#333] text-white border border-[#555]"
-          // biome-ignore lint/a11y/noAutofocus: 내가 쓸거임
-          autoFocus
-          {...register('tagInput')}
-        />
-
-        {/* 태그 목록 */}
-        <div className="mt-2">
-          <p className="text-sm text-gray-400 mb-1">기존 태그 클릭하여 추가</p>
           <div className="flex flex-wrap gap-1">
             {allTags.map((tag) => (
               <button
@@ -162,43 +137,37 @@ export default function MemeEditForm({
             ))}
           </div>
         </div>
-      </div>
 
-      <div className="mb-4">
-        <label className="flex items-center text-white">
+        <div className="flex items-center gap-2">
           <input
+            id="hidden"
             type="checkbox"
-            className="mr-2 h-4 w-4"
+            className="h-4 w-4"
             {...register('hidden')}
           />
-          <span className="font-bold">숨김</span>
-        </label>
-      </div>
+          <label htmlFor="hidden" className="flex items-center text-white">
+            숨김
+          </label>
+        </div>
 
-      <div className="flex justify-between mt-4">
-        <div className="flex gap-2">
-          <button
+        <div className="flex gap-4 justify-end">
+          <Button
+            theme="gray"
             type="button"
             onClick={onCancel}
-            className="py-2 px-4 bg-[#555] text-white border-none rounded cursor-pointer flex items-center gap-2"
+            icon={<X size={16} />}
           >
-            <X size={16} /> 취소
+            취소
+          </Button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="py-2 px-4 bg-[#4CAF50] text-white border-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            <Save size={16} /> 저장
           </button>
         </div>
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="py-2 px-4 bg-[#4CAF50] text-white border-none rounded cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
-        >
-          {isSubmitting ? (
-            '저장 중...'
-          ) : (
-            <>
-              <Save size={16} /> 저장
-            </>
-          )}
-        </button>
-      </div>
-    </form>
+      </form>
+    </FormProvider>
   );
 }

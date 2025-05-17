@@ -20,9 +20,9 @@ export default function MemeModal({
   return (
     <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40" />
+        <Dialog.Overlay className="fixed inset-0 bg-black/75" />
         <Dialog.Content
-          className="fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] max-h-[85vh] w-[90vw] max-w-[800px] rounded-md bg-[#1e1e1e] border border-[#5e5e5e] p-6 shadow-xl z-50 overflow-y-auto"
+          className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-h-[85vh] w-[90vw] max-w-[800px] bg-black p-6 overflow-y-auto"
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           {title && (

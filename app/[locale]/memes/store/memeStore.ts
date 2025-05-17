@@ -7,7 +7,6 @@ export const keyAtom = atom(0);
 export const memesAtom = atom<Meme[]>([]);
 export const allTagsAtom = atom<Tag[]>([]);
 export const selectedTagAtom = atom<string | undefined>(undefined);
-export const selectedIdAtom = atom<string | null>(null);
 export const isHiddenModeAtom = atom(false);
 
 export const displayedMemesAtom = atom<Meme[]>((get) => {
@@ -38,11 +37,6 @@ export const updateMemeAtom = atom(null, (get, set, updatedMeme: Meme) => {
     memes.map((meme) => (meme.id === updatedMeme.id ? updatedMeme : meme)),
   );
 
-  const selectedId = get(selectedIdAtom);
-  if (selectedId === updatedMeme.id) {
-    set(selectedIdAtom, updatedMeme.id);
-  }
-
   set(keyAtom, get(keyAtom) + 1);
 });
 
@@ -61,7 +55,6 @@ export const changeTagAtom = atom(null, async (get, set, tag: string) => {
     set(selectedTagAtom, tag);
   }
 
-  set(selectedIdAtom, null);
   set(isHiddenModeAtom, false);
   set(keyAtom, get(keyAtom) + 1);
 });

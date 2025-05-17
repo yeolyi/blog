@@ -1,5 +1,4 @@
 import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import { IBM_Plex_Sans_KR } from 'next/font/google';
 import Footer from './components/layout/Footer';
 import Header from './components/layout/Header';
@@ -65,8 +64,7 @@ export default async function RootLayout({
           <Header />
           <Footer />
         </NextIntlClientProvider>
-        <Analytics />
-        <SpeedInsights />
+        <Analytics debug={false} />
       </body>
     </html>
   );
