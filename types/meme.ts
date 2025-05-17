@@ -17,5 +17,4 @@ export interface Meme {
   created_at: string;
   updated_at: string;
   meme_tags: MemeTag[];
-  hidden: boolean;
 }

@@ -2,16 +2,20 @@
 
 import Button from '@/app/[locale]/components/ui/Button';
 import Form from '@/app/[locale]/components/ui/Form';
-import { getRandomMeme, updateMeme } from '@/app/[locale]/memes/actions';
+import Link from '@/app/[locale]/components/ui/Link';
+import {
+  deleteMeme,
+  getRandomMeme,
+  updateMeme,
+} from '@/app/[locale]/memes/actions';
 import type { Meme, Tag } from '@/types/meme';
-import { ChevronRight, Save } from 'lucide-react';
+import { ChevronRight, List, Trash } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 interface FormValues {
   title: string;
   tagInput: string;
-  hidden: boolean;
 }
 
 export default function MemeSwipe({
@@ -28,13 +32,12 @@ export default function MemeSwipe({
     defaultValues: {
       title: meme.title,
       tagInput: meme.meme_tags.map((tag) => tag.tags.name).join(', '),
-      hidden: meme.hidden,
     },
   });
 
   const {
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
     setError,
     reset,
   } = formMethods;
@@ -49,7 +52,6 @@ export default function MemeSwipe({
       reset({
         title: nextMeme.title,
         tagInput: nextMeme.meme_tags.map((tag) => tag.tags.name).join(', '),
-        hidden: nextMeme.hidden,
       });
     } catch (err) {
       setError('root', {
@@ -61,8 +63,18 @@ export default function MemeSwipe({
     }
   }, [reset, setError]);
 
+  const onDelete = async () => {
+    await deleteMeme(meme.id);
+    await loadNext();
+  };
+
   const onSubmit = async (data: FormValues) => {
     setLoading(true);
+    console.log(isDirty);
+    if (!isDirty) {
+      await loadNext();
+      return;
+    }
 
     try {
       const tagsList = data.tagInput
@@ -74,7 +86,6 @@ export default function MemeSwipe({
         id: meme.id,
         title: data.title,
         tags: tagsList,
-        hidden: data.hidden,
       });
 
       await loadNext();
@@ -94,7 +105,7 @@ export default function MemeSwipe({
         alt={meme.title}
         width={meme.width}
         height={meme.height}
-        className="h-[50vh] object-contain mx-auto mt-20"
+        className="w-full aspect-[4/5] max-w-xl mx-auto object-contain mt-20 border border-stone-700"
       />
 
       <Form
@@ -103,26 +114,31 @@ export default function MemeSwipe({
       >
         <Form.Text title="제목" registerName="title" />
         <Form.TagList registerName="tagInput" allTags={allTags} />
-        <Form.Checkbox label="숨김" registerName="hidden" />
 
-        <div className="flex justify-end gap-4">
-          <Button
-            theme="gray"
-            onClick={loadNext}
-            disabled={loading}
-            Icon={ChevronRight}
-          >
-            다음
-          </Button>
-          <Button
-            theme="green"
-            type="submit"
-            onClick={handleSubmit(onSubmit)}
-            disabled={isSubmitting || loading}
-            Icon={Save}
-          >
-            저장
-          </Button>
+        <div className="flex justify-between gap-4">
+          <Link theme="gray" href="/memes/" Icon={List} locale="ko">
+            목록
+          </Link>
+          <div className="flex gap-4">
+            <Button
+              theme="red"
+              type="button"
+              onClick={() => confirm('삭제하시겠습니까?') && onDelete()}
+              disabled={loading}
+              Icon={Trash}
+            >
+              삭제
+            </Button>
+            <Button
+              theme="gray"
+              type="button"
+              onClick={loadNext}
+              disabled={loading}
+              Icon={ChevronRight}
+            >
+              다음
+            </Button>
+          </div>
         </div>
       </Form>
     </FormProvider>

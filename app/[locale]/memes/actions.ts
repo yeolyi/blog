@@ -120,12 +120,10 @@ export async function updateMeme({
   id,
   title,
   tags,
-  hidden,
 }: {
   id: string;
   title: string;
   tags?: string[];
-  hidden?: boolean;
 }) {
   const supabase = await createClient();
 
@@ -138,11 +136,7 @@ export async function updateMeme({
   const oldTagIds = memeTags?.map((tag) => tag.tag_id) || [];
 
   // 1. 밈 정보 업데이트
-  await supabase
-    .from('memes')
-    .update({ title, hidden: hidden !== undefined ? hidden : false })
-    .eq('id', id)
-    .throwOnError();
+  await supabase.from('memes').update({ title }).eq('id', id).throwOnError();
 
   // 2. 기존 태그 관계 삭제 (태그 자체는 삭제하지 않음)
   await supabase.from('meme_tags').delete().eq('meme_id', id).throwOnError();
