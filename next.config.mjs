@@ -36,14 +36,6 @@ const nextConfig = {
       bodySizeLimit: '2mb',
     },
   },
-  serverExternalPackages: ['puppeteer-core', '@sparticuz/chromium'],
-  // https://stackoverflow.com/a/79029968/30126918
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.externals.push('puppeteer-core', '@sparticuz/chromium');
-    }
-    return config;
-  },
 };
 
 const withMDX = createMDX({
