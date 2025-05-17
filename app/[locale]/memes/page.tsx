@@ -9,6 +9,8 @@ import { Masonry } from 'masonic';
 import { useState } from 'react';
 import useSWR from 'swr';
 
+export const maxDuration = 60;
+
 export default function MemeViewer() {
   const { data: allTags } = useSWR('/api/tags', getAllTags);
   const [selectedTag, setSelectedTag] = useState<Tag | null>(null);
