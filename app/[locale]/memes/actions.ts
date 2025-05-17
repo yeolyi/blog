@@ -423,6 +423,7 @@ export async function getClipEmbeddingFromUrl(
     extractor = await pipeline(
       'image-feature-extraction',
       'Xenova/clip-vit-large-patch14',
+      { cache_dir: '/tmp/.cache' },
     );
   }
 
