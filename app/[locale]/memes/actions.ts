@@ -10,6 +10,7 @@ import {
   pipeline,
 } from '@xenova/transformers';
 import probe from 'probe-image-size';
+import puppeteer from 'puppeteer';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function deleteMeme(id: string) {
@@ -525,38 +526,76 @@ export async function getMemesByTag(tagId: string): Promise<Meme[]> {
 
 export async function crawlInstagramImage(url: string) {
   try {
-    const { chromium } = await import('playwright');
-    const browser = await chromium.launch();
-    const context = await browser.newContext();
-    const page = await context.newPage();
+    const install = require('puppeteer/src/node/install.js').downloadBrowser;
+    await install();
 
-    await page.goto(url, { waitUntil: 'networkidle' });
+    const browser = await puppeteer.launch({
+      args: [
+        '--use-gl=angle',
+        '--use-angle=swiftshader',
+        '--single-process',
+        '--no-sandbox',
+      ],
+      headless: true,
+    });
 
-    // 인스타그램 첫 번째 이미지 선택자 (실제로는 다를 수 있음)
-    const imageSelector = 'img';
-    await page.waitForSelector(imageSelector, { timeout: 10000 });
+    const page = await browser.newPage();
 
-    const imageUrl = await page.getAttribute(imageSelector, 'src');
+    try {
+      // 페이지로 이동
+      await page.goto(url, { waitUntil: 'networkidle0', timeout: 30000 });
 
-    await browser.close();
+      // 이미지 선택자 대기
+      await page.waitForSelector('img', { timeout: 15000 });
 
-    if (!imageUrl) {
-      return {
-        type: 'no_image_found' as const,
-        error: '이미지 URL을 찾을 수 없습니다',
-      };
+      // 이미지 URL 가져오기
+      const imageUrl = await page.evaluate(() => {
+        // 모든 이미지 태그를 찾고 가장 큰 이미지 선택
+        const images = Array.from(document.querySelectorAll('img'));
+
+        // 너비 또는 높이 속성이 있는 이미지 중 가장 큰 이미지 선택
+        const largestImage =
+          images
+            .filter((img) => {
+              const width =
+                img.getAttribute('width') || img.style.width || img.width;
+              const height =
+                img.getAttribute('height') || img.style.height || img.height;
+              return width && height; // 크기 정보가 있는 이미지만 필터링
+            })
+            .sort((a, b) => {
+              const aSize = (a.width || 0) * (a.height || 0);
+              const bSize = (b.width || 0) * (b.height || 0);
+              return bSize - aSize; // 내림차순 정렬
+            })[0] || images[0]; // 정렬된 첫 번째 이미지 또는 첫 번째 이미지
+
+        return largestImage?.src;
+      });
+
+      await browser.close();
+
+      if (!imageUrl) {
+        return {
+          type: 'no_image_found' as const,
+          error: '이미지 URL을 찾을 수 없습니다',
+        };
+      }
+
+      // 밈 업로드
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+
+      const urlParts = imageUrl.split('/');
+      const fileName = urlParts[urlParts.length - 1];
+      const file = new File([blob], fileName, { type: blob.type });
+
+      return await uploadSingleMeme({ file, title: url });
+    } catch (innerError) {
+      await browser.close();
+      throw innerError;
     }
-
-    // 밈 업로드
-    const response = await fetch(imageUrl);
-    const blob = await response.blob();
-
-    const urlParts = imageUrl.split('/');
-    const fileName = urlParts[urlParts.length - 1];
-    const file = new File([blob], fileName, { type: blob.type });
-
-    return await uploadSingleMeme({ file, title: url });
   } catch (error) {
+    console.error('인스타그램 크롤링 오류:', error);
     return {
       type: 'upload_failed' as const,
       error: getErrMessage(error),
