@@ -36,6 +36,7 @@ const nextConfig = {
       bodySizeLimit: '2mb',
     },
   },
+  serverExternalPackages: ['puppeteer-core', '@sparticuz/chromium'],
 };
 
 const withMDX = createMDX({
