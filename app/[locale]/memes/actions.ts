@@ -199,13 +199,16 @@ export async function uploadSingleMeme({
   try {
     // 임베딩 벡터 생성
     const embedding = await getClipEmbeddingFromUrl(tempUrl);
+    console.log('embedding', embedding.length);
 
     // 유사한 밈 검색 (threshold 0.1 이하는 매우 유사한 이미지로 간주)
-    const { data: matches } = await supabase.rpc('match_similar_meme', {
+    const { data: matches, error } = await supabase.rpc('match_similar_meme', {
       query_embedding: embedding,
       match_threshold: 0.1,
       match_count: 5,
     });
+
+    console.log('matches', matches, error);
 
     // 유사한 이미지가 발견된 경우
     if (matches && matches.length > 0) {
@@ -589,6 +592,8 @@ export async function crawlInstagramImage(url: string) {
           error: '이미지 URL을 찾을 수 없습니다',
         };
       }
+
+      console.log('imageUrl', imageUrl);
 
       // 밈 업로드
       const response = await fetch(imageUrl);
