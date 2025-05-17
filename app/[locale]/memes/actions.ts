@@ -5,12 +5,14 @@ import { uploadFileToSupabase } from '@/actions/supabase';
 import type { Meme } from '@/types/meme';
 import { getErrMessage } from '@/utils/string';
 import { createClient } from '@/utils/supabase/server';
+import chromium from '@sparticuz/chromium';
 import {
   type ImageFeatureExtractionPipeline,
   pipeline,
 } from '@xenova/transformers';
 import probe from 'probe-image-size';
-import puppeteer from 'puppeteer';
+import { executablePath } from 'puppeteer';
+import puppeteer from 'puppeteer-core';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function deleteMeme(id: string) {
@@ -526,18 +528,31 @@ export async function getMemesByTag(tagId: string): Promise<Meme[]> {
 
 export async function crawlInstagramImage(url: string) {
   try {
-    const install = require('puppeteer/src/node/install.js').downloadBrowser;
-    await install();
+    chromium.setGraphicsMode = false;
 
-    const browser = await puppeteer.launch({
-      args: [
-        '--use-gl=angle',
-        '--use-angle=swiftshader',
-        '--single-process',
-        '--no-sandbox',
-      ],
-      headless: true,
-    });
+    const browser = await puppeteer.launch(
+      process.env.NODE_ENV === 'production'
+        ? {
+            args: puppeteer.defaultArgs({
+              args: chromium.args,
+              headless: 'shell',
+            }),
+            defaultViewport: {
+              deviceScaleFactor: 1,
+              hasTouch: false,
+              height: 1080,
+              isLandscape: true,
+              isMobile: false,
+              width: 1920,
+            },
+            executablePath: await chromium.executablePath(),
+            headless: 'shell',
+          }
+        : {
+            headless: true,
+            executablePath: executablePath(),
+          },
+    );
 
     const page = await browser.newPage();
 
