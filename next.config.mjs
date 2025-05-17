@@ -36,6 +36,7 @@ const nextConfig = {
       bodySizeLimit: '2mb',
     },
   },
+  serverExternalPackages: ['@xenova/transformers'],
 };
 
 const withMDX = createMDX({
