@@ -528,6 +528,7 @@ export async function getMemesByTag(tagId: string): Promise<Meme[]> {
 const remoteExecutablePath =
   'https://github.com/Sparticuz/chromium/releases/download/v133.0.0/chromium-v133.0.0-pack.tar';
 
+chromium.setGraphicsMode = false;
 let browser: Browser | undefined;
 
 async function getBrowser() {
@@ -536,7 +537,7 @@ async function getBrowser() {
   browser = await puppeteerCore.launch({
     args: chromium.args,
     executablePath: await chromium.executablePath(remoteExecutablePath),
-    headless: true,
+    headless: 'shell',
   });
 
   return browser;
