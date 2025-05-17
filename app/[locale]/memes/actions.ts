@@ -2,6 +2,7 @@
 
 import { connectMemeToTag } from '@/actions/meme';
 import { uploadFileToSupabase } from '@/actions/supabase';
+import type { Meme } from '@/types/meme';
 import { createClient } from '@/utils/supabase/server';
 import {
   type ImageFeatureExtractionPipeline,
@@ -10,33 +11,6 @@ import {
 import { revalidatePath } from 'next/cache';
 import probe from 'probe-image-size';
 import { v4 as uuidv4 } from 'uuid';
-
-export async function getMemes() {
-  const supabase = await createClient();
-
-  const query = supabase
-    .from('memes')
-    .select(
-      `
-      *,
-      meme_tags(
-        tag_id,
-        tags(id, name)
-      )
-    `,
-    )
-    .limit(10000); // 기본값이 1000임
-
-  // 항상 모든 데이터 가져오기 (페이지네이션은 프론트엔드에서 처리)
-  const { data, error } = await query;
-
-  if (error) {
-    console.error('밈 불러오기 오류:', error);
-    throw new Error('밈을 불러오는 중 오류가 발생했습니다');
-  }
-
-  return data;
-}
 
 export async function deleteMeme(id: string) {
   const supabase = await createClient();
@@ -491,4 +465,49 @@ export async function checkAllSimilarMemes() {
   }
 
   return { done: true };
+}
+
+// 랜덤 밈 가져오기
+export async function getRandomMeme(): Promise<Meme> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.rpc('get_random_meme');
+
+  if (error) {
+    console.error('랜덤 밈 가져오기 오류:', error);
+    throw new Error('밈을 가져오는 중 오류가 발생했습니다');
+  }
+
+  console.log(data);
+
+  return data;
+}
+
+// 태그 ID로 밈 목록 조회
+export async function getMemesByTag(tagId: string): Promise<Meme[]> {
+  const supabase = await createClient();
+
+  // 태그 ID에 해당하는 밈 조회
+  const { data, error } = await supabase
+    .from('meme_tags')
+    .select(
+      `
+      meme_id,
+      memes(*)
+    `,
+    )
+    .eq('tag_id', tagId);
+
+  if (error) {
+    console.error('태그별 밈 조회 오류:', error);
+    throw new Error('밈을 불러오는 중 오류가 발생했습니다');
+  }
+
+  // 결과 데이터 형식 변환
+  const memes = data
+    .filter((item) => item.memes) // null 체크
+    .map((item) => item.memes);
+
+  // @ts-expect-error 고쳐야됨
+  return memes;
 }

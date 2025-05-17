@@ -50,7 +50,11 @@ export default async function RootLayout({
   setRequestLocale(locale);
 
   return (
-    <html lang={locale} className={`${ibmPlexSans.variable}`}>
+    <html
+      lang={locale}
+      className={`${ibmPlexSans.variable}`}
+      style={{ scrollbarGutter: 'stable both-edges' }}
+    >
       <head>
         <link
           rel="stylesheet"

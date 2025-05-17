@@ -54,7 +54,10 @@ export default function BulkMemeUploadForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+    <form
+      onSubmit={handleSubmit}
+      className="flex flex-col gap-4 max-w-2xl mx-auto my-auto h-full"
+    >
       {error && (
         <div className="bg-[#ffebee] text-[#c62828] p-4 rounded mb-4">
           <strong>오류:</strong> {error}

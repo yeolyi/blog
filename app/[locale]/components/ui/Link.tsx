@@ -1,33 +1,37 @@
 import { type Theme, themeMap } from '@/app/[locale]/components/ui/theme';
+import { Link as _Link } from '@/i18n/navigation';
 import clsx from 'clsx';
 import type { LucideProps } from 'lucide-react';
-import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import type { Locale } from 'next-intl';
+import type { LinkProps } from 'next/link';
+import type { ReactNode } from 'react';
 
-const Button = ({
+const Link = ({
   theme,
-  onClick,
+  href,
   children,
   Icon,
   ...props
 }: {
+  locale: Locale;
   theme: Theme;
-  onClick?: () => void;
+  href: string;
   Icon: (props: LucideProps) => ReactNode;
   children: ReactNode;
-} & ButtonHTMLAttributes<HTMLButtonElement>) => {
+} & LinkProps) => {
   return (
-    <button
-      onClick={onClick}
+    <_Link
+      href={href}
       className={clsx(
-        'flex items-center gap-2 px-4 py-2 cursor-pointer hover:opacity-80',
+        'flex items-center gap-2 px-4 py-2 cursor-pointer hover:opacity-80 w-fit',
         themeMap[theme],
       )}
       {...props}
     >
       <Icon size={16} />
       {children}
-    </button>
+    </_Link>
   );
 };
 
-export default Button;
+export default Link;

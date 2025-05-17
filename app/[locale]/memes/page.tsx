@@ -1,28 +1,60 @@
-import Admin from '@/app/[locale]/memes/components/Admin';
-import MemeList from '@/app/[locale]/memes/components/MemeList';
-import { getIsAdmin } from '@/utils/auth';
-import { Suspense } from 'react';
-import { getAllTags, getMemes } from './actions';
+'use client';
+import { TagContainer, TagItem } from '@/app/[locale]/components/ui/Form';
+import { getAllTags, getMemesByTag } from '@/app/[locale]/memes/actions';
+import { Link } from '@/i18n/navigation';
+import type { Meme, Tag } from '@/types/meme';
+import { Masonry } from 'masonic';
+import { useState } from 'react';
+import useSWR from 'swr';
 
-export default async function MemesPage() {
-  const [memesResult, tags, isAdmin] = await Promise.all([
-    getMemes(),
-    getAllTags(),
-    getIsAdmin(),
-  ]);
+export default function MemeViewer() {
+  const { data: allTags } = useSWR('/api/tags', getAllTags);
+  const [selectedTag, setSelectedTag] = useState<Tag | null>(null);
+  const { data: memes } = useSWR(
+    selectedTag ? selectedTag.id : null,
+    getMemesByTag,
+  );
 
   return (
-    <div className="mx-auto my-24 mb-[30vh] p-8 flex flex-col gap-4 w-full">
-      <Suspense>
-        <Admin isAdmin={isAdmin} />
-      </Suspense>
-      <Suspense
-        fallback={
-          <div className="text-xl font-medium text-[#5e5e5e]">로딩 중...</div>
-        }
-      >
-        <MemeList memes={memesResult} allTags={tags} />
-      </Suspense>
+    <div className="flex flex-col gap-4 mt-20 px-4 max-w-2xl mx-auto">
+      <TagContainer>
+        {allTags?.map((tag) => (
+          <TagItem
+            key={tag.id}
+            tag={tag}
+            onClickTag={() => setSelectedTag(tag)}
+            isSelected={selectedTag?.id === tag.id}
+          />
+        ))}
+      </TagContainer>
+
+      {memes && (
+        <Masonry
+          items={memes}
+          itemKey={(item) => item.id}
+          columnGutter={16}
+          columnWidth={300}
+          render={MemeCard}
+        />
+      )}
     </div>
   );
 }
+
+const MemeCard = ({ data: meme }: { data: Meme }) => {
+  return (
+    <Link
+      locale="ko"
+      href={`/memes/random/${meme.id}`}
+      className="flex flex-col bg-stone-800"
+    >
+      <img
+        src={meme.media_url}
+        alt={meme.title}
+        width={meme.width}
+        height={meme.height}
+      />
+      <p className="text-white p-1">{meme.title}</p>
+    </Link>
+  );
+};
