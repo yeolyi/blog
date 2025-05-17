@@ -40,10 +40,9 @@ export default function BulkMemeUploadForm({
       const result = await uploadMultipleMemes(memes);
 
       if (result.success) {
-        // 성공시 바로 모달 닫기
         onSuccess();
       } else {
-        setError(result.message || '업로드 실패');
+        setError('업로드 실패');
       }
     } catch (err) {
       const errorMessage =

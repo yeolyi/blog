@@ -1,5 +1,9 @@
 'use client';
 
+import {
+  checkAllSimilarMemes,
+  updateMissingEmbeddings,
+} from '@/app/[locale]/memes/actions';
 import { PlusCircle, Upload } from 'lucide-react';
 import { useState } from 'react';
 import BulkMemeUploadForm from './modals/BulkMemeUploadForm';
@@ -39,6 +43,22 @@ export default function Admin({ isAdmin }: AdminProps) {
       >
         <Upload size={16} /> 일괄 업로드
       </ModalTrigger>
+
+      <button
+        onClick={updateMissingEmbeddings}
+        type="button"
+        className="text-white cursor-pointer flex items-center gap-1 bg-[#2196f3] hover:bg-[#42a5f5] py-2 px-4 rounded"
+      >
+        임베딩 업데이트
+      </button>
+
+      <button
+        onClick={checkAllSimilarMemes}
+        type="button"
+        className="text-white cursor-pointer flex items-center gap-1 bg-[#2196f3] hover:bg-[#42a5f5] py-2 px-4 rounded"
+      >
+        모든 밈 비교
+      </button>
 
       <MemeModal
         isOpen={isUploadOpen}

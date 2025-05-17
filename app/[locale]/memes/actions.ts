@@ -3,6 +3,10 @@
 import { connectMemeToTag } from '@/actions/meme';
 import { uploadFileToSupabase } from '@/actions/supabase';
 import { createClient } from '@/utils/supabase/server';
+import {
+  type ImageFeatureExtractionPipeline,
+  pipeline,
+} from '@xenova/transformers';
 import { revalidatePath } from 'next/cache';
 import probe from 'probe-image-size';
 import { v4 as uuidv4 } from 'uuid';
@@ -376,10 +380,115 @@ export async function uploadMultipleMemes(
     });
   }
 
-  return {
-    success: successCount > 0,
-    succeeded,
-    failed,
-    message: `${successCount}/${memes.length} 밈이 성공적으로 업로드됨`,
-  };
+  console.log(
+    JSON.stringify(
+      failed.map((item) => ({
+        title: item.title,
+        imageURL: item.imageURL,
+      })),
+    ),
+    null,
+    2,
+  );
+
+  return { success: failed.length === 0 };
+}
+
+export async function updateMissingEmbeddings() {
+  const supabase = await createClient();
+
+  // 1. 임베딩이 없는 밈만 가져오기
+  const { data: memes } = await supabase
+    .from('memes')
+    .select('id, media_url')
+    .is('embedding', null)
+    .throwOnError();
+
+  const results: { id: string; status: string }[] = [];
+
+  for (const meme of memes) {
+    try {
+      const embedding = await getClipEmbeddingFromUrl(meme.media_url);
+
+      await supabase
+        .from('memes')
+        .update({ embedding: embedding })
+        .eq('id', meme.id)
+        .throwOnError();
+
+      console.log(`[일괄 업로드] 업데이트 완료: ${meme.id}`);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  return results;
+}
+
+let extractor: ImageFeatureExtractionPipeline | null = null;
+
+export async function getClipEmbeddingFromUrl(
+  imageUrl: string,
+): Promise<number[]> {
+  if (!extractor) {
+    extractor = await pipeline(
+      'image-feature-extraction',
+      'Xenova/clip-vit-large-patch14',
+    );
+  }
+
+  const output = await extractor(imageUrl);
+  const outputArr = Array.from(output.data);
+  const norm = Math.sqrt(outputArr.reduce((sum, x) => sum + x * x, 0));
+  return outputArr.map((x) => x / norm);
+}
+
+export async function checkAllSimilarMemes() {
+  const supabase = await createClient();
+
+  // 1. 모든 임베딩 가져오기
+  const { data: memes, error } = await supabase
+    .from('memes')
+    .select('id, media_url, embedding')
+    .not('embedding', 'is', null);
+
+  if (error) throw new Error(`❌ 임베딩 불러오기 실패: ${error.message}`);
+
+  const seenPairs = new Set<string>(); // 중복 쌍 방지용
+
+  for (const meme of memes) {
+    const { id, embedding } = meme;
+
+    // 2. 자기 자신 제외하고 유사한 밈 찾기
+    const { data: matches, error: matchError } = await supabase.rpc(
+      'match_similar_meme',
+      {
+        query_embedding: embedding,
+        match_threshold: 0.1,
+        match_count: 5, // 여러 개 찾되 자기 자신은 제거
+      },
+    );
+
+    if (matchError) {
+      console.error(`❌ ${id} 비교 중 오류:`, matchError);
+      continue;
+    }
+
+    for (const match of matches) {
+      if (match.id === id) continue; // 자기 자신 제외
+
+      // 중복 비교 방지 (a-b, b-a 모두 피함)
+      const key = [id, match.id].sort().join('-');
+      if (seenPairs.has(key)) continue;
+      seenPairs.add(key);
+
+      console.log(`🔁 유사한 밈 발견:
+  - ${id} (${meme.media_url})
+  - ${match.id} (${match.media_url})
+  - 거리: ${match.distance.toFixed(4)}
+`);
+    }
+  }
+
+  return { done: true };
 }
