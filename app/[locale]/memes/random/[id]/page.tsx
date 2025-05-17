@@ -1,5 +1,5 @@
-import MemeSwipe from '@/app/[locale]/memes/MemeSwipe';
 import { getAllTags, getMemeById } from '@/app/[locale]/memes/actions';
+import MemeSwipe from '@/app/[locale]/memes/components/MemeSwipe';
 
 export default async function MemesPage({
   params,

@@ -47,3 +47,9 @@ export const selectJSONFromFile = (): Promise<string> => {
     input.remove();
   });
 };
+
+export const getErrMessage = (error: unknown): string => {
+  if (typeof error === 'string') return error;
+  if (error instanceof Error) return error.message;
+  return `알 수 없는 에러: ${String(error)}`;
+};

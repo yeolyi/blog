@@ -70,7 +70,7 @@ export default function MemeSwipe({
 
   const onSubmit = async (data: FormValues) => {
     setLoading(true);
-    console.log(isDirty);
+
     if (!isDirty) {
       await loadNext();
       return;

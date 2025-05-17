@@ -3,12 +3,12 @@
 import { connectMemeToTag } from '@/actions/meme';
 import { uploadFileToSupabase } from '@/actions/supabase';
 import type { Meme } from '@/types/meme';
+import { getErrMessage } from '@/utils/string';
 import { createClient } from '@/utils/supabase/server';
 import {
   type ImageFeatureExtractionPipeline,
   pipeline,
 } from '@xenova/transformers';
-import { revalidatePath } from 'next/cache';
 import probe from 'probe-image-size';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -69,9 +69,6 @@ export async function deleteMeme(id: string) {
     console.error('스토리지 파일 경로 처리 오류:', err);
     // URL 처리 오류는 치명적이지 않으므로 무시
   }
-
-  // 페이지 재검증
-  revalidatePath('/private/memes');
 
   return { success: true };
 }
@@ -174,65 +171,88 @@ export async function updateMeme({
   return { success: true, meme: updatedMeme };
 }
 
+// match_similar_meme RPC 함수의 반환 타입 정의
+interface SimilarMemeMatch {
+  id: string;
+  title: string;
+  media_url: string;
+  distance: number;
+}
+
 /**
  * 단일 밈 업로드를 처리하는 서버 액션
  */
 export async function uploadSingleMeme({
   title,
   file,
-  tags,
 }: {
   title: string;
   file: File;
-  tags?: string;
 }) {
-  try {
-    const supabase = await createClient();
+  const supabase = await createClient();
 
-    // 파일 업로드
-    const fileExt = file.name.split('.').pop();
+  // 파일 업로드 전에 임시 URL 생성해서 유사도 검사
+  const tempUrl = URL.createObjectURL(file);
+
+  try {
+    // 임베딩 벡터 생성
+    const embedding = await getClipEmbeddingFromUrl(tempUrl);
+
+    // 유사한 밈 검색 (threshold 0.1 이하는 매우 유사한 이미지로 간주)
+    const { data: matches } = await supabase.rpc('match_similar_meme', {
+      query_embedding: embedding,
+      match_threshold: 0.1,
+      match_count: 5,
+    });
+
+    // 유사한 이미지가 발견된 경우
+    if (matches && matches.length > 0) {
+      console.log(`유사한 밈 발견: ${matches.length}개`);
+
+      // URL 객체 해제
+      URL.revokeObjectURL(tempUrl);
+
+      // 가장 유사한 이미지 정보 반환
+      return {
+        type: 'similar_meme_found' as const,
+        similarMemes: (matches as SimilarMemeMatch[]).map((m) => m.id),
+        error: '이미 유사한 밈이 등록되어 있습니다.',
+      };
+    }
+
+    console.log('유사한 밈 없음, 업로드 진행');
+
+    const fileExt = file.type.split('/')[1];
     const fileName = `${uuidv4()}.${fileExt}`;
     const url = await uploadFileToSupabase(fileName, file);
 
-    // TODO: 업로드하고 다시 다운로드받아서 보는게 맞나...?
+    // 이미지 크기 얻기
     const { width, height } = await probe(url);
-
-    // memes 테이블에 정보 저장
-    const memeData = {
-      title,
-      media_url: url,
-      width,
-      height,
-    };
 
     const { data: meme } = await supabase
       .from('memes')
-      .insert([memeData])
+      .insert([
+        {
+          title,
+          media_url: url,
+          width,
+          height,
+          embedding,
+        },
+      ])
       .select()
       .single()
       .throwOnError();
 
-    // 태그 처리
-    if (tags) {
-      const tagNames = tags
-        .split(',')
-        .map((tag) => tag.trim())
-        .filter((tag) => tag);
-
-      if (tagNames.length > 0) {
-        for (const tagName of tagNames) {
-          await connectMemeToTag(meme.id, tagName);
-        }
-      }
-    }
-
-    return { success: true, meme };
+    return { type: 'success' as const, meme };
   } catch (error) {
-    console.error('밈 업로드 오류:', error);
     return {
-      success: false,
-      error: error instanceof Error ? error.message : String(error),
+      type: 'upload_failed' as const,
+      error: getErrMessage(error),
     };
+  } finally {
+    // URL 객체 해제
+    URL.revokeObjectURL(tempUrl);
   }
 }
 
@@ -287,11 +307,10 @@ export async function uploadMultipleMemes(
         const result = await uploadSingleMeme({
           title: meme.title,
           file,
-          tags: meme.tags,
         });
 
         // uploadSingleMeme의 반환값에서 success 확인
-        if (result.success) {
+        if (result.type === 'success') {
           console.log(`[일괄 업로드] 항목 업로드 성공: ${meme.title}`);
           return {
             title: meme.title,
@@ -472,8 +491,6 @@ export async function getRandomMeme(): Promise<Meme> {
     throw new Error('밈을 가져오는 중 오류가 발생했습니다');
   }
 
-  console.log(data);
-
   return data;
 }
 
@@ -504,4 +521,45 @@ export async function getMemesByTag(tagId: string): Promise<Meme[]> {
 
   // @ts-expect-error 고쳐야됨
   return memes;
+}
+
+export async function crawlInstagramImage(url: string) {
+  try {
+    const { chromium } = await import('playwright');
+    const browser = await chromium.launch();
+    const context = await browser.newContext();
+    const page = await context.newPage();
+
+    await page.goto(url, { waitUntil: 'networkidle' });
+
+    // 인스타그램 첫 번째 이미지 선택자 (실제로는 다를 수 있음)
+    const imageSelector = 'img';
+    await page.waitForSelector(imageSelector, { timeout: 10000 });
+
+    const imageUrl = await page.getAttribute(imageSelector, 'src');
+
+    await browser.close();
+
+    if (!imageUrl) {
+      return {
+        type: 'no_image_found' as const,
+        error: '이미지 URL을 찾을 수 없습니다',
+      };
+    }
+
+    // 밈 업로드
+    const response = await fetch(imageUrl);
+    const blob = await response.blob();
+
+    const urlParts = imageUrl.split('/');
+    const fileName = urlParts[urlParts.length - 1];
+    const file = new File([blob], fileName, { type: blob.type });
+
+    return await uploadSingleMeme({ file, title: url });
+  } catch (error) {
+    return {
+      type: 'upload_failed' as const,
+      error: getErrMessage(error),
+    };
+  }
 }

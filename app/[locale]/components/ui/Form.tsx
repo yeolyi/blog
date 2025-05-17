@@ -171,8 +171,10 @@ const Form = ({
 
   return (
     <form {...props} className={clsx('flex flex-col gap-8', props.className)}>
-      <p>{errors.root?.message}</p>
       {children}
+      {errors.root?.message && (
+        <p className="text-red-500 text-sm">{errors.root?.message}</p>
+      )}
     </form>
   );
 };

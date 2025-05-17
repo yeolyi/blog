@@ -1,6 +1,8 @@
 'use client';
+
 import { TagContainer, TagItem } from '@/app/[locale]/components/ui/Form';
 import { getAllTags, getMemesByTag } from '@/app/[locale]/memes/actions';
+import ImportMeme from '@/app/[locale]/memes/components/ImportMeme';
 import { Link } from '@/i18n/navigation';
 import type { Meme, Tag } from '@/types/meme';
 import { Masonry } from 'masonic';
@@ -16,7 +18,9 @@ export default function MemeViewer() {
   );
 
   return (
-    <div className="flex flex-col gap-4 mt-20 px-4 max-w-2xl mx-auto">
+    <div className="flex flex-col gap-8 mt-20 px-4 max-w-2xl mx-auto">
+      <ImportMeme />
+
       <TagContainer>
         {allTags?.map((tag) => (
           <TagItem
@@ -30,6 +34,7 @@ export default function MemeViewer() {
 
       {memes && (
         <Masonry
+          key={selectedTag?.id ?? '$none$'}
           items={memes}
           itemKey={(item) => item.id}
           columnGutter={16}
