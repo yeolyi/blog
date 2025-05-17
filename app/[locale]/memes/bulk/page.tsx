@@ -3,15 +3,7 @@
 import { uploadMultipleMemes } from '@/app/[locale]/memes/actions';
 import { type FormEvent, useState } from 'react';
 
-interface BulkMemeUploadFormProps {
-  onSuccess: () => void;
-  onCancel: () => void;
-}
-
-export default function BulkMemeUploadForm({
-  onSuccess,
-  onCancel,
-}: BulkMemeUploadFormProps) {
+export default function BulkMemeUploadForm() {
   const [jsonText, setJsonText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -37,13 +29,7 @@ export default function BulkMemeUploadForm({
       }
 
       // 서버 액션 호출
-      const result = await uploadMultipleMemes(memes);
-
-      if (result.success) {
-        onSuccess();
-      } else {
-        setError('업로드 실패');
-      }
+      await uploadMultipleMemes(memes);
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : '유효하지 않은 JSON 형식';
@@ -84,14 +70,6 @@ export default function BulkMemeUploadForm({
       </div>
 
       <div className="flex justify-between mt-4">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="py-2 px-4 bg-[#555] text-white border-none rounded cursor-pointer flex items-center gap-2"
-          disabled={isLoading}
-        >
-          취소
-        </button>
         <button
           type="submit"
           disabled={isLoading}
