@@ -1,3 +1,4 @@
+import { getErrMessage } from '@/utils/string';
 import chromium from '@sparticuz/chromium';
 import { delay } from 'es-toolkit';
 import puppeteer, { type Viewport, type Browser, type Page } from 'puppeteer';
@@ -138,70 +139,45 @@ export async function getInstagramImageList(url: string) {
   return images;
 }
 
-async function resolveRedditShortlink(shortUrl: string) {
-  const response = await fetch(shortUrl, {
-    method: 'GET',
-    headers: {
-      'User-Agent': 'Mozilla/5.0',
-    },
-    redirect: 'manual', // 자동 리디렉션 끄기
-  });
-
-  const text = await response.text();
-  console.log(text);
-  const match = text.match(/<a href="([^"]+)">Moved Permanently<\/a>/);
-
-  if (match?.[1]) {
-    const redirectedUrl = match[1].replace(/&amp;/g, '&'); // HTML escape 처리
-    return redirectedUrl.split('?')[0];
+async function extractPostIdFromUrl(url: string) {
+  const match = url.match(/comments\/([^/]+)/);
+  if (!match) {
+    throw new Error('올바른 Reddit 게시물 URL이 아닙니다.');
   }
-
-  throw new Error('리디렉션 URL을 찾을 수 없습니다.');
+  return match[1]; // post_id
 }
 
-async function getRedditImages(_postUrl: string) {
-  let postUrl = _postUrl;
-  if (!postUrl.endsWith('/')) postUrl += '/';
-  const jsonUrl = `${postUrl}.json`;
-
-  const response = await fetch(jsonUrl, {
-    headers: { 'User-Agent': 'Mozilla/5.0' },
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch Reddit JSON: ${response.status}`);
-  }
-
-  const json = await response.json();
-  const postData = json[0].data.children[0].data;
-  const images = [];
-
-  if (postData.is_gallery && postData.gallery_data && postData.media_metadata) {
-    const items = postData.gallery_data.items;
-    for (const item of items) {
-      const mediaId = item.media_id;
-      const media = postData.media_metadata[mediaId];
-      const url = media.s.u.replace(/&amp;/g, '&');
-      images.push(url);
-    }
-  } else if (postData.url_overridden_by_dest?.match(/\.(jpg|jpeg|png|gif)$/)) {
-    images.push(postData.url_overridden_by_dest);
-  }
-
-  return images;
-}
-
-export async function getImagesFromReddit(shortUrl: string) {
+export async function getImagesFromReddit(postUrl: string) {
   try {
-    const actualUrl = shortUrl.includes('/s/')
-      ? await resolveRedditShortlink(shortUrl)
-      : shortUrl.split('?')[0];
-    console.log(actualUrl);
-    const images = await getRedditImages(actualUrl);
-    console.log('✅ Images found:', images);
+    const postId = await extractPostIdFromUrl(postUrl);
+    const fullname = `t3_${postId}`;
+    const apiUrl = `https://www.reddit.com/api/info.json?id=${fullname}`;
+
+    const response = await fetch(apiUrl, {
+      headers: { 'User-Agent': 'Mozilla/5.0' },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Reddit API 오류: ${response.status}`);
+    }
+
+    const json = await response.json();
+    const post = json.data.children[0].data;
+    const images = [];
+
+    if (post.is_gallery && post.media_metadata) {
+      for (const item of post.gallery_data.items) {
+        const media = post.media_metadata[item.media_id];
+        const url = media.s.u.replace(/&amp;/g, '&');
+        images.push(url);
+      }
+    } else if (post.url_overridden_by_dest?.match(/\.(jpg|jpeg|png|gif)$/)) {
+      images.push(post.url_overridden_by_dest);
+    }
+
     return images;
   } catch (err) {
-    console.error('❌ Error:', err);
+    console.error('❌ 에러:', getErrMessage(err));
     return [];
   }
 }
