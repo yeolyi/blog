@@ -24,7 +24,7 @@ async function getBrowser() {
           defaultViewport: viewport,
         })
       : await puppeteerCore.launch({
-          args: chromium.args,
+          args: [...chromium.args],
           executablePath: await chromium.executablePath(remoteExecutablePath),
           headless: 'shell',
           defaultViewport: viewport,
@@ -100,8 +100,6 @@ const iterateImages = async (
   const imageUrl = await getImageUrl(page, isDuplicate);
   if (!imageUrl) return [];
 
-  console.log(imageUrl);
-
   const nextButton = await getNextButton(page);
   if (!nextButton) return [imageUrl];
 
@@ -125,6 +123,7 @@ export async function getInstagramImageList(url: string) {
   await page.setExtraHTTPHeaders({
     'Accept-Language': 'ko-KR',
   });
+  await page.screenshot({ path: 'screenshot.png' });
 
   await page.goto(urlWithoutQuery, {
     waitUntil: 'networkidle0',
@@ -137,5 +136,33 @@ export async function getInstagramImageList(url: string) {
   const images = await iterateImages(page, () => false);
   await page.close();
 
+  return images;
+}
+
+export async function getRedditImageList(url: string) {
+  const browser = await getBrowser();
+  const page = await browser.newPage();
+
+  await page.goto(url, { waitUntil: 'load', timeout: 15000 });
+  await page.setUserAgent(
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
+  );
+
+  // media-lightbox-img 클래스를 가진 모든 이미지 찾기
+  const images = await page.evaluate(() => {
+    const imgElements = document.querySelectorAll('img.media-lightbox-img');
+    const imageUrls: string[] = [];
+
+    for (const img of imgElements) {
+      if (img instanceof HTMLImageElement) {
+        // TODO: srcset 지원?
+        imageUrls.push(img.src);
+      }
+    }
+
+    return imageUrls;
+  });
+
+  await page.close();
   return images;
 }

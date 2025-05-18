@@ -3,7 +3,7 @@
 import { connectMemeToTag } from '@/actions/meme';
 import { uploadFileToSupabase } from '@/actions/supabase';
 import type { Meme } from '@/types/meme';
-import { getInstagramImageList } from '@/utils/puppeteer';
+import { getInstagramImageList, getRedditImageList } from '@/utils/puppeteer';
 import { getErrMessage } from '@/utils/string';
 import { createClient } from '@/utils/supabase/server';
 import {
@@ -490,14 +490,20 @@ export async function getMemesByTag(tagId: string): Promise<Meme[]> {
   return memes;
 }
 
-export async function crawlInstagramImage(url: string) {
-  try {
-    const value = await getInstagramImageList(url);
-    return { success: true as const, value };
-  } catch (error) {
-    console.error('인스타그램 크롤링 오류:', error);
-    return { success: false as const, error: getErrMessage(error) };
+export async function crawlImage(url: string) {
+  if (url.includes('reddit.com')) {
+    return {
+      success: true as const,
+      value: await getRedditImageList(url),
+    };
   }
+  if (url.includes('instagram.com')) {
+    return {
+      success: true as const,
+      value: await getInstagramImageList(url),
+    };
+  }
+  return { success: false as const, error: '지원하지 않는 사이트' };
 }
 
 // 최근 밈 10개 가져오기
