@@ -123,7 +123,6 @@ export async function getInstagramImageList(url: string) {
   await page.setExtraHTTPHeaders({
     'Accept-Language': 'ko-KR',
   });
-  await page.screenshot({ path: 'screenshot.png' });
 
   await page.goto(urlWithoutQuery, {
     waitUntil: 'networkidle0',
