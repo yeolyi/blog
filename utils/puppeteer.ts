@@ -20,9 +20,8 @@ async function getBrowser() {
   browser =
     process.env.NODE_ENV === 'development'
       ? await puppeteer.launch({
-          headless: false,
+          headless: 'shell',
           defaultViewport: viewport,
-          args: ['--hide-scrollbars'],
         })
       : await puppeteerCore.launch({
           args: chromium.args,
@@ -125,6 +124,10 @@ export async function getInstagramImageList(url: string) {
 
   try {
     const page = await browser.newPage();
+    await page.setExtraHTTPHeaders({
+      'Accept-Language': 'ko-KR',
+    });
+
     await page.goto(urlWithoutQuery, {
       waitUntil: 'networkidle0',
       timeout: 15000,
