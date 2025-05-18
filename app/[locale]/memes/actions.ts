@@ -3,7 +3,7 @@
 import { connectMemeToTag } from '@/actions/meme';
 import { uploadFileToSupabase } from '@/actions/supabase';
 import type { Meme } from '@/types/meme';
-import { getInstagramImageList, getRedditImageList } from '@/utils/puppeteer';
+import { getImagesFromReddit, getInstagramImageList } from '@/utils/puppeteer';
 import { getErrMessage } from '@/utils/string';
 import { createClient } from '@/utils/supabase/server';
 import {
@@ -494,7 +494,7 @@ export async function crawlImage(url: string) {
   if (url.includes('reddit.com')) {
     return {
       success: true as const,
-      value: await getRedditImageList(url),
+      value: await getImagesFromReddit(url),
     };
   }
   if (url.includes('instagram.com')) {

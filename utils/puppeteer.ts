@@ -1,6 +1,5 @@
 import chromium from '@sparticuz/chromium';
 import { delay } from 'es-toolkit';
-import { JSDOM } from 'jsdom';
 import puppeteer, { type Viewport, type Browser, type Page } from 'puppeteer';
 import puppeteerCore from 'puppeteer-core';
 
@@ -139,105 +138,69 @@ export async function getInstagramImageList(url: string) {
   return images;
 }
 
-export async function getRedditImageList(url: string) {
-  const tmp = url.split('?')[0];
-  const jsonUrl = tmp.endsWith('.json') ? tmp : `${tmp}.json`;
+async function resolveRedditShortlink(shortUrl: string) {
+  const response = await fetch(shortUrl, {
+    method: 'GET',
+    headers: {
+      'User-Agent': 'Mozilla/5.0',
+    },
+    redirect: 'manual', // 자동 리디렉션 끄기
+  });
 
-  const response = await fetch(jsonUrl);
+  const text = await response.text();
+  const match = text.match(/<a href="([^"]+)">Moved Permanently<\/a>/);
 
-  if (!response.ok) {
-    throw new Error(`레딧 API 요청 실패: ${response.status}`);
+  if (match?.[1]) {
+    const redirectedUrl = match[1].replace(/&amp;/g, '&'); // HTML escape 처리
+    return redirectedUrl.split('?')[0];
   }
 
-  const data = await response.json();
-  console.log(data);
-
-  // 이미지 URL 추출
-  const images: string[] = [];
-
-  // 포스트 데이터 접근
-  const posts = data[0]?.data?.children || [];
-
-  for (const post of posts) {
-    const postData = post.data;
-
-    // 이미지 URL이 직접 있는 경우 (이미지 포스트)
-    if (postData?.url && isImageUrl(postData.url)) {
-      images.push(postData.url);
-      continue;
-    }
-
-    // gallery 형태의 포스트인 경우
-    if (postData?.gallery_data && postData?.media_metadata) {
-      const galleryItems = postData.gallery_data.items || [];
-      for (const item of galleryItems) {
-        const mediaId = item.media_id;
-        const mediaItem = postData.media_metadata[mediaId];
-        if (mediaItem && typeof mediaItem === 'object' && 's' in mediaItem) {
-          const source = mediaItem.s as {
-            u?: string;
-            gif?: string;
-            mp4?: string;
-          };
-          const imageUrl = source.u || source.gif || source.mp4 || '';
-          if (imageUrl) images.push(imageUrl);
-        }
-      }
-      continue;
-    }
-
-    // preview 이미지가 있는 경우
-    if (postData?.preview && postData.preview.images?.length > 0) {
-      const previewImages = postData.preview.images;
-      for (const previewImage of previewImages) {
-        // 가장 높은 해상도의 이미지 선택
-        if (previewImage.source) {
-          const imageUrl = previewImage.source.url.replace(/&amp;/g, '&');
-          images.push(imageUrl);
-        }
-      }
-    }
-  }
-
-  // 댓글 내 이미지도 추출 (있을 경우)
-  const comments = data[1]?.data?.children || [];
-  for (const comment of comments) {
-    const commentData = comment.data;
-    if (commentData?.media_metadata) {
-      for (const [, mediaItem] of Object.entries(commentData.media_metadata)) {
-        if (
-          typeof mediaItem === 'object' &&
-          mediaItem !== null &&
-          's' in mediaItem
-        ) {
-          const source = mediaItem.s as {
-            u?: string;
-            gif?: string;
-            mp4?: string;
-          };
-          const imageUrl = source.u || source.gif || source.mp4 || '';
-          if (imageUrl) images.push(imageUrl);
-        }
-      }
-    }
-  }
-
-  // https://www.reddit.com/r/redditdev/comments/1cdmu02/getting_403_when_trying_to_download_pictures_from/
-  return [...new Set(images)]
-    .map((str) => {
-      const dom = new JSDOM(str);
-      const decoded = dom.window.document.documentElement.textContent;
-      return decoded;
-    })
-    .filter((x): x is string => x !== null);
+  throw new Error('리디렉션 URL을 찾을 수 없습니다.');
 }
 
-// 이미지 URL인지 확인하는 헬퍼 함수
-function isImageUrl(url: string): boolean {
-  const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
-  return (
-    imageExtensions.some((ext) => url.toLowerCase().endsWith(ext)) ||
-    url.includes('i.redd.it') ||
-    url.includes('i.imgur.com')
-  );
+async function getRedditImages(_postUrl: string) {
+  let postUrl = _postUrl;
+  if (!postUrl.endsWith('/')) postUrl += '/';
+  const jsonUrl = `${postUrl}.json`;
+
+  const response = await fetch(jsonUrl, {
+    headers: { 'User-Agent': 'Mozilla/5.0' },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch Reddit JSON: ${response.status}`);
+  }
+
+  const json = await response.json();
+  const postData = json[0].data.children[0].data;
+  const images = [];
+
+  if (postData.is_gallery && postData.gallery_data && postData.media_metadata) {
+    const items = postData.gallery_data.items;
+    for (const item of items) {
+      const mediaId = item.media_id;
+      const media = postData.media_metadata[mediaId];
+      const url = media.s.u.replace(/&amp;/g, '&');
+      images.push(url);
+    }
+  } else if (postData.url_overridden_by_dest?.match(/\.(jpg|jpeg|png|gif)$/)) {
+    images.push(postData.url_overridden_by_dest);
+  }
+
+  return images;
+}
+
+export async function getImagesFromReddit(shortUrl: string) {
+  try {
+    const actualUrl = shortUrl.includes('/s/')
+      ? await resolveRedditShortlink(shortUrl)
+      : shortUrl.split('?')[0];
+    console.log(actualUrl);
+    const images = await getRedditImages(actualUrl);
+    console.log('✅ Images found:', images);
+    return images;
+  } catch (err) {
+    console.error('❌ Error:', err);
+    return [];
+  }
 }
