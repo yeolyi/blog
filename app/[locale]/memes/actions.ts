@@ -3,15 +3,14 @@
 import { connectMemeToTag } from '@/actions/meme';
 import { uploadFileToSupabase } from '@/actions/supabase';
 import type { Meme } from '@/types/meme';
+import { getInstagramImageList } from '@/utils/puppeteer';
 import { getErrMessage } from '@/utils/string';
 import { createClient } from '@/utils/supabase/server';
-import chromium from '@sparticuz/chromium';
 import {
   type ImageFeatureExtractionPipeline,
   pipeline,
 } from '@xenova/transformers';
 import probe from 'probe-image-size';
-import puppeteerCore, { type Browser } from 'puppeteer-core';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function deleteMeme(id: string) {
@@ -199,7 +198,6 @@ export async function uploadSingleMeme({
   try {
     // 임베딩 벡터 생성
     const embedding = await getClipEmbeddingFromUrl(tempUrl);
-    console.log('embedding', embedding.length);
 
     // 유사한 밈 검색 (threshold 0.1 이하는 매우 유사한 이미지로 간주)
     const { data: matches, error } = await supabase.rpc('match_similar_meme', {
@@ -207,8 +205,6 @@ export async function uploadSingleMeme({
       match_threshold: 0.1,
       match_count: 5,
     });
-
-    console.log('matches', matches, error);
 
     // 유사한 이미지가 발견된 경우
     if (matches && matches.length > 0) {
@@ -224,8 +220,6 @@ export async function uploadSingleMeme({
         error: '이미 유사한 밈이 등록되어 있습니다.',
       };
     }
-
-    console.log('유사한 밈 없음, 업로드 진행');
 
     const fileExt = file.type.split('/')[1];
     const fileName = `${uuidv4()}.${fileExt}`;
@@ -529,85 +523,19 @@ export async function getMemesByTag(tagId: string): Promise<Meme[]> {
   return memes;
 }
 
-const remoteExecutablePath =
-  'https://github.com/Sparticuz/chromium/releases/download/v133.0.0/chromium-v133.0.0-pack.tar';
-
-chromium.setGraphicsMode = false;
-let browser: Browser | undefined;
-
-async function getBrowser() {
-  if (browser) return browser;
-
-  browser = await puppeteerCore.launch({
-    args: chromium.args,
-    executablePath: await chromium.executablePath(remoteExecutablePath),
-    headless: 'shell',
-  });
-
-  return browser;
-}
-
 export async function crawlInstagramImage(url: string) {
   try {
-    const browser = await getBrowser();
+    const imageUrl = await getInstagramImageList(url);
+    console.log(imageUrl);
+    // 밈 업로드
+    // const response = await fetch(imageUrl);
+    // const blob = await response.blob();
 
-    const page = await browser.newPage();
+    // const urlParts = imageUrl.split('/');
+    // const fileName = urlParts[urlParts.length - 1];
+    // const file = new File([blob], fileName, { type: blob.type });
 
-    try {
-      // 페이지로 이동
-      await page.goto(url, { waitUntil: 'networkidle0', timeout: 30000 });
-
-      // 이미지 선택자 대기
-      await page.waitForSelector('img', { timeout: 15000 });
-
-      // 이미지 URL 가져오기
-      const imageUrl = await page.evaluate(() => {
-        // 모든 이미지 태그를 찾고 가장 큰 이미지 선택
-        const images = Array.from(document.querySelectorAll('img'));
-
-        // 너비 또는 높이 속성이 있는 이미지 중 가장 큰 이미지 선택
-        const largestImage =
-          images
-            .filter((img) => {
-              const width =
-                img.getAttribute('width') || img.style.width || img.width;
-              const height =
-                img.getAttribute('height') || img.style.height || img.height;
-              return width && height; // 크기 정보가 있는 이미지만 필터링
-            })
-            .sort((a, b) => {
-              const aSize = (a.width || 0) * (a.height || 0);
-              const bSize = (b.width || 0) * (b.height || 0);
-              return bSize - aSize; // 내림차순 정렬
-            })[0] || images[0]; // 정렬된 첫 번째 이미지 또는 첫 번째 이미지
-
-        return largestImage?.src;
-      });
-
-      await browser.close();
-
-      if (!imageUrl) {
-        return {
-          type: 'no_image_found' as const,
-          error: '이미지 URL을 찾을 수 없습니다',
-        };
-      }
-
-      console.log('imageUrl', imageUrl);
-
-      // 밈 업로드
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-
-      const urlParts = imageUrl.split('/');
-      const fileName = urlParts[urlParts.length - 1];
-      const file = new File([blob], fileName, { type: blob.type });
-
-      return await uploadSingleMeme({ file, title: url });
-    } catch (innerError) {
-      await browser.close();
-      throw innerError;
-    }
+    // return await uploadSingleMeme({ file, title: url });
   } catch (error) {
     console.error('인스타그램 크롤링 오류:', error);
     return {
