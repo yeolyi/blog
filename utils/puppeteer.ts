@@ -3,6 +3,7 @@ import chromium from '@sparticuz/chromium';
 import { delay } from 'es-toolkit';
 import puppeteer, { type Viewport, type Browser, type Page } from 'puppeteer';
 import puppeteerCore from 'puppeteer-core';
+import snoowrap from 'snoowrap';
 
 const remoteExecutablePath =
   'https://github.com/Sparticuz/chromium/releases/download/v133.0.0/chromium-v133.0.0-pack.tar';
@@ -147,35 +148,42 @@ async function extractPostIdFromUrl(url: string) {
   return match[1]; // post_id
 }
 
-export async function getImagesFromReddit(postUrl: string) {
+const reddit = new snoowrap({
+  userAgent: 'MyRedditApp/1.0 by u/your_reddit_username',
+  clientId: process.env.REDDIT_CLIENT_ID,
+  clientSecret: process.env.REDDIT_CLIENT_SECRET,
+  refreshToken: process.env.REDDIT_REFRESH_TOKEN,
+});
+
+async function fetchImagesFromPost(postId: string) {
   try {
-    const postId = await extractPostIdFromUrl(postUrl);
-    const fullname = `t3_${postId}`;
-    const apiUrl = `https://www.reddit.com/api/info.json?id=${fullname}`;
-
-    const response = await fetch(apiUrl, {
-      headers: { 'User-Agent': 'Mozilla/5.0' },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Reddit API 오류: ${response.status}`);
-    }
-
-    const json = await response.json();
-    const post = json.data.children[0].data;
+    // @ts-expect-error 귀찮음
+    const post = await reddit.getSubmission(postId).fetch();
     const images = [];
 
     if (post.is_gallery && post.media_metadata) {
-      for (const item of post.gallery_data.items) {
+      const items = post.gallery_data.items;
+      for (const item of items) {
         const media = post.media_metadata[item.media_id];
         const url = media.s.u.replace(/&amp;/g, '&');
         images.push(url);
       }
-    } else if (post.url_overridden_by_dest?.match(/\.(jpg|jpeg|png|gif)$/)) {
-      images.push(post.url_overridden_by_dest);
+    } else if (post.url?.match(/\.(jpg|jpeg|png|gif)$/)) {
+      images.push(post.url);
     }
 
+    console.log('📸 이미지 목록:', images);
     return images;
+  } catch (err) {
+    console.error('❌ 오류:', getErrMessage(err));
+    return [];
+  }
+}
+
+export async function getImagesFromReddit(postUrl: string) {
+  try {
+    const postId = await extractPostIdFromUrl(postUrl);
+    return await fetchImagesFromPost(postId);
   } catch (err) {
     console.error('❌ 에러:', getErrMessage(err));
     return [];
