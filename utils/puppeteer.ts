@@ -79,19 +79,18 @@ const getImageUrl = async (
   page: Page,
   isDuplicate: (url: string) => boolean,
 ) => {
-  const imageUrl = await tryImageUrl(page);
-  if (!imageUrl) return null;
+  while (true) {
+    const imageUrl = await tryImageUrl(page);
+    if (!imageUrl) return null;
 
-  if (isDuplicate(imageUrl)) {
+    if (!isDuplicate(imageUrl)) return imageUrl;
+
     // 가끔 버튼이 씹힘
     const nextButton = await getNextButton(page);
     if (!nextButton) return null;
     nextButton.click();
     await delay(DELAY_TIME);
-    return tryImageUrl(page);
   }
-
-  return imageUrl;
 };
 
 const iterateImages = async (

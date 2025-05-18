@@ -1,10 +1,10 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
+import { memeImagesAtom } from '@/app/[locale]/memes/store';
+import { useAtomValue } from 'jotai';
 
 export default function SelectPage() {
-  const searchParams = useSearchParams();
-  const imageUrls = searchParams.getAll('imageUrl') as string[];
+  const imageUrls = useAtomValue(memeImagesAtom);
 
   const getProxiedImageUrl = (originalUrl: string) => {
     return `/api/image-proxy?url=${encodeURIComponent(originalUrl)}`;

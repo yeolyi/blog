@@ -2,7 +2,9 @@
 
 import Button from '@/app/[locale]/components/ui/Button';
 import Form from '@/app/[locale]/components/ui/Form';
+import { memeImagesAtom } from '@/app/[locale]/memes/store';
 import { Link, useRouter } from '@/i18n/navigation';
+import { useSetAtom } from 'jotai';
 import { Download } from 'lucide-react';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -10,6 +12,7 @@ import { crawlInstagramImage } from '../actions';
 
 export default function ImportMeme() {
   const router = useRouter();
+  const setMemeImages = useSetAtom(memeImagesAtom);
 
   const formMethods = useForm<{ url: string }>({
     defaultValues: { url: '' },
@@ -28,11 +31,8 @@ export default function ImportMeme() {
 
     const crawlResult = await crawlInstagramImage(data.url);
     if (crawlResult.success) {
-      const params = new URLSearchParams();
-      for (const url of crawlResult.value) {
-        params.append('imageUrl', url);
-      }
-      router.push(`/memes/select?${params.toString()}`);
+      setMemeImages(crawlResult.value);
+      router.push('/memes/select');
     } else {
       setError('root', { message: crawlResult.error });
     }

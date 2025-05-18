@@ -24,7 +24,13 @@ export default function MemeViewer() {
       <ImportMeme />
 
       <TagContainer>
-        {allTags?.map((tag) => (
+        {(
+          allTags ??
+          Array.from({ length: 30 }).map((_, i) => ({
+            id: i,
+            name: '로딩중'[i % 3],
+          }))
+        ).map((tag) => (
           <TagItem
             key={tag.id}
             tag={tag}
