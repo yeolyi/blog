@@ -122,25 +122,21 @@ export async function getInstagramImageList(url: string) {
   const urlWithoutQuery = url.split('?')[0];
   const browser = await getBrowser();
 
-  try {
-    const page = await browser.newPage();
-    await page.setExtraHTTPHeaders({
-      'Accept-Language': 'ko-KR',
-    });
+  const page = await browser.newPage();
+  await page.setExtraHTTPHeaders({
+    'Accept-Language': 'ko-KR',
+  });
 
-    await page.goto(urlWithoutQuery, {
-      waitUntil: 'networkidle0',
-      timeout: 15000,
-    });
+  await page.goto(urlWithoutQuery, {
+    waitUntil: 'networkidle0',
+    timeout: 15000,
+  });
 
-    await closePopup(page);
-    await delay(300);
+  await closePopup(page);
+  await delay(300);
 
-    return await iterateImages(page, () => false);
-  } finally {
-    // 필요한가?
-    if (process.env.NODE_ENV === 'production') {
-      await browser.close();
-    }
-  }
+  const images = await iterateImages(page, () => false);
+  await page.close();
+
+  return images;
 }
