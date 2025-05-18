@@ -196,31 +196,6 @@ export async function uploadSingleMeme({
   const tempUrl = URL.createObjectURL(file);
 
   try {
-    // 임베딩 벡터 생성
-    const embedding = await getClipEmbeddingFromUrl(tempUrl);
-
-    // 유사한 밈 검색 (threshold 0.1 이하는 매우 유사한 이미지로 간주)
-    const { data: matches, error } = await supabase.rpc('match_similar_meme', {
-      query_embedding: embedding,
-      match_threshold: 0.1,
-      match_count: 5,
-    });
-
-    // 유사한 이미지가 발견된 경우
-    if (matches && matches.length > 0) {
-      console.log(`유사한 밈 발견: ${matches.length}개`);
-
-      // URL 객체 해제
-      URL.revokeObjectURL(tempUrl);
-
-      // 가장 유사한 이미지 정보 반환
-      return {
-        type: 'similar_meme_found' as const,
-        similarMemes: (matches as SimilarMemeMatch[]).map((m) => m.id),
-        error: '이미 유사한 밈이 등록되어 있습니다.',
-      };
-    }
-
     const fileExt = file.type.split('/')[1];
     const fileName = `${uuidv4()}.${fileExt}`;
     const url = await uploadFileToSupabase(fileName, file);
@@ -230,15 +205,7 @@ export async function uploadSingleMeme({
 
     const { data: meme } = await supabase
       .from('memes')
-      .insert([
-        {
-          title,
-          media_url: url,
-          width,
-          height,
-          embedding,
-        },
-      ])
+      .insert([{ title, media_url: url, width, height }])
       .select()
       .single()
       .throwOnError();
@@ -531,4 +498,22 @@ export async function crawlInstagramImage(url: string) {
     console.error('인스타그램 크롤링 오류:', error);
     return { success: false as const, error: getErrMessage(error) };
   }
+}
+
+// 최근 밈 10개 가져오기
+export async function getRecentMemes(): Promise<Meme[]> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from('memes')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  if (error) {
+    console.error('최근 밈 가져오기 오류:', error);
+    throw new Error('최근 밈을 불러오는 중 오류가 발생했습니다');
+  }
+
+  return data;
 }

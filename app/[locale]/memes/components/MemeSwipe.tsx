@@ -37,7 +37,7 @@ export default function MemeSwipe({
 
   const {
     handleSubmit,
-    formState: { isSubmitting, isDirty },
+    formState: { isDirty },
     setError,
     reset,
   } = formMethods;
@@ -70,6 +70,7 @@ export default function MemeSwipe({
 
   const onSubmit = async (data: FormValues) => {
     setLoading(true);
+    console.log(isDirty);
 
     if (!isDirty) {
       await loadNext();
@@ -131,8 +132,7 @@ export default function MemeSwipe({
             </Button>
             <Button
               theme="gray"
-              type="button"
-              onClick={loadNext}
+              type="submit"
               disabled={loading}
               Icon={ChevronRight}
             >
