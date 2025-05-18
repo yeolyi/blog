@@ -42,7 +42,7 @@ export default function SelectPage() {
     try {
       await uploadMultipleMemes(
         selectedImages.map((url) => ({
-          title: url,
+          title: 'imported',
           imageURL: url,
         })),
       );
