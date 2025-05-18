@@ -18,6 +18,11 @@ export default function ImportMeme() {
       return;
     }
 
+    if (url.includes('/s/')) {
+      open(url, '_blank');
+      return;
+    }
+
     const crawlResult = await crawlImage(url);
 
     if (crawlResult.success) {

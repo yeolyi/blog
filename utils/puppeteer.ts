@@ -22,7 +22,7 @@ async function getBrowser() {
   browser =
     process.env.NODE_ENV === 'development'
       ? await puppeteer.launch({
-          headless: 'shell',
+          headless: false,
           defaultViewport: viewport,
         })
       : await puppeteerCore.launch({
@@ -67,7 +67,7 @@ const tryImageUrl = async (page: Page) => {
   return await page.evaluate(({ width, height }) => {
     const sibling = document.elementFromPoint(
       width / 2,
-      height / 2,
+      height / 3,
     ) as HTMLElement;
     const parent = sibling.parentElement;
     const img = parent?.querySelector('img');
