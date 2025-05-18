@@ -148,6 +148,7 @@ async function resolveRedditShortlink(shortUrl: string) {
   });
 
   const text = await response.text();
+  console.log(text);
   const match = text.match(/<a href="([^"]+)">Moved Permanently<\/a>/);
 
   if (match?.[1]) {
