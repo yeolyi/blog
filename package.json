@@ -39,6 +39,7 @@
     "jotai": "^2.12.3",
     "jotai-effect": "^2.0.2",
     "js-confetti": "^0.12.0",
+    "jsdom": "^26.1.0",
     "lucide-react": "^0.487.0",
     "marked": "^15.0.8",
     "marked-highlight": "^2.2.1",
@@ -72,6 +73,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@shikijs/rehype": "^3.2.2",
+    "@types/jsdom": "^21.1.7",
     "@types/node": "^20",
     "@types/probe-image-size": "^7.2.5",
     "@types/react": "^19",
