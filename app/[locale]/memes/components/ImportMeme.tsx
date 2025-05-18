@@ -5,11 +5,13 @@ import { crawlImage } from '@/app/[locale]/memes/actions';
 import { memeImagesAtom } from '@/app/[locale]/memes/store';
 import { useRouter } from '@/i18n/navigation';
 import { useSetAtom } from 'jotai';
-import { Clipboard, FileCheck, FileJson } from 'lucide-react';
+import { AppWindow, Clipboard, FileCheck, FileJson } from 'lucide-react';
+import { useState } from 'react';
 
 export default function ImportMeme() {
   const router = useRouter();
   const setMemeImages = useSetAtom(memeImagesAtom);
+  const [shouldOpen, setShouldOpen] = useState('');
 
   const pasteUrl = async () => {
     const url = await navigator.clipboard.readText();
@@ -19,7 +21,7 @@ export default function ImportMeme() {
     }
 
     if (url.includes('/s/')) {
-      open(url, '_blank');
+      setShouldOpen(url);
       return;
     }
 
@@ -38,6 +40,18 @@ export default function ImportMeme() {
       <Button theme="gray" Icon={Clipboard} onClick={pasteUrl}>
         붙여넣기
       </Button>
+      {shouldOpen && (
+        <Button
+          theme="gray"
+          Icon={AppWindow}
+          onClick={() => {
+            setShouldOpen('');
+            open(shouldOpen, '_blank');
+          }}
+        >
+          새 창 열기
+        </Button>
+      )}
       <Link theme="gray" locale="ko" href="/memes/bulk" Icon={FileJson}>
         JSON
       </Link>
