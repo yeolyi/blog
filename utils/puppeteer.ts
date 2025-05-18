@@ -146,6 +146,7 @@ export async function getRedditImageList(url: string) {
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36',
   );
   await page.goto(url, { waitUntil: 'load', timeout: 15000 });
+  await page.waitForSelector('img.media-lightbox-img');
 
   // media-lightbox-img 클래스를 가진 모든 이미지 찾기
   const images = await page.evaluate(() => {
