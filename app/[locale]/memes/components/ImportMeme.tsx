@@ -27,20 +27,14 @@ export default function ImportMeme() {
     if (!data.url) return;
 
     const crawlResult = await crawlInstagramImage(data.url);
-
-    switch (crawlResult.type) {
-      case 'similar_meme_found':
-        setSimilarMemes(crawlResult.similarMemes);
-        break;
-      case 'no_image_found':
-      case 'upload_failed':
-        setError('root', { message: crawlResult.error });
-        break;
-      case 'success':
-        router.push(`/memes/random/${crawlResult.meme.id}`);
-        break;
-      default:
-        setError('root', { message: '알 수 없는 오류가 발생했습니다' });
+    if (crawlResult.success) {
+      const params = new URLSearchParams();
+      for (const url of crawlResult.value) {
+        params.append('imageUrl', url);
+      }
+      router.push(`/memes/select?${params.toString()}`);
+    } else {
+      setError('root', { message: crawlResult.error });
     }
   };
 

@@ -525,22 +525,10 @@ export async function getMemesByTag(tagId: string): Promise<Meme[]> {
 
 export async function crawlInstagramImage(url: string) {
   try {
-    const imageUrl = await getInstagramImageList(url);
-    console.log(imageUrl);
-    // 밈 업로드
-    // const response = await fetch(imageUrl);
-    // const blob = await response.blob();
-
-    // const urlParts = imageUrl.split('/');
-    // const fileName = urlParts[urlParts.length - 1];
-    // const file = new File([blob], fileName, { type: blob.type });
-
-    // return await uploadSingleMeme({ file, title: url });
+    const value = await getInstagramImageList(url);
+    return { success: true as const, value };
   } catch (error) {
     console.error('인스타그램 크롤링 오류:', error);
-    return {
-      type: 'upload_failed' as const,
-      error: getErrMessage(error),
-    };
+    return { success: false as const, error: getErrMessage(error) };
   }
 }
