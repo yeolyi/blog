@@ -291,7 +291,7 @@ export async function uploadMultipleMemes(
           `[일괄 업로드] 업로드 실패 (${meme.title}): ${result.error}`,
         );
         return {
-          title: meme.title,
+          title: '인스타',
           imageURL: meme.imageURL,
           success: false,
           error: result.error,

@@ -1,12 +1,12 @@
 'use client';
 
 import Button from '@/app/[locale]/components/ui/Button';
-import Form from '@/app/[locale]/components/ui/Form';
+import Form, { Label, LabelGroup } from '@/app/[locale]/components/ui/Form';
+import Link from '@/app/[locale]/components/ui/Link';
 import { memeImagesAtom } from '@/app/[locale]/memes/store';
-import { Link, useRouter } from '@/i18n/navigation';
+import { useRouter } from '@/i18n/navigation';
 import { useSetAtom } from 'jotai';
-import { Download } from 'lucide-react';
-import { useState } from 'react';
+import { FileCheck, FileJson, Instagram } from 'lucide-react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { crawlInstagramImage } from '../actions';
 
@@ -17,8 +17,6 @@ export default function ImportMeme() {
   const formMethods = useForm<{ url: string }>({
     defaultValues: { url: '' },
   });
-
-  const [similarMemes, setSimilarMemes] = useState<string[]>([]);
 
   const {
     handleSubmit,
@@ -41,34 +39,42 @@ export default function ImportMeme() {
   return (
     <FormProvider {...formMethods}>
       <Form onSubmit={handleSubmit(onSubmit)}>
-        <Form.Text
-          title="URL"
-          registerName="url"
-          registerOptions={{ required: true, minLength: 1 }}
-        />
+        <div className="flex flex-col gap-2">
+          <Form.Text
+            title="URL"
+            registerName="url"
+            registerOptions={{ required: true, minLength: 1 }}
+            placeholder="https://www.instagram.com/p/..."
+          />
 
-        <Button
-          theme="gray"
-          type="submit"
-          disabled={isSubmitting || !isValid}
-          Icon={Download}
-          className="w-fit"
-        >
-          이미지 가져오기
-        </Button>
+          <Button
+            theme="gray"
+            type="submit"
+            disabled={isSubmitting || !isValid}
+            Icon={Instagram}
+            className="w-fit"
+          >
+            가져오기
+          </Button>
+        </div>
+
+        <LabelGroup>
+          <Label>추가 기능</Label>
+          <div className="flex gap-2">
+            <Link theme="gray" locale="ko" href="/memes/bulk" Icon={FileJson}>
+              JSON
+            </Link>
+            <Link
+              theme="gray"
+              locale="ko"
+              href="/memes/buttons"
+              Icon={FileCheck}
+            >
+              중복검사
+            </Link>
+          </div>
+        </LabelGroup>
       </Form>
-
-      {similarMemes.length > 0 && (
-        <ul className="flex flex-wrap gap-2 text-red-600">
-          {similarMemes.map((meme) => (
-            <li key={meme}>
-              <Link className="underline" href={`/memes/random/${meme}`}>
-                {meme}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
     </FormProvider>
   );
 }

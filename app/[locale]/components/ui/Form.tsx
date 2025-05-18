@@ -1,11 +1,35 @@
 import type { Tag } from '@/types/meme';
 import clsx from 'clsx';
-import type { FormHTMLAttributes, InputHTMLAttributes, ReactNode } from 'react';
+import type {
+  FormHTMLAttributes,
+  InputHTMLAttributes,
+  LabelHTMLAttributes,
+  ReactNode,
+} from 'react';
 import {
   type RegisterOptions,
   useController,
   useFormContext,
 } from 'react-hook-form';
+
+export const Label = ({
+  className,
+  htmlFor,
+  ...props
+}: LabelHTMLAttributes<HTMLLabelElement>) => {
+  return (
+    // biome-ignore lint/a11y/noLabelWithoutControl: 왜뜨지
+    <label
+      htmlFor={htmlFor}
+      className={clsx('block mb-2 font-bold text-white', className)}
+      {...props}
+    />
+  );
+};
+
+export const LabelGroup = ({ children }: { children: ReactNode }) => {
+  return <div className="flex flex-col gap-2">{children}</div>;
+};
 
 const Input = ({
   className,
@@ -37,10 +61,8 @@ const Text = ({
     formState: { errors },
   } = useFormContext();
   return (
-    <div>
-      <label htmlFor="title" className="block mb-2 font-bold text-white">
-        {title}
-      </label>
+    <LabelGroup>
+      <Label htmlFor="title">{title}</Label>
       <Input
         id="title"
         type="text"
@@ -53,7 +75,7 @@ const Text = ({
           {errors[registerName]?.message as string}
         </p>
       )}
-    </div>
+    </LabelGroup>
   );
 };
 
@@ -82,9 +104,7 @@ const TagList = ({
 
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor="tagInput" className="block font-bold text-white">
-        태그
-      </label>
+      <Label htmlFor="tagInput">태그</Label>
       <Input
         id="tagInput"
         type="text"
@@ -149,9 +169,7 @@ const Checkbox = ({
 
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={registerName} className="font-bold text-white">
-        {label}
-      </label>
+      <Label htmlFor={registerName}>{label}</Label>
       <input
         type="checkbox"
         className="h-8 w-8 cursor-pointer border"
@@ -183,4 +201,5 @@ export default Object.assign(Form, {
   Text,
   TagList,
   Checkbox,
+  Label,
 });
