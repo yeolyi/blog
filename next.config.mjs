@@ -32,11 +32,9 @@ const nextConfig = {
   transpilePackages: ['shiki', '@shikijs/rehype'],
   eslint: { ignoreDuringBuilds: true },
   experimental: {
-    serverActions: {
-      bodySizeLimit: '2mb',
-    },
+    serverActions: { bodySizeLimit: '2mb' },
   },
-  serverExternalPackages: ['@xenova/transformers'],
+  serverExternalPackages: ['snoowrap'],
 };
 
 const withMDX = createMDX({

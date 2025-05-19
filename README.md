@@ -1,4 +1,13 @@
-Sheikah Font from 
+- avif 최적화
+  - 1.4GB(아마) -> 80mb ㄷㄷㄷ  
+- vercel로 puppeteer쓰려면 light 깔아야되고... chromium 따로 동적 로드 해야되고... 
+  - https://nextjs.org/docs/app/api-reference/config/next-config-js/serverExternalPackages
+  - puppeteer 이런건 이미 등록되어있는데 목적이 잘 와닿지 않는다. 빌드 과정을 살펴보자. 
+  - 인스타는 잘 되는데 레딧은 네트워크 보안 페이지 뜬다. 결국 snoowoop? 활용함
+  - 동일 환경 가져가려면 언어도 신경써야한다. 
+  - local에서 되는데 prod에서 안되는게 반복돼서 힘들었다. serverless 환경... 시간 제한... 램 제한...
+  - 이럴거면 EC2가 낫지 않을까하는 생각이 들다가도...
+- https://nextjs.org/docs/app/api-reference/config/next-config-js/serverComponentsHmrCache supabase storage 업데이트할 때 에러 뜸. 목적은 좋다만...
 
 # 메모
 

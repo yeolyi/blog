@@ -82,7 +82,7 @@ export default function EmailSubscribe() {
       <p className="text-gray-400 text-sm mb-3">
         {t('description')}
         <br />
-        {t('subscriberCount', { count: subscriberCount ?? -1 })}
+        {t('subscriberCount', { count: subscriberCount ?? 304 })}
       </p>
 
       <div className="w-full flex gap-2">

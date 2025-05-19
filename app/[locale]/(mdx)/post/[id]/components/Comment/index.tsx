@@ -1,25 +1,18 @@
-import { getIsAuthenticated } from '@/utils/auth';
-import { Suspense } from 'react';
+'use client';
+
+import { useProfileStore } from '@/store/profile';
 import Emoji from './Emoji';
-import CommentForm from './Form/CommentForm';
+import CommentForm from './Form';
 import CommentViewer from './Viewer';
 
-export default async function Comment({ postId }: { postId: string }) {
-  const isLoggedIn = await getIsAuthenticated();
+export default function Comment({ postId }: { postId: string }) {
+  const { profile } = useProfileStore();
 
   return (
     <div className="space-y-4">
-      <Suspense fallback={<Emoji.Fallback />}>
-        <Emoji postId={postId} />
-      </Suspense>
-
-      <Suspense>
-        <CommentForm postId={postId} isLoggedIn={isLoggedIn} />
-      </Suspense>
-
-      <Suspense>
-        <CommentViewer postId={postId} />
-      </Suspense>
+      <Emoji postId={postId} profile={profile} />
+      <CommentForm postId={postId} profile={profile} />
+      <CommentViewer postId={postId} profile={profile} />
     </div>
   );
 }

@@ -1,11 +1,11 @@
 import { Analytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 import { IBM_Plex_Sans_KR } from 'next/font/google';
 import Footer from './components/layout/Footer';
 import Header from './components/layout/Header';
 
 import '@/app/[locale]/globals.css';
 
+import AuthListener from '@/app/[locale]/components/AuthListener';
 import { routing } from '@/i18n/routing';
 import { type Locale, NextIntlClientProvider, hasLocale } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
@@ -70,7 +70,7 @@ export default async function RootLayout({
           <Footer />
         </NextIntlClientProvider>
         <Analytics />
-        <SpeedInsights />
+        <AuthListener />
       </body>
     </html>
   );

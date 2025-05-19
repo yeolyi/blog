@@ -46,7 +46,7 @@ export default function ImportMeme() {
           Icon={AppWindow}
           onClick={() => {
             setShouldOpen('');
-            open(shouldOpen, '_blank');
+            open('', '_blank');
           }}
         >
           새 창 열기

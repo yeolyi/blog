@@ -1,4 +1,4 @@
-import type { Tag } from '@/types/meme';
+import type { Tag } from '@/types/helper.types';
 import clsx from 'clsx';
 import type {
   FormHTMLAttributes,
@@ -88,11 +88,13 @@ const TagList = ({
 }) => {
   const { control } = useFormContext();
   const { field } = useController({ name: registerName, control });
-  const value = field.value as string;
+  const value = field.value as string | undefined;
   const tags = value
-    .split(',')
+    ?.split(',')
     .map((tag) => tag.trim())
     .filter(Boolean);
+
+  if (!tags) return;
 
   const onClickTag = (tag: string) => {
     if (tags.includes(tag)) {

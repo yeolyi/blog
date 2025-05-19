@@ -1,6 +1,6 @@
 'use client';
 
-import { uploadMultipleMemes } from '@/app/[locale]/memes/actions';
+import { uploadMultipleMemes } from '@/db/meme/create';
 import { type FormEvent, useState } from 'react';
 
 export default function BulkMemeUploadForm() {
@@ -28,7 +28,6 @@ export default function BulkMemeUploadForm() {
         }
       }
 
-      // 서버 액션 호출
       await uploadMultipleMemes(memes);
     } catch (err) {
       const errorMessage =

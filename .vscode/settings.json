@@ -4,10 +4,10 @@
   "[mdx]": {
     "editor.defaultFormatter": "unifiedjs.vscode-mdx"
   },
-  "editor.codeActionsOnSave": {
-    "source.fixAll.biome": "explicit",
-    "source.organizeImports.biome": "explicit"
-  },
+  // "editor.codeActionsOnSave": {
+  //   "source.fixAll.biome": "explicit",
+  //   "source.organizeImports.biome": "explicit"
+  // },
   "[json]": {
     "editor.defaultFormatter": "biomejs.biome"
   },

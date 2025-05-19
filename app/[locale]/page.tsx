@@ -1,11 +1,11 @@
 import cs from '@/app/[locale]/(mdx)/cs/assets/chasing.png';
-import PostList from '@/app/[locale]/components/content/PostList';
+import PostList from '@/app/[locale]/components/PostList';
 import Tile from '@/app/[locale]/components/ui/Tile';
+import { Link } from '@/i18n/navigation';
 import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
-import Link from 'next/link';
 import me from './assets/me.jpg';
 
 export type PostType = {

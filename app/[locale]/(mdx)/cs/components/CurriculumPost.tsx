@@ -8,23 +8,22 @@ export default function CurriculumPost(post: PostType) {
 
   if (post.isPublished) {
     return (
-      <li
-        className={clsx(
-          'list-decimal text-gray-400 list-inside group cursor-pointer',
-        )}
-      >
-        <Link
-          href={post.slug}
-          className="font-semibold inline text-base text-pretty break-keep text-white group-hover:text-white/80"
+      <Link href={post.slug} className="group block">
+        <li
+          className={clsx(
+            'list-decimal text-gray-400 list-inside cursor-pointer',
+          )}
         >
-          {post.title}
-        </Link>
-        {post.description && (
-          <p className="text-white text-base group-hover:text-white/80">
-            {post.description}
-          </p>
-        )}
-      </li>
+          <h3 className="font-semibold inline text-base text-pretty break-keep text-white group-hover:text-white/80">
+            {post.title}
+          </h3>
+          {post.description && (
+            <p className="text-white text-base group-hover:text-white/80">
+              {post.description}
+            </p>
+          )}
+        </li>
+      </Link>
     );
   }
   return (

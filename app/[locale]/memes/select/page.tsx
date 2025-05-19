@@ -5,12 +5,12 @@ import {
   memeImagesAtom,
   selectedMemeImagesAtom,
 } from '@/app/[locale]/memes/store';
+import { uploadMultipleMemes } from '@/db/meme/create';
 import { useRouter } from '@/i18n/navigation';
 import clsx from 'clsx';
 import { useAtom, useAtomValue } from 'jotai';
 import { Check } from 'lucide-react';
 import { useState } from 'react';
-import { uploadMultipleMemes } from '../actions';
 
 export default function SelectPage() {
   const router = useRouter();
