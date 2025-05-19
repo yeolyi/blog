@@ -6,7 +6,7 @@ export const connectMemeToTag = async (memeId: string, tagName: string) => {
     .from('tags')
     .select('id, name')
     .eq('name', tagName)
-    .single()
+    .maybeSingle()
     .throwOnError();
 
   let tagId: string;
@@ -28,7 +28,5 @@ export const connectMemeToTag = async (memeId: string, tagName: string) => {
   await supabase
     .from('meme_tags')
     .insert([{ meme_id: memeId, tag_id: tagId }])
-    .select('tag_id')
-    .single()
     .throwOnError();
 };

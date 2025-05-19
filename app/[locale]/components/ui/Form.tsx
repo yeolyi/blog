@@ -94,9 +94,8 @@ const TagList = ({
     .map((tag) => tag.trim())
     .filter(Boolean);
 
-  if (!tags) return;
-
   const onClickTag = (tag: string) => {
+    if (!tags) return;
     if (tags.includes(tag)) {
       field.onChange(tags.filter((t) => t !== tag).join(','));
     } else {
@@ -122,7 +121,7 @@ const TagList = ({
             key={tag.id}
             tag={tag}
             onClickTag={() => onClickTag(tag.name)}
-            isSelected={tags.includes(tag.name)}
+            isSelected={tags?.includes(tag.name) ?? false}
           />
         ))}
       </TagContainer>

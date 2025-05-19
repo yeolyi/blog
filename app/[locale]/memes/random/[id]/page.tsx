@@ -27,6 +27,7 @@ export default function MemeSwipe({
       const meme = await getMemeWithTag(id);
       return {
         ...meme,
+        title: meme.title ?? '',
         tagInput: meme.meme_tags.map((tag) => tag.tags?.name ?? '').join(','),
       };
     },
@@ -43,7 +44,7 @@ export default function MemeSwipe({
 
   const next = async () => {
     const id = await getRandomMeme();
-    router.push(`/memes/random/${id}`);
+    router.push(`/memes/random/${id}`, { scroll: false });
   };
 
   const onDelete = async () => {
@@ -88,7 +89,7 @@ export default function MemeSwipe({
 
       <Form
         onSubmit={handleSubmit(onSubmit)}
-        className="mb-4 max-w-2xl mx-auto px-4"
+        className="mb-4 max-w-2xl mx-auto px-4 w-full"
       >
         <Form.Text title="제목" registerName="title" />
         <Form.TagList registerName="tagInput" allTags={allTags ?? []} />
