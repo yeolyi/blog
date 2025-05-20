@@ -1,6 +1,6 @@
 'use client';
+import supabase from '@/db';
 import { getProfile } from '@/db/auth';
-import supabase from '@/db/createClient';
 import { useProfileStore } from '@/store/profile';
 import { useEffect } from 'react';
 

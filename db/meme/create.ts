@@ -1,4 +1,4 @@
-import supabase from '@/db/createClient';
+import supabase from '@/db';
 import { uploadFile } from '@/db/storage';
 import { getErrMessage } from '@/utils/string';
 import { v4 } from 'uuid';

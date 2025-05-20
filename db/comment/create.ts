@@ -1,4 +1,4 @@
-import supabase from '@/db/createClient';
+import supabase from '@/db';
 
 export async function createComment(
   postId: string,

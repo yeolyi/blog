@@ -1,4 +1,4 @@
-import supabase from '@/db/createClient';
+import supabase from '@/db';
 import { getMemeMediaUrlById } from '@/db/meme/read';
 import { tryDeleteTag } from '@/db/memeTag/delete';
 import { getMemeTagIds } from '@/db/memeTag/read';

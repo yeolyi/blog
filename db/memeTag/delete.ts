@@ -1,4 +1,4 @@
-import supabase from '@/db/createClient';
+import supabase from '@/db';
 
 export const tryDeleteTag = async (tagId: string) => {
   const { count } = await supabase
