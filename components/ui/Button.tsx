@@ -1,4 +1,4 @@
-import { type Theme, themeMap } from '@/app/[locale]/components/ui/theme';
+import { type Theme, themeMap } from '@/components/ui/theme';
 import clsx from 'clsx';
 import type { LucideProps } from 'lucide-react';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';

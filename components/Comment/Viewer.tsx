@@ -1,4 +1,4 @@
-import { DeleteButton } from '@/app/[locale]/(mdx)/post/[id]/components/Comment/DeleteButton';
+import { DeleteButton } from '@/components/Comment/DeleteButton';
 import { getComments } from '@/db/comment/read';
 import type { Profile } from '@/types/helper.types';
 import dayjs from 'dayjs';

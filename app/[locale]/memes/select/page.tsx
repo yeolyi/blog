@@ -1,10 +1,10 @@
 'use client';
 
-import Button from '@/app/[locale]/components/ui/Button';
 import {
   memeImagesAtom,
   selectedMemeImagesAtom,
 } from '@/app/[locale]/memes/store';
+import Button from '@/components/ui/Button';
 import { uploadMultipleMemes } from '@/db/meme/create';
 import { useRouter } from '@/i18n/navigation';
 import clsx from 'clsx';

@@ -21,12 +21,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import '@xyflow/react/dist/style.css';
 import './style.css';
 
-import type { RegistryKey } from '@/app/[locale]/components/Nand/atoms';
-import { nodeTypes } from '@/app/[locale]/components/Nand/components';
-import { Controls } from '@/app/[locale]/components/Nand/components/Controls';
-import { useTouchDeviceState } from '@/app/[locale]/components/Nand/hooks/useMobileState';
-import type { SaveFile } from '@/app/[locale]/components/Nand/model/type';
-import { useNodeAtom } from '@/app/[locale]/components/Nand/model/useNodeAtom';
+import type { RegistryKey } from '@/components/Nand/atoms';
+import { nodeTypes } from '@/components/Nand/components';
+import { Controls } from '@/components/Nand/components/Controls';
+import { useTouchDeviceState } from '@/components/Nand/hooks/useMobileState';
+import type { SaveFile } from '@/components/Nand/model/type';
+import { useNodeAtom } from '@/components/Nand/model/useNodeAtom';
 import { saveJSONToFile, selectJSONFromFile } from '@/utils/string';
 import { Provider, createStore } from 'jotai';
 

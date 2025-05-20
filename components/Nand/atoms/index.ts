@@ -1,4 +1,4 @@
-import { createNandAtoms } from '@/app/[locale]/components/Nand/atoms/nand';
+import { createNandAtoms } from '@/components/Nand/atoms/nand';
 import { createBooleanAtoms } from './boolean';
 
 export const registry = {

@@ -1,4 +1,4 @@
-import { minZoomOptions } from '@/app/[locale]/components/Nand';
+import { minZoomOptions } from '@/components/Nand';
 import {
   type Edge,
   type Node,

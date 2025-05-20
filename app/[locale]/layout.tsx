@@ -1,16 +1,18 @@
 import { Analytics } from '@vercel/analytics/react';
 import { IBM_Plex_Sans_KR } from 'next/font/google';
-import Footer from './components/layout/Footer';
-import Header from './components/layout/Header';
+import Footer from '../../components/layout/Footer';
+import Header from '../../components/layout/Header';
 
 import '@/app/[locale]/globals.css';
 
-import AuthListener from '@/app/[locale]/components/AuthListener';
+import AuthListener from '@/components/AuthListener';
+import ScrollRestore from '@/components/ScrollRestore';
 import { routing } from '@/i18n/routing';
 import { type Locale, NextIntlClientProvider, hasLocale } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import type * as React from 'react';
+import { Suspense } from 'react';
 
 const ibmPlexSans = IBM_Plex_Sans_KR({
   variable: '--font-ibm-plex-sans',
@@ -71,6 +73,9 @@ export default async function RootLayout({
         </NextIntlClientProvider>
         <Analytics />
         <AuthListener />
+        <Suspense>
+          <ScrollRestore />
+        </Suspense>
       </body>
     </html>
   );

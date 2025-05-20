@@ -1,5 +1,5 @@
 'use client';
-import Button from '@/app/[locale]/components/ui/Button';
+import Button from '@/components/ui/Button';
 import { login, logout } from '@/db/auth';
 import { Link } from '@/i18n/navigation';
 import { useProfileStore } from '@/store/profile';

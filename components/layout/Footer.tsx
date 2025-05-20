@@ -1,4 +1,4 @@
-import LocaleSwitcher from '@/app/[locale]/components/layout/LocaleSwitcher';
+import LocaleSwitcher from '@/components/layout/LocaleSwitcher';
 import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 

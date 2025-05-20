@@ -1,5 +1,5 @@
 'use client';
-import { ScrollableTable } from '@/app/[locale]/components/ui/scrollable-area';
+import { ScrollableTable } from '@/components/ui/scrollable-area';
 import * as Checkbox from '@radix-ui/react-checkbox';
 import { useId, useState } from 'react';
 

@@ -1,5 +1,5 @@
-import Comments from '@/app/[locale]/(mdx)/post/[id]/components/Comment';
-import TableOfContents from '@/app/[locale]/(mdx)/post/[id]/components/TableOfContents';
+import Comments from '@/components/Comment';
+import TableOfContents from '@/components/TableOfContents';
 import { routing } from '@/i18n/routing';
 import { getPostIds } from '@/utils/post';
 import type { Metadata } from 'next';

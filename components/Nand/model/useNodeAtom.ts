@@ -2,14 +2,14 @@ import {
   type RegistryKey,
   isRegistryKey,
   registry,
-} from '@/app/[locale]/components/Nand/atoms';
+} from '@/components/Nand/atoms';
 import type {
   JotaiStore,
   NodeAtoms,
   NodeOutput,
   NodeOutputs,
   SaveFile,
-} from '@/app/[locale]/components/Nand/model/type';
+} from '@/components/Nand/model/type';
 import { useCallback, useRef } from 'react';
 
 // setState 콜백이 두 번 불리기에 일단 에러 처리는 간단하게만 한다.

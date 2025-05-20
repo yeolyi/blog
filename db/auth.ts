@@ -4,8 +4,7 @@ export const login = async () => {
   supabase.auth.signInWithOAuth({
     provider: 'github',
     options: {
-      redirectTo: `${window.location.origin}${window.location.pathname}`,
-      queryParams: { next: window.location.pathname },
+      redirectTo: `${window.location.origin}${window.location.pathname}?scrollY=${window.scrollY.toString()}`,
     },
   });
 };

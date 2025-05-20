@@ -1,8 +1,8 @@
-import CurriculumSection from '@/app/[locale]/(mdx)/cs/components/CurriculumSection';
-import EmailSubscribe from '@/app/[locale]/(mdx)/cs/components/EmailSubscribe';
 import chapter1 from '@/app/[locale]/assets/chapter1.png';
 import chapter2 from '@/app/[locale]/assets/chapter2.png';
 import chapter3 from '@/app/[locale]/assets/chapter3.png';
+import CurriculumSection from '@/components/cs/CurriculumSection';
+import EmailSubscribe from '@/components/cs/EmailSubscribe';
 import type { Metadata } from 'next';
 import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';

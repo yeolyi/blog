@@ -1,8 +1,8 @@
 'use client';
 
-import Button from '@/app/[locale]/components/ui/Button';
-import Form from '@/app/[locale]/components/ui/Form';
-import Link from '@/app/[locale]/components/ui/Link';
+import Button from '@/components/ui/Button';
+import Form from '@/components/ui/Form';
+import Link from '@/components/ui/Link';
 import { deleteMeme } from '@/db/meme/delete';
 import { getMemeWithTag, getRandomMeme } from '@/db/meme/read';
 import { updateMeme } from '@/db/meme/update';

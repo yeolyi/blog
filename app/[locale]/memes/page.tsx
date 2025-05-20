@@ -1,6 +1,6 @@
 'use client';
 
-import { TagContainer, TagItem } from '@/app/[locale]/components/ui/Form';
+import { TagContainer, TagItem } from '@/components/ui/Form';
 import { isDev } from '@/constants/phase';
 import { getMemesByTag, getRecentMemes } from '@/db/meme/read';
 import { getTags } from '@/db/memeTag/read';

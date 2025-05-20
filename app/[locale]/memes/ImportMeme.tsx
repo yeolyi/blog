@@ -1,8 +1,8 @@
 'use client';
-import Button from '@/app/[locale]/components/ui/Button';
-import Link from '@/app/[locale]/components/ui/Link';
 import { crawlImage } from '@/app/[locale]/memes/actions';
 import { memeImagesAtom } from '@/app/[locale]/memes/store';
+import Button from '@/components/ui/Button';
+import Link from '@/components/ui/Link';
 import { useRouter } from '@/i18n/navigation';
 import { useSetAtom } from 'jotai';
 import { AppWindow, Clipboard, FileCheck, FileJson } from 'lucide-react';

@@ -99,7 +99,7 @@
   "Comment": {
     "loginRequired": "You need to <loginLink>login</loginLink> to write a comment.",
     "login": "login",
-    "placeholder": "Leave a markdown comment or emoji.",
+    "placeholder": "Thank you for reading! 👍",
     "submit": "Submit",
     "submitting": "Submitting...",
     "noComments": "No comments yet. Be the first to comment!",

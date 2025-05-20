@@ -3,7 +3,7 @@ import type {
   NodeCreator,
   OutputAtom,
   OutputValue,
-} from '@/app/[locale]/components/Nand/model/type';
+} from '@/components/Nand/model/type';
 import { atom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
 

@@ -1,4 +1,4 @@
-import { type Theme, themeMap } from '@/app/[locale]/components/ui/theme';
+import { type Theme, themeMap } from '@/components/ui/theme';
 import { Link as _Link } from '@/i18n/navigation';
 import clsx from 'clsx';
 import type { LucideProps } from 'lucide-react';
