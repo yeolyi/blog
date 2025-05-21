@@ -67,22 +67,6 @@ export async function getNoEmbeddingMemesFromDB() {
   return data.map(({ id }) => id);
 }
 
-export async function getRecentMemesFromDB() {
-  const { data } = await supabase
-    .from('memes')
-    .select('*')
-    .order('created_at', { ascending: false })
-    .limit(10)
-    .throwOnError();
-
-  return data;
-}
-
-export async function getRandomMemeFromDB() {
-  const { data } = await supabase.rpc('get_random_meme_id').throwOnError();
-  return data;
-}
-
 export async function getMemeIdsFromDB() {
   const { data } = await supabase.from('memes').select('id').throwOnError();
   return data.map(({ id }) => id);

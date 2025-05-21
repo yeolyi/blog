@@ -1,36 +1,36 @@
-import { type Bg, bgMap } from '@/components/ui/theme';
-import { Link as _Link } from '@/i18n/navigation';
+import { bgMap } from '@/components/ui/theme';
+import { Link as NextLink } from '@/i18n/navigation';
 import clsx from 'clsx';
-import type { LucideProps } from 'lucide-react';
+import { Link2 } from 'lucide-react';
 import type { Locale } from 'next-intl';
-import type { LinkProps } from 'next/link';
-import type { ReactNode } from 'react';
+import type { AnchorHTMLAttributes } from 'react';
 
 const Link = ({
-  theme,
   href,
   children,
-  Icon,
+  className,
   ...props
 }: {
-  locale: Locale;
-  theme: Bg;
   href: string;
-  Icon: (props: LucideProps) => ReactNode;
-  children: ReactNode;
-} & LinkProps) => {
+  locale: Locale;
+  onClick?: () => void;
+  isLoading?: boolean;
+  hideBackground?: boolean;
+} & AnchorHTMLAttributes<HTMLAnchorElement>) => {
   return (
-    <_Link
+    <NextLink
       href={href}
       className={clsx(
-        'flex items-center gap-2 px-4 py-2 cursor-pointer hover:opacity-80 w-fit',
-        bgMap[theme],
+        'flex items-center gap-2 cursor-pointer text-white w-fit text-base font-normal',
+        bgMap.gray,
+        className,
+        children ? 'px-4 py-2' : 'p-3',
       )}
       {...props}
     >
-      <Icon size={16} />
+      <Link2 size={16} />
       {children}
-    </_Link>
+    </NextLink>
   );
 };
 

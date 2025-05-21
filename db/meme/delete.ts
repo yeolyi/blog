@@ -9,6 +9,7 @@ export async function deleteMemeFromDB(id: string) {
 
   // 태그 삭제
   const tagIds = await getMemeTagIdsAtDB(id);
+  await supabase.from('meme_tags').delete().eq('meme_id', id).throwOnError();
   // 태그 수 많아봨자 한자리니 Promise.all로 한번에 처리
   await Promise.all(tagIds.map(tryDeleteTagAtDB));
 

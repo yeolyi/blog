@@ -41,7 +41,7 @@ const MemeModal = ({ meme, onClose }: MemeModalProps) => {
               밈 편집
             </Dialog.Title>
             <Dialog.Close asChild>
-              <Button bg="gray" Icon={X} aria-label="닫기" hideBackground />
+              <Button bg="transparent" Icon={X} aria-label="닫기" />
             </Dialog.Close>
           </div>
 
@@ -59,7 +59,7 @@ const MemeModal = ({ meme, onClose }: MemeModalProps) => {
             />
 
             <Button type="submit" bg="green" Icon={Save} className="ml-auto">
-              변경사항 저장
+              저장
             </Button>
           </form>
         </Dialog.Content>

@@ -55,6 +55,9 @@ module.exports = {
             'blockquote p:last-of-type::after': {
               content: 'none',
             },
+            'a:hover': {
+              fontWeight: 'bold',
+            },
           },
         },
       },

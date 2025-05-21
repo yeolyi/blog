@@ -1,6 +1,6 @@
 import cs from '@/app/[locale]/(mdx)/cs/assets/chasing.png';
 import PostList from '@/components/PostList';
-import Tile from '@/components/ui/Tile';
+import StyledLink from '@/components/ui/Link';
 import { Link } from '@/i18n/navigation';
 import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
@@ -47,46 +47,25 @@ export default async function Home({
       <div className="relative w-full aspect-square mx-auto">
         <Image src={me} alt="me" className="object-cover w-full h-full" />
         <div className="flex flex-col gap-2 absolute bottom-5 left-5">
-          <Link
-            href="https://github.com/yeolyi/blog"
-            className="block text-white text-2xl font-semibold bg-black w-fit hover:bg-white hover:text-black"
-          >
+          <StyledLink locale="ko" href="https://github.com/yeolyi/blog">
             GitHub
-          </Link>
-          <Link
-            href="https://www.instagram.com/yeol.dev"
-            className="block text-white text-2xl font-semibold bg-black w-fit hover:bg-white hover:text-black"
-          >
+          </StyledLink>
+          <StyledLink locale="ko" href="https://www.instagram.com/yeol.dev">
             Instagram
-          </Link>
+          </StyledLink>
         </div>
       </div>
 
       <p className="prose prose-invert break-keep">
         {t.rich('bio', {
           snuLink: (chunks) => (
-            <Link
-              href="https://cse.snu.ac.kr"
-              className="text-white hover:text-black hover:bg-white underline active:text-black active:bg-white"
-            >
-              {chunks}
-            </Link>
+            <Link href="https://cse.snu.ac.kr">{chunks}</Link>
           ),
           kakaoLink: (chunks) => (
-            <Link
-              href="https://kakaocorp.com"
-              className="text-white hover:text-black hover:bg-white underline active:text-black active:bg-white"
-            >
-              {chunks}
-            </Link>
+            <Link href="https://kakaocorp.com">{chunks}</Link>
           ),
           instagramLink: (chunks) => (
-            <Link
-              href="https://www.instagram.com/yeol.dev"
-              className="text-white hover:text-black hover:bg-white underline active:text-black active:bg-white"
-            >
-              {chunks}
-            </Link>
+            <Link href="https://www.instagram.com/yeol.dev">{chunks}</Link>
           ),
         })}
       </p>
@@ -96,15 +75,24 @@ export default async function Home({
         <PostList />
       </div>
 
-      <Tile>
-        <Tile.Item title={t('curriculum')} href="/cs">
+      <div>
+        <h2 className="text-2xl font-bold mb-[1em] text-white">
+          {t('series')}
+        </h2>
+        <Link
+          href="/cs"
+          className="group cursor-pointer relative w-fit flex flex-col"
+        >
           <Image
             src={cs}
             alt="cs"
             className="w-[512px] max-w-full aspect-video object-cover"
           />
-        </Tile.Item>
-      </Tile>
+          <h3 className="text-xl font-semibold text-black bg-white p-2 group-hover:tracking-wide transition-all ease-in-out duration-200">
+            {t('curriculum')}
+          </h3>
+        </Link>
+      </div>
     </div>
   );
 }

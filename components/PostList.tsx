@@ -20,15 +20,15 @@ export default async function PostList() {
   return (
     <ul>
       {sortedMetadataList.map(({ id, title, date }) => (
-        <li key={id} className="group hover:bg-white py-2">
+        <li key={id} className="group py-2">
           <Link
             href={`/post/${id}`}
             className="flex w-full no-underline text-base flex-col sm:flex-row"
           >
-            <span className="text-gray-500 shrink-0 font-normal mr-2">
+            <span className="text-gray-500 shrink-0 font-normal mr-2 transition-transform group-hover:-skew-x-15 ease-in-out duration-200">
               {date}
             </span>
-            <h3 className="text-white group-hover:text-black font-semibold shrink-0">
+            <h3 className="text-white group-hover:-skew-x-15 font-semibold shrink-0 transition-transform ease-in-out duration-200">
               {title}
             </h3>
           </Link>
