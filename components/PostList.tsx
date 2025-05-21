@@ -25,10 +25,10 @@ export default async function PostList() {
             href={`/post/${id}`}
             className="flex w-full no-underline text-base flex-col sm:flex-row"
           >
-            <span className="text-gray-500 shrink-0 font-normal mr-2 transition-transform group-hover:-skew-x-15 ease-in-out duration-200">
+            <span className="text-gray-500 shrink-0 font-normal mr-2 transition-transform group-hover:-skew-x-10 group-active:-skew-x-20 ease-in-out duration-200">
               {date}
             </span>
-            <h3 className="text-white group-hover:-skew-x-15 font-semibold shrink-0 transition-transform ease-in-out duration-200">
+            <h3 className="text-white group-hover:-skew-x-10 group-active:-skew-x-20 font-semibold shrink-0 transition-transform ease-in-out duration-200">
               {title}
             </h3>
           </Link>

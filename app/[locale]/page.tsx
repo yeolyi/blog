@@ -1,6 +1,5 @@
 import cs from '@/app/[locale]/(mdx)/cs/assets/chasing.png';
 import PostList from '@/components/PostList';
-import StyledLink from '@/components/ui/Link';
 import { Link } from '@/i18n/navigation';
 import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
@@ -43,18 +42,13 @@ export default async function Home({
   const t = await getTranslations('HomePage');
 
   return (
-    <div className="max-w-2xl mx-auto my-24 px-4 flex flex-col gap-16">
-      <div className="relative w-full aspect-square mx-auto">
-        <Image src={me} alt="me" className="object-cover w-full h-full" />
-        <div className="flex flex-col gap-2 absolute bottom-5 left-5">
-          <StyledLink locale="ko" href="https://github.com/yeolyi/blog">
-            GitHub
-          </StyledLink>
-          <StyledLink locale="ko" href="https://www.instagram.com/yeol.dev">
-            Instagram
-          </StyledLink>
-        </div>
-      </div>
+    <div className="max-w-2xl mx-auto my-24 px-4 flex flex-col gap-12">
+      <Image
+        src={me}
+        alt="me"
+        className="object-cover w-full h-full aspect-square"
+        draggable={false}
+      />
 
       <p className="prose prose-invert break-keep">
         {t.rich('bio', {
@@ -82,13 +76,15 @@ export default async function Home({
         <Link
           href="/cs"
           className="group cursor-pointer relative w-fit flex flex-col"
+          draggable={false}
         >
           <Image
             src={cs}
             alt="cs"
             className="w-[512px] max-w-full aspect-video object-cover"
+            draggable={false}
           />
-          <h3 className="text-xl font-semibold text-black bg-white p-2 group-hover:tracking-wide transition-all ease-in-out duration-200">
+          <h3 className="text-xl font-semibold text-black bg-white p-2 group-hover:tracking-wide group-active:tracking-wider transition-all ease-in-out duration-200">
             {t('curriculum')}
           </h3>
         </Link>
