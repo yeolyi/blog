@@ -11,6 +11,9 @@
     "label": "Language",
     "locale": "{locale}"
   },
+  "TableOfContents": {
+    "title": "Table of Contents"
+  },
   "Footer": {
     "title": "seongyeol",
     "copyright": "© {year} All rights reserved.",

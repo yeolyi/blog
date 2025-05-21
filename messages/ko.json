@@ -11,6 +11,9 @@
     "label": "언어",
     "locale": "{locale}"
   },
+  "TableOfContents": {
+    "title": "목차"
+  },
   "Footer": {
     "title": "seongyeol",
     "copyright": "© {year} 모든 권리 보유.",
