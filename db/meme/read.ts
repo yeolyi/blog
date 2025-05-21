@@ -1,6 +1,73 @@
 import supabase from '@/db';
+import type { Meme, Tag } from '@/types/helper.types';
 
-export async function getRecentMemes() {
+export function getMemeFromDB(id: string): Promise<Omit<Meme, 'embedding'>>;
+export function getMemeFromDB(
+  id: string,
+  options: { includeEmbedding: true },
+): Promise<Meme>;
+export function getMemeFromDB(
+  id: string,
+  options: { includeTags: true },
+): Promise<Meme & { meme_tags: { tags: Tag }[] }>;
+export async function getMemeFromDB(
+  id: string,
+  options?: { includeEmbedding?: boolean; includeTags?: boolean },
+): Promise<Omit<Meme, 'embedding'>> {
+  const { includeEmbedding = false, includeTags = false } = options ?? {};
+
+  let columns = includeEmbedding
+    ? 'id, media_url, embedding, title, height, width, created_at, updated_at'
+    : 'id, media_url, title, height, width, created_at, updated_at';
+
+  if (includeTags) columns += ', meme_tags(tag_id, tags(id, name))';
+
+  const { data } = await supabase
+    .from('memes')
+    .select(columns)
+    .eq('id', id)
+    .single()
+    .throwOnError();
+
+  return data as unknown as Omit<Meme, 'embedding'>;
+}
+
+export async function getMemesFromDB(tagId?: string) {
+  if (tagId) {
+    const { data } = await supabase
+      .from('meme_tags')
+      .select(
+        `
+      meme_id,
+      memes(id, media_url, title, height, width)
+    `,
+      )
+      .eq('tag_id', tagId)
+      .throwOnError();
+
+    return data.map(({ memes }) => memes).filter((meme) => meme !== null);
+  }
+
+  const { data } = await supabase
+    .from('memes')
+    .select('id, media_url, title, height, width')
+    .order('created_at', { ascending: false })
+    .limit(10)
+    .throwOnError();
+  return data;
+}
+
+export async function getNoEmbeddingMemesFromDB() {
+  const { data } = await supabase
+    .from('memes')
+    .select('id')
+    .is('embedding', null)
+    .throwOnError();
+
+  return data.map(({ id }) => id);
+}
+
+export async function getRecentMemesFromDB() {
   const { data } = await supabase
     .from('memes')
     .select('*')
@@ -11,52 +78,36 @@ export async function getRecentMemes() {
   return data;
 }
 
-export async function getMemeMediaUrlById(id: string) {
-  const { data } = await supabase
-    .from('memes')
-    .select('media_url')
-    .eq('id', id)
-    .single()
-    .throwOnError();
-
-  return data?.media_url;
+export async function getRandomMemeFromDB() {
+  const { data } = await supabase.rpc('get_random_meme_id').throwOnError();
+  return data;
 }
 
-export async function getMemeWithTag(id: string) {
+export async function getMemeIdsFromDB() {
+  const { data } = await supabase.from('memes').select('id').throwOnError();
+  return data.map(({ id }) => id);
+}
+
+export async function matchSimilarMemeAtDB({
+  query_id,
+  match_threshold,
+  match_count,
+}: {
+  query_id: string;
+  match_threshold: number;
+  match_count: number;
+}) {
   const { data } = await supabase
-    .from('memes')
-    .select(
-      `
-      *,
-      meme_tags(
-        tag_id,
-        tags(id, name)
-      )
-    `,
-    )
-    .eq('id', id)
-    .single()
+    .rpc('match_similar_meme', { query_id, match_threshold, match_count })
     .throwOnError();
 
   return data;
 }
 
-export async function getMemesByTag(tagId: string) {
-  const { data } = await supabase
-    .from('meme_tags')
-    .select(
-      `
-      meme_id,
-      memes(*)
-    `,
-    )
-    .eq('tag_id', tagId)
-    .throwOnError();
+export async function getRandomMemesFromDB(count: number) {
+  const { data } = await supabase.rpc('get_random_memes', {
+    p_count: count,
+  });
 
-  return data.map(({ memes }) => memes).filter((meme) => meme !== null);
-}
-
-export async function getRandomMeme() {
-  const { data } = await supabase.rpc('get_random_meme_id').throwOnError();
   return data;
 }

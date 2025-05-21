@@ -1,6 +1,6 @@
 import supabase from '@/db';
 
-export async function getComments(postId: string) {
+export async function getCommentsFromDB(postId: string) {
   const { data: comments } = await supabase
     .rpc('get_comments_with_developer_number', { post_id_param: postId })
     .throwOnError();
@@ -9,7 +9,7 @@ export async function getComments(postId: string) {
 }
 
 // id가 안와??
-export async function getEmojiReactions(postId: string) {
+export async function getEmojiReactionsFromDB(postId: string) {
   const { data } = await supabase
     .rpc('get_emoji_counts', { p_post_id: postId })
     .throwOnError();

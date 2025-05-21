@@ -8,3 +8,5 @@ alwaysApply: true
 - Use Tailwind CSS for all styling.
 - When implementing Server Actions, always handle errors and return a response in the following format: { success: boolean, error: string }- 
 - Prefer using throwOnError when working with Supabase to simplify error handling.-
+- For icon use lucide icon package.- 
+- Use uncontrolled component for form. Prefer native html solution.

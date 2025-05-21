@@ -1,6 +1,6 @@
 'use client';
 
-import { getSubscriberCount, subscribeEmail } from '@/app/[locale]/actions';
+import { getSubscriberCount, subscribeEmail } from '@/actions/resend';
 import * as Slider from '@radix-ui/react-slider';
 import clsx from 'clsx';
 import { delay } from 'es-toolkit';

@@ -1,4 +1,4 @@
-import { type Theme, themeMap } from '@/components/ui/theme';
+import { type Bg, bgMap } from '@/components/ui/theme';
 import { Link as _Link } from '@/i18n/navigation';
 import clsx from 'clsx';
 import type { LucideProps } from 'lucide-react';
@@ -14,7 +14,7 @@ const Link = ({
   ...props
 }: {
   locale: Locale;
-  theme: Theme;
+  theme: Bg;
   href: string;
   Icon: (props: LucideProps) => ReactNode;
   children: ReactNode;
@@ -24,7 +24,7 @@ const Link = ({
       href={href}
       className={clsx(
         'flex items-center gap-2 px-4 py-2 cursor-pointer hover:opacity-80 w-fit',
-        themeMap[theme],
+        bgMap[theme],
       )}
       {...props}
     >

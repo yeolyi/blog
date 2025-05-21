@@ -1,3 +1,7 @@
+A portal only changes the physical placement of the DOM node. In every other way, the JSX you render into a portal acts as a child node of the React component that renders it. For example, the child can access the context provided by the parent tree, and events bubble up from children to parents according to the React tree.
+
+https://github.com/orgs/supabase/discussions/9214 왜!!!! 왜 insert가 안되나 했네
+
 - avif 최적화
   - 1.4GB(아마) -> 80mb ㄷㄷㄷ  
 - vercel로 puppeteer쓰려면 light 깔아야되고... chromium 따로 동적 로드 해야되고... 

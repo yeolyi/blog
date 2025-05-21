@@ -1,93 +1,112 @@
 'use client';
+import { crawlImage } from '@/actions/crawl';
+import MemeCard, { type MemeCardProps } from '@/components/meme/MemeCard';
+import TagRadio from '@/components/meme/TagRadio';
+import Button from '@/components/ui/Button';
+import Form from '@/components/ui/Form';
+import { getRandomMemesFromDB } from '@/db/meme/read';
+import { useRouter } from '@/i18n/navigation';
+import { useCrawlStore } from '@/store/crawl';
+import { NO_TAG_ID, useMemes, useTags } from '@/swr/meme';
+import { shuffled } from '@/utils/array';
+import { AppWindow, Clipboard, Shuffle } from 'lucide-react';
+import dynamic from 'next/dynamic';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useReducer, useState } from 'react';
 
-import { TagContainer, TagItem } from '@/components/ui/Form';
-import { isDev } from '@/constants/phase';
-import { getMemesByTag, getRecentMemes } from '@/db/meme/read';
-import { getTags } from '@/db/memeTag/read';
-import { Link } from '@/i18n/navigation';
-import type { Meme } from '@/types/helper.types';
-import { useAtom } from 'jotai';
-import { atomWithStorage } from 'jotai/utils';
-import { Masonry } from 'masonic';
-import useSWR from 'swr';
-
-export const maxDuration = 60;
-
-// 선택된 태그를 localStorage에 저장하는 atom 생성
-const selectedTagAtom = atomWithStorage<string | null>(
-  'selected-meme-tag',
-  null,
+// ResizeObserver 문제 해결을 위해 dynamic import
+const Masonry = dynamic(
+  () => import('masonic').then((mod) => mod.Masonry<MemeCardProps>),
+  { ssr: false },
 );
 
 export default function MemeViewer() {
-  const { data: allTags } = useSWR('/api/tags', getTags);
-  const [selectedTag, setSelectedTag] = useAtom(selectedTagAtom);
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-  // 선택된 태그가 있으면 해당 태그의 밈을, 없으면 최근 밈을 가져옴
-  const { data: tagMemes } = useSWR(
-    selectedTag ? selectedTag : null,
-    selectedTag ? getMemesByTag : null,
-  );
+  const { data: _tags } = useTags();
+  const tagSearchParam = searchParams.get('tag');
+  const selectedTag = tagSearchParam ?? NO_TAG_ID;
 
-  // 선택된 태그가 없을 때 최근 밈을 가져옴
-  const { data: recentMemes } = useSWR(
-    selectedTag ? null : '/api/memes/recent',
-    selectedTag ? null : getRecentMemes,
-  );
+  const { data: dbMemes } = useMemes(selectedTag);
 
-  // 표시할 밈 데이터
-  const memes = selectedTag ? tagMemes : recentMemes;
+  const [memes, setMemes] = useState(dbMemes ?? []);
+  const [masonryKey, setMasonryKey] = useReducer((x) => x + 1, 0);
+
+  const setUrlList = useCrawlStore((state) => state.setUrlList);
+
+  useEffect(() => {
+    setMemes(dbMemes ?? []);
+    setMasonryKey();
+  }, [dbMemes]);
+
+  const tags = [{ id: NO_TAG_ID, name: '전체' }, ...(_tags ?? [])];
+
+  const onChange = async (e: React.ChangeEvent<HTMLFormElement>) => {
+    // 다른 form에서 오는 경우 (모달 등) 제외
+    if (e.target.name !== 'tag') return;
+
+    const tagName = e.target.value;
+    const tagId = tags?.find((tag) => tag.name === tagName)?.id;
+    if (!tagId) return;
+    router.push(`/memes?tag=${tagId}`);
+  };
+
+  const onShuffle = async () => {
+    const randomMemes = await getRandomMemesFromDB(50);
+    setMemes(shuffled(randomMemes ?? []));
+  };
+
+  const [shouldOpen, setShouldOpen] = useState('');
+
+  const pasteUrl = async () => {
+    const url = await navigator.clipboard.readText();
+    if (!url) return;
+
+    const crawlResult = await crawlImage(url);
+
+    if (crawlResult.success) {
+      setUrlList(crawlResult.value);
+      router.push('/memes/select');
+    } else {
+      window.alert(crawlResult.error);
+    }
+  };
 
   return (
-    <div className="flex flex-col gap-8 mt-20 px-4 max-w-2xl mx-auto">
-      <TagContainer>
-        {allTags?.map((tag) => (
-          <TagItem
-            key={tag.id}
-            tag={tag}
-            onClickTag={() =>
-              setSelectedTag((currentTag) => {
-                if (currentTag === tag.id) return null;
-                return tag.id;
-              })
-            }
-            isSelected={selectedTag === tag.id}
-          />
-        ))}
-      </TagContainer>
-
-      {memes && (
-        <Masonry
-          key={selectedTag ?? '$recent$'}
-          items={memes}
-          itemKey={(item) => item.id}
-          columnGutter={16}
-          columnWidth={300}
-          render={MemeCard}
-        />
-      )}
-    </div>
+    <Form onChange={onChange} className="mt-20 px-4 max-w-2xl mx-auto w-full">
+      <TagRadio tags={tags} name="tag" initialValue={selectedTag} />
+      <Masonry
+        key={masonryKey}
+        items={memes}
+        itemKey={(item) => item.id}
+        columnGutter={16}
+        columnWidth={300}
+        render={MemeCard}
+      />
+      <div className="fixed bottom-8 right-8 flex flex-col gap-2">
+        {selectedTag === NO_TAG_ID && (
+          <Button type="button" bg="gray" Icon={Shuffle} onClick={onShuffle}>
+            셔플
+          </Button>
+        )}
+        {shouldOpen && (
+          <Button
+            type="button"
+            bg="gray"
+            Icon={AppWindow}
+            onClick={() => {
+              setShouldOpen('');
+              open('', '_blank');
+            }}
+          >
+            새 창 열기
+          </Button>
+        )}
+        <Button type="button" bg="gray" Icon={Clipboard} onClick={pasteUrl}>
+          붙여넣기
+        </Button>
+      </div>
+    </Form>
   );
 }
-
-const MemeCard = ({ data: meme }: { data: Meme }) => {
-  return (
-    <Link
-      locale="ko"
-      href={`/memes/random/${meme.id}`}
-      className="flex flex-col bg-stone-800"
-    >
-      <img
-        src={
-          isDev
-            ? `https://placehold.co/${meme.width}x${meme.height}`
-            : meme.media_url
-        }
-        alt={meme.title ?? ''}
-        width={meme.width}
-        height={meme.height}
-      />
-      <p className="text-white p-1">{meme.title}</p>
-    </Link>
-  );
-};

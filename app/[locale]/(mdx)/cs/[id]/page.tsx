@@ -1,6 +1,6 @@
 import { generateCSMetadata } from '@/app/[locale]/(mdx)/cs/utils/generateCSMetadata';
-import Comments from '@/components/Comment';
 import TableOfContents from '@/components/TableOfContents';
+import Comments from '@/components/comment';
 import { routing } from '@/i18n/routing';
 import { getPostIds } from '@/utils/post';
 import { notFound } from 'next/navigation';

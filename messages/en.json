@@ -4,7 +4,7 @@
     "loading": "Loading...",
     "developer": "Developer #{number}",
     "logout": "Logout",
-    "login": "GitHub Login",
+    "login": "Login",
     "changeLocale": "Change locale"
   },
   "LocaleSwitcher": {
@@ -103,7 +103,7 @@
     "submit": "Submit",
     "submitting": "Submitting...",
     "noComments": "No comments yet. Be the first to comment!",
-    "loading": "Loading...",
+    "loading": "Logging in...",
     "deleteComment": "Delete Comment",
     "deleteConfirm": "Are you sure you want to delete this comment?",
     "deleting": "Deleting...",

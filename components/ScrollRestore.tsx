@@ -7,29 +7,27 @@ const ScrollRestore = () => {
   const searchParams = useSearchParams();
 
   useLayoutEffect(() => {
+    const scrollY = searchParams.get('scrollY');
+    if (!scrollY) return;
+
     setTimeout(() => {
-      const scrollY = searchParams.get('scrollY');
+      // 스크롤 위치 복원
+      window.scrollTo({
+        top: Number.parseInt(scrollY, 10),
+        behavior: 'instant',
+      });
 
-      if (scrollY) {
-        // 스크롤 위치 복원
-        window.scrollTo({
-          top: Number.parseInt(scrollY, 10),
-          behavior: 'instant',
-        });
+      // 쿼리 파라미터에서 scrollY 제거
+      const newParams = new URLSearchParams(searchParams.toString());
+      newParams.delete('scrollY');
+      const newPathname = window.location.pathname;
+      const newSearch = newParams.toString() ? `?${newParams.toString()}` : '';
 
-        // 쿼리 파라미터에서 scrollY 제거
-        const newParams = new URLSearchParams(searchParams.toString());
-        newParams.delete('scrollY');
-        const newPathname = window.location.pathname;
-        const newSearch = newParams.toString()
-          ? `?${newParams.toString()}`
-          : '';
+      // URL 수정 (히스토리 대체)
+      window.history.replaceState({}, '', `${newPathname}${newSearch}`);
 
-        // URL 수정 (히스토리 대체)
-        window.history.replaceState({}, '', `${newPathname}${newSearch}`);
-      }
-      // TODO: 값 최소회
-    }, 500);
+      // TODO: 최소화
+    }, 200);
   }, [searchParams]);
 
   return null;

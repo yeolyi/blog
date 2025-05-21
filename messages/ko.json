@@ -4,7 +4,7 @@
     "loading": "로딩 중...",
     "developer": "#{number}번째 개발자님",
     "logout": "로그아웃",
-    "login": "GitHub 로그인",
+    "login": "로그인",
     "changeLocale": "언어 변경"
   },
   "LocaleSwitcher": {
@@ -103,7 +103,7 @@
     "submit": "댓글 작성",
     "submitting": "작성 중...",
     "noComments": "아직 댓글이 없습니다. 첫 댓글을 남겨보세요!",
-    "loading": "로딩 중...",
+    "loading": "로그인 중...",
     "deleteComment": "댓글 삭제",
     "deleteConfirm": "정말 이 댓글을 삭제하시겠습니까?",
     "deleting": "삭제 중...",

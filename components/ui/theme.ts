@@ -1,7 +1,8 @@
-export const themeMap = {
-  green: 'bg-[#4CAF50] text-white',
-  gray: 'bg-stone-700 text-white',
-  red: 'bg-red-500 text-white',
+export const bgMap = {
+  green: 'bg-[#4CAF50]',
+  gray: 'bg-stone-700',
+  red: 'bg-red-500',
+  transparent: 'bg-transparent',
 };
 
-export type Theme = keyof typeof themeMap;
+export type Bg = keyof typeof bgMap;

@@ -1,6 +1,6 @@
 import supabase from '@/db';
 
-export const tryDeleteTag = async (tagId: string) => {
+export const tryDeleteTagAtDB = async (tagId: string) => {
   const { count } = await supabase
     .from('meme_tags')
     .select('*', { count: 'exact', head: true })

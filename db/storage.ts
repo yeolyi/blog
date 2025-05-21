@@ -1,6 +1,6 @@
 import supabase from '@/db';
 
-export async function uploadFile(
+export async function uploadFileToDB(
   filePath: string,
   file: File | Blob,
 ): Promise<string> {

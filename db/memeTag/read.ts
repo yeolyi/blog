@@ -1,16 +1,17 @@
 import supabase from '@/db';
 
-export async function getTags() {
+export async function getTagsAtDB() {
   const { data } = await supabase
     .from('tags')
     .select()
-    .order('name')
+    .order('name', { ascending: true })
     .throwOnError();
 
-  return data;
+  // TODO: colocation 어쩌구를 안해서 클라에서 정렬
+  return data.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-export async function getMemeTagIds(memeId: string) {
+export async function getMemeTagIdsAtDB(memeId: string) {
   // 왜 string | null ??
   const { data } = await supabase
     .from('meme_tags')
@@ -18,7 +19,11 @@ export async function getMemeTagIds(memeId: string) {
     .eq('meme_id', memeId)
     .throwOnError();
 
-  return data
-    .map((tag) => tag.tag_id)
-    .filter((id): id is string => id !== null);
+  return (
+    data
+      .map((tag) => tag.tag_id)
+      .filter((id): id is string => id !== null)
+      // TODO: colocation 어쩌구를 안해서 클라에서 정렬
+      .sort((a, b) => a.localeCompare(b))
+  );
 }

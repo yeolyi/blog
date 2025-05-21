@@ -1,6 +1,6 @@
 import supabase from '@/db';
 
-export async function toggleEmojiReaction({
+export async function toggleEmojiReactionInDB({
   postId,
   emoji,
 }: {

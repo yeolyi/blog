@@ -1,6 +1,6 @@
 import supabase from '@/db';
 
-export async function createComment(
+export async function createCommentInDB(
   postId: string,
   content: string,
   userId: string,

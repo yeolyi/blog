@@ -5,9 +5,10 @@ import Header from '../../components/layout/Header';
 
 import '@/app/[locale]/globals.css';
 
-import AuthListener from '@/components/AuthListener';
+import { Providers } from '@/app/providers';
 import ScrollRestore from '@/components/ScrollRestore';
 import { routing } from '@/i18n/routing';
+import { Provider } from 'jotai';
 import { type Locale, NextIntlClientProvider, hasLocale } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
@@ -67,12 +68,15 @@ export default async function RootLayout({
       </head>
       <body className="min-h-dvh flex flex-col">
         <NextIntlClientProvider>
-          {children}
-          <Header />
-          <Footer />
+          <Provider>
+            <Providers>
+              {children}
+              <Header />
+              <Footer />
+            </Providers>
+          </Provider>
         </NextIntlClientProvider>
         <Analytics />
-        <AuthListener />
         <Suspense>
           <ScrollRestore />
         </Suspense>

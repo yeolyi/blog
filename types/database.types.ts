@@ -234,6 +234,16 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: string;
       };
+      get_random_memes: {
+        Args: { p_count?: number };
+        Returns: {
+          id: string;
+          media_url: string;
+          title: string;
+          height: number;
+          width: number;
+        }[];
+      };
       get_subscriber_count: {
         Args: Record<PropertyKey, never>;
         Returns: number;
@@ -299,11 +309,19 @@ export type Database = {
         Returns: string;
       };
       match_similar_meme: {
-        Args: {
-          query_embedding: string;
-          match_threshold: number;
-          match_count: number;
-        };
+        Args:
+          | {
+              query_embedding: string;
+              match_threshold: number;
+              match_count: number;
+            }
+          | {
+              query_embedding: string;
+              match_threshold: number;
+              match_count: number;
+              query_id: string;
+            }
+          | { query_id: string; match_threshold: number; match_count: number };
         Returns: {
           id: string;
           media_url: string;

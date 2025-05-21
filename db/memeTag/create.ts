@@ -1,6 +1,6 @@
 import supabase from '@/db';
 
-export const connectMemeToTag = async (memeId: string, tagName: string) => {
+export const connectMemeToTagInDB = async (memeId: string, tagName: string) => {
   // 기존 태그 찾기
   const { data: existingTag } = await supabase
     .from('tags')

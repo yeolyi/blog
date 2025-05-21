@@ -1,9 +1,9 @@
 import supabase from '@/db';
-import { uploadFile } from '@/db/storage';
+import { uploadFileToDB } from '@/db/storage';
 import { getErrMessage } from '@/utils/string';
 import { v4 } from 'uuid';
 
-export async function uploadSingleMeme({
+export async function uploadMemeToDB({
   title,
   file,
 }: {
@@ -13,7 +13,7 @@ export async function uploadSingleMeme({
   try {
     const fileExt = file.type.split('/')[1];
     const fileName = `${v4()}.${fileExt}`;
-    const url = await uploadFile(fileName, file);
+    const url = await uploadFileToDB(fileName, file);
 
     // 이미지 크기 얻기
     const { width, height } = await new Promise<{
@@ -44,8 +44,8 @@ export async function uploadSingleMeme({
   }
 }
 
-export async function uploadMultipleMemes(
-  memes: { title: string; imageURL: string; tags?: string }[],
+export async function uploadMemesToDB(
+  memes: { title: string; imageURL: string }[],
 ) {
   console.log(`[일괄 업로드] 시작: ${memes.length}개 항목`);
 
@@ -89,7 +89,7 @@ export async function uploadMultipleMemes(
 
         // 단일 밈 업로드 함수 호출
         console.log(`[일괄 업로드] Supabase에 업로드 중: ${meme.title}`);
-        const result = await uploadSingleMeme({
+        const result = await uploadMemeToDB({
           title: meme.title,
           file,
         });
