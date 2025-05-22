@@ -1,3 +1,4 @@
+import { border } from '@/components/ui/theme';
 import { useSessionStore } from '@/store/session';
 import { useTranslations } from 'next-intl';
 
@@ -7,7 +8,7 @@ export default function NeedLogin() {
   const isLoading = useSessionStore((state) => state.isLoading);
 
   return (
-    <p className="p-4 border border-[#5E5E5E] text-gray-300">
+    <p className={`p-4 ${border} text-gray-300`}>
       {isLoading
         ? t('loading')
         : t.rich('loginRequired', {

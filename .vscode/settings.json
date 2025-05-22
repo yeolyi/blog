@@ -16,5 +16,6 @@
   },
   "[cpp]": {
     "editor.defaultFormatter": "ms-vscode.cpptools"
-  }
+  },
+  "i18n-ally.localesPaths": ["i18n", "messages"]
 }

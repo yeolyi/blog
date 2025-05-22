@@ -1,4 +1,5 @@
 import Button from '@/components/ui/Button';
+import { border } from '@/components/ui/theme';
 import { useProfile } from '@/swr/auth';
 import { deleteComment, useComments } from '@/swr/comment';
 import type { Comment } from '@/types/helper.types';
@@ -12,22 +13,13 @@ interface CommentListProps {
 }
 
 export default function CommentList({ postId }: CommentListProps) {
-  const commentT = useTranslations('Comment');
   const { data: comments } = useComments(postId);
-
-  if (!comments) return null;
 
   return (
     <>
-      {comments.length === 0 ? (
-        <p className="text-gray-500 dark:text-gray-400">
-          {commentT('noComments')}
-        </p>
-      ) : (
-        comments.map((comment) => (
-          <CommentItem key={comment.id} comment={comment} postId={postId} />
-        ))
-      )}
+      {comments?.map((comment) => (
+        <CommentItem key={comment.id} comment={comment} postId={postId} />
+      ))}
     </>
   );
 }
@@ -48,10 +40,7 @@ const CommentItem = ({
   const isAuthor = profile?.id === comment.author_id;
 
   return (
-    <div
-      key={comment.id}
-      className="p-4 border border-[#5E5E5E] dark:border-[#5E5E5E]"
-    >
+    <div key={comment.id} className={`p-4 ${border}`}>
       {/* 게시물에 첨부된 경우 prose가 적용되지 않도록 처리 */}
       <div className="not-prose flex justify-between items-start mb-4">
         <p>

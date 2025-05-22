@@ -1,7 +1,7 @@
 'use client';
 import Button from '@/components/ui/Button';
 import { useProfile } from '@/swr/auth';
-import { createComment } from '@/swr/comment';
+import { createComment, useComments } from '@/swr/comment';
 import { getErrMessage } from '@/utils/string';
 import { Pencil } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -13,7 +13,10 @@ type CommentFormProps = {
 
 export default function CommentForm({ postId }: CommentFormProps) {
   const { data: profile } = useProfile();
+  const { data: comments } = useComments(postId);
   const t = useTranslations('Comment');
+
+  const isCommentEmpty = comments?.length === 0;
 
   const onSubmit = async (prevState: string | undefined, values: FormData) => {
     const content = values.get('content');
@@ -40,7 +43,9 @@ export default function CommentForm({ postId }: CommentFormProps) {
       )}
       <textarea
         name="content"
-        placeholder={t('placeholder')}
+        placeholder={`${t('placeholder')} ${
+          isCommentEmpty ? t('noComments') : ''
+        }`}
         className="block w-full resize-none min-h-32 p-3 border border-[#5E5E5E] focus:outline-none focus:ring-1 focus:ring-stone-500 focus:border-stone-500 text-gray-100 overflow-hidden"
         defaultValue=""
         required

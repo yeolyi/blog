@@ -1,5 +1,7 @@
+import { skewOnHover } from '@/components/ui/theme';
 import { Link } from '@/i18n/navigation';
 import { getPostIds } from '@/utils/post';
+import clsx from 'clsx';
 import { getLocale } from 'next-intl/server';
 
 export default async function PostList() {
@@ -25,10 +27,17 @@ export default async function PostList() {
             href={`/post/${id}`}
             className="flex w-full no-underline text-base flex-col sm:flex-row"
           >
-            <span className="text-gray-500 shrink-0 font-normal mr-2 transition-transform group-hover:-skew-x-10 group-active:-skew-x-20 ease-in-out duration-200">
+            <span
+              className={clsx(
+                'text-gray-500 shrink-0 font-normal mr-2',
+                skewOnHover,
+              )}
+            >
               {date}
             </span>
-            <h3 className="text-white group-hover:-skew-x-10 group-active:-skew-x-20 font-semibold shrink-0 transition-transform ease-in-out duration-200">
+            <h3
+              className={clsx('text-white font-semibold shrink-0', skewOnHover)}
+            >
               {title}
             </h3>
           </Link>

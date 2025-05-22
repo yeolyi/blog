@@ -1,4 +1,6 @@
 'use server';
+import { getErrMessage } from '@/utils/string';
+import { revalidatePath } from 'next/cache';
 import { Resend } from 'resend';
 
 // Resend 객체 생성
@@ -15,6 +17,11 @@ type SubscribeResult = {
 
 export async function subscribeEmail(email: string): Promise<SubscribeResult> {
   const resp = await resend.contacts.create({ email, audienceId: AUDIENCE_ID });
+
+  // TODO: 이 페이지 말고 다른 곳에서도 구독자 수를 사용한다면...?
+  revalidatePath('/cs');
+  revalidatePath('/en/cs');
+
   if (resp.error) {
     return {
       success: false,
@@ -29,6 +36,16 @@ export async function subscribeEmail(email: string): Promise<SubscribeResult> {
 
 // 구독자 수 조회 함수
 export async function getSubscriberCount() {
-  const response = await resend.contacts.list({ audienceId: AUDIENCE_ID });
-  return response.data?.data.length;
+  try {
+    const response = await resend.contacts.list({ audienceId: AUDIENCE_ID });
+    return {
+      success: true,
+      value: response.data?.data.length,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: getErrMessage(error),
+    };
+  }
 }

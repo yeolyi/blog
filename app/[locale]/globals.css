@@ -6,6 +6,7 @@
   body {
     font-family: var(--font-ibm-plex-sans);
     @apply bg-black;
+    scrollbar-gutter: stable;
   }
 
   /* 1. Use a more-intuitive box-sizing model */

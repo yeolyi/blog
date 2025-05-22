@@ -25,7 +25,7 @@ export const LabelGroup = ({ children }: { children: ReactNode }) => {
   return <div className="flex flex-col gap-2">{children}</div>;
 };
 
-const Input = ({
+export const Input = ({
   className,
   ...props
 }: InputHTMLAttributes<HTMLInputElement>) => {

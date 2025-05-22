@@ -1,14 +1,8 @@
-import chapter1 from '@/app/[locale]/assets/chapter1.png';
-import chapter2 from '@/app/[locale]/assets/chapter2.png';
-import chapter3 from '@/app/[locale]/assets/chapter3.png';
-import CurriculumSection from '@/components/cs/CurriculumSection';
+import { getSubscriberCount } from '@/actions/resend';
+import CSPostListItem from '@/components/cs/CSPostListItem';
 import EmailSubscribe from '@/components/cs/EmailSubscribe';
 import type { Metadata } from 'next';
-import type { Locale } from 'next-intl';
-import { getTranslations, setRequestLocale } from 'next-intl/server';
-import Image from 'next/image';
-import type { StaticImageData } from 'next/image';
-import chasing from './assets/chasing.png';
+import { getTranslations } from 'next-intl/server';
 
 export const metadata: Metadata = {
   title: '만들면서 배우는 컴퓨터공학',
@@ -23,220 +17,89 @@ export const metadata: Metadata = {
   ],
 };
 
-export type PostType = {
-  titleKey: string;
-  title?: string;
-  descriptionKey?: string;
-  description?: string;
-} & (
-  | {
-      isPublished: false;
-    }
-  | {
-      isPublished: true;
-      slug: string;
-    }
-);
-
-export type PartType = {
-  id: string;
-  titleKey: string;
-  title?: string;
-  image?: StaticImageData;
-  posts: PostType[];
-};
-
-export default async function Home({
-  params,
-}: {
-  params: Promise<{ locale: Locale }>;
-}) {
-  const { locale } = await params;
-  // Enable static rendering
-  setRequestLocale(locale);
-
+export default async function Home() {
   const t = await getTranslations('HomePage');
-  const tCurriculum = await getTranslations('Curriculum');
-
-  // 번역이 적용된 curriculumData 생성
-  const curriculumData = curriculumDataRaw.map((part) => ({
-    ...part,
-    // @ts-expect-error 어떻게 고치지
-    title: tCurriculum(part.titleKey),
-    posts: part.posts.map((post) => ({
-      ...post,
-      // @ts-expect-error 어떻게 고치지
-      title: tCurriculum(post.titleKey),
-      description: post.descriptionKey
-        ? // @ts-expect-error 어떻게 고치지
-          tCurriculum(post.descriptionKey)
-        : undefined,
-    })),
-  }));
+  const tCS = await getTranslations('Curriculum');
+  const tEmail = await getTranslations('EmailSubscribe');
+  const subscriberCount = await getSubscriberCount();
+  const count = subscriberCount.success ? subscriberCount.value : undefined;
 
   return (
-    <>
-      <h1 className="text-3xl font-bold mb-[1em] text-white break-keep">
-        {t('curriculum')}
-      </h1>
-      <Image src={chasing} alt="컴퓨터 이미지" className="w-full mb-8" />
-      <p className="my-5 text-[oklch(87.2%_0.01_258.338)] text-base text-pretty break-keep">
-        {t('curriculumIntro1')}
-      </p>
-      <p className="my-5 text-[oklch(87.2%_0.01_258.338)] text-base text-pretty break-keep">
-        {t('curriculumIntro2')}
-      </p>
-      <p className="my-5 text-[oklch(87.2%_0.01_258.338)] text-base text-pretty break-keep">
-        {t('curriculumIntro3')}
+    <div className="prose prose-invert">
+      <h1>{t('curriculum')}</h1>
+      <p>{t('curriculumIntro1')}</p>
+      <p>{t('curriculumIntro2')}</p>
+      <p>{t('curriculumIntro3')}</p>
+
+      <h2>{tEmail('title')}</h2>
+      <p>
+        {tEmail('description')}{' '}
+        {count !== undefined && tEmail('subscriberCount', { count })}
       </p>
 
       <EmailSubscribe />
+
       <div className="border-t border-white/20 my-12" />
 
-      {curriculumData.map((part) => (
-        <CurriculumSection key={part.id} {...part} />
-      ))}
-    </>
+      <h2>{tCS('part1Title')}</h2>
+
+      <div className="flex flex-col gap-6">
+        <CSPostListItem
+          title={tCS('hw1Title')}
+          description={tCS('hw1Description')}
+          href="/cs/zero-and-one"
+        />
+
+        <CSPostListItem
+          title={tCS('hw2Title')}
+          description={tCS('hw2Description')}
+          href="/cs/and-or-not"
+        />
+
+        {[...Array(6)].map((_, idx) => (
+          <CSPostListItem
+            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+            key={idx}
+            // @ts-expect-error
+            title={tCS(`hw${idx + 3}Title`)}
+            // @ts-expect-error
+            description={tCS(`hw${idx + 3}Description`)}
+          />
+        ))}
+      </div>
+
+      <h2>{tCS('part2Title')}</h2>
+      <div className="flex flex-col gap-6">
+        {[...Array(7)].map((_, idx) => (
+          <CSPostListItem
+            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+            key={idx}
+            // @ts-expect-error
+            title={tCS(`ds${idx + 1}Title`)}
+            // @ts-expect-error
+            description={tCS(`ds${idx + 1}Description`)}
+          />
+        ))}
+      </div>
+
+      <h2>{tCS('part3Title')}</h2>
+      <div className="flex flex-col gap-6">
+        {[...Array(6)].map((_, idx) => (
+          <CSPostListItem
+            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+            key={idx}
+            // @ts-expect-error
+            title={tCS(`os${idx + 1}Title`)}
+            // @ts-expect-error
+            description={tCS(`os${idx + 1}Description`)}
+          />
+        ))}
+      </div>
+
+      <h2>{tCS('appendixTitle')}</h2>
+      <div className="flex flex-col gap-6">
+        <CSPostListItem title={tCS('appendix1Title')} description={''} />
+      </div>
+    </div>
   );
 }
-
-const curriculumDataRaw: PartType[] = [
-  {
-    id: 'hardware',
-    titleKey: 'part1Title',
-    image: chapter1,
-    posts: [
-      {
-        titleKey: 'hw1Title',
-        descriptionKey: 'hw1Description',
-        isPublished: true,
-        slug: '/cs/zero-and-one',
-      },
-      {
-        titleKey: 'hw2Title',
-        descriptionKey: 'hw2Description',
-        isPublished: true,
-        slug: '/cs/and-or-not',
-      },
-      {
-        titleKey: 'hw3Title',
-        descriptionKey: 'hw3Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'hw4Title',
-        descriptionKey: 'hw4Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'hw5Title',
-        descriptionKey: 'hw5Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'hw6Title',
-        descriptionKey: 'hw6Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'hw7Title',
-        descriptionKey: 'hw7Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'hw8Title',
-        descriptionKey: 'hw8Description',
-        isPublished: false,
-      },
-    ],
-  },
-  {
-    id: 'data-structures',
-    titleKey: 'part2Title',
-    image: chapter2,
-    posts: [
-      {
-        titleKey: 'ds1Title',
-        descriptionKey: 'ds1Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'ds2Title',
-        descriptionKey: 'ds2Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'ds3Title',
-        descriptionKey: 'ds3Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'ds4Title',
-        descriptionKey: 'ds4Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'ds5Title',
-        descriptionKey: 'ds5Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'ds6Title',
-        descriptionKey: 'ds6Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'ds7Title',
-        descriptionKey: 'ds7Description',
-        isPublished: false,
-      },
-    ],
-  },
-  {
-    id: 'os-network',
-    titleKey: 'part3Title',
-    image: chapter3,
-    posts: [
-      {
-        titleKey: 'os1Title',
-        descriptionKey: 'os1Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'os2Title',
-        descriptionKey: 'os2Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'os3Title',
-        descriptionKey: 'os3Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'os4Title',
-        descriptionKey: 'os4Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'os5Title',
-        descriptionKey: 'os5Description',
-        isPublished: false,
-      },
-      {
-        titleKey: 'os6Title',
-        descriptionKey: 'os6Description',
-        isPublished: false,
-      },
-    ],
-  },
-  {
-    id: 'appendix',
-    titleKey: 'appendixTitle',
-    posts: [
-      {
-        titleKey: 'appendix1Title',
-        isPublished: false,
-      },
-    ],
-  },
-];

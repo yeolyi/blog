@@ -6,7 +6,7 @@ import Header from '../../components/layout/Header';
 import '@/app/[locale]/globals.css';
 
 import { Providers } from '@/app/providers';
-import ScrollRestore from '@/components/ScrollRestore';
+import ScrollRetoration from '@/components/ScrollRestore';
 import { routing } from '@/i18n/routing';
 import { Provider } from 'jotai';
 import { type Locale, NextIntlClientProvider, hasLocale } from 'next-intl';
@@ -78,7 +78,7 @@ export default async function RootLayout({
         </NextIntlClientProvider>
         <Analytics />
         <Suspense>
-          <ScrollRestore />
+          <ScrollRetoration />
         </Suspense>
       </body>
     </html>
