@@ -54,6 +54,25 @@ const Text = ({
   );
 };
 
+export const ImageUploader = ({
+  title = '이미지 첨부',
+  ...inputProps
+}: {
+  title?: string;
+} & InputHTMLAttributes<HTMLInputElement>) => {
+  return (
+    <LabelGroup>
+      <Label htmlFor={inputProps.name}>{title}</Label>
+      <input
+        {...inputProps}
+        type="file"
+        accept="image/*"
+        className="w-full text-white bg-stone-700 p-2"
+      />
+    </LabelGroup>
+  );
+};
+
 const Form = ({
   children,
   ...props

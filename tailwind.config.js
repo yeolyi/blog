@@ -20,6 +20,18 @@ module.exports = {
               width: 'calc(100% + 2.2857143em)',
               display: 'inline-block',
             },
+            '.line.diff.remove': {
+              backgroundColor: 'rgba(248,81,73,0.3)',
+              color: 'red',
+            },
+            '.line.diff.remove::before': {
+              color: 'white',
+              fontWeight: 'semibold',
+              content: '"-"',
+              fontSize: '1rem',
+              position: 'relative',
+              left: '0.2em',
+            },
             p: {
               wordBreak: 'keep-all',
             },
@@ -57,6 +69,11 @@ module.exports = {
             },
             'a:hover': {
               fontWeight: 'bold',
+            },
+            summary: {
+              '&:hover': {
+                cursor: 'pointer',
+              },
             },
           },
         },

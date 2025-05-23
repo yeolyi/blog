@@ -2,10 +2,10 @@
 import TagCheckbox from '@/components/meme/TagCheckbox';
 import Button from '@/components/ui/Button';
 import Form from '@/components/ui/Form';
-import { updateMeme, useMemeTagIds, useTags } from '@/swr/meme';
+import { deleteMeme, updateMeme, useMemeTagIds, useTags } from '@/swr/meme';
 import type { Meme } from '@/types/helper.types';
 import * as Dialog from '@radix-ui/react-dialog';
-import { Save, X } from 'lucide-react';
+import { Save, Trash, X } from 'lucide-react';
 
 interface MemeModalProps {
   meme: Pick<Meme, 'id' | 'media_url' | 'title' | 'height' | 'width'>;
@@ -29,6 +29,14 @@ const MemeModal = ({ meme, onClose }: MemeModalProps) => {
 
     await updateMeme({ id: meme.id, title, tags });
     onClose();
+  };
+
+  const handleDelete = async () => {
+    const confirmed = confirm('정말 삭제하시겠습니까?');
+    if (confirmed) {
+      await deleteMeme(meme.id);
+      onClose();
+    }
   };
 
   return (
@@ -58,9 +66,19 @@ const MemeModal = ({ meme, onClose }: MemeModalProps) => {
               initialValues={selectedTagIds ?? []}
             />
 
-            <Button type="submit" bg="green" Icon={Save} className="ml-auto">
-              저장
-            </Button>
+            <div className="flex justify-between gap-2">
+              <Button
+                type="button"
+                bg="red"
+                Icon={Trash}
+                onClick={handleDelete}
+              >
+                삭제
+              </Button>
+              <Button type="submit" bg="green" Icon={Save}>
+                저장
+              </Button>
+            </div>
           </form>
         </Dialog.Content>
       </Dialog.Portal>

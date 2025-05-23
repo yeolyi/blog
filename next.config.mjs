@@ -2,6 +2,7 @@ import bundleAnalyzer from '@next/bundle-analyzer';
 import createMDX from '@next/mdx';
 import rehypeShiki from '@shikijs/rehype';
 import {
+  transformerNotationDiff,
   transformerNotationFocus,
   transformerNotationHighlight,
 } from '@shikijs/transformers';
@@ -46,10 +47,12 @@ const withMDX = createMDX({
       [
         rehypeShiki,
         {
+          inline: 'tailing-curly-colon',
           theme: 'github-dark',
           transformers: [
             transformerNotationHighlight(),
             transformerNotationFocus(),
+            transformerNotationDiff(),
           ],
         },
       ],

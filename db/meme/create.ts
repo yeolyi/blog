@@ -1,3 +1,4 @@
+import { toAVIFAction } from '@/actions/image';
 import supabase from '@/db';
 import { uploadFileToDB } from '@/db/storage';
 import { getErrMessage } from '@/utils/string';
@@ -65,20 +66,18 @@ export async function uploadMemesToDB(
   // Promise.all로 모든 밈 업로드 시도 (모든 Promise는 fulfilled 됨)
   const results = await Promise.all(
     memes.map(async (meme, index) => {
-      console.log(
-        `[일괄 업로드] 항목 ${index + 1}/${memes.length} 처리 중: ${meme.title}`,
-      );
+      console.log(`항목 ${index + 1}/${memes.length} 처리 중: ${meme.title}`);
       try {
-        // 외부 URL에서 이미지 파일 가져오기
-        console.log(`[일괄 업로드] 이미지 다운로드 중: ${meme.imageURL}`);
-        const response = await fetch(meme.imageURL);
-        if (!response.ok) {
-          throw new Error(`이미지를 가져올 수 없음: ${meme.imageURL}`);
+        const response = await toAVIFAction(meme.imageURL);
+        if (typeof response === 'string') {
+          throw new Error(`이미지를 가져올 수 없음: ${response}`);
         }
 
+        // @ts-expect-error 어떻게하지
+        const blob = new Blob([response], { type: 'image/avif' });
+
         // Blob으로 변환
-        const blob = await response.blob();
-        console.log(`[일괄 업로드] 이미지 다운로드 완료: ${blob.size} 바이트`);
+        console.log(`이미지 다운로드 완료: ${blob.size} 바이트`);
 
         // 파일 이름 추출
         const urlParts = meme.imageURL.split('/');
@@ -88,7 +87,7 @@ export async function uploadMemesToDB(
         const file = new File([blob], fileName, { type: blob.type });
 
         // 단일 밈 업로드 함수 호출
-        console.log(`[일괄 업로드] Supabase에 업로드 중: ${meme.title}`);
+        console.log(`Supabase에 업로드 중: ${meme.title}`);
         const result = await uploadMemeToDB({
           title: meme.title,
           file,
@@ -96,7 +95,7 @@ export async function uploadMemesToDB(
 
         // uploadSingleMeme의 반환값에서 success 확인
         if (result.type === 'success') {
-          console.log(`[일괄 업로드] 항목 업로드 성공: ${meme.title}`);
+          console.log(`항목 업로드 성공: ${meme.title}`);
           return {
             title: meme.title,
             imageURL: meme.imageURL,
@@ -105,10 +104,8 @@ export async function uploadMemesToDB(
           } as MemeResult;
         }
 
-        // 업로드 실패한 경우 (uploadSingleMeme에서 {success: false, error: ...} 반환)
-        console.error(
-          `[일괄 업로드] 업로드 실패 (${meme.title}): ${result.error}`,
-        );
+        console.error(`업로드 실패 (${meme.title}): ${result.error}`);
+
         return {
           title: '인스타',
           imageURL: meme.imageURL,

@@ -1,5 +1,6 @@
 'use client';
-import { crawlImage } from '@/actions/crawl';
+import { crawlImageAction } from '@/actions/crawl';
+import AddMemeModal from '@/components/meme/AddMemeModal';
 import MemeCard, { type MemeCardProps } from '@/components/meme/MemeCard';
 import TagRadio from '@/components/meme/TagRadio';
 import Button from '@/components/ui/Button';
@@ -9,7 +10,7 @@ import { useRouter } from '@/i18n/navigation';
 import { useCrawlStore } from '@/store/crawl';
 import { NO_TAG_ID, useMemes, useTags } from '@/swr/meme';
 import { shuffled } from '@/utils/array';
-import { AppWindow, Clipboard, Shuffle } from 'lucide-react';
+import { AppWindow, Clipboard, PlusCircle, Shuffle } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useReducer, useState } from 'react';
@@ -32,6 +33,7 @@ export default function MemeViewer() {
 
   const [memes, setMemes] = useState(dbMemes ?? []);
   const [masonryKey, setMasonryKey] = useReducer((x) => x + 1, 0);
+  const [showAddModal, setShowAddModal] = useState(false);
 
   const setUrlList = useCrawlStore((state) => state.setUrlList);
 
@@ -63,7 +65,7 @@ export default function MemeViewer() {
     const url = await navigator.clipboard.readText();
     if (!url) return;
 
-    const crawlResult = await crawlImage(url);
+    const crawlResult = await crawlImageAction(url);
 
     if (crawlResult.success) {
       setUrlList(crawlResult.value);
@@ -85,6 +87,14 @@ export default function MemeViewer() {
         render={MemeCard}
       />
       <div className="fixed bottom-8 right-8 flex flex-col gap-2">
+        <Button
+          type="button"
+          bg="green"
+          Icon={PlusCircle}
+          onClick={() => setShowAddModal(true)}
+        >
+          추가
+        </Button>
         {selectedTag === NO_TAG_ID && (
           <Button type="button" bg="gray" Icon={Shuffle} onClick={onShuffle}>
             셔플
@@ -107,6 +117,8 @@ export default function MemeViewer() {
           붙여넣기
         </Button>
       </div>
+
+      {showAddModal && <AddMemeModal onClose={() => setShowAddModal(false)} />}
     </Form>
   );
 }

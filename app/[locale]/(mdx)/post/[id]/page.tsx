@@ -1,5 +1,5 @@
-import TableOfContents from '@/components/TableOfContents';
 import Comments from '@/components/comment';
+import TableOfContents from '@/components/layout/TableOfContents';
 import { routing } from '@/i18n/routing';
 import { getPostIds } from '@/utils/post';
 import type { Metadata } from 'next';

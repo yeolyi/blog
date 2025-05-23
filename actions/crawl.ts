@@ -6,7 +6,7 @@ import { delay } from 'es-toolkit';
 import puppeteer, { type Viewport, type Browser, type Page } from 'puppeteer';
 import puppeteerCore from 'puppeteer-core';
 
-export async function crawlImage(url: string) {
+export async function crawlImageAction(url: string) {
   if (url.includes('reddit.com')) {
     return {
       success: true as const,
@@ -134,7 +134,7 @@ const iterateImages = async (
   ];
 };
 
-export async function getInstagramImageList(url: string) {
+async function getInstagramImageList(url: string) {
   const urlWithoutQuery = url.split('?')[0];
   const browser = await getBrowser();
 
@@ -157,7 +157,7 @@ export async function getInstagramImageList(url: string) {
   return images;
 }
 
-async function extractPostIdFromUrl(url: string) {
+function extractPostIdFromUrl(url: string) {
   const match = url.match(/comments\/([^/]+)/);
   if (!match) {
     throw new Error('올바른 Reddit 게시물 URL이 아닙니다.');
@@ -201,7 +201,7 @@ async function fetchImagesFromPost(postId: string) {
 
 async function getImagesFromReddit(postUrl: string) {
   try {
-    const postId = await extractPostIdFromUrl(postUrl);
+    const postId = extractPostIdFromUrl(postUrl);
     return await fetchImagesFromPost(postId);
   } catch (err) {
     console.error('❌ 에러:', getErrMessage(err));
