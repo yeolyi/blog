@@ -73,7 +73,6 @@ export async function uploadMemesToDB(
           throw new Error(`이미지를 가져올 수 없음: ${response}`);
         }
 
-        // @ts-expect-error 어떻게하지
         const blob = new Blob([response], { type: 'image/avif' });
 
         // Blob으로 변환

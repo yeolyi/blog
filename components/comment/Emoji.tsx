@@ -28,6 +28,10 @@ const EMOJI_TO_COLOR = {
   '🚀': ['#F44336', '#2196F3', '#90CAF9', '#FF7043', '#B0BEC5', '#ECEFF1'],
 };
 
+const strIsEmoji = (str: string): str is keyof typeof EMOJI_TO_COLOR => {
+  return str in EMOJI_TO_COLOR;
+};
+
 export default function Emoji({ postId }: { postId: string }) {
   const session = useSessionStore((state) => state.session);
   const { data, mutate } = useEmojiComment(postId);
@@ -54,6 +58,8 @@ export default function Emoji({ postId }: { postId: string }) {
 
       await toggleEmojiReactionInDB({ postId, emoji });
       await mutate();
+
+      if (!strIsEmoji(emoji)) return;
 
       const isUserReacted = getReaction(emoji)?.user_reacted;
       if (isUserReacted) return;
