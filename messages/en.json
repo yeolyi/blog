@@ -101,7 +101,7 @@
     "confettiLabel": "Confetti count"
   },
   "Comment": {
-    "loginRequired": "You need to <loginLink>login</loginLink> to write a comment.",
+    "loginRequired": "You need to <loginLink>login</loginLink> to leave a reaction.",
     "login": "login",
     "placeholder": "Thank you for reading! 👍",
     "submit": "Submit",
