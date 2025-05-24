@@ -43,9 +43,12 @@ export default function TruthTable({ labels, data }: TruthTableGateProps) {
 
   const inputLabels = labels.filter((l) => l.type === 'input');
 
-  const [inputs, setInputs] = useState<boolean[]>(
-    Array(inputLabels.length).fill(false),
-  );
+  const [inputs, setInputs] = useState<boolean[]>(() => {
+    const inputs = Array(inputLabels.length).fill(false);
+    // 유저에게 체크박스임을 인식
+    inputs[inputs.length - 1] = true;
+    return inputs;
+  });
 
   const matchingRowIndex = data.findIndex((row) => {
     return inputs.every((val, idx) => val === row[idx]);
