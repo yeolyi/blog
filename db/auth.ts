@@ -15,13 +15,6 @@ export const logoutFromDB = async () => {
   if (error) throw error;
 };
 
-export const getUserFromDB = async () => {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  return session?.user ?? null;
-};
-
 export async function getProfileFromDB() {
   const {
     data: { user },

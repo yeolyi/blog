@@ -1,14 +1,17 @@
 'use client';
 
-import * as Checkbox from '@radix-ui/react-checkbox';
 import { useState } from 'react';
 import './transistor.css';
+import { Checkbox } from '@/components/ui/Checkbox';
+import { layerBg } from '@/components/ui/theme';
 
 export default function TransistorDemo() {
   const [isFlowing, setIsFlowing] = useState(false);
 
   return (
-    <div className="w-full max-w-xs h-64 border border-[#5e5e5e] mx-auto flex flex-col items-center justify-between py-3 relative">
+    <div
+      className={`w-full max-w-xs h-64 flex flex-col items-center justify-between py-3 relative ${layerBg}`}
+    >
       {/* 상단 배선 (드레인/컬렉터) */}
       <div className="flex flex-col items-center w-full gap-2">
         <div className="mt-1 text-xs text-gray-400">Drain (D)</div>
@@ -18,21 +21,14 @@ export default function TransistorDemo() {
       {/* 트랜지스터 본체 */}
       <div className="relative w-20 h-20 border border-[#5e5e5e] flex items-center justify-center">
         {/* 게이트 라인 및 입력 */}
-        <div className="absolute flex flex-col items-center left-[-4.5rem]">
+        <div className="absolute flex flex-col items-center left-[-6rem]">
           <span className="text-xs text-gray-400 absolute top-0 translate-y-[-100%]">
             Gate
           </span>
-          <Checkbox.Root
-            className="flex h-5 w-5 appearance-none items-center justify-center rounded-none bg-black border border-[#5e5e5e] data-[state=checked]:bg-blue-500 data-[state=checked]:border-blue-500 cursor-pointer"
+          <Checkbox
             checked={isFlowing}
             onCheckedChange={(checked) => setIsFlowing(checked === true)}
-          >
-            <Checkbox.Indicator>
-              <div className="h-3 w-3 text-white flex items-center justify-center">
-                ✓
-              </div>
-            </Checkbox.Indicator>
-          </Checkbox.Root>
+          />
         </div>
 
         <div className="absolute left-[-3rem] w-12 h-1 bg-[#5e5e5e]" />

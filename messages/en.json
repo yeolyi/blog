@@ -119,24 +119,12 @@
     "required": "Required field."
   },
   "ZeroAndOne": {
-    "RGBSlider": {
-      "title": "RGB Color Slider",
-      "red": "Red",
-      "green": "Green",
-      "blue": "Blue"
-    },
     "PixelateImage": {
       "title": "Image Pixelation",
       "analogLandscape": "Analog Landscape",
       "digitalizedImage": "Digitalized Image",
       "loading": "Loading image...",
       "pixelSize": "Pixel Size"
-    },
-    "SignalComparison": {
-      "title": "Signal Error Comparison: Binary vs Decimal",
-      "binary": "Binary (0 or 1)",
-      "decimal": "Decimal (0~9)",
-      "measurementResult": "<status></status> <signal></signal> is interpreted as <value></value>."
     },
     "TruthTableDemo": {
       "rainForecast": "Rain Forecast",

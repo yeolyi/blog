@@ -119,24 +119,12 @@
     "required": "필수 입력 필드입니다."
   },
   "ZeroAndOne": {
-    "RGBSlider": {
-      "title": "RGB 컬러 슬라이더",
-      "red": "빨간색",
-      "green": "초록색",
-      "blue": "파란색"
-    },
     "PixelateImage": {
       "title": "이미지 픽셀화",
       "analogLandscape": "아날로그 풍경",
       "digitalizedImage": "디지털화된 이미지",
       "loading": "이미지 로드 중...",
       "pixelSize": "픽셀 크기"
-    },
-    "SignalComparison": {
-      "title": "신호 에러 비교: 2진법 vs 10진법",
-      "binary": "2진법 (0 또는 1)",
-      "decimal": "10진법 (0~9)",
-      "measurementResult": "<status></status> <signal></signal>이 <value></value>로 해석되었습니다."
     },
     "TruthTableDemo": {
       "rainForecast": "비 예보",

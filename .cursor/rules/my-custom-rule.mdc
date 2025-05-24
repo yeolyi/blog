@@ -14,5 +14,5 @@ alwaysApply: true
 - Prefer using the components from the /components/ui folder instead of implementing basic UI elements from scratch.
 - When designing components, avoid using border radius. Use constants(like colors) from components/ui/theme.ts whenever possible.
 - Only Next.js-related files (like layout.tsx, page.tsx, loading.tsx, etc.) should go in the app folder. Manage all components in the components folder.
-- Keep things simple
-- Prefer short variable name. index -> idx, value -> val- 
+- Keep things simple. Prefer simpicity over reusability unless explicitly mentioned.
+- Prefer short variable name. index -> idx, value -> val
