@@ -2,9 +2,9 @@ export const title = '컴퓨터는 엄마가 좋은지 아빠가 좋은지로 �
 export const description = 'AND, OR, NOT 게이트로 세상 모든 불 함수를 표현할 수 있음을 확인해봅시다.'
 export const ogImage = '/cs/and-or-not/og.png';
 
-import TransistorDemo from './components/TransistorDemo'
-import { TruthTableGate, NotGate, ComplexLogicGate } from './components/TruthTableGate'
+import TransistorDemo from '@/components/cs/TransistorDemo'
 import Image from '@/components/ui/Image';
+import TruthTable from '@/components/cs/TruthTable';
 
 import circuit from './assets/circuit.jpg';
 import lego from './assets/lego.jpg';
@@ -48,11 +48,18 @@ import og from './assets/og.png';
 
 AND는 '그리고'를 의미합니다. 두 가지 조건이 **모두** 참일 때만 결과가 참이 됩니다.
 
-<TruthTableGate
-  truthTable={[false, false, false, true]}
-  inputALabel="A"
-  inputBLabel="B"
-  outputLabel="A AND B"
+<TruthTable
+  labels={[
+    { label: 'A', type: 'input' },
+    { label: 'B', type: 'input' },
+    { label: 'A AND B', type: 'output' },
+  ]}
+  data={[
+    [false, false, false],
+    [false, true, false],
+    [true, false, false],
+    [true, true, true],
+  ]}
 />
 
 AND 게이트는 특정 조건들이 모두 충족되었는지 판단하는 데 주로 사용됩니다. 예를 들어, 어떤 명령을 실행하기 위해 두 개의 데이터가 모두 준비되었는지 확인하는 경우 등에 사용될 수 있습니다.
@@ -61,11 +68,18 @@ AND 게이트는 특정 조건들이 모두 충족되었는지 판단하는 데 
 
 OR는 '또는'을 의미합니다. 두 가지 조건 중 **하나라도** 참이면 결과가 참이 됩니다.
 
-<TruthTableGate
-  truthTable={[false, true, true, true]}
-  inputALabel="A"
-  inputBLabel="B"
-  outputLabel="A OR B"
+<TruthTable
+  labels={[
+    { label: 'A', type: 'input' },
+    { label: 'B', type: 'input' },
+    { label: 'A OR B', type: 'output' },
+  ]}
+  data={[
+    [false, false, false],
+    [false, true, true],
+    [true, false, true],
+    [true, true, true],
+  ]}
 />
 
 여러 가능한 조건들 중 하나만 만족해도 되는 상황을 판단하는 데 사용됩니다. 예를 들어, 공장 기계의 여러 위치의 비상 정지 버튼이 있을 때 어느 버튼이든 하나라도 눌리면 전체 시스템을 정지해야할 때 사용될 수 있습니다.
@@ -74,9 +88,15 @@ OR는 '또는'을 의미합니다. 두 가지 조건 중 **하나라도** 참이
 
 NOT는 '아니다'를 의미합니다. 입력된 비트의 상태를 **반전**시키는 논리입니다. 
 
-<NotGate
-  inputLabel="A"
-  outputLabel="NOT A"
+<TruthTable
+  labels={[
+    { label: 'A', type: 'input' },
+    { label: 'NOT A', type: 'output' },
+  ]}
+  data={[
+    [false, true],
+    [true, false],
+  ]}
 />
 
 어떤 상태를 반대로 뒤집거나 특정 조건이 *아닌* 경우를 판단할 때 사용됩니다. 예를 들어, 어떤 장치가 '작동 중(1)'이 아닐 때(0) 정지등을 켜는 회로 등에 활용될 수 있습니다.
@@ -89,11 +109,18 @@ NOT는 '아니다'를 의미합니다. 입력된 비트의 상태를 **반전**�
 
 말로만 들으면 조금 복잡하게 느껴질 수 있으니 예시를 통해 자세히 살펴볼까요? **두 입력이 같을 때 출력이 1인 게이트**를 AND, OR, NOT만으로 만들어 봅시다. 우선 진리표를 살펴보면 다음과 같습니다.
 
-<TruthTableGate
-  truthTable={[true, false, false, true]}
-  inputALabel="A"
-  inputBLabel="B"
-  outputLabel="A == B"
+<TruthTable
+  labels={[
+    { label: 'A', type: 'input' },
+    { label: 'B', type: 'input' },
+    { label: 'A == B', type: 'output' },
+  ]}
+  data={[
+    [false, false, true],
+    [false, true, false],
+    [true, false, false],
+    [true, true, true],
+  ]}
 />
 
 이제 간단한 세 단계를 거치면 됩니다.
@@ -115,9 +142,22 @@ NOT는 '아니다'를 의미합니다. 입력된 비트의 상태를 **반전**�
 
 최종 논리식은 **`((NOT A) AND (NOT B)) OR (A AND B)`** 가 됩니다.
 
-<ComplexLogicGate
-  inputALabel="A"
-  inputBLabel="B"
+<TruthTable
+  labels={[
+    { label: 'A', type: 'input' },
+    { label: 'B', type: 'input' },
+    { label: 'NOT A', type: 'output' },
+    { label: 'NOT B', type: 'output' },
+    { label: '(NOT A) AND B', type: 'output' },
+    { label: 'A AND (NOT B)', type: 'output' },
+    { label: '((NOT A) AND (NOT B)) OR (A AND B)', type: 'output' },
+  ]}
+  data={[
+    [false, false, true, true, false, false, true],
+    [false, true, true, false, true, false, false],
+    [true, false, false, true, false, true, false],
+    [true, true, false, false, false, false, true],
+  ]}
 />
 
 원래 진리표와 똑같이 작동하는 회로가 완성됐네요!

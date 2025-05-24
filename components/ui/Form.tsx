@@ -10,12 +10,17 @@ export const Label = ({
   className,
   htmlFor,
   ...props
-}: LabelHTMLAttributes<HTMLLabelElement>) => {
+}: LabelHTMLAttributes<HTMLLabelElement> &
+  Required<Pick<LabelHTMLAttributes<HTMLLabelElement>, 'htmlFor'>>) => {
   return (
     // biome-ignore lint/a11y/noLabelWithoutControl: 왜뜨지
     <label
       htmlFor={htmlFor}
-      className={clsx('block mb-2 font-bold text-white', className)}
+      className={clsx(
+        // 라벨 누르다가 텍스트 선택되는거 방지
+        'block font-bold text-white cursor-pointer select-none shrink-0',
+        className,
+      )}
       {...props}
     />
   );
@@ -59,7 +64,8 @@ export const ImageUploader = ({
   ...inputProps
 }: {
   title?: string;
-} & InputHTMLAttributes<HTMLInputElement>) => {
+} & InputHTMLAttributes<HTMLInputElement> &
+  Required<Pick<InputHTMLAttributes<HTMLInputElement>, 'name'>>) => {
   return (
     <LabelGroup>
       <Label htmlFor={inputProps.name}>{title}</Label>

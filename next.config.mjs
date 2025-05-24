@@ -48,7 +48,7 @@ const withMDX = createMDX({
         rehypeShiki,
         {
           inline: 'tailing-curly-colon',
-          theme: 'github-dark',
+          theme: 'one-dark-pro',
           transformers: [
             transformerNotationHighlight(),
             transformerNotationFocus(),

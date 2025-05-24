@@ -115,7 +115,7 @@
     "cancel": "Cancel",
     "deleteError": "An error occurred while deleting the comment.",
     "submitError": "An error occurred while submitting the comment.",
-    "dateFormat": "MMM DD, YYYY HH:mm",
+    "dateFormat": "MMM DD, YYYY HH:mm:ss",
     "required": "Required field."
   },
   "ZeroAndOne": {

@@ -3,18 +3,32 @@
 import { subscribeEmail } from '@/actions/resend';
 import Button from '@/components/ui/Button';
 import { Input } from '@/components/ui/Form';
+import { confetti } from '@/utils/confetti';
 import { Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useActionState } from 'react';
+import { useActionState, useRef } from 'react';
 
 export default function EmailSubscribe() {
   const t = useTranslations('EmailSubscribe');
+  const ref = useRef<HTMLButtonElement>(null);
 
   const onSubmit = async (prevState: string | null, formData: FormData) => {
     const email = formData.get('email');
     if (typeof email !== 'string') return prevState;
 
     const result = await subscribeEmail(email);
+    if (!result.success) return result.message;
+
+    const rect = ref.current?.getBoundingClientRect();
+    if (rect) {
+      confetti({
+        origin: {
+          x: 0.5,
+          y: (rect.y + rect.height) / window.innerHeight,
+        },
+        colors: ['#FFD60A', '#FF375F', '#32D74B', '#0A84FF', '#FF9F0A'],
+      });
+    }
     return result.message;
   };
 
@@ -30,7 +44,13 @@ export default function EmailSubscribe() {
         required
       />
 
-      <Button type="submit" bg="gray" Icon={Send} className="shrink-0 ">
+      <Button
+        type="submit"
+        bg="gray"
+        Icon={Send}
+        className="shrink-0 "
+        ref={ref}
+      >
         {isPending ? t('subscribingButton') : t('subscribeButton')}
       </Button>
     </form>

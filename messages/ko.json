@@ -115,7 +115,7 @@
     "cancel": "취소",
     "deleteError": "댓글 삭제 중 오류가 발생했습니다.",
     "submitError": "댓글 작성 중 오류가 발생했습니다.",
-    "dateFormat": "YYYY년 MM월 DD일 HH:mm",
+    "dateFormat": "YYYY/MM/DD HH:mm:ss",
     "required": "필수 입력 필드입니다."
   },
   "ZeroAndOne": {

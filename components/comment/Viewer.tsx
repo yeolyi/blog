@@ -1,5 +1,6 @@
 import Button from '@/components/ui/Button';
-import { border } from '@/components/ui/theme';
+import { layerBg } from '@/components/ui/theme';
+import { Link } from '@/i18n/navigation';
 import { useProfile } from '@/swr/auth';
 import { deleteComment, useComments } from '@/swr/comment';
 import type { Comment } from '@/types/helper.types';
@@ -40,25 +41,23 @@ const CommentItem = ({
   const isAuthor = profile?.id === comment.author_id;
 
   return (
-    <div key={comment.id} className={`p-4 ${border}`}>
-      {/* 게시물에 첨부된 경우 prose가 적용되지 않도록 처리 */}
-      <div className="not-prose flex justify-between items-start mb-4">
-        <p>
-          <a
-            href={githubUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium text-gray-700 hover:underline dark:text-gray-300"
-          >
-            {headerT('developer', { number: comment.developernumber })}
-          </a>
-          <span className="text-xs text-gray-500 mt-2 whitespace-pre">
-            {`  ${dayjs(comment.created_at).format(commentT('dateFormat'))}`}
-          </span>
-        </p>
-        {isAuthor && <DeleteButton postId={postId} commentId={comment.id} />}
-      </div>
-      <p className="text-gray-300 break-keep">{comment.content}</p>
+    <div
+      className={`relative prose prose-invert prose-stone prose-p:m-0 prose-a:no-underline ${layerBg} p-4 min-w-full`}
+    >
+      <p key={comment.id}>
+        <Link href={githubUrl} target="_blank" rel="noopener noreferrer">
+          {headerT('developer', { number: comment.developernumber })}
+        </Link>
+
+        <code className="text-stone-400">
+          {`  ${dayjs(comment.created_at).format(commentT('dateFormat'))}`}
+        </code>
+
+        <br />
+
+        {comment.content}
+      </p>
+      {isAuthor && <DeleteButton postId={postId} commentId={comment.id} />}
     </div>
   );
 };
@@ -74,18 +73,18 @@ const DeleteButton = ({
 
   if (asked) {
     return (
-      <div className="flex -m-4">
-        <Button
-          type="button"
-          onClick={() => deleteComment(postId, commentId)}
-          bg="transparent"
-          Icon={Check}
-        />
+      <div className="flex absolute top-0 right-0">
         <Button
           type="button"
           onClick={() => setAsked(false)}
           bg="transparent"
           Icon={X}
+        />
+        <Button
+          type="button"
+          onClick={() => deleteComment(postId, commentId)}
+          bg="transparent"
+          Icon={Check}
         />
       </div>
     );
@@ -97,7 +96,7 @@ const DeleteButton = ({
       onClick={() => setAsked(true)}
       bg="transparent"
       Icon={Trash}
-      className="-m-4"
+      className="absolute top-0 right-0"
     />
   );
 };

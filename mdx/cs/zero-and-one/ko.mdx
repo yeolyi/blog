@@ -4,8 +4,8 @@ export const ogImage = 'cs/og1.png'
 
 import PixelateImage from '@/components/cs/PixelateImage';
 import SignalComparison from './components/SignalComparison';
-import TruthTableDemo from './components/TruthTableDemo';
 import Image from '@/components/ui/Image';
+import TruthTable from '@/components/cs/TruthTable';
 
 import cover from './assets/cover.png';
 import zeroone from './assets/zeroone.png';
@@ -92,7 +92,19 @@ import shannon from './assets/shannon.png';
 
 우리는 보통 '비 예보도 있고, 외출도 할 계획이 있을 때만' 우산을 챙길 겁니다. 이러한 규칙을 가진 불 함수를 진리표로 나타내면 다음과 같습니다.
 
-<TruthTableDemo />
+<TruthTable
+  labels={[
+    { label: '비 예보', type: 'input' },
+    { label: '외출 계획', type: 'input' },
+    { label: '우산 챙기기', type: 'output' },
+  ]}
+  data={[
+    [false, false, false],
+    [false, true, false],
+    [true, false, false],
+    [true, true, true],
+  ]}
+/>
 
 이 진리표는 우리가 우산을 챙기는 논리적 결정 과정을 명확하게 보여줍니다. 오직 입력 A와 입력 B가 모두 '참(1)'일 때만 최종 출력 '우산 챙기기'가 '참(1)'이 되는 규칙인 것이죠. 이처럼 어떤 복잡한 조건이나 결정이라도 그 논리적 구조를 파악하면 불 함수와 진리표로 표현할 수 있습니다. **컴퓨터 내부에서는 이렇게 진리표로 정의될 수 있는 수많은 불 함수들이 다양한 판단과 연산을 수행하고 있습니다.**
 

@@ -2,8 +2,8 @@ export const title = 'Computers are Built on Simple Logical Decisions: AND, OR, 
 export const description = 'Let\'s confirm that all boolean functions in the world can be expressed with AND, OR, and NOT gates.'
 export const ogImage = '/cs/and-or-not/og.png';
 
-import TransistorDemo from './components/TransistorDemo'
-import { TruthTableGate, NotGate, ComplexLogicGate } from './components/TruthTableGate'
+import TransistorDemo from '@/components/cs/TransistorDemo'
+import TruthTable from '@/components/cs/TruthTable'
 import Image from '@/components/ui/Image';
 import circuit from './assets/circuit.jpg';
 import lego from './assets/lego.jpg';
@@ -44,12 +44,20 @@ Now, let's look at the three representative gates: the AND, OR, and NOT gates.
 
 The result is true only when **both** conditions are true.
 
-<TruthTableGate
-  truthTable={[false, false, false, true]}
-  inputALabel="A"
-  inputBLabel="B"
-  outputLabel="A AND B"
+<TruthTable
+  labels={[
+    { label: 'A', type: 'input' },
+    { label: 'B', type: 'input' },
+    { label: 'A AND B', type: 'output' },
+  ]}
+  data={[
+    [false, false, false],
+    [false, true, false],
+    [true, false, false],
+    [true, true, true],
+  ]}
 />
+
 
 The AND gate is primarily used to determine if specific conditions are all met. For example, it can be used to check if two pieces of data are both ready before executing a command.
 
@@ -57,11 +65,18 @@ The AND gate is primarily used to determine if specific conditions are all met. 
 
 The result is true if **at least one** of the two conditions is true.
 
-<TruthTableGate
-  truthTable={[false, true, true, true]}
-  inputALabel="A"
-  inputBLabel="B"
-  outputLabel="A OR B"
+<TruthTable
+  labels={[
+    { label: 'A', type: 'input' },
+    { label: 'B', type: 'input' },
+    { label: 'A OR B', type: 'output' },
+  ]}
+  data={[
+    [false, false, false],
+    [false, true, true],
+    [true, false, true],
+    [true, true, true],
+  ]}
 />
 
 It is used to make decisions when only one of several possible conditions needs to be satisfied. For instance, if there are emergency stop buttons at various locations on a factory machine, it can be used when pressing any one button should stop the entire system.
@@ -70,9 +85,15 @@ It is used to make decisions when only one of several possible conditions needs 
 
 **NOT** means 'not'. It is the logic that **inverts** the state of the input bit.
 
-<NotGate
-  inputLabel="A"
-  outputLabel="NOT A"
+<TruthTable
+  labels={[
+    { label: 'A', type: 'input' },
+    { label: 'NOT A', type: 'output' },
+  ]}
+  data={[
+    [false, true],
+    [true, false],
+  ]}
 />
 
 It is used to reverse a state or to determine if a specific condition is *not* met. For example, it can be used in a circuit that turns on a stop light when a device is *not* 'operating (1)' (i.e., is 0).
@@ -85,11 +106,18 @@ The core idea is simple. Find all input combinations where the output is true (1
 
 This might sound a bit complicated just by reading, so let's take a closer look with an example. Let's build a gate where the **output is 1 when the two inputs are the same**, using only AND, OR, and NOT. First, let's look at the truth table:
 
-<TruthTableGate
-  truthTable={[true, false, false, true]}
-  inputALabel="A"
-  inputBLabel="B"
-  outputLabel="A == B"
+<TruthTable
+  labels={[
+    { label: 'A', type: 'input' },
+    { label: 'B', type: 'input' },
+    { label: 'A == B', type: 'output' },
+  ]}
+  data={[
+    [false, false, true],
+    [false, true, false],
+    [true, false, false],
+    [true, true, true],
+  ]}
 />
 
 Now, we just need to follow three simple steps.
@@ -112,10 +140,22 @@ The cases where the output is 1 are when 'the condition of the first row is met'
 
 The final logical expression is **`((NOT A) AND (NOT B)) OR (A AND B)`**.
 
-<ComplexLogicGate
-  expression="((!A) & (!B)) | (A & B)"
-  inputALabel="A"
-  inputBLabel="B"
+<TruthTable
+  labels={[
+    { label: 'A', type: 'input' },
+    { label: 'B', type: 'input' },
+    { label: 'NOT A', type: 'output' },
+    { label: 'NOT B', type: 'output' },
+    { label: '(NOT A) AND B', type: 'output' },
+    { label: 'A AND (NOT B)', type: 'output' },
+    { label: '((NOT A) AND (NOT B)) OR (A AND B)', type: 'output' },
+  ]}
+  data={[
+    [false, false, true, true, false, false, true],
+    [false, true, true, false, true, false, false],
+    [true, false, false, true, false, true, false],
+    [true, true, false, false, false, false, true],
+  ]}
 />
 
 A circuit that works exactly like the original truth table is complete!

@@ -16,6 +16,7 @@ const Button = ({
   onClick?: () => void;
   Icon: (props: LucideProps) => ReactNode;
   isLoading?: boolean;
+  ref?: React.RefObject<HTMLButtonElement | null>;
 } & ButtonHTMLAttributes<HTMLButtonElement>) => {
   return (
     <button

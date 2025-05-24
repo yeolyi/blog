@@ -1,5 +1,6 @@
 'use client';
 import Button from '@/components/ui/Button';
+import { border } from '@/components/ui/theme';
 import { useProfile } from '@/swr/auth';
 import { createComment, useComments } from '@/swr/comment';
 import { getErrMessage } from '@/utils/string';
@@ -35,7 +36,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
   const [state, formAction, isPending] = useActionState(onSubmit, undefined);
 
   return (
-    <form action={formAction} className="space-y-3 relative">
+    <form action={formAction} className="space-y-3 relative not-prose">
       {state && (
         <p className="absolute right-0 -top-1 -translate-y-full text-orange-600">
           {state}
@@ -46,11 +47,17 @@ export default function CommentForm({ postId }: CommentFormProps) {
         placeholder={`${t('placeholder')} ${
           isCommentEmpty ? t('noComments') : ''
         }`}
-        className="block w-full resize-none min-h-32 p-3 border border-[#5E5E5E] focus:outline-none focus:ring-1 focus:ring-stone-500 focus:border-stone-500 text-gray-100 overflow-hidden"
+        className={`block w-full resize-none min-h-32 p-3  focus:outline-none focus:ring-1 focus:ring-stone-500 focus:border-stone-500 text-gray-100 overflow-hidden ${border}`}
         defaultValue=""
         required
       />
-      <Button bg="gray" type="submit" disabled={isPending} Icon={Pencil}>
+      <Button
+        bg="gray"
+        type="submit"
+        disabled={isPending}
+        Icon={Pencil}
+        className="absolute bottom-3 right-3"
+      >
         {isPending ? t('submitting') : t('submit')}
       </Button>
     </form>

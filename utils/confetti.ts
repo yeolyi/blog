@@ -1,6 +1,6 @@
 import _confetti from 'canvas-confetti';
 
-export const confetti = (opts: _confetti.Options) => {
+export const confetti = (opts?: _confetti.Options) => {
   function fire(particleRatio: number, opts2: _confetti.Options) {
     _confetti({
       particleCount: Math.floor((window.innerWidth / 2.5) * particleRatio),

@@ -4,8 +4,8 @@ export const ogImage = 'cs/og1.png';
 
 import PixelateImage from '@/components/cs/PixelateImage';
 import SignalComparison from './components/SignalComparison';
-import TruthTableDemo from './components/TruthTableDemo';
 import Image from '@/components/ui/Image';
+import TruthTable from '@/components/cs/TruthTable';
 
 import cover from './assets/cover.png';
 import zeroone from './assets/zeroone.png';
@@ -90,7 +90,19 @@ The output would be:
 
 We usually take an umbrella only if both rain is forecasted and we plan to go out. Represented as a truth table:
 
-<TruthTableDemo />
+<TruthTable
+  labels={[
+    { label: 'Rain Forecast', type: 'input' },
+    { label: 'Go Out Plan', type: 'input' },
+    { label: 'Bring an Umbrella', type: 'output' },
+  ]}
+  data={[
+    [false, false, false],
+    [false, true, false],
+    [true, false, false],
+    [true, true, true],
+  ]}
+/>
 
 This clearly illustrates the logical decision-making process. Computers internally use countless Boolean functions defined by truth tables for decision-making and computations.
 

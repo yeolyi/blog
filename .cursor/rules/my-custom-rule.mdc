@@ -15,3 +15,4 @@ alwaysApply: true
 - When designing components, avoid using border radius. Use constants(like colors) from components/ui/theme.ts whenever possible.
 - Only Next.js-related files (like layout.tsx, page.tsx, loading.tsx, etc.) should go in the app folder. Manage all components in the components folder.
 - Keep things simple
+- Prefer short variable name. index -> idx, value -> val- 

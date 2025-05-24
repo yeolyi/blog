@@ -3,8 +3,11 @@
 import Slider from '@/components/ui/Slider';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { layerBg } from '@/components/ui/theme';
+import clsx from 'clsx';
+import { debounce } from 'es-toolkit';
 // https://pixabay.com/photos/changdeokgung-palace-garden-786592/
 import changdeokgung from './assets/changdeokgung.jpg';
 
@@ -12,70 +15,111 @@ import changdeokgung from './assets/changdeokgung.jpg';
 export default function PixelateImage() {
   const t = useTranslations('ZeroAndOne.PixelateImage');
   const [pixelCntPow, setPixelCntPow] = useState(5);
+
   const [pixelatedImageSrc, setPixelatedImageSrc] = useState('');
   const [canvasRef, setCanvasRef] = useState<HTMLCanvasElement | null>(null);
   const [imageRef, setImageRef] = useState<HTMLImageElement | null>(null);
   const [originalLoaded, setOriginalLoaded] = useState(false);
+  const workerRef = useRef<Worker | null>(null);
 
   const pixelCnt = 2 ** pixelCntPow;
 
-  // 이미지가 로드되면 원본 로드 상태 변경
+  // 웹 워커 초기화
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    workerRef.current = new Worker('/pixelateWorker.js');
+    workerRef.current.onmessage = (e) => {
+      if (e.data.status === 'success') {
+        setPixelatedImageSrc(e.data.result);
+      } else {
+        console.error('웹 워커 오류:', e.data.error);
+      }
+    };
+
+    return () => {
+      workerRef.current?.terminate();
+    };
+  }, []);
+
   const handleImageLoad = () => {
     setOriginalLoaded(true);
   };
 
   // 픽셀 크기가 변경되거나 이미지가 로드되면 픽셀화 실행
   useEffect(() => {
-    if (originalLoaded && canvasRef && imageRef) {
-      const pixelatedImageSrc = pixelateImage(canvasRef, imageRef, pixelCnt);
-      if (pixelatedImageSrc) {
-        setPixelatedImageSrc(pixelatedImageSrc);
-      }
+    if (originalLoaded && canvasRef && imageRef && workerRef.current) {
+      processImageWithWorker(canvasRef, imageRef, pixelCnt);
     }
   }, [originalLoaded, pixelCnt, canvasRef, imageRef]);
 
+  const processImageWithWorker = useCallback(
+    debounce(
+      (canvas: HTMLCanvasElement, img: HTMLImageElement, pixelCnt: number) => {
+        // 캔버스 크기를 이미지 크기로 설정
+        canvas.width = img.naturalWidth;
+        canvas.height = img.naturalHeight;
+
+        // 이미지 데이터 가져오기
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        if (!ctx) return;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+        // 웹 워커로 데이터 전송
+        workerRef.current?.postMessage(
+          {
+            imageData: imageData.data.buffer,
+            pixelCnt,
+            width: canvas.width,
+            height: canvas.height,
+          },
+          // ArrayBuffer를 전송하므로 메모리 복사 방지를 위해 전송??
+          [imageData.data.buffer],
+        );
+      },
+      // TODO: 100ms안에는 되겠지...? 일단 겹치는건 처리 안함
+      100,
+    ),
+    [],
+  );
+
   return (
-    <div className="mb-8 border border-[#5e5e5e] p-6 rounded-none not-prose">
-      <div className="mb-8 flex flex-col md:flex-row items-start gap-6">
-        <div className="w-full md:w-1/2">
-          <p className="text-sm font-medium mb-2">{t('analogLandscape')}</p>
-          <div className="relative border border-[#5e5e5e]">
-            <Image
-              ref={setImageRef}
-              src={changdeokgung}
-              alt="원본 이미지"
-              className="w-full h-48 object-cover"
-              onLoad={handleImageLoad}
-              unoptimized
-            />
-          </div>
-        </div>
+    <div
+      className={clsx(
+        'p-4 not-prose flex flex-col gap-4 max-w-[512px] w-full',
+        layerBg,
+      )}
+    >
+      <Image
+        ref={setImageRef}
+        src={changdeokgung}
+        alt="원본 이미지"
+        className="object-cover aspect-video opacity-0 absolute pointer-events-none w-[256px]"
+        onLoad={handleImageLoad}
+        unoptimized
+      />
 
-        <div className="w-full md:w-1/2">
-          <p className="text-sm font-medium mb-2">
-            {t('digitalizedImage')} ({pixelCnt}x{pixelCnt})
-          </p>
-          <div className="relative border border-[#5e5e5e]">
-            {pixelatedImageSrc ? (
-              <img
-                src={pixelatedImageSrc}
-                alt="픽셀화된 이미지"
-                className="w-full h-48 object-cover"
-              />
-            ) : (
-              <div className="w-full h-48 flex items-center justify-center">
-                {t('loading')}
-              </div>
-            )}
-          </div>
-        </div>
+      <p className="text-sm font-medium">
+        {t('digitalizedImage')} ({pixelCnt}x{pixelCnt})
+      </p>
+
+      <div className="relative aspect-video w-full overflow-hidden">
+        {pixelatedImageSrc && (
+          <img
+            src={pixelatedImageSrc}
+            alt="픽셀화된 이미지"
+            className="object-cover w-full h-full"
+            width={1600}
+            height={900}
+          />
+        )}
       </div>
-
       <Slider
         label={`N: ${pixelCnt}`}
         value={pixelCntPow}
         onValueChange={setPixelCntPow}
-        max={9}
+        max={10}
         min={1}
         step={1}
         ariaLabel={t('pixelSize')}
@@ -88,76 +132,3 @@ export default function PixelateImage() {
     </div>
   );
 }
-
-const pixelateImage = (
-  canvas: HTMLCanvasElement,
-  img: HTMLImageElement,
-  pixelCnt: number,
-) => {
-  // Canvas2D: Multiple readback operations using getImageData are
-  // faster with the willReadFrequently attribute set to true. See:
-  const ctx = canvas.getContext('2d', { willReadFrequently: true });
-  if (!ctx) return;
-
-  // 캔버스 크기를 이미지 크기로 설정
-  canvas.width = img.naturalWidth;
-  canvas.height = img.naturalHeight;
-
-  // 원본 이미지 그리기
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-  // 이미지 데이터 가져오기
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const data = imageData.data;
-
-  // 픽셀 블록 크기 계산
-  const blockWidth = Math.ceil(canvas.width / pixelCnt);
-  const blockHeight = Math.ceil(canvas.height / pixelCnt);
-
-  // 이미지 데이터 초기화
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  // 각 픽셀 블록에 대해 평균 색상을 계산하고 그 블록을 해당 색상으로 채움
-  for (let y = 0; y < pixelCnt; y++) {
-    for (let x = 0; x < pixelCnt; x++) {
-      let r = 0;
-      let g = 0;
-      let b = 0;
-      let a = 0;
-      let count = 0;
-
-      // 각 블록의 시작/끝 좌표 계산 (이미지 가장자리 처리)
-      const startX = x * blockWidth;
-      const endX = Math.min((x + 1) * blockWidth, canvas.width);
-      const startY = y * blockHeight;
-      const endY = Math.min((y + 1) * blockHeight, canvas.height);
-
-      // 블록 내의 모든 픽셀에 대한 색상의 합 계산
-      for (let blockY = startY; blockY < endY; blockY++) {
-        for (let blockX = startX; blockX < endX; blockX++) {
-          const i = (blockY * canvas.width + blockX) * 4;
-          r += data[i];
-          g += data[i + 1];
-          b += data[i + 2];
-          a += data[i + 3];
-          count++;
-        }
-      }
-
-      // 색상 평균 계산
-      if (count > 0) {
-        r = Math.floor(r / count);
-        g = Math.floor(g / count);
-        b = Math.floor(b / count);
-        a = Math.floor(a / count);
-
-        // 해당 블록을 평균 색상으로 채움
-        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
-        ctx.fillRect(startX, startY, endX - startX, endY - startY);
-      }
-    }
-  }
-
-  // 픽셀화된 이미지를 데이터 URL로 변환
-  return canvas.toDataURL('image/png');
-};

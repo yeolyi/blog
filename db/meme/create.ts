@@ -73,7 +73,10 @@ export async function uploadMemesToDB(
           throw new Error(`이미지를 가져올 수 없음: ${response}`);
         }
 
-        const blob = new Blob([response], { type: 'image/avif' });
+        // TODO: as가 꼭 필요한가? 서버랑 브라우저 타입 차이 때문인 것 같기도 하고...
+        // server action에서 브라우저로 오면서 반환값이 바뀌어서 실제로는 상관없나
+        // 근데 왜 editor에서만 뜨고 tsc에서는 아무 문제 없지
+        const blob = new Blob([response as BlobPart], { type: 'image/avif' });
 
         // Blob으로 변환
         console.log(`이미지 다운로드 완료: ${blob.size} 바이트`);

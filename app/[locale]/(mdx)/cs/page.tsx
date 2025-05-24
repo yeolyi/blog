@@ -1,6 +1,8 @@
 import { getSubscriberCount } from '@/actions/resend';
 import CSPostListItem from '@/components/cs/CSPostListItem';
 import EmailSubscribe from '@/components/cs/EmailSubscribe';
+import PixelateImage from '@/components/cs/PixelateImage';
+import TruthTable from '@/components/cs/TruthTable';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
@@ -48,17 +50,32 @@ export default async function Home() {
           title={tCS('hw1Title')}
           description={tCS('hw1Description')}
           href="/cs/zero-and-one"
-        />
+        >
+          <PixelateImage />
+        </CSPostListItem>
 
         <CSPostListItem
           title={tCS('hw2Title')}
           description={tCS('hw2Description')}
           href="/cs/and-or-not"
-        />
+        >
+          <TruthTable
+            labels={[
+              { label: 'A', type: 'input' },
+              { label: 'B', type: 'input' },
+              { label: 'A AND B', type: 'output' },
+            ]}
+            data={[
+              [false, false, false],
+              [false, true, false],
+              [true, false, false],
+              [true, true, true],
+            ]}
+          />
+        </CSPostListItem>
 
         {[...Array(6)].map((_, idx) => (
           <CSPostListItem
-            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
             key={idx}
             // @ts-expect-error
             title={tCS(`hw${idx + 3}Title`)}
@@ -72,7 +89,6 @@ export default async function Home() {
       <div className="flex flex-col gap-6">
         {[...Array(7)].map((_, idx) => (
           <CSPostListItem
-            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
             key={idx}
             // @ts-expect-error
             title={tCS(`ds${idx + 1}Title`)}
@@ -86,7 +102,6 @@ export default async function Home() {
       <div className="flex flex-col gap-6">
         {[...Array(6)].map((_, idx) => (
           <CSPostListItem
-            // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
             key={idx}
             // @ts-expect-error
             title={tCS(`os${idx + 1}Title`)}

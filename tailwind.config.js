@@ -68,7 +68,7 @@ module.exports = {
               content: 'none',
             },
             'a:hover': {
-              fontWeight: 'bold',
+              '-webkit-text-stroke': '0.4px currentColor',
             },
             summary: {
               '&:hover': {

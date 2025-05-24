@@ -9,7 +9,7 @@ export default function Comment({ postId }: { postId: string }) {
   const session = useSessionStore((state) => state.session);
 
   return (
-    <div className="space-y-4 not-prose">
+    <div className="w-full space-y-4">
       <Emoji postId={postId} />
       {session ? <CommentForm postId={postId} /> : <NeedLogin />}
       <CommentList postId={postId} />

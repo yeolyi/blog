@@ -1,3 +1,4 @@
+import Pre from '@/components/ui/Pre';
 import type { MDXComponents } from 'mdx/types';
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
@@ -11,5 +12,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       // 그렇다고 내 블로그를 새 창으로 여는건 비직관적이므로...
       return <a {...props} />;
     },
+    pre: Pre,
   };
 }

@@ -49,7 +49,8 @@ export default function Emoji({ postId }: { postId: string }) {
     reactionArr.find((reaction) => reaction.emoji === emoji);
 
   const onClick =
-    (emoji: string) => async (e: React.MouseEvent<HTMLButtonElement>) => {
+    (emoji: string, count: number, user_reacted: boolean) =>
+    async (e: React.MouseEvent<HTMLButtonElement>) => {
       // 1. await 이후 React가 리렌더링하며 이벤트 핸들러와 관련된 DOM이 제거되었을 가능성 있음.
       // 2. 이벤트 풀링: React는 SyntheticEvent(합성 이벤트)를 사용합니다.
       // 이건 브라우저의 Native Event를 감싸서 크로스 브라우징 이슈를 줄이고 성능을 개선하기 위한 방식입니다.
@@ -57,7 +58,16 @@ export default function Emoji({ postId }: { postId: string }) {
       const rect = target.getBoundingClientRect();
 
       await toggleEmojiReactionInDB({ postId, emoji });
-      await mutate();
+
+      // 빠른 confetti를 위해 굳이 await하지 않음
+      mutate((prev) =>
+        prev?.map((reaction) => {
+          if (reaction.emoji === emoji) {
+            return { ...reaction, count: user_reacted ? count - 1 : count + 1 };
+          }
+          return reaction;
+        }),
+      );
 
       if (!strIsEmoji(emoji)) return;
 
@@ -71,7 +81,7 @@ export default function Emoji({ postId }: { postId: string }) {
     };
 
   return (
-    <div className="flex flex-wrap gap-2 mt-2">
+    <div className="flex flex-wrap gap-2 mt-2 not-prose">
       {reactionArr.map(({ emoji, count, user_reacted }) => (
         <button
           key={emoji}
@@ -82,7 +92,7 @@ export default function Emoji({ postId }: { postId: string }) {
             user_reacted ? 'font-semibold' : 'font-normal',
           )}
           type="button"
-          onClick={onClick(emoji)}
+          onClick={onClick(emoji, count, user_reacted)}
           disabled={!session}
         >
           <Image
