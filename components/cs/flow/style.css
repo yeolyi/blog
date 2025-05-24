@@ -4,29 +4,17 @@ svg {
   max-width: unset;
 }
 
-@keyframes flow {
-  from {
-    stroke-dashoffset: 20;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-.react-flow__edge-path {
-  stroke: #ffffff;
-  stroke-width: 2;
-  stroke-dasharray: 5;
-}
 :root {
   --xy-handle-background-color: #ffffff;
   --xy-handle-border-color: transparent;
-}
-.react-flow__handle {
-  width: 10px;
-  height: 10px;
+
+  --xy-edge-stroke: #ffffff;
+  --xy-edge-stroke-width: 2;
+  --xy-edge-stroke-dasharray: 5;
 }
 
 /* 라이브러리에서 직접 improt해서 스크립트로 들어가나해서 여기 직접 삽입 */
+
 /* this gets exported as style.css and can be used for the default theming */
 /* these are the necessary styles for React/Svelte Flow, they get used by base.css and style.css */
 .react-flow {
