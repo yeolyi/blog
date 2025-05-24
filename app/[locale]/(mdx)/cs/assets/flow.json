@@ -1,0 +1,68 @@
+{
+  "nodes": [
+    {
+      "id": "9152313e-1b0a-4ea6-b351-c157eda1b03f",
+      "type": "nand",
+      "position": { "x": 32, "y": 0 },
+      "data": {
+        "atoms": {
+          "type": "nand",
+          "inputAtoms": { "in1": { "init": null }, "in2": { "init": null } },
+          "outputAtoms": { "out": { "init": null } },
+          "effectAtom": {},
+          "id": "9152313e-1b0a-4ea6-b351-c157eda1b03f"
+        }
+      },
+      "measured": { "width": 96, "height": 64 },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "c5196fc9-f018-4479-98b5-a05c61560792",
+      "type": "number",
+      "position": { "x": -104, "y": 8 },
+      "data": {
+        "atoms": {
+          "type": "boolean",
+          "inputAtoms": {},
+          "outputAtoms": { "out": { "init": false } },
+          "id": "c5196fc9-f018-4479-98b5-a05c61560792"
+        }
+      },
+      "measured": { "width": 48, "height": 48 },
+      "selected": true,
+      "dragging": false
+    }
+  ],
+  "edges": [
+    {
+      "type": "step",
+      "animated": true,
+      "selectable": true,
+      "source": "c5196fc9-f018-4479-98b5-a05c61560792",
+      "sourceHandle": "out",
+      "target": "9152313e-1b0a-4ea6-b351-c157eda1b03f",
+      "targetHandle": "in1",
+      "id": "xy-edge__c5196fc9-f018-4479-98b5-a05c61560792out-9152313e-1b0a-4ea6-b351-c157eda1b03fin1"
+    },
+    {
+      "type": "step",
+      "animated": true,
+      "selectable": true,
+      "source": "c5196fc9-f018-4479-98b5-a05c61560792",
+      "sourceHandle": "out",
+      "target": "9152313e-1b0a-4ea6-b351-c157eda1b03f",
+      "targetHandle": "in2",
+      "id": "xy-edge__c5196fc9-f018-4479-98b5-a05c61560792out-9152313e-1b0a-4ea6-b351-c157eda1b03fin2"
+    }
+  ],
+  "viewport": {
+    "x": 187.76941944670853,
+    "y": 200.83329327597744,
+    "zoom": 0.8234689814524547
+  },
+  "nodeOutputs": {
+    "9152313e-1b0a-4ea6-b351-c157eda1b03f": { "out": true },
+    "c5196fc9-f018-4479-98b5-a05c61560792": { "out": false }
+  }
+}

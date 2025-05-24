@@ -2,10 +2,10 @@ import type {
   NodeAtoms,
   NodeCreator,
   OutputValue,
-} from '@/components/Nand/model/type';
+} from '@/components/cs/flow/model/type';
 import { atom } from 'jotai';
 
-export type BooleanAtoms = NodeAtoms<never, 'out', false>;
+type BooleanAtoms = NodeAtoms<never, 'out', false>;
 
 export const createBooleanAtoms: NodeCreator<BooleanAtoms> = (
   initialValues,

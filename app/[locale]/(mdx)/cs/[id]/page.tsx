@@ -2,7 +2,7 @@ import { generateCSMetadata } from '@/app/[locale]/(mdx)/cs/utils/generateCSMeta
 import Comments from '@/components/comment';
 import TableOfContents from '@/components/layout/TableOfContents';
 import { routing } from '@/i18n/routing';
-import { getPostIds } from '@/utils/post';
+import { getPostIds } from '@/utils/path';
 import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';

@@ -1,4 +1,4 @@
-import type { RegistryAtoms, RegistryKey } from '@/components/Nand/atoms';
+import type { RegistryAtoms, RegistryKey } from '@/components/cs/flow/atoms';
 
 export type NodeProps<T extends RegistryKey> = {
   id: string;

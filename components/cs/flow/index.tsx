@@ -21,12 +21,12 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import '@xyflow/react/dist/style.css';
 import './style.css';
 
-import type { RegistryKey } from '@/components/Nand/atoms';
-import { nodeTypes } from '@/components/Nand/components';
-import { Controls } from '@/components/Nand/components/Controls';
-import { useTouchDeviceState } from '@/components/Nand/hooks/useMobileState';
-import type { SaveFile } from '@/components/Nand/model/type';
-import { useNodeAtom } from '@/components/Nand/model/useNodeAtom';
+import type { RegistryKey } from '@/components/cs/flow/atoms';
+import { nodeTypes } from '@/components/cs/flow/components';
+import { Controls } from '@/components/cs/flow/components/Controls';
+import { useTouchDeviceState } from '@/components/cs/flow/hooks/useMobileState';
+import type { SaveFile } from '@/components/cs/flow/model/type';
+import { useNodeAtom } from '@/components/cs/flow/model/useNodeAtom';
 import { saveJSONToFile, selectJSONFromFile } from '@/utils/string';
 import { Provider, createStore } from 'jotai';
 
@@ -68,6 +68,7 @@ function Flow({
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
+      console.log('onNodesChange', changes);
       // 노드 삭제 대응
       for (const change of changes) {
         if (change.type === 'remove') {

@@ -3,8 +3,10 @@ import CSPostListItem from '@/components/cs/CSPostListItem';
 import EmailSubscribe from '@/components/cs/EmailSubscribe';
 import PixelateImage from '@/components/cs/PixelateImage';
 import TruthTable from '@/components/cs/TruthTable';
+import Flow from '@/components/cs/flow';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import initialJSON from './assets/flow.json';
 
 export const metadata: Metadata = {
   title: '만들면서 배우는 컴퓨터공학',
@@ -74,13 +76,21 @@ export default async function Home() {
           />
         </CSPostListItem>
 
-        {[...Array(6)].map((_, idx) => (
+        <CSPostListItem
+          title={tCS('hw3Title')}
+          description={tCS('hw3Description')}
+          href="/cs/nand-is-all-you-need"
+        >
+          <Flow id="/cs" initialJSON={initialJSON} />
+        </CSPostListItem>
+
+        {[...Array(5)].map((_, idx) => (
           <CSPostListItem
             key={idx}
             // @ts-expect-error
-            title={tCS(`hw${idx + 3}Title`)}
+            title={tCS(`hw${idx + 4}Title`)}
             // @ts-expect-error
-            description={tCS(`hw${idx + 3}Description`)}
+            description={tCS(`hw${idx + 4}Description`)}
           />
         ))}
       </div>

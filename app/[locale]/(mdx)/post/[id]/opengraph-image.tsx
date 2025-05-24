@@ -1,4 +1,9 @@
-import getOG from '@/app/[locale]/(mdx)/utils/getOG';
+import getOG, {
+  alt,
+  contentType,
+  size,
+} from '@/app/[locale]/(mdx)/utils/getOG';
+export { alt, contentType, size };
 
 export default async function OpengraphImage({
   params,

@@ -1,7 +1,5 @@
 import { useLayoutEffect, useState } from 'react';
 
-import { isTouchDevice } from '@/utils/isTouchDevice';
-
 export type TouchDeviceState =
   | {
       type: 'loading';
@@ -19,7 +17,7 @@ export const useTouchDeviceState = () => {
 
   useLayoutEffect(() => {
     if (typeof window === 'undefined') return;
-    const isTouch = isTouchDevice();
+    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     setState(isTouch ? { type: 'mobile', value: false } : { type: 'desktop' });
   }, []);
 

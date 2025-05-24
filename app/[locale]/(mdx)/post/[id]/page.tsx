@@ -1,7 +1,7 @@
 import Comments from '@/components/comment';
 import TableOfContents from '@/components/layout/TableOfContents';
 import { routing } from '@/i18n/routing';
-import { getPostIds } from '@/utils/post';
+import { getPostIds } from '@/utils/path';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 

@@ -1,6 +1,6 @@
-import type { RegistryKey } from '@/components/Nand/atoms';
-import { BooleanNode } from '@/components/Nand/components/BooleanNode';
-import { NandNode } from '@/components/Nand/components/NandNode';
+import type { RegistryKey } from '@/components/cs/flow/atoms';
+import { BooleanNode } from '@/components/cs/flow/components/BooleanNode';
+import { NandNode } from '@/components/cs/flow/components/NandNode';
 import type { ComponentType } from 'react';
 import type { NodeProps } from './type';
 

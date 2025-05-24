@@ -1,6 +1,6 @@
 import { skewOnHover } from '@/components/ui/theme';
 import { Link } from '@/i18n/navigation';
-import { getPostIds } from '@/utils/post';
+import { getPostIds } from '@/utils/path';
 import clsx from 'clsx';
 import { getLocale } from 'next-intl/server';
 

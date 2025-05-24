@@ -3,11 +3,11 @@ import type {
   NodeCreator,
   OutputAtom,
   OutputValue,
-} from '@/components/Nand/model/type';
+} from '@/components/cs/flow/model/type';
 import { atom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
 
-export type NandAtoms = NodeAtoms<'in1' | 'in2', 'out', true>;
+type NandAtoms = NodeAtoms<'in1' | 'in2', 'out', true>;
 
 export const createNandAtoms: NodeCreator<NandAtoms> = (initialValues) => {
   const in1Atom = atom<OutputAtom | null>(null);

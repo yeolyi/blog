@@ -1,4 +1,4 @@
-import type { NodeProps } from '@/components/Nand/components/type';
+import type { NodeProps } from '@/components/cs/flow/components/type';
 import { Handle, Position, useNodeConnections } from '@xyflow/react';
 import clsx from 'clsx';
 import { useAtom, useAtomValue } from 'jotai';

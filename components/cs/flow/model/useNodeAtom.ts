@@ -2,17 +2,18 @@ import {
   type RegistryKey,
   isRegistryKey,
   registry,
-} from '@/components/Nand/atoms';
+} from '@/components/cs/flow/atoms';
 import type {
   JotaiStore,
   NodeAtoms,
   NodeOutput,
   NodeOutputs,
   SaveFile,
-} from '@/components/Nand/model/type';
+} from '@/components/cs/flow/model/type';
 import { useCallback, useRef } from 'react';
 
 // setState 콜백이 두 번 불리기에 일단 에러 처리는 간단하게만 한다.
+// (무슨 에러였지... 아 이미 있는 노드랑 엣지 추가하는거였나?)
 // TODO: 더 나은 방법
 export const useNodeAtom = (store: JotaiStore) => {
   const map = useRef<Map<string, NodeAtoms>>(new Map());
@@ -28,7 +29,6 @@ export const useNodeAtom = (store: JotaiStore) => {
 
   const remove = useCallback(
     (id: string) => {
-      console.log('remove', id);
       const atom = map.current.get(id);
       if (!atom) return;
 
@@ -95,7 +95,13 @@ export const useNodeAtom = (store: JotaiStore) => {
         if (isRegistryKey(node.type)) {
           const atoms = add(node.type);
           idMap.set(node.id, { id: atoms.id, data: { atoms } });
-          return { ...node, id: atoms.id, data: { atoms } };
+          return {
+            ...node,
+            id: atoms.id,
+            data: { atoms },
+            // 선택 상태는 저장하지 않는다
+            selected: false,
+          };
         }
         return node;
       });
@@ -114,7 +120,14 @@ export const useNodeAtom = (store: JotaiStore) => {
           targetHandle: edge.targetHandle,
         });
 
-        return { ...edge, id: crypto.randomUUID(), source, target };
+        return {
+          ...edge,
+          id: crypto.randomUUID(),
+          source,
+          target,
+          // 선택 상태는 저장하지 않는다
+          selected: false,
+        };
       });
 
       if (nodeOutputs) {

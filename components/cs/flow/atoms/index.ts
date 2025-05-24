@@ -1,4 +1,4 @@
-import { createNandAtoms } from '@/components/Nand/atoms/nand';
+import { createNandAtoms } from '@/components/cs/flow/atoms/nand';
 import { createBooleanAtoms } from './boolean';
 
 export const registry = {
@@ -6,10 +6,11 @@ export const registry = {
   nand: createNandAtoms,
 } as const;
 
-export type Registry = typeof registry;
+type Registry = typeof registry;
 
 export const registryKeys = ['number', 'nand'] satisfies (keyof Registry)[];
 export type RegistryKey = (typeof registryKeys)[number];
+
 export const isRegistryKey = (key: unknown): key is RegistryKey =>
   typeof key === 'string' && registryKeys.includes(key as RegistryKey);
 

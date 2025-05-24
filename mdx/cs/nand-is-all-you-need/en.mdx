@@ -1,0 +1,91 @@
+export const title = 'The computer that didn’t quite like both mom and dad';
+export const description = 'Let’s see how we can create everything in computing from just one simple function';
+
+import TruthTable from '@/components/cs/TruthTable';
+import Flow from '@/components/cs/flow';
+
+import not from './assets/not.json';
+import and from './assets/and.json';
+import or from './assets/or.json';
+
+In the previous post, we explored three basic logic gates: AND, OR, and NOT. We also discovered that by combining these gates, we can construct any logical circuit expressible through truth tables—much like stacking Lego blocks to build complex structures.
+
+However, from the perspective of computer hardware engineers, a different consideration emerges. Since computers aren't human, rather than intuitive or easy-to-understand designs, the crucial factor is **physical efficiency and simplicity**. If every possible logical component could be built using **just one type of component**, the manufacturing process would become significantly simpler and more cost-effective.
+
+Remarkably, it turns out any complex logic circuit in the world can be constructed exclusively using a single type of gate: the **NAND gate**. This property is known as the **Completeness or Universality of NAND**. Today, we will explore the NAND gate and practically build other fundamental gates using only NAND.
+
+## NAND Gate
+
+A NAND gate, as its name suggests, is the **inverse of an AND operation**. It returns false only when both inputs are true, and true in every other case. If A means 'mom is liked' and B means 'dad is liked,' then A NAND B would mean 'we don’t quite like both mom and dad.'
+
+Here's the truth table for the NAND gate:
+
+<TruthTable 
+  labels={[
+    { label: 'A', type: 'input' },
+    { label: 'B', type: 'input' },
+    { label: 'A NAND B', type: 'output' },
+  ]}
+  data={[
+    [false, false, true],
+    [false, true, true],
+    [true, false, true],
+    [true, true, false],
+  ]}
+/>
+
+## Creating AND, OR, NOT from NAND
+
+Let's now create the NOT, OR, and AND gates we discussed previously using only NAND gates.
+
+### Creating NOT
+
+Let's start with the simple NOT gate. What happens if we connect the same value to both inputs of a NAND gate?
+
+<Flow id="not_answer" initialJSON={not} />
+
+Click on the rectangular node to change the input value. Notice how the output is always the inverse of the input?
+
+### Making AND Yourself!
+
+A NAND gate outputs the inverse of an AND operation. So what if we invert the output of a NAND gate again?
+
+Try creating it yourself using the playground below. Click on the buttons to the left to add gates, then connect the dots to wire them together.
+
+<Flow id="and_playground" />
+
+<br/>
+
+<details>
+<summary>View Example Solution</summary>
+<Flow id="and_answer" initialJSON={and} />
+Connecting a NAND gate's output back into another NAND gate’s inputs creates an AND gate.
+</details>
+
+### Creating OR
+
+Creating an OR gate requires a bit more thought, and here we use De Morgan’s laws. The OR gate can be expressed using NAND as follows:
+
+1. `A OR B`
+1. `NOT ((NOT A) AND (NOT B))`
+1. `(NOT A) NAND (NOT B)`
+
+Usually, De Morgan’s laws are applied from step 2 to 1, but here we use them in reverse, which can be tricky. Here's how it looks implemented:
+
+<Flow id="or_answer" initialJSON={or} />
+
+## The Universality of NAND Gates
+
+We've now confirmed that using only NAND gates, we can create NOT, OR, and AND gates. And from the previous post, we know that any logical circuit can be built from AND, OR, and NOT gates.
+
+Thus, we reach the conclusion that **NAND gates alone can theoretically build every digital logic circuit in existence**. This is known as the **Universality of NAND gates**.
+
+Why is this important? From a mass-production standpoint in computer hardware, reducing component diversity significantly simplifies and streamlines the manufacturing process. Producing just one basic component dramatically reduces complexity and manufacturing costs.
+
+## Wrapping Up
+
+Isn’t it astonishing that complex computer hardware essentially boils down to combinations of simple NAND gates?
+
+Now, we better understand how computers implement logical meanings physically with bits (0 and 1). We also know that these basic gates can be combined to build any logical circuit imaginable.
+
+In the next post, we'll explore how to combine these gates to construct circuits capable of performing **actual calculations**. At last, we’ll enter the realm of arithmetic, where computers can perform operations like addition and subtraction!
