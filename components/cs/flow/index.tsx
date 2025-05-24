@@ -37,9 +37,11 @@ export const minZoomOptions = { padding: 1 };
 function Flow({
   id,
   initialJSON,
+  height = 400,
 }: {
   id: string;
   initialJSON?: ReactFlowJsonObject<Node, Edge>;
+  height?: number;
 }) {
   const store = useMemo(() => createStore(), []);
   const {
@@ -151,7 +153,10 @@ function Flow({
   return (
     <Provider store={store}>
       <ReactFlowProvider>
-        <div className="h-[400px] not-prose font-sans overflow-hidden">
+        <div
+          className="not-prose font-sans overflow-hidden"
+          style={{ height: `${height}px` }}
+        >
           <ReactFlow
             onInit={setRfInstance}
             id={id}
@@ -191,7 +196,11 @@ function Flow({
               onDeleteNode={(id) => onNodesChange([{ type: 'remove', id }])}
               onDeleteEdge={(id) => onEdgesChange([{ type: 'remove', id }])}
             />
-            <Background variant={BackgroundVariant.Dots} id={id} />
+            <Background
+              bgColor="var(--color-stone-900)"
+              variant={BackgroundVariant.Dots}
+              id={id}
+            />
           </ReactFlow>
         </div>
       </ReactFlowProvider>

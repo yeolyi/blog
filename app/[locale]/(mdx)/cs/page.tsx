@@ -81,7 +81,7 @@ export default async function Home() {
           description={tCS('hw3Description')}
           href="/cs/nand-is-all-you-need"
         >
-          <Flow id="/cs" initialJSON={initialJSON} />
+          <Flow id="/cs" initialJSON={initialJSON} height={250} />
         </CSPostListItem>
 
         {[...Array(5)].map((_, idx) => (

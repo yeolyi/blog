@@ -99,7 +99,7 @@ export default function TruthTable({ labels, data }: TruthTableGateProps) {
               {row.map((cell, colIdx) => (
                 <td
                   key={`cell-${rowIdx}-${colIdx}`}
-                  className="p-3 text-center"
+                  className="p-2 text-center"
                 >
                   {cell ? '1' : '0'}
                 </td>
