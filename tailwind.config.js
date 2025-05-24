@@ -22,14 +22,30 @@ module.exports = {
             },
             '.line.diff.remove': {
               backgroundColor: 'rgba(248,81,73,0.3)',
-              color: 'red',
+              position: 'relative',
             },
             '.line.diff.remove::before': {
+              position: 'absolute',
+              height: '100%',
+              lineHeight: '100%',
+              top: 0,
               color: 'white',
-              fontWeight: 'semibold',
               content: '"-"',
               fontSize: '1rem',
+              left: '0.2em',
+            },
+            '.line.diff.add': {
+              backgroundColor: '#2ea04326',
               position: 'relative',
+            },
+            '.line.diff.add::before': {
+              position: 'absolute',
+              height: '100%',
+              lineHeight: '100%',
+              top: 0,
+              color: 'white',
+              content: '"+"',
+              fontSize: '1rem',
               left: '0.2em',
             },
             p: {
