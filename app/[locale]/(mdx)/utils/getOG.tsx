@@ -16,7 +16,9 @@ export default async function getOG({
   locale: string;
   subDir?: string;
 }) {
-  const mdxModule = await import(`@/mdx/${subDir}/${id}/${locale}.mdx`);
+  const mdxModule = subDir
+    ? await import(`@/mdx/${subDir}/${id}/${locale}.mdx`)
+    : await import(`@/mdx/${id}/${locale}.mdx`);
   const { title } = mdxModule;
 
   const headerText =
