@@ -131,5 +131,10 @@
       "goingOut": "Going Out",
       "takeUmbrella": "Take Umbrella"
     }
+  },
+  "PostNavigation": {
+    "backToList": "Back to List",
+    "prev": "Previous",
+    "next": "Next"
   }
 }
