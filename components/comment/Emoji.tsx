@@ -12,7 +12,7 @@ import party from './assets/party.webp';
 import rocket from './assets/rocket.webp';
 import sparkles from './assets/sparkles.webp';
 
-const DEFAULT_EMOJIS = ['👍', '❤️', '🎉', '✨', '🚀'] as const;
+const DEFAULT_EMOJIS = ['👍', '❤️', '🎉'] as const;
 const EMOJI_TO_ANIMATED = {
   // thumb_up이 못생겨서 대체
   '👍': clap,
