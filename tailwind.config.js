@@ -48,10 +48,7 @@ module.exports = {
               fontSize: '1rem',
               left: '0.2em',
             },
-            p: {
-              wordBreak: 'keep-all',
-            },
-            h1: {
+            '*': {
               wordBreak: 'keep-all',
             },
             h2: {
