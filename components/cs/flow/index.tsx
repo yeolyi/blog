@@ -18,7 +18,6 @@ import {
   applyNodeChanges,
 } from '@xyflow/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import './style.css';
 
 import type { RegistryKey } from '@/components/cs/flow/atoms';
 import { nodeTypes } from '@/components/cs/flow/components';
