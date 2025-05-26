@@ -101,7 +101,7 @@
     "confettiLabel": "폭죽 개수"
   },
   "Comment": {
-    "loginRequired": "반응을 남기려면 <loginLink>로그인</loginLink>이 필요합니다.",
+    "loginRequired": "댓글을 남기려면 <loginLink>로그인</loginLink>이 필요합니다.",
     "login": "로그인",
     "placeholder": "읽어주셔서 감사합니다 :)",
     "submit": "댓글 작성",
