@@ -8,10 +8,12 @@ export async function getCommentsFromDB(postId: string) {
   return comments;
 }
 
-// id가 안와??
-export async function getEmojiReactionsFromDB(postId: string) {
+export async function getEmojiCountsFromDB(postId: string, userId: string) {
   const { data } = await supabase
-    .rpc('get_emoji_counts', { p_post_id: postId })
+    .rpc('get_emoji_counts', {
+      p_post_id: postId,
+      p_user_id: userId,
+    })
     .throwOnError();
 
   return data;

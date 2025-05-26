@@ -50,31 +50,23 @@ export type Database = {
           emoji: string;
           id: string;
           post_id: string;
-          user_id: string;
+          user_id: string | null;
         };
         Insert: {
           created_at?: string;
           emoji: string;
           id?: string;
           post_id: string;
-          user_id: string;
+          user_id?: string | null;
         };
         Update: {
           created_at?: string;
           emoji?: string;
           id?: string;
           post_id?: string;
-          user_id?: string;
+          user_id?: string | null;
         };
-        Relationships: [
-          {
-            foreignKeyName: 'emoji_reactions_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'profiles';
-            referencedColumns: ['id'];
-          },
-        ];
+        Relationships: [];
       };
       meme_tags: {
         Row: {
@@ -223,7 +215,7 @@ export type Database = {
         }[];
       };
       get_emoji_counts: {
-        Args: { p_post_id: string };
+        Args: { p_post_id: string } | { p_post_id: string; p_user_id?: string };
         Returns: {
           emoji: string;
           count: number;

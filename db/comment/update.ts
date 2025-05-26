@@ -1,16 +1,20 @@
 import supabase from '@/db';
 
-export async function toggleEmojiReactionInDB({
+export async function addEmojiReactionInDB({
   postId,
   emoji,
+  userId,
 }: {
   postId: string;
   emoji: string;
+  userId: string;
 }) {
   await supabase
-    .rpc('toggle_emoji_reaction', {
-      p_post_id: postId,
-      p_emoji: emoji,
+    .from('emoji_reactions')
+    .insert({
+      post_id: postId,
+      emoji: emoji,
+      user_id: userId,
     })
     .throwOnError();
 }

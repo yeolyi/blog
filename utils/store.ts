@@ -1,4 +1,5 @@
 import type { SyncStorage } from 'jotai/vanilla/utils/atomWithStorage';
+import { v4 } from 'uuid';
 
 export const searchParamStorage: SyncStorage<string | null> = {
   getItem(key, initialValue) {
@@ -22,4 +23,17 @@ export const searchParamStorage: SyncStorage<string | null> = {
     params.delete(key);
     window.history.replaceState(null, '', `?${params.toString()}`);
   },
+};
+
+export const getAnonymousId = () => {
+  if (typeof window === 'undefined') return 'anonymous-id-on-server';
+
+  const anonymousId = localStorage.getItem('anonymous-user-id');
+
+  if (!anonymousId) {
+    const newAnonymousId = `tmp-${v4()}`;
+    localStorage.setItem('anonymous-user-id', newAnonymousId);
+    return newAnonymousId;
+  }
+  return anonymousId;
 };

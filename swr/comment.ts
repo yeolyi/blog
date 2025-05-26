@@ -1,12 +1,18 @@
 import { createCommentInDB } from '@/db/comment/create';
 import { deleteCommentFromDB } from '@/db/comment/delete';
-import { getCommentsFromDB, getEmojiReactionsFromDB } from '@/db/comment/read';
+import { getCommentsFromDB, getEmojiCountsFromDB } from '@/db/comment/read';
+import { useSessionStore } from '@/store/session';
+import { getAnonymousId } from '@/utils/store';
 import useSWR, { mutate } from 'swr';
 import { commentsKey, emojiKey } from './key';
 
-export const useEmojiComment = (id: string) => {
-  return useSWR(emojiKey(id), () => getEmojiReactionsFromDB(id));
-};
+export function useEmojiComment(id: string) {
+  const session = useSessionStore((state) => state.session);
+
+  return useSWR(emojiKey(id), () =>
+    getEmojiCountsFromDB(id, session?.user.id ?? getAnonymousId()),
+  );
+}
 
 export const useComments = (id: string) => {
   return useSWR(commentsKey(id), () => getCommentsFromDB(id));

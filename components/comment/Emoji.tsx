@@ -1,8 +1,9 @@
 import { bgMap } from '@/components/ui/theme';
-import { toggleEmojiReactionInDB } from '@/db/comment/update';
+import { addEmojiReactionInDB } from '@/db/comment/update';
 import { useSessionStore } from '@/store/session';
 import { useEmojiComment } from '@/swr/comment';
 import { confetti } from '@/utils/confetti';
+import { getAnonymousId } from '@/utils/store';
 import clsx from 'clsx';
 import Image from 'next/image';
 import clap from './assets/clap.webp';
@@ -45,34 +46,32 @@ export default function Emoji({ postId }: { postId: string }) {
     };
   });
 
-  const getReaction = (emoji: string) =>
-    reactionArr.find((reaction) => reaction.emoji === emoji);
-
   const onClick =
     (emoji: string, count: number, user_reacted: boolean) =>
     async (e: React.MouseEvent<HTMLButtonElement>) => {
+      // 이미 반응한 경우 무시
+      if (user_reacted) return;
+
       // 1. await 이후 React가 리렌더링하며 이벤트 핸들러와 관련된 DOM이 제거되었을 가능성 있음.
       // 2. 이벤트 풀링: React는 SyntheticEvent(합성 이벤트)를 사용합니다.
       // 이건 브라우저의 Native Event를 감싸서 크로스 브라우징 이슈를 줄이고 성능을 개선하기 위한 방식입니다.
       const target = e.currentTarget;
       const rect = target.getBoundingClientRect();
 
-      await toggleEmojiReactionInDB({ postId, emoji });
+      const userId = session?.user.id ?? getAnonymousId();
+      await addEmojiReactionInDB({ postId, emoji, userId });
 
       // 빠른 confetti를 위해 굳이 await하지 않음
       mutate((prev) =>
         prev?.map((reaction) => {
           if (reaction.emoji === emoji) {
-            return { ...reaction, count: user_reacted ? count - 1 : count + 1 };
+            return { ...reaction, count: count + 1 };
           }
           return reaction;
         }),
       );
 
       if (!strIsEmoji(emoji)) return;
-
-      const isUserReacted = getReaction(emoji)?.user_reacted;
-      if (isUserReacted) return;
 
       const x = (rect.x + rect.width / 2) / window.innerWidth;
       const y = (rect.y + rect.height / 2) / window.innerHeight;
@@ -86,14 +85,15 @@ export default function Emoji({ postId }: { postId: string }) {
         <button
           key={emoji}
           className={clsx(
-            'flex items-center gap-2  text-white px-2 py-1',
-            session ? 'cursor-pointer' : 'cursor-not-allowed',
+            'flex items-center gap-2 text-white px-2 py-1',
             bgMap.gray,
-            user_reacted ? 'font-semibold' : 'font-normal',
+            user_reacted
+              ? 'font-semibold cursor-not-allowed'
+              : 'font-normal cursor-pointer',
           )}
           type="button"
           onClick={onClick(emoji, count, user_reacted)}
-          disabled={!session}
+          disabled={user_reacted}
         >
           <Image
             src={EMOJI_TO_ANIMATED[emoji]}
