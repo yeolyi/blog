@@ -1,6 +1,6 @@
 'use client';
 
-import * as RadixSlider from '@radix-ui/react-slider';
+import { Slider as RadixSlider } from 'radix-ui';
 import type { ReactNode } from 'react';
 
 interface SliderProps {

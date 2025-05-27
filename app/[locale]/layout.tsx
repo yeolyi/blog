@@ -5,7 +5,7 @@ import Header from '../../components/layout/Header';
 
 import '@/app/[locale]/globals.css';
 
-import { Providers } from '@/app/providers';
+import { AuthProvider } from '@/components/AuthProvider';
 import ScrollRetoration from '@/components/ScrollRestore';
 import { routing } from '@/i18n/routing';
 import { Provider } from 'jotai';
@@ -69,11 +69,11 @@ export default async function RootLayout({
       <body className="min-h-dvh flex flex-col">
         <NextIntlClientProvider>
           <Provider>
-            <Providers>
+            <AuthProvider>
               {children}
               <Header />
               <Footer />
-            </Providers>
+            </AuthProvider>
           </Provider>
         </NextIntlClientProvider>
         <Analytics />

@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { Loader2, type LucideProps } from 'lucide-react';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 
+// https://github.com/radix-ui/primitives/issues/892
 const Button = ({
   bg: theme,
   onClick,

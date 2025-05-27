@@ -2,11 +2,11 @@
 
 import { usePathname, useRouter } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
-import * as ToggleGroup from '@radix-ui/react-toggle-group';
 import clsx from 'clsx';
 import { useLocale, useTranslations } from 'next-intl';
 import type { Locale } from 'next-intl';
 import { useParams } from 'next/navigation';
+import { ToggleGroup } from 'radix-ui';
 
 export default function LocaleSwitcher() {
   const t = useTranslations('LocaleSwitcher');

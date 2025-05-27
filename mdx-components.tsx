@@ -1,4 +1,5 @@
-import Pre from '@/components/ui/Pre';
+import Image from '@/components/mdx/Image';
+import Pre from '@/components/mdx/Pre';
 import type { MDXComponents } from 'mdx/types';
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
@@ -13,5 +14,6 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
       return <a {...props} />;
     },
     pre: Pre,
+    Image,
   };
 }

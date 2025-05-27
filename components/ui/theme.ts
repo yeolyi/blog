@@ -5,7 +5,7 @@ export const bgMap = {
   transparent: 'bg-transparent hover:text-white/80 active:text-white/60',
 };
 
-export const border = 'border-stone-700 border';
+export const border = 'outline-stone-700 outline';
 
 export type Bg = keyof typeof bgMap;
 

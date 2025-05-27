@@ -4,8 +4,8 @@ import Button from '@/components/ui/Button';
 import Form from '@/components/ui/Form';
 import { deleteMeme, updateMeme, useMemeTagIds, useTags } from '@/swr/meme';
 import type { Meme } from '@/types/helper.types';
-import * as Dialog from '@radix-ui/react-dialog';
 import { Save, Trash, X } from 'lucide-react';
+import { Dialog } from 'radix-ui';
 
 interface MemeModalProps {
   meme: Pick<Meme, 'id' | 'media_url' | 'title' | 'height' | 'width'>;

@@ -4,8 +4,8 @@ import Button from '@/components/ui/Button';
 import Form from '@/components/ui/Form';
 import { ImageUploader } from '@/components/ui/Form';
 import { useTags } from '@/swr/meme';
-import * as Dialog from '@radix-ui/react-dialog';
 import { Plus, X } from 'lucide-react';
+import { Dialog } from 'radix-ui';
 
 interface AddMemeModalProps {
   onClose: () => void;

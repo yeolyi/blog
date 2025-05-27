@@ -1,5 +1,5 @@
 import { addEmojiAction } from '@/actions/emoji';
-import { bgMap } from '@/components/ui/theme';
+import { bgMap, border } from '@/components/ui/theme';
 import { useSessionStore } from '@/store/session';
 import { useEmojiComment } from '@/swr/comment';
 import { confetti } from '@/utils/confetti';
@@ -48,14 +48,20 @@ export default function Emoji({ postId }: { postId: string }) {
   const onClick =
     (emoji: string, count: number, user_reacted: boolean) =>
     async (e: React.MouseEvent<HTMLButtonElement>) => {
-      // 이미 반응한 경우 무시
-      if (user_reacted) return;
-
       // 1. await 이후 React가 리렌더링하며 이벤트 핸들러와 관련된 DOM이 제거되었을 가능성 있음.
       // 2. 이벤트 풀링: React는 SyntheticEvent(합성 이벤트)를 사용합니다.
       // 이건 브라우저의 Native Event를 감싸서 크로스 브라우징 이슈를 줄이고 성능을 개선하기 위한 방식입니다.
       const target = e.currentTarget;
       const rect = target.getBoundingClientRect();
+      const x = (rect.x + rect.width / 2) / window.innerWidth;
+      const y = (rect.y + rect.height / 2) / window.innerHeight;
+
+      // 이미 반응한 경우 무시
+      if (user_reacted) {
+        if (!strIsEmoji(emoji)) return;
+        confetti({ origin: { x, y }, colors: EMOJI_TO_COLOR[emoji] });
+        return;
+      }
 
       await addEmojiAction({ postId, emoji, session });
 
@@ -70,10 +76,6 @@ export default function Emoji({ postId }: { postId: string }) {
       );
 
       if (!strIsEmoji(emoji)) return;
-
-      const x = (rect.x + rect.width / 2) / window.innerWidth;
-      const y = (rect.y + rect.height / 2) / window.innerHeight;
-
       confetti({ origin: { x, y }, colors: EMOJI_TO_COLOR[emoji] });
     };
 
@@ -83,15 +85,11 @@ export default function Emoji({ postId }: { postId: string }) {
         <button
           key={emoji}
           className={clsx(
-            'flex items-center gap-2 text-white px-2 py-1',
-            bgMap.gray,
-            user_reacted
-              ? 'font-semibold cursor-not-allowed'
-              : 'font-normal cursor-pointer',
+            'flex items-center gap-2 px-2 py-1 cursor-pointer text-white font-normal',
+            user_reacted ? bgMap.gray : `${bgMap.transparent} ${border}`,
           )}
           type="button"
           onClick={onClick(emoji, count, user_reacted)}
-          disabled={user_reacted}
         >
           <Image
             src={EMOJI_TO_ANIMATED[emoji]}
