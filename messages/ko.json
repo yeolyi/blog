@@ -34,6 +34,8 @@
     "curriculumIntro3": "CS 공부를 미루고 계신 개발자 분들, 컴퓨터가 어떻게 동작하는지 궁금하신 모든 분들을 환영합니다 🙌"
   },
   "Curriculum": {
+    "dateFormat": "{date, date, long}",
+    "plannedDateFormat": "{date, date, long}",
     "part1Title": "파트 1: 0과 1로 컴퓨터 조립하기",
     "hw1Title": "컴퓨터의 손가락이 두 개인 이유",
     "hw1Description": "비트, 이진수, 진리표",

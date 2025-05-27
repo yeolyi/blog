@@ -34,6 +34,8 @@
     "curriculumIntro3": "Welcome to all developers who've been putting off CS studies, and anyone curious about how computers work 🙌"
   },
   "Curriculum": {
+    "dateFormat": "{date, date, long}",
+    "plannedDateFormat": "{date, date, long}",
     "part1Title": "Part 1: Building a Computer with Just 0s and 1s",
     "hw1Title": "Why Computers Only Have Two Fingers",
     "hw1Description": "Bits, Binary, Truth Tables",

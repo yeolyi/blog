@@ -2,7 +2,7 @@ import { skewOnHover } from '@/components/ui/theme';
 import { Link } from '@/i18n/navigation';
 import clsx from 'clsx';
 import { CornerDownRight } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 
 export default function CSPostListItem(
   props:
@@ -10,16 +10,19 @@ export default function CSPostListItem(
         href: string;
         title: string;
         description: string;
+        date?: string;
         children: React.ReactNode;
       }
     | {
         title: string;
         description: string;
+        date?: string;
       },
 ) {
   const t = useTranslations('Curriculum');
+  const formatter = useFormatter();
 
-  const { title, description } = props;
+  const { title, description, date } = props;
 
   // TODO: 이게 최선?
   const href = 'href' in props ? props.href : undefined;
@@ -32,12 +35,19 @@ export default function CSPostListItem(
           className={clsx(
             'm-0 p-0 font-semibold break-keep',
             href && skewOnHover,
-            href ? 'text-white' : 'text-gray-500',
+            href ? 'text-white' : 'text-stone-500',
           )}
         >
           {!href && (
-            <span className="bg-gray-700 mr-1 px-1 text-xs text-white relative -top-[1px]">
-              {t('comingSoon')}
+            <span
+              className={clsx(
+                'bg-stone-700 mr-1 px-1 text-white relative -top-[1px]',
+                date ? 'text-sm' : 'text-xs',
+              )}
+            >
+              {date
+                ? `⏰ ${formatter.relativeTime(new Date(date), new Date())}`
+                : t('comingSoon')}
             </span>
           )}
           {title}
@@ -46,10 +56,16 @@ export default function CSPostListItem(
           className={clsx(
             'm-0 p-0 font-light',
             href && skewOnHover,
-            href ? 'text-[var(--tw-prose-body)]' : 'text-gray-500',
+            href ? 'text-[var(--tw-prose-body)]' : 'text-stone-500',
           )}
         >
           {description}
+          {'  '}
+          {date && href && (
+            <span className="text-stone-500">
+              {` ${t('dateFormat', { date: new Date(date) })}`}
+            </span>
+          )}
         </p>
       </Container>
       {children && (
@@ -64,6 +80,19 @@ export default function CSPostListItem(
       )}
     </div>
   );
+}
+
+// 날짜 문자열을 파싱하고 번역 파일의 형식으로 변환하는 함수
+function formatDate(
+  dateString: string,
+  t: (key: string, values?: Record<string, unknown>) => string,
+) {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = date.toLocaleString('default', { month: 'long' });
+  const day = date.getDate();
+
+  return t('dateFormat', { year, month, day });
 }
 
 const Container = ({

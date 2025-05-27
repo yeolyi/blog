@@ -29,7 +29,7 @@ export default async function Home() {
   const count = subscriberCount.success ? subscriberCount.value : undefined;
 
   return (
-    <div className="prose prose-invert">
+    <div className="prose prose-invert prose-stone">
       <h1>{t('curriculum')}</h1>
       <p>{t('curriculumIntro1')}</p>
       <p>{t('curriculumIntro2')}</p>
@@ -51,6 +51,7 @@ export default async function Home() {
         <CSPostListItem
           title={tCS('hw1Title')}
           description={tCS('hw1Description')}
+          date="2025-05-04"
           href="/cs/zero-and-one"
         >
           <PixelateImage />
@@ -59,6 +60,7 @@ export default async function Home() {
         <CSPostListItem
           title={tCS('hw2Title')}
           description={tCS('hw2Description')}
+          date="2025-05-11"
           href="/cs/and-or-not"
         >
           <TruthTable
@@ -79,18 +81,25 @@ export default async function Home() {
         <CSPostListItem
           title={tCS('hw3Title')}
           description={tCS('hw3Description')}
+          date="2025-05-25"
           href="/cs/nand-is-all-you-need"
         >
           <Flow id="/cs" initialJSON={initialJSON} height={250} />
         </CSPostListItem>
 
-        {[...Array(5)].map((_, idx) => (
+        <CSPostListItem
+          title={tCS('hw4Title')}
+          description={tCS('hw4Description')}
+          date="2025-06-01"
+        />
+
+        {[...Array(4)].map((_, idx) => (
           <CSPostListItem
             key={idx}
             // @ts-expect-error
-            title={tCS(`hw${idx + 4}Title`)}
+            title={tCS(`hw${idx + 5}Title`)}
             // @ts-expect-error
-            description={tCS(`hw${idx + 4}Description`)}
+            description={tCS(`hw${idx + 5}Description`)}
           />
         ))}
       </div>

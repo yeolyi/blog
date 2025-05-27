@@ -11,7 +11,11 @@ const Checkbox = ({
 }: CheckboxPrimitive.CheckboxProps &
   React.RefAttributes<HTMLButtonElement>) => (
   <CheckboxPrimitive.Root
-    className={clsx('h-8 w-8 shrink-0 cursor-pointer', bgMap.gray, className)}
+    className={clsx(
+      'h-8 w-8 shrink-0 cursor-pointer border border-stone-600',
+      bgMap.gray,
+      className,
+    )}
     {...props}
   >
     <CheckboxPrimitive.Indicator className={clsx('text-white')}>
