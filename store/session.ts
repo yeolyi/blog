@@ -64,7 +64,6 @@ export function initializeAuthListener() {
 
   // 인증 상태 변경 감지
   // 이걸 써야 탭 간에 상태 동기화가 가능하다.
-
   const {
     data: { subscription },
   } = supabase.auth.onAuthStateChange((event, session) => {

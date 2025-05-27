@@ -1,9 +1,8 @@
+import { addEmojiAction } from '@/actions/emoji';
 import { bgMap } from '@/components/ui/theme';
-import { addEmojiReactionInDB } from '@/db/comment/update';
 import { useSessionStore } from '@/store/session';
 import { useEmojiComment } from '@/swr/comment';
 import { confetti } from '@/utils/confetti';
-import { getAnonymousId } from '@/utils/store';
 import clsx from 'clsx';
 import Image from 'next/image';
 import clap from './assets/clap.webp';
@@ -58,8 +57,7 @@ export default function Emoji({ postId }: { postId: string }) {
       const target = e.currentTarget;
       const rect = target.getBoundingClientRect();
 
-      const userId = session?.user.id ?? getAnonymousId();
-      await addEmojiReactionInDB({ postId, emoji, userId });
+      await addEmojiAction({ postId, emoji, session });
 
       // 빠른 confetti를 위해 굳이 await하지 않음
       mutate((prev) =>

@@ -7,14 +7,3 @@ export async function getCommentsFromDB(postId: string) {
 
   return comments;
 }
-
-export async function getEmojiCountsFromDB(postId: string, userId: string) {
-  const { data } = await supabase
-    .rpc('get_emoji_counts', {
-      p_post_id: postId,
-      p_user_id: userId,
-    })
-    .throwOnError();
-
-  return data;
-}
