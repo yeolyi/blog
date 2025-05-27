@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "analyze": "ANALYZE=true next build",
     "start": "next start",
     "prepare": "husky",
     "knip": "knip",
@@ -13,7 +14,7 @@
   "dependencies": {
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
-    "@next/bundle-analyzer": "^15.3.1",
+    "@next/bundle-analyzer": "^15.4.0-canary.51",
     "@next/mdx": "^15.2.4",
     "@shikijs/transformers": "^3.4.2",
     "@sparticuz/chromium": "135.0.0-next.3",

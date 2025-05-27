@@ -12,6 +12,7 @@ import { Provider } from 'jotai';
 import { type Locale, NextIntlClientProvider, hasLocale } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import Script from 'next/script';
 import type * as React from 'react';
 import { Suspense } from 'react';
 
@@ -66,6 +67,19 @@ export default async function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
+      <Script
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-3WJSD6D679"
+      />
+      <Script
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: gtag script
+        dangerouslySetInnerHTML={{
+          __html: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-3WJSD6D679');`,
+        }}
+      />
       <body className="min-h-dvh flex flex-col">
         <NextIntlClientProvider>
           <Provider>
