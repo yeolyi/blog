@@ -10,9 +10,16 @@ type ServerActionResult<T> =
       value: string;
     };
 
-export const wrapServerAction =
-  async <T, U>(action: (props: T) => Promise<U>) =>
-  async (props: T): Promise<ServerActionResult<U>> => {
+export function wrapServerAction<U>(
+  action: () => Promise<U>,
+): () => Promise<ServerActionResult<U>>;
+export function wrapServerAction<T, U>(
+  action: (props: T) => Promise<U>,
+): (props: T) => Promise<ServerActionResult<U>>;
+export function wrapServerAction<T, U>(
+  action: (props?: T) => Promise<U>,
+): (props?: T) => Promise<ServerActionResult<U>> {
+  return async (props?: T) => {
     try {
       const value = await action(props);
       return {
@@ -27,11 +34,4 @@ export const wrapServerAction =
       };
     }
   };
-
-export const unwrapServerAction =
-  async <T, U>(action: (props: T) => Promise<ServerActionResult<U>>) =>
-  async (props: T) => {
-    const { success, value } = await action(props);
-    if (!success) throw new Error(value);
-    return value;
-  };
+}

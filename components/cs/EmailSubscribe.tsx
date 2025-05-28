@@ -7,6 +7,7 @@ import { confetti } from '@/utils/confetti';
 import { Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useActionState, useRef } from 'react';
+import { toast } from 'react-toastify';
 
 export default function EmailSubscribe() {
   const t = useTranslations('EmailSubscribe');
@@ -17,7 +18,10 @@ export default function EmailSubscribe() {
     if (typeof email !== 'string') return prevState;
 
     const result = await subscribeEmail(email);
-    if (!result.success) return result.message;
+    if (!result.success) {
+      toast.error(result.value);
+      return '';
+    }
 
     const rect = ref.current?.getBoundingClientRect();
     if (rect) {
@@ -29,7 +33,7 @@ export default function EmailSubscribe() {
         colors: ['#FFD60A', '#FF375F', '#32D74B', '#0A84FF', '#FF9F0A'],
       });
     }
-    return result.message;
+    return t('successMessage');
   };
 
   const [state, formAction, isPending] = useActionState(onSubmit, null);
