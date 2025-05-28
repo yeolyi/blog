@@ -15,14 +15,13 @@ export const subscribeEmail = wrapServerAction(async (email: string) => {
     email,
     audienceId: AUDIENCE_ID,
   });
+  if (resp.error) {
+    throw new Error(resp.error.message);
+  }
 
   // TODO: 이 페이지 말고 다른 곳에서도 구독자 수를 사용한다면...?
   revalidatePath('/cs');
   revalidatePath('/en/cs');
-
-  if (resp.error) {
-    throw new Error(resp.error.message);
-  }
 });
 
 // 구독자 수 조회 함수

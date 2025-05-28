@@ -7,6 +7,7 @@ import { getErrMessage } from '@/utils/string';
 import { Pencil } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useActionState } from 'react';
+import { toast } from 'react-toastify';
 
 type CommentFormProps = {
   postId: string;
@@ -27,7 +28,8 @@ export default function CommentForm({ postId }: CommentFormProps) {
       if (!profile) return '유저 아이디를 불러올 수 없어요';
       await createComment(postId, content, profile.id);
     } catch (e) {
-      return getErrMessage(e);
+      toast.error(getErrMessage(e));
+      return '';
     }
 
     return;
