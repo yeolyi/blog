@@ -26,6 +26,7 @@ export default async function Home() {
   const t = await getTranslations('HomePage');
   const tCS = await getTranslations('Curriculum');
   const tEmail = await getTranslations('EmailSubscribe');
+  const tComment = await getTranslations('Comment');
   const subscriberCount = await getSubscriberCount();
   const count = subscriberCount.success ? subscriberCount.value : undefined;
 
@@ -138,28 +139,16 @@ export default async function Home() {
 
       <Border />
 
-      <h2>여러분들 의견이 궁금해요</h2>
-      <p>
-        이 시리즈를 읽으면서 떠오른 궁금한 점이나 나누고 싶은 의견이 있다면
-        언제든지 아래 댓글로 남겨주세요. 예를 들면...
-      </p>
+      <h2>{tComment('title')}</h2>
+      <p>{tComment('description')}</p>
       <ul>
-        <li>
-          컴퓨터 공학 분야에서 '이건 왜 이렇게 될까?' 등 평소에 궁금하셨던 것
-        </li>
-        <li>컴퓨터 공학을 공부하면서 인상 깊었던 개념</li>
-        <li>
-          다들 중요하다고는 하는데, 솔직히 아직 이게 왜 필요한지, 어떻게
-          쓰이는지 잘 모르겠다 싶은 개념
-        </li>
+        <li>{tComment('example1')}</li>
+        <li>{tComment('example2')}</li>
+        <li>{tComment('example3')}</li>
       </ul>
-      <p>
-        여러분의 질문, 경험, 솔직한 어려움을 나눠주시면 다른 독자분들에게도
-        도움이 될 것이라 믿습니다. 함께 배우고 성장하는 공간이 될 수 있도록 저도
-        계속 고민할게요 :)
-      </p>
+      <p>{tComment('encouragement')}</p>
       <p className="italic text-stone-400 mb-12">
-        * 스팸 방지를 위해 깃허브 로그인 후 작성할 수 있어요
+        {tComment('githubLoginNotice')}
       </p>
       <Comment postId="index" />
     </div>

@@ -103,6 +103,13 @@
     "confettiLabel": "Confetti count"
   },
   "Comment": {
+    "title": "I'd Love to Hear Your Thoughts",
+    "description": "Feel free to share any questions or thoughts that come to mind while reading this series. For example...",
+    "example1": "Things you've always wondered about in computer science, like 'Why does this work this way?'",
+    "example2": "Concepts that left a lasting impression while studying computer science",
+    "example3": "Concepts that everyone says are important, but you're not quite sure why or how they're used",
+    "encouragement": "I believe sharing your questions, experiences, and honest challenges will help other readers. I'll keep working to make this a space where we can learn and grow together :)",
+    "githubLoginNotice": "* GitHub login is required to prevent spam",
     "loginRequired": "You need to <loginLink>login</loginLink> to leave a comment.",
     "login": "login",
     "placeholder": "Thank you for reading! 👍",
