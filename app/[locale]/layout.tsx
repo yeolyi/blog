@@ -6,15 +6,17 @@ import Header from '../../components/layout/Header';
 import '@/app/[locale]/globals.css';
 
 import { AuthProvider } from '@/components/AuthProvider';
+import SWRProvider from '@/components/SWRProvider';
 import ScrollRetoration from '@/components/ScrollRestore';
 import { routing } from '@/i18n/routing';
-import { Provider } from 'jotai';
+import { Provider as JotaiProvider } from 'jotai';
 import { type Locale, NextIntlClientProvider, hasLocale } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import Script from 'next/script';
 import type * as React from 'react';
 import { Suspense } from 'react';
+import { Slide, ToastContainer } from 'react-toastify';
 
 const ibmPlexSans = IBM_Plex_Sans_KR({
   variable: '--font-ibm-plex-sans',
@@ -67,6 +69,43 @@ export default async function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
+      <GoogleAnalytics />
+      <body className="min-h-dvh flex flex-col">
+        <NextIntlClientProvider>
+          <JotaiProvider>
+            <SWRProvider>
+              <AuthProvider>
+                {children}
+                <Header />
+                <Footer />
+                <ToastContainer
+                  position="bottom-right"
+                  autoClose={5000}
+                  hideProgressBar={false}
+                  newestOnTop={false}
+                  closeOnClick={false}
+                  rtl={false}
+                  pauseOnFocusLoss
+                  pauseOnHover
+                  theme="dark"
+                  transition={Slide}
+                />
+              </AuthProvider>
+            </SWRProvider>
+          </JotaiProvider>
+        </NextIntlClientProvider>
+        <Analytics />
+        <Suspense>
+          <ScrollRetoration />
+        </Suspense>
+      </body>
+    </html>
+  );
+}
+
+const GoogleAnalytics = () => {
+  return (
+    <>
       <Script
         async
         src="https://www.googletagmanager.com/gtag/js?id=G-3WJSD6D679"
@@ -80,24 +119,9 @@ gtag('js', new Date());
 gtag('config', 'G-3WJSD6D679');`,
         }}
       />
-      <body className="min-h-dvh flex flex-col">
-        <NextIntlClientProvider>
-          <Provider>
-            <AuthProvider>
-              {children}
-              <Header />
-              <Footer />
-            </AuthProvider>
-          </Provider>
-        </NextIntlClientProvider>
-        <Analytics />
-        <Suspense>
-          <ScrollRetoration />
-        </Suspense>
-      </body>
-    </html>
+    </>
   );
-}
+};
 
 export async function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));

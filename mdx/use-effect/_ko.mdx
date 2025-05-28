@@ -1,0 +1,183 @@
+export const title = 'useEffect'
+
+강의는 mountEffect에서 시작하는데 useEffect에서 mountEffect로 어떻게 가는걸까?
+
+```ts
+// react/packages/react/src/ReactHooks.js
+export function useEffect(
+  create: () => (() => void) | void,
+  deps: Array<mixed> | void | null,
+): void {
+  if (__DEV__) {
+    if (create == null) {
+      console.warn(
+        'React Hook useEffect requires an effect callback. Did you forget to pass a callback to the hook?',
+      );
+    }
+  }
+
+// [!code highlight]
+  const dispatcher = resolveDispatcher(); 
+  return dispatcher.useEffect(create, deps);
+}
+```
+
+```js
+// react/packages/react/src/ReactHooks.js
+function resolveDispatcher() {
+    // [!code highlight]
+  const dispatcher = ReactSharedInternals.H;
+  if (__DEV__) {
+    if (dispatcher === null) {
+      console.error(
+        'Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for' +
+          ' one of the following reasons:\n' +
+          '1. You might have mismatching versions of React and the renderer (such as React DOM)\n' +
+          '2. You might be breaking the Rules of Hooks\n' +
+          '3. You might have more than one copy of React in the same app\n' +
+          'See https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.',
+      );
+    }
+  }
+  // Will result in a null access error if accessed outside render phase. We
+  // intentionally don't throw our own error because this is in a hot path.
+  // Also helps ensure this is inlined.
+  return ((dispatcher: any): Dispatcher);
+}
+```
+
+```ts
+// react/packages/shared/ReactSharedInternals.js
+import * as React from 'react';
+
+const ReactSharedInternals =
+  React.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE;
+
+export default ReactSharedInternals;
+```
+
+원래 이름은 `__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED`였다. https://github.com/facebook/react/pull/28789 
+
+> React는 여러 패키지(예: react, react-dom, react-reconciler 등)로 쪼개져 있어요.
+서로 다른 패키지 간에 일부 내부 상태나 참조를 공유해야 할 때, 비공식적으로라도 외부로 export할 필요가 있습니다.
+
+Level of indirection.
+
+```ts
+// react/packages/react-reconciler/src/ReactFiberHooks.js
+const HooksDispatcherOnMount: Dispatcher = {
+  // ...
+  useEffect: mountEffect,
+  // ...
+};
+
+const HooksDispatcherOnUpdate: Dispatcher = {
+  // ...
+  useEffect: updateEffect,
+  // ...
+};
+
+const HooksDispatcherOnRerender: Dispatcher = {
+  // ...
+  useEffect: updateEffect,
+  // ...
+};
+
+export const ContextOnlyDispatcher: Dispatcher = {
+  // ...
+  useEffect: throwInvalidHookError,
+  // ...
+};
+```
+
+`useThenable`과 `renderWithHooks`에서 사용하는데 이름이 익숙한 후자를 살펴보자. 
+
+```ts
+export function renderWithHooks<Props, SecondArg>(
+  current: Fiber | null,
+  workInProgress: Fiber,
+  Component: (p: Props, arg: SecondArg) => any,
+  props: Props,
+  secondArg: SecondArg,
+  nextRenderLanes: Lanes,
+) {
+ // ...
+ ReactSharedInternals.H =
+      current === null || current.memoizedState === null
+        ? HooksDispatcherOnMount
+        : HooksDispatcherOnUpdate;
+
+  // ...
+  let children = __DEV__
+    ? callComponentInDEV(Component, props, secondArg)
+    : Component(props, secondArg);
+}
+```
+
+연결리스트를 사용
+
+```js
+function mountWorkInProgressHook(): Hook {
+  const hook: Hook = {
+    memoizedState: null,
+
+    baseState: null,
+    baseQueue: null,
+    queue: null,
+
+    next: null,
+  };
+
+  if (workInProgressHook === null) {
+    // This is the first hook in the list
+    // currentlyRenderingFiber는 어디서 왔나 했더니 renderWithHooks에서 설정해준다. 
+    // 이런식의 변수 활용을 자주 하는 것 같다... prop으로 명시적으로 건네주면 안되나? 파일 하나가 길어서 기억하기 힘든데.
+    // [!code highlight]
+    currentlyRenderingFiber.memoizedState = workInProgressHook = hook;
+  } else {
+    // Append to the end of the list
+    workInProgressHook = workInProgressHook.next = hook;
+  }
+  return workInProgressHook;
+}
+```
+
+> if deps don't change, then do nothing but recreate the Effect object
+we need to recreate here mabe because simply we need to recreate the updateQueue
+and we need to get the updated create().
+notice that here we are using the previous destroy()
+
+뎁스가 같아도 create함수는 업데이트해준다. 
+
+뎁스를 비교할 때 areHookInputsEqual 함수를 사용한다. memo나 useCallback에서도 사용된다.
+
+```ts
+function areHookInputsEqual(
+  nextDeps: Array<mixed>,
+  prevDeps: Array<mixed> | null,
+): boolean {
+  for (let i = 0; i < prevDeps.length && i < nextDeps.length; i++) {
+    if (is(nextDeps[i], prevDeps[i])) {
+      continue;
+    }
+    return false;
+  }
+  return true;
+}
+```
+
+```ts
+// react/packages/react-reconciler/src/ReactHookEffectTags.js
+
+export type HookFlags = number;
+
+export const NoFlags = /*   */ 0b0000;
+
+// Represents whether effect should fire.
+export const HasEffect = /* */ 0b0001;
+
+// Represents the phase in which the effect (not the clean-up) fires.
+export const Insertion = /* */ 0b0010;
+export const Layout = /*    */ 0b0100;
+export const Passive = /*   */ 0b1000;
+```

@@ -1,7 +1,6 @@
-import { getEmojiCounts } from '@/actions/emoji';
 import { createCommentInDB } from '@/db/comment/create';
 import { deleteCommentFromDB } from '@/db/comment/delete';
-import { getCommentsFromDB } from '@/db/comment/read';
+import { getCommentsFromDB, getEmojiCounts } from '@/db/comment/read';
 import { useSessionStore } from '@/store/session';
 import useSWR, { mutate } from 'swr';
 import { commentsKey, emojiKey } from './key';

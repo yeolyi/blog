@@ -199,6 +199,10 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      add_emoji_reaction: {
+        Args: { p_post_id: string; p_emoji: string; p_user_id?: string };
+        Returns: boolean;
+      };
       binary_quantize: {
         Args: { '': string } | { '': unknown };
         Returns: unknown;
@@ -239,6 +243,10 @@ export type Database = {
       get_subscriber_count: {
         Args: Record<PropertyKey, never>;
         Returns: number;
+      };
+      get_temp_user_id: {
+        Args: Record<PropertyKey, never>;
+        Returns: string;
       };
       halfvec_avg: {
         Args: { '': number[] };

@@ -34,7 +34,6 @@ export const getUserId = async ({
       // @ts-expect-error TOOD: 환경변수 타입 명시
       process.env.JWT_SECRET,
     );
-    console.log('session.user.id', session.user.id);
     return session.user.id;
   }
 
@@ -42,7 +41,6 @@ export const getUserId = async ({
     throw new Error('IP_SALT is not defined');
 
   const ip = headerToIp(headers);
-  console.log('ip', ip);
 
   return crypto
     .createHash('sha256')

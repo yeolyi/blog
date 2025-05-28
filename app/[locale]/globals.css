@@ -2,6 +2,10 @@
 @plugin "@tailwindcss/typography";
 @config "../../tailwind.config.js";
 
+:root {
+  --toastify-toast-bd-radius: 0px;
+}
+
 @layer base {
   body {
     font-family: var(--font-ibm-plex-sans);

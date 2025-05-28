@@ -1,5 +1,5 @@
-import { addEmojiAction } from '@/actions/emoji';
 import { bgMap, border } from '@/components/ui/theme';
+import { addEmojiReactionInDB } from '@/db/comment/update';
 import { useSessionStore } from '@/store/session';
 import { useEmojiComment } from '@/swr/comment';
 import { confetti } from '@/utils/confetti';
@@ -63,7 +63,11 @@ export default function Emoji({ postId }: { postId: string }) {
         return;
       }
 
-      await addEmojiAction({ postId, emoji, session });
+      await addEmojiReactionInDB({
+        postId,
+        emoji,
+        session,
+      });
 
       // 빠른 confetti를 위해 굳이 await하지 않음
       mutate((prev) =>

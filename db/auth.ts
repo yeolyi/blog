@@ -32,7 +32,7 @@ export async function getProfileFromDB() {
     .throwOnError();
 
   // TODO
-  if (profile.role === null) throw new Error('role is null');
+  if (profile.role === null) throw new Error('Role 값을 찾을 수 없습니다.');
 
   return profile;
 }
