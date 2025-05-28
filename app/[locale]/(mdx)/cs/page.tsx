@@ -1,4 +1,5 @@
 import { getSubscriberCount } from '@/actions/resend';
+import Comment from '@/components/comment';
 import CSPostListItem from '@/components/cs/CSPostListItem';
 import EmailSubscribe from '@/components/cs/EmailSubscribe';
 import PixelateImage from '@/components/cs/PixelateImage';
@@ -43,7 +44,7 @@ export default async function Home() {
 
       <EmailSubscribe />
 
-      <div className="border-t border-white/20 my-12" />
+      <Border />
 
       <h2>{tCS('part1Title')}</h2>
 
@@ -134,6 +135,37 @@ export default async function Home() {
       <div className="flex flex-col gap-6">
         <CSPostListItem title={tCS('appendix1Title')} description={''} />
       </div>
+
+      <Border />
+
+      <h2>여러분들 의견이 궁금해요</h2>
+      <p>
+        이 시리즈를 읽으면서 떠오른 궁금한 점이 있거나, 나누고 싶은 의견이
+        있다면 언제든지 아래 댓글로 편하게 남겨주세요. 여러분의 모든 목소리를
+        환영합니다. 예를 들면...
+      </p>
+      <ul>
+        <li>
+          컴퓨터 공학 분야에서 '이건 왜 이렇게 될까?' 등 평소에 궁금하셨던게
+          있나요?
+        </li>
+        <li>컴퓨터 공학을 공부하면서 인상 깊었던 개념이 있다면 나눠주세요.</li>
+        <li>
+          다들 중요하다고는 하는데, 솔직히 아직 이게 왜 필요한지, 어떻게
+          쓰이는지 잘 모르겠다 싶은 개념이 있다면 이야기해주세요.
+        </li>
+      </ul>
+      <p>
+        여러분의 질문, 경험, 그리고 솔직한 어려움이 다른 독자분들에게도 도움이
+        될 것이라 믿습니다. 함께 배우고 성장하는 공간이 될 수 있도록 저도
+        고민할게요!
+      </p>
+      <p className="italic text-stone-400 mb-12">
+        * 깃허브 로그인이 필요합니다
+      </p>
+      <Comment postId="index" />
     </div>
   );
 }
+
+const Border = () => <div className="border-t border-white/20 my-12" />;

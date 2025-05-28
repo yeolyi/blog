@@ -36,6 +36,7 @@
   "Curriculum": {
     "dateFormat": "{date, date, long}",
     "plannedDateFormat": "{date, date, long}",
+
     "part1Title": "파트 1: 0과 1로 컴퓨터 조립하기",
     "hw1Title": "컴퓨터의 손가락이 두 개인 이유",
     "hw1Description": "비트, 이진수, 진리표",
