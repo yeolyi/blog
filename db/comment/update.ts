@@ -1,4 +1,5 @@
 import supabase from '@/db';
+import { useTempUserStore } from '@/store/tempUser';
 import type { Session } from '@supabase/supabase-js';
 
 export async function addEmojiReactionInDB({
@@ -11,11 +12,13 @@ export async function addEmojiReactionInDB({
   session: Session | null | undefined;
 }) {
   try {
+    const tempId = useTempUserStore.getState().getId();
+    const userId = session?.user?.id || tempId || undefined;
     const { data } = await supabase
       .rpc('add_emoji_reaction', {
         p_post_id: postId,
         p_emoji: emoji,
-        p_user_id: session?.user?.id,
+        p_user_id: userId,
       })
       .throwOnError();
 
