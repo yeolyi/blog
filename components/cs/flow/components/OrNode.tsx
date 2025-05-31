@@ -4,11 +4,10 @@ import {
   RIGHT_HANDLE_STYLE,
 } from '@/components/cs/flow/constants';
 import { Handle, Position, useNodeConnections } from '@xyflow/react';
-import clsx from 'clsx';
 import { useAtom, useAtomValue } from 'jotai';
 
-export const NandNode = (props: NodeProps<'nand'>) => {
-  const { atoms } = props.data;
+export const OrNode = ({ id, data, selected }: NodeProps<'or'>) => {
+  const { atoms } = data;
 
   const out = useAtomValue(atoms.outputAtoms.out);
   useAtom(atoms.effectAtom);
@@ -19,11 +18,11 @@ export const NandNode = (props: NodeProps<'nand'>) => {
   // 애초에 useConnection에서 나에게로 오는 것만 반환하게
   const in1Connections = connections.filter(
     (connection) =>
-      connection.target === props.id && connection.targetHandle === 'in1',
+      connection.target === id && connection.targetHandle === 'in1',
   );
   const in2Connections = connections.filter(
     (connection) =>
-      connection.target === props.id && connection.targetHandle === 'in2',
+      connection.target === id && connection.targetHandle === 'in2',
   );
 
   const backgroundColor = (() => {
@@ -31,26 +30,30 @@ export const NandNode = (props: NodeProps<'nand'>) => {
       case null:
         return '';
       case false:
-        return 'bg-red-500';
+        return 'fill-red-500';
       case true:
-        return 'bg-green-500';
+        return 'fill-green-500';
     }
   })();
 
   return (
-    <div
-      className={clsx(
-        'relative w-24 h-16 rounded-r-full box-content flex items-center justify-center outline outline-white',
-        backgroundColor,
-        props.selected ? 'outline-2' : 'outline-1',
-      )}
-    >
-      <div
-        className={clsx(
-          'absolute right-0 translate-x-[12px] rounded-full top-1/2 -translate-y-1/2 w-[16px] h-[16px] outline outline-white',
-          backgroundColor,
-        )}
-      />
+    <div className="relative">
+      <svg
+        width="96"
+        height="64"
+        viewBox="0 0 96 64"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-labelledby="orGateTitle"
+        className={backgroundColor}
+      >
+        <title id="orGateTitle">OR Gate</title>
+        <path
+          d="M0,0 Q85,0 96,32 Q85,64 0,64 Q8,32 0,0 Z"
+          stroke="white"
+          strokeWidth={selected ? 2 : 1}
+        />
+      </svg>
       <Handle
         type="target"
         position={Position.Left}
@@ -78,13 +81,8 @@ export const NandNode = (props: NodeProps<'nand'>) => {
         style={{
           ...RIGHT_HANDLE_STYLE,
           top: '50%',
-          right: '-12px',
         }}
       />
-      {/* 생긴게 치우치게 생겨서 중심 미세조정 */}
-      <p className="text-white text-2xl font-semibold mr-[5px]">
-        {out === true ? 1 : out === false ? 0 : ''}
-      </p>
     </div>
   );
 };

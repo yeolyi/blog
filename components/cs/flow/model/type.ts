@@ -20,7 +20,6 @@ export type OutputValue =
   | null;
 
 export type OutputAtom = PrimitiveAtom<OutputValue>;
-
 export type InputAtom = PrimitiveAtom<OutputAtom | null>;
 
 // 특정 노드의 상태를 표현

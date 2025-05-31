@@ -3,14 +3,16 @@ import {
   LEFT_HANDLE_STYLE,
   RIGHT_HANDLE_STYLE,
 } from '@/components/cs/flow/constants';
+import type { OutputValue } from '@/components/cs/flow/model/type';
 import { Handle, Position, useNodeConnections } from '@xyflow/react';
 import clsx from 'clsx';
 import { useAtom, useAtomValue } from 'jotai';
 
-export const NandNode = (props: NodeProps<'nand'>) => {
+export const HalfAdderNode = (props: NodeProps<'halfAdder'>) => {
   const { atoms } = props.data;
 
-  const out = useAtomValue(atoms.outputAtoms.out);
+  const sum = useAtomValue(atoms.outputAtoms.sum);
+  const carry = useAtomValue(atoms.outputAtoms.carry);
   useAtom(atoms.effectAtom);
 
   const connections = useNodeConnections();
@@ -26,64 +28,63 @@ export const NandNode = (props: NodeProps<'nand'>) => {
       connection.target === props.id && connection.targetHandle === 'in2',
   );
 
-  const backgroundColor = (() => {
-    switch (out) {
-      case null:
-        return '';
-      case false:
-        return 'bg-red-500';
-      case true:
-        return 'bg-green-500';
-    }
-  })();
+  const valueToColor = (value: OutputValue | null) => {
+    if (value === null) return 'text-white';
+    return value ? 'text-green-500' : 'text-red-500';
+  };
 
   return (
     <div
       className={clsx(
-        'relative w-24 h-16 rounded-r-full box-content flex items-center justify-center outline outline-white',
-        backgroundColor,
+        'relative w-32 h-32 box-content flex items-center justify-center outline outline-white',
         props.selected ? 'outline-2' : 'outline-1',
       )}
     >
-      <div
-        className={clsx(
-          'absolute right-0 translate-x-[12px] rounded-full top-1/2 -translate-y-1/2 w-[16px] h-[16px] outline outline-white',
-          backgroundColor,
-        )}
-      />
       <Handle
         type="target"
         position={Position.Left}
         id="in1"
-        style={{
-          ...LEFT_HANDLE_STYLE,
-          top: '25%',
-        }}
+        style={{ ...LEFT_HANDLE_STYLE, top: '25%' }}
         isConnectable={in1Connections.length === 0}
       />
       <Handle
         type="target"
         position={Position.Left}
         id="in2"
-        style={{
-          ...LEFT_HANDLE_STYLE,
-          top: '75%',
-        }}
+        style={{ ...LEFT_HANDLE_STYLE, top: '75%' }}
         isConnectable={in2Connections.length === 0}
       />
       <Handle
         type="source"
         position={Position.Right}
-        id="out"
-        style={{
-          ...RIGHT_HANDLE_STYLE,
-          top: '50%',
-          right: '-12px',
-        }}
+        id="sum"
+        style={{ ...RIGHT_HANDLE_STYLE, top: '25%' }}
       />
-      {/* 생긴게 치우치게 생겨서 중심 미세조정 */}
-      <p className="text-white text-2xl font-semibold mr-[5px]">
-        {out === true ? 1 : out === false ? 0 : ''}
+      <Handle
+        type="source"
+        position={Position.Right}
+        id="carry"
+        style={{ ...RIGHT_HANDLE_STYLE, top: '75%' }}
+      />
+
+      <p
+        className={clsx(
+          'absolute top-1 right-1 text-sm font-mono',
+          valueToColor(sum),
+        )}
+      >
+        SUM
+      </p>
+      <p
+        className={clsx(
+          'absolute bottom-1 right-1 text-sm font-mono',
+          valueToColor(carry),
+        )}
+      >
+        CARRY
+      </p>
+      <p className="absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-white text-base text-center">
+        HALF ADDER
       </p>
     </div>
   );

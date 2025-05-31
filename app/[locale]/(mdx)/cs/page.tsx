@@ -5,6 +5,7 @@ import EmailSubscribe from '@/components/cs/EmailSubscribe';
 import PixelateImage from '@/components/cs/PixelateImage';
 import TruthTable from '@/components/cs/TruthTable';
 import Flow from '@/components/cs/flow';
+import half from '@/mdx/cs/adder/assets/half.json';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import initialJSON from './assets/flow.json';
@@ -93,15 +94,29 @@ export default async function Home() {
           title={tCS('hw4Title')}
           description={tCS('hw4Description')}
           date="2025-06-01"
+          href="/cs/adder"
+        >
+          <Flow
+            id="ripple-carry-adder"
+            initialJSON={half}
+            additionalRegistryKeys={['or', 'halfAdder', 'fullAdder']}
+            height={300}
+          />
+        </CSPostListItem>
+
+        <CSPostListItem
+          title={tCS('hw5Title')}
+          description={tCS('hw5Description')}
+          date="2025-06-07T08:00:00Z"
         />
 
-        {[...Array(4)].map((_, idx) => (
+        {[...Array(3)].map((_, idx) => (
           <CSPostListItem
             key={idx}
             // @ts-expect-error
-            title={tCS(`hw${idx + 5}Title`)}
+            title={tCS(`hw${idx + 6}Title`)}
             // @ts-expect-error
-            description={tCS(`hw${idx + 5}Description`)}
+            description={tCS(`hw${idx + 6}Description`)}
           />
         ))}
       </div>

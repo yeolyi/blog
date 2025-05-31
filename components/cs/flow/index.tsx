@@ -37,10 +37,12 @@ function Flow({
   id,
   initialJSON,
   height = 400,
+  additionalRegistryKeys = [],
 }: {
   id: string;
   initialJSON?: ReactFlowJsonObject<Node, Edge>;
   height?: number;
+  additionalRegistryKeys?: RegistryKey[];
 }) {
   const store = useMemo(() => createStore(), []);
   const {
@@ -194,6 +196,7 @@ function Flow({
               onRestore={onRestore}
               onDeleteNode={(id) => onNodesChange([{ type: 'remove', id }])}
               onDeleteEdge={(id) => onEdgesChange([{ type: 'remove', id }])}
+              registryKeys={['number', 'nand', ...additionalRegistryKeys]}
             />
             <Background
               bgColor="var(--color-stone-900)"

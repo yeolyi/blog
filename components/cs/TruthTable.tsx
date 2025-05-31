@@ -45,8 +45,6 @@ export default function TruthTable({ labels, data }: TruthTableGateProps) {
 
   const [inputs, setInputs] = useState<boolean[]>(() => {
     const inputs = Array(inputLabels.length).fill(false);
-    // 유저에게 체크박스임을 인식
-    inputs[inputs.length - 1] = true;
     return inputs;
   });
 
@@ -62,7 +60,7 @@ export default function TruthTable({ labels, data }: TruthTableGateProps) {
 
   return (
     <div className="overflow-x-auto">
-      <table className={clsx('w-fit border-collapse not-prose', layerBg)}>
+      <table className={clsx('w-fit not-prose border-collapse', layerBg)}>
         <thead>
           <tr>
             {labels.map((labelObj, index) => (
@@ -89,17 +87,19 @@ export default function TruthTable({ labels, data }: TruthTableGateProps) {
         </thead>
         <tbody>
           {data.map((row, rowIdx) => (
-            <tr
-              key={`row-${rowIdx}`}
-              className={clsx(
-                rowIdx === matchingRowIndex &&
-                  (row.at(-1) ? successBg : failBg),
-              )}
-            >
+            <tr key={`row-${rowIdx}`}>
               {row.map((cell, colIdx) => (
                 <td
                   key={`cell-${rowIdx}-${colIdx}`}
-                  className="p-2 text-center"
+                  className={clsx(
+                    'p-2 text-center',
+                    rowIdx === matchingRowIndex &&
+                      (labels[colIdx].type === 'output'
+                        ? cell
+                          ? successBg
+                          : failBg
+                        : 'bg-stone-700'),
+                  )}
                 >
                   {cell ? '1' : '0'}
                 </td>

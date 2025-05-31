@@ -25,7 +25,7 @@ import {
   useCallback,
   useState,
 } from 'react';
-import type { RegistryKey } from '../atoms';
+import { type RegistryKey, registryNames } from '../atoms';
 import type { TouchDeviceState } from '../hooks/useMobileState';
 
 type MobileControlButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -68,6 +68,7 @@ interface ControlsProps {
   onRestore: () => void;
   onDeleteNode: (id: string) => void;
   onDeleteEdge: (id: string) => void;
+  registryKeys?: RegistryKey[];
 }
 
 export function Controls({
@@ -79,6 +80,7 @@ export function Controls({
   onRestore,
   onDeleteNode,
   onDeleteEdge,
+  registryKeys = [],
 }: ControlsProps) {
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
   const [selectedEdges, setSelectedEdges] = useState<string[]>([]);
@@ -154,25 +156,20 @@ export function Controls({
             </div>
           </div>
 
-          <div className="absolute top-0 left-0 bottom-0 flex flex-col justify-center z-10 pointer-events-none">
-            <div className="flex flex-col gap-4 p-2 m-2 bg-black/50 pointer-events-auto">
-              <div className="flex flex-col">
-                <MobileControlButton
-                  onClick={addNode('number')}
-                  disabled={
-                    touchOnlyState.type === 'mobile' && !touchOnlyState.value
-                  }
-                >
-                  0/1
-                </MobileControlButton>
-                <MobileControlButton
-                  onClick={addNode('nand')}
-                  disabled={
-                    touchOnlyState.type === 'mobile' && !touchOnlyState.value
-                  }
-                >
-                  NAND
-                </MobileControlButton>
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
+            <div className="p-2 m-2 bg-black/50 pointer-events-auto">
+              <div className="flex gap-2">
+                {registryKeys.map((key) => (
+                  <MobileControlButton
+                    key={key}
+                    onClick={addNode(key)}
+                    disabled={
+                      touchOnlyState.type === 'mobile' && !touchOnlyState.value
+                    }
+                  >
+                    <span className="text-sm">{registryNames[key]}</span>
+                  </MobileControlButton>
+                ))}
               </div>
             </div>
           </div>

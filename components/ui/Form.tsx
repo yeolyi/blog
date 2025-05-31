@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import { Keyboard } from 'lucide-react';
 import type {
   FormHTMLAttributes,
   InputHTMLAttributes,
@@ -35,13 +36,17 @@ export const Input = ({
   ...props
 }: InputHTMLAttributes<HTMLInputElement>) => {
   return (
-    <input
+    <div
       className={clsx(
-        'w-full p-2 bg-stone-700 text-white focus:border-white focus:outline-none border-2 border-transparent',
-        className,
+        'w-full bg-stone-700 text-white flex items-center pl-2 focus-within:border-white focus-within:outline-none border-2 border-transparent',
       )}
-      {...props}
-    />
+    >
+      <Keyboard size={16} />
+      <input
+        className={clsx('p-2 w-full focus:outline-none', className)}
+        {...props}
+      />
+    </div>
   );
 };
 

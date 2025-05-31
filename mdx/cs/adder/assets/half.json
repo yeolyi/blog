@@ -1,0 +1,87 @@
+{
+  "nodes": [
+    {
+      "id": "37d0a35c-c522-48d1-972c-7f5ec19d4229",
+      "type": "halfAdder",
+      "position": { "x": 40, "y": 0 },
+      "data": {
+        "atoms": {
+          "type": "halfAdder",
+          "inputAtoms": { "in1": { "init": null }, "in2": { "init": null } },
+          "outputAtoms": { "sum": { "init": null }, "carry": { "init": null } },
+          "effectAtom": {},
+          "id": "37d0a35c-c522-48d1-972c-7f5ec19d4229"
+        }
+      },
+      "measured": { "width": 128, "height": 128 },
+      "selected": false,
+      "dragging": false
+    },
+    {
+      "id": "db1912ce-e88f-4353-8c80-1cb8136f8eb0",
+      "type": "number",
+      "position": { "x": -64, "y": 72 },
+      "data": {
+        "atoms": {
+          "type": "boolean",
+          "inputAtoms": {},
+          "outputAtoms": { "out": { "init": false } },
+          "id": "db1912ce-e88f-4353-8c80-1cb8136f8eb0"
+        }
+      },
+      "measured": { "width": 48, "height": 48 },
+      "selected": true,
+      "dragging": false
+    },
+    {
+      "id": "390bcc3b-13e6-447c-b78e-170b86f5d8aa",
+      "type": "number",
+      "position": { "x": -64, "y": 8 },
+      "data": {
+        "atoms": {
+          "type": "boolean",
+          "inputAtoms": {},
+          "outputAtoms": { "out": { "init": false } },
+          "id": "390bcc3b-13e6-447c-b78e-170b86f5d8aa"
+        }
+      },
+      "measured": { "width": 48, "height": 48 },
+      "selected": false,
+      "dragging": false
+    }
+  ],
+  "edges": [
+    {
+      "type": "step",
+      "animated": true,
+      "selectable": true,
+      "source": "390bcc3b-13e6-447c-b78e-170b86f5d8aa",
+      "sourceHandle": "out",
+      "target": "37d0a35c-c522-48d1-972c-7f5ec19d4229",
+      "targetHandle": "in1",
+      "id": "9aeb86c5-e172-4d82-8cdc-058e1e727b82",
+      "selected": false
+    },
+    {
+      "type": "step",
+      "animated": true,
+      "selectable": true,
+      "source": "db1912ce-e88f-4353-8c80-1cb8136f8eb0",
+      "sourceHandle": "out",
+      "target": "37d0a35c-c522-48d1-972c-7f5ec19d4229",
+      "targetHandle": "in2",
+      "id": "d830cf30-c050-4438-9bff-c451916776e6",
+      "selected": false
+    }
+  ],
+  "viewport": {
+    "x": 167.11111111111111,
+    "y": 157.33333333333334,
+    "zoom": 0.8888888888888888
+  },
+  "nodeOutputs": {
+    "37d0a35c-c522-48d1-972c-7f5ec19d4229": { "sum": false, "carry": false },
+    "db1912ce-e88f-4353-8c80-1cb8136f8eb0": { "out": false },
+    "390bcc3b-13e6-447c-b78e-170b86f5d8aa": { "out": false }
+  }
+}

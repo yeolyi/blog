@@ -7,29 +7,30 @@ import type {
 import { atom } from 'jotai';
 import { atomEffect } from 'jotai-effect';
 
-type NandAtoms = NodeAtoms<'in1' | 'in2', 'out', true>;
+type OrAtoms = NodeAtoms<'in1' | 'in2', 'out', true>;
 
-export const createNandAtoms: NodeCreator<NandAtoms> = (initialValues) => {
+export const createOrAtoms: NodeCreator<OrAtoms> = (initialValues) => {
   const in1Atom = atom<OutputAtom | null>(null);
   const in2Atom = atom<OutputAtom | null>(null);
 
-  const nandAtom = atom<boolean | null>((get) => {
+  const orAtom = atom<boolean | null>((get) => {
     const in1 = get(in1Atom);
     const in2 = get(in2Atom);
-    if (in1 === null || in2 === null) return null;
+
+    if (in1 === null || in2 === null) {
+      return null;
+    }
 
     const in1Value = get(in1);
     const in2Value = get(in2);
 
-    // input 하나가 null인걸 의도적을 허용
-    // 이를 통해 피드백 구조를 허용
-    return !(in1Value && in2Value);
+    return Boolean(in1Value || in2Value);
   });
 
   const outAtom = atom<OutputValue>(initialValues?.out ?? null);
 
   const outEffect = atomEffect((get, set) => {
-    const out = get(nandAtom);
+    const out = get(orAtom);
 
     const id = setTimeout(() => {
       set.recurse(outAtom, out);
@@ -39,7 +40,7 @@ export const createNandAtoms: NodeCreator<NandAtoms> = (initialValues) => {
   });
 
   return {
-    type: 'nand' as const,
+    type: 'or' as const,
     inputAtoms: {
       in1: in1Atom,
       in2: in2Atom,
