@@ -1,0 +1,235 @@
+export const title = 'Now You Can Build Calculators (For Real)'
+export const description = 'Let\'s create circuits that can perform addition using NAND gates'
+
+import TruthTable from '@/components/cs/TruthTable';
+import Flow from '@/components/cs/flow';
+import DecimalToBinary from '@/components/cs/DecimalToBinary';
+
+import calculator from './assets/calculator.png';
+import halfNand from './assets/halfNand.json';
+import half from './assets/half.json';
+import full from './assets/full.json';
+import ripple from './assets/ripple.json';
+
+So far, we've learned that all information in the world can be represented using just the simple signals 0 and 1. We've also understood that by combining logic gates, we can create new information from information represented as 0s and 1s.
+
+Now it's time to move beyond theory and meet concrete examples. Today, we'll combine logic gates to create circuits that actually perform **addition**.
+
+<Image src={calculator} alt="calculator" className="object-cover object-top w-full h-[180px] outline-stone-700 outline"/>
+
+Smartphone calculator apps perform addition much faster than humans. They can instantly calculate operations like 999,999 + 888,888. But the core of that calculator is ultimately just **combinations of the logic gates** we've been learning about.
+
+After completing this post, you'll be able to combine logic gates to create your own calculator. And it will be much faster and more accurate than calculating by hand!
+
+## First, Let's Think About How We Do Addition
+
+Before learning how computers perform addition, let's reflect on how we usually do addition. For example, how do you calculate `123 + 456`?
+
+```txt
+  123
++ 456
+-----
+  579
+```
+
+We naturally calculate one digit at a time from right to left. If a digit produces a result greater than 10, we carry over to the next digit.
+
+Let's look at a more complex example with carrying: calculating `179 + 287`:
+
+```txt
+  11  <-- (carry)
+  179
++ 287
+-----
+  466
+```
+
+1. `9 + 7 = 16`, so we write 6 and carry 1.
+2. `1 + 7 + 8 = 16`, so we write 6 and carry 1.
+3. `1 + 1 + 2 = 4`.
+
+Looking at this process carefully, there are two key elements:
+- The result of adding two numbers in each digit position (**Sum**)
+- The carry that moves to the next digit position (**Carry**)
+
+These two elements are exactly the core idea of how computers perform addition. But computers only know 0 and 1. How can we transfer this principle to the world of 0s and 1s?
+
+## How Do We Represent Numbers with 0s and 1s?
+
+In daily life, we use the **decimal system, which uses 10 numbers as basic units**. In decimal, we create the entire number by multiplying each digit by values that **increase by 10 times**: 1, 10, 100, 1000, etc. For example, if we break down the number 123 in detail:
+
+$$
+\textcolor{red}{1} \times 100 + \textcolor{blue}{2} \times 10 + \textcolor{green}{3} \times 1 \\
+= \textcolor{red}{1} \times 10^2 + \textcolor{blue}{2} \times 10^1 + \textcolor{green}{3} \times 10^0
+$$
+
+So the leftmost digit represents the hundreds place, the middle is the tens place, and the last is the ones place. It's a positional notation system.
+
+Computers actually use the same principle. They just use only two numbers, 0 and 1, when representing numbers. So as positions increase, we multiply by values that **increase by 2 times** rather than 10 times. This is called the **binary system**.
+
+For example, converting the binary number 101₂ to decimal works like this:
+
+$$
+\textcolor{red}{1} \times 2^2 + \textcolor{blue}{0} \times 2^1 + \textcolor{green}{1} \times 2^0 \\
+= \textcolor{red}{1} \times 4 + \textcolor{blue}{0} \times 2 + \textcolor{green}{1} \times 1 \\
+= 4 + 0 + 1 = 5_{10}
+$$
+
+Try converting decimal numbers to binary below.
+
+<DecimalToBinary />
+
+By processing numbers represented in binary with logic gates, we can create new meaningful numbers.
+
+## Trying Addition with Binary Numbers
+
+Let's start with a simple example.
+
+Converting decimal 3₁₀ + 1₁₀ = 4₁₀ to binary calculation gives us 11₂ + 01₂ = 100₂.
+
+```txt
+  11   <-- (carry)
+   11   
++  01   
+-----
+  100   
+```
+
+1. 1 + 1 equals 2₁₀ in decimal, but in binary it's 10₂. So the current digit becomes 0 and we carry 1 to the next digit.
+2. 1(carry) + 1 + 0 = 10₂, so the current digit is 0 and we carry 1 to the next digit.
+
+The result is 100₂, which equals decimal 4.
+
+The key in this process is the same two results that occur in each digit position as in decimal:
+- The result of the current digit position (**Sum**)
+- The carry that moves to the next digit position (**Carry**)
+
+## Half Adder
+
+Now let's seriously build an addition circuit. Let's think about the simplest case of adding two single-digit binary numbers.
+
+Listing all possible cases:
+
+```txt
+0 + 0 = 0  
+0 + 1 = 1  
+1 + 0 = 1  
+1 + 1 = ?
+```
+
+The last case is interesting. 1 + 1 becomes 10₂. That is, the current digit result (Sum) is 0 and a carry of 1 occurs to the next digit.
+
+Looking at the truth table, Sum becomes 1 only when A and B are different, and Carry becomes 1 only when both A and B are 1.
+
+<TruthTable 
+  labels={[
+    { label: 'A', type: 'input' },
+    { label: 'B', type: 'input' },
+    { label: 'Sum', type: 'output' },
+    { label: 'Carry', type: 'output' },
+   ]}
+  data={[
+    [false, false, false, false],
+    [false, true, true, false],
+    [true, false, true, false],
+    [true, true, false, true],
+  ]} 
+/>
+
+Implementing the above truth table with logic gates creates a calculator that can perform single-digit binary addition!
+
+<Flow id="half" initialJSON={half} additionalRegistryKeys={['halfAdder']}/>
+
+We've already created a single-digit addition calculator! This is called a **half adder**.
+
+<details>
+<summary>Half Adder Implemented Directly with NAND</summary>
+
+Referring to the content from [NAND is All You Need](/cs/nand-is-all-you-need), implementing the above circuit with NAND gates looks like this. The top output is Carry, the bottom output is Sum.
+
+<Flow id="half-nand" initialJSON={halfNand} additionalRegistryKeys={['halfAdder']}/>
+
+</details>
+
+## Full Adder for Real Addition
+
+Why is it called a half adder? The half adder is excellent, but it has one problem. When actually adding multi-digit numbers, we need to handle the carry value from the lower digit as well.
+
+Let's look at the example we calculated earlier:
+
+```txt
+  1    (carry)
+  11   (decimal 3)
++ 01   (decimal 1)
+----
+ 100   (decimal 4)
+```
+
+When calculating the first digit, we only needed to consider two inputs, but from the next digit onward, we need to handle the **carry value from the previous digit**. In the above example, we calculated 1+1+0 for the 2's place.
+
+We need a circuit that can handle all three input values (A, B, and the Carry from the lower digit). This is called a **full adder**.
+
+The truth table for a full adder is as follows. For distinction, we'll call the carry from the previous digit Cin, and the carry to the next digit Cout.
+
+<TruthTable 
+  labels={[
+    { label: 'A', type: 'input' },
+    { label: 'B', type: 'input' },
+    { label: 'Cin', type: 'input' },
+    { label: 'Cout', type: 'output' },
+    { label: 'Sum', type: 'output' },
+   ]}
+  data={[
+    [false, false, false, false, false],
+    [false, false, true, false, true],
+    [false, true, false, false, true],
+    [false, true, true, true, false],
+    [true, false, false, false, true],
+    [true, false, true, true, false],
+    [true, true, false, true, false],
+    [true, true, true, true, true],
+  ]} 
+/>
+
+It looks complex, but think of each row as binary addition. For example, the last row is 1 + 1 + 1 = 11₂, so Sum is 1 and Cout is 1.
+
+A full adder can be built using half adders and an OR gate. In the example below, the OR gate's output is the Carry, and the right half adder's SUM output becomes the final SUM.
+
+<Flow id="half-to-full" initialJSON={full} additionalRegistryKeys={['or', 'halfAdder']} />
+
+## Multi-Digit Addition
+
+One full adder can only perform 1-bit addition. So how do we add multi-digit numbers like 4-bit or 8-bit?
+
+Since the addition method doesn't change when the number of digits changes, we simply connect multiple full adders in sequence! We place one full adder for each digit position and connect each digit's Carry-out to the next digit's Carry-in.
+
+With 10 full adders, we can add numbers over 1000, and with 30, we can add numbers over a billion!
+
+<Flow 
+  id="ripple-carry-adder" 
+  initialJSON={ripple} 
+  additionalRegistryKeys={['or', 'halfAdder', 'fullAdder']} 
+  height={500}
+/>
+
+This method is called a ripple carry adder. It's named this way because the carry propagates (ripples) to the next digit in sequence.
+
+## Combinational Logic
+
+Finally, we've created circuits that actually perform number addition by combining logic gates!
+
+By the way, not only addition but also subtraction and multiplication can all be built with combinations of logic gates.
+- Subtraction can be handled like addition using [two's complement](https://en.wikipedia.org/wiki/Two%27s_complement)
+- Multiplication can be implemented by repeating multi-digit addition
+
+The adders we created here are representative examples of **Combinational Logic**. Combinational logic circuits are **circuits where output is immediately determined based only on current input values**. That is, past inputs or states have no influence at all; results are produced based solely on the currently given input values.
+
+In the case of adders, they receive two bits (or three bits, including Cin in full adders) as input and immediately output Sum and Carry. When input changes, output changes immediately, and they can't remember what inputs were received previously. Combinational logic can be seen as circuits that only calculate without memory.
+
+## Conclusion
+
+One problem remains. All the circuits we've built so far can't remember calculation results. Once calculation is finished, the results disappear. To be a real computer, it must be able to store and remember information.
+
+For example, suppose you want to calculate the 1000th Fibonacci number. The Fibonacci sequence creates the next value by continuously adding the previous two values. If you can't remember any previous calculation results, you'd have to recalculate from the beginning every time. That would be inefficient and make it impossible to create practical programs.
+
+In the next post, we'll solve this problem. We'll create circuits that store information using logic gates and understand the basic principles of memory. Let's witness the moment when computers finally gain 'memory'!

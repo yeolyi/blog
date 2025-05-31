@@ -19,21 +19,21 @@ export default function DecimalToBinary() {
   const nonZeroDigits = digits.filter((d) => d.bit === 1);
 
   return (
-    <div className="h-[200px] space-y-2">
+    <div className="space-y-2">
       <Input
-        type="number"
+        type="text"
         value={val}
         onChange={(e) => {
-          const value = e.target.value;
-          if (value.length > 10) {
-            setVal(value.slice(0, 10));
+          const numberOnly = e.target.value.replace(/[^0-9]/g, '');
+          if (numberOnly.length > 10) {
+            setVal(numberOnly.slice(0, 10));
           } else {
-            setVal(value);
+            setVal(numberOnly);
           }
         }}
         placeholder="십진수를 입력하세요"
       />
-      <div className={clsx(layerBg, 'p-4')}>
+      <div className={clsx(layerBg, 'p-4 h-[116px]')}>
         {!Number.isNaN(num) && (
           <div className="font-mono overflow-x-auto whitespace-nowrap">
             <span className="font-bold">
