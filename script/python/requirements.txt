@@ -1,4 +1,0 @@
-# python/requirements.txt
-sentence-transformers
-Pillow
-requests

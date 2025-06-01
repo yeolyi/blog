@@ -13,7 +13,7 @@ export async function addEmojiReactionInDB({
 }) {
   try {
     const tempId = useTempUserStore.getState().getId();
-    const userId = session?.user?.id || tempId || undefined;
+    const userId = session?.user?.id || tempId;
     const { data } = await supabase
       .rpc('add_emoji_reaction', {
         p_post_id: postId,

@@ -70,6 +70,7 @@
     "husky": "^9.1.7",
     "knip": "^5.56.0",
     "lint-staged": "^15.5.1",
+    "playwright": "^1.52.0",
     "typescript": "^5.8.3"
   }
 }

@@ -17,8 +17,8 @@ export async function getMemeFromDB(
   const { includeEmbedding = false, includeTags = false } = options ?? {};
 
   let columns = includeEmbedding
-    ? 'id, media_url, embedding, title, height, width, created_at, updated_at'
-    : 'id, media_url, title, height, width, created_at, updated_at';
+    ? 'id, media_url, embedding, title, height, width, created_at, updated_at, hidden'
+    : 'id, media_url, title, height, width, created_at, updated_at, hidden';
 
   if (includeTags) columns += ', meme_tags(tag_id, tags(id, name))';
 
@@ -39,7 +39,7 @@ export async function getMemesFromDB(tagId?: string) {
       .select(
         `
       meme_id,
-      memes(id, media_url, title, height, width)
+      memes(*)
     `,
       )
       .eq('tag_id', tagId)
@@ -50,10 +50,12 @@ export async function getMemesFromDB(tagId?: string) {
 
   const { data } = await supabase
     .from('memes')
-    .select('id, media_url, title, height, width')
+    .select('*')
+    .eq('hidden', false)
     .order('created_at', { ascending: false })
     .limit(10)
     .throwOnError();
+
   return data;
 }
 

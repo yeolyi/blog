@@ -4,7 +4,7 @@ import MemeModal from './MemeModal';
 
 export type MemeCardProps = Pick<
   Meme,
-  'id' | 'media_url' | 'title' | 'height' | 'width'
+  'id' | 'media_url' | 'title' | 'height' | 'width' | 'hidden'
 >;
 
 const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {

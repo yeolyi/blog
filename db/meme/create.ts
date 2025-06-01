@@ -4,13 +4,7 @@ import { uploadFileToDB } from '@/db/storage';
 import { getErrMessage } from '@/utils/string';
 import { v4 } from 'uuid';
 
-export async function uploadMemeToDB({
-  title,
-  file,
-}: {
-  title: string;
-  file: File;
-}) {
+export async function uploadMemeToDB(title: string, file: Blob) {
   try {
     const fileExt = file.type.split('/')[1];
     const fileName = `${v4()}.${fileExt}`;
@@ -50,117 +44,24 @@ export async function uploadMemesToDB(
 ) {
   console.log(`[일괄 업로드] 시작: ${memes.length}개 항목`);
 
-  // 타입 정의
-  type MemeResult = {
-    title: string;
-    imageURL: string;
-    success: boolean;
-    meme?: {
-      id: string;
-      title: string;
-      media_url: string;
-    };
-    error?: string;
-  };
+  for (const [index, meme] of memes.entries()) {
+    console.log(`항목 ${index + 1}/${memes.length} 처리 중: ${meme.title}`);
 
-  // Promise.all로 모든 밈 업로드 시도 (모든 Promise는 fulfilled 됨)
-  const results = await Promise.all(
-    memes.map(async (meme, index) => {
-      console.log(`항목 ${index + 1}/${memes.length} 처리 중: ${meme.title}`);
-      try {
-        const response = await toAVIFAction(meme.imageURL);
-        if (typeof response === 'string') {
-          throw new Error(`이미지를 가져올 수 없음: ${response}`);
-        }
+    const response = await toAVIFAction(meme.imageURL);
+    if (typeof response === 'string') {
+      throw new Error(`이미지를 가져올 수 없음: ${response}`);
+    }
 
-        // TODO: as가 꼭 필요한가? 서버랑 브라우저 타입 차이 때문인 것 같기도 하고...
-        // server action에서 브라우저로 오면서 반환값이 바뀌어서 실제로는 상관없나
-        // 근데 왜 editor에서만 뜨고 tsc에서는 아무 문제 없지
-        const blob = new Blob([response as BlobPart], { type: 'image/avif' });
+    // TODO: as가 꼭 필요한가? 서버랑 브라우저 타입 차이 때문인 것 같기도 하고...
+    // server action에서 브라우저로 오면서 반환값이 바뀌어서 실제로는 상관없나
+    // 근데 왜 editor에서만 뜨고 tsc에서는 아무 문제 없지
+    const blob = new Blob([response as BlobPart], { type: 'image/avif' });
 
-        // Blob으로 변환
-        console.log(`이미지 다운로드 완료: ${blob.size} 바이트`);
+    // Blob으로 변환
+    console.log(`${index + 1}/${memes.length}: 이미지 변환 완료`);
 
-        // 파일 이름 추출
-        const urlParts = meme.imageURL.split('/');
-        const fileName = urlParts[urlParts.length - 1];
-
-        // File 객체 생성
-        const file = new File([blob], fileName, { type: blob.type });
-
-        // 단일 밈 업로드 함수 호출
-        console.log(`Supabase에 업로드 중: ${meme.title}`);
-        const result = await uploadMemeToDB({
-          title: meme.title,
-          file,
-        });
-
-        // uploadSingleMeme의 반환값에서 success 확인
-        if (result.type === 'success') {
-          console.log(`항목 업로드 성공: ${meme.title}`);
-          return {
-            title: meme.title,
-            imageURL: meme.imageURL,
-            success: true,
-            meme: result.meme,
-          } as MemeResult;
-        }
-
-        console.error(`업로드 실패 (${meme.title}): ${result.error}`);
-
-        return {
-          title: '인스타',
-          imageURL: meme.imageURL,
-          success: false,
-          error: result.error,
-        } as MemeResult;
-      } catch (error) {
-        // 이미지 다운로드 등 외부 오류
-        const errorMessage =
-          error instanceof Error ? error.message : String(error);
-        console.error(
-          `[일괄 업로드] 예외 발생 (${meme.title}): ${errorMessage}`,
-        );
-        return {
-          title: meme.title,
-          imageURL: meme.imageURL,
-          success: false,
-          error: errorMessage,
-        } as MemeResult;
-      }
-    }),
-  );
-
-  // 성공/실패 항목 분류
-  const succeeded = results.filter((result) => result.success);
-  const failed = results.filter((result) => !result.success);
-
-  const successCount = succeeded.length;
-  const failCount = failed.length;
-
-  // 최종 로그 출력
-  console.log(
-    `[일괄 업로드] 완료: 총 ${memes.length}개 중 ${successCount}개 성공, ${failCount}개 실패`,
-  );
-
-  // 실패한 항목 상세 로그
-  if (failed.length > 0) {
-    console.log('[일괄 업로드] 실패 항목 목록:');
-    failed.forEach((item, index) => {
-      console.log(`  ${index + 1}. ${item.title}: ${item.error}`);
-    });
+    // 단일 밈 업로드 함수 호출
+    console.log(`Supabase에 업로드 중: ${meme.title}`);
+    await uploadMemeToDB(meme.title, blob);
   }
-
-  console.log(
-    JSON.stringify(
-      failed.map((item) => ({
-        title: item.title,
-        imageURL: item.imageURL,
-      })),
-    ),
-    null,
-    2,
-  );
-
-  return { success: failed.length === 0 };
 }

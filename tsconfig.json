@@ -33,7 +33,8 @@
     "next.config.mjs",
     "mdx/react-internal/Lane.js",
     "components/cs/flow/index.tsx",
-    "tmp.js"
+    "tmp.js",
+    "script/uploadAvif.js"
   ],
   "exclude": ["node_modules"]
 }

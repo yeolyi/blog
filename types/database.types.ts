@@ -104,8 +104,8 @@ export type Database = {
       memes: {
         Row: {
           created_at: string | null;
-          embedding: string | null;
           height: number;
+          hidden: boolean;
           id: string;
           media_url: string;
           title: string | null;
@@ -114,8 +114,8 @@ export type Database = {
         };
         Insert: {
           created_at?: string | null;
-          embedding?: string | null;
           height: number;
+          hidden?: boolean;
           id?: string;
           media_url: string;
           title?: string | null;
@@ -124,8 +124,8 @@ export type Database = {
         };
         Update: {
           created_at?: string | null;
-          embedding?: string | null;
           height?: number;
+          hidden?: boolean;
           id?: string;
           media_url?: string;
           title?: string | null;
@@ -200,7 +200,7 @@ export type Database = {
     };
     Functions: {
       add_emoji_reaction: {
-        Args: { p_post_id: string; p_emoji: string; p_user_id?: string };
+        Args: { p_post_id: string; p_emoji: string; p_user_id: string };
         Returns: boolean;
       };
       binary_quantize: {
@@ -219,7 +219,7 @@ export type Database = {
         }[];
       };
       get_emoji_counts: {
-        Args: { p_post_id: string } | { p_post_id: string; p_user_id?: string };
+        Args: { p_post_id: string; p_user_id: string };
         Returns: {
           emoji: string;
           count: number;
@@ -231,22 +231,19 @@ export type Database = {
         Returns: string;
       };
       get_random_memes: {
-        Args: { p_count?: number };
+        Args: { p_count: number };
         Returns: {
           id: string;
           media_url: string;
           title: string;
-          height: number;
           width: number;
+          height: number;
+          hidden: boolean;
         }[];
       };
       get_subscriber_count: {
         Args: Record<PropertyKey, never>;
         Returns: number;
-      };
-      get_temp_user_id: {
-        Args: Record<PropertyKey, never>;
-        Returns: string;
       };
       halfvec_avg: {
         Args: { '': number[] };
