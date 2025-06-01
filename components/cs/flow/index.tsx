@@ -28,7 +28,7 @@ import { useNodeAtom } from '@/components/cs/flow/model/useNodeAtom';
 import { saveJSONToFile, selectJSONFromFile } from '@/utils/string';
 import { Provider, createStore } from 'jotai';
 
-export const minZoomOptions = { padding: 1 };
+export const minZoomOptions = { maxZoom: 1, padding: 0.25 };
 
 // 처음에는 NAND의 값은 atom으로 해보겠는데 연결이 바뀌는건 어떻게 표현하지? 그때는 어떻게 리렌더링하지? 했었는데
 // 연결도 atom으로 표현하면 되겠더라
@@ -70,7 +70,6 @@ function Flow({
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
-      console.log('onNodesChange', changes);
       // 노드 삭제 대응
       for (const change of changes) {
         if (change.type === 'remove') {
@@ -169,11 +168,11 @@ function Flow({
             colorMode="dark"
             nodeTypes={nodeTypes}
             defaultEdgeOptions={{
-              type: ConnectionLineType.Step,
+              type: ConnectionLineType.Bezier,
               animated: true,
               selectable: true,
             }}
-            connectionLineType={ConnectionLineType.Step}
+            connectionLineType={ConnectionLineType.Bezier}
             connectionLineStyle={{ stroke: 'lightgray' }}
             fitView
             fitViewOptions={minZoomOptions}
@@ -185,7 +184,7 @@ function Flow({
             nodesConnectable={isInteractionEnabled}
             zoomOnDoubleClick={false}
             snapToGrid
-            snapGrid={[8, 8]}
+            snapGrid={[4, 4]}
           >
             <Controls
               rfInstance={rfInstance}
@@ -196,7 +195,12 @@ function Flow({
               onRestore={onRestore}
               onDeleteNode={(id) => onNodesChange([{ type: 'remove', id }])}
               onDeleteEdge={(id) => onEdgesChange([{ type: 'remove', id }])}
-              registryKeys={['number', 'nand', ...additionalRegistryKeys]}
+              registryKeys={[
+                'number',
+                'nand',
+                'label',
+                ...additionalRegistryKeys,
+              ]}
             />
             <Background
               bgColor="var(--color-stone-900)"

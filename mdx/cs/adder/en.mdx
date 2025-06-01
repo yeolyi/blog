@@ -193,7 +193,7 @@ The truth table for a full adder is as follows. For distinction, we'll call the 
 
 It looks complex, but think of each row as binary addition. For example, the last row is 1 + 1 + 1 = 11₂, so Sum is 1 and Cout is 1.
 
-A full adder can be built using half adders and an OR gate. In the example below, the OR gate's output is the Carry, and the right half adder's SUM output becomes the final SUM.
+A full adder can be built using half adders and an OR gate. 
 
 <Flow id="half-to-full" initialJSON={full} additionalRegistryKeys={['or', 'halfAdder']} />
 
@@ -203,7 +203,7 @@ One full adder can only perform 1-bit addition. So how do we add multi-digit num
 
 Since the addition method doesn't change when the number of digits changes, we simply connect multiple full adders in sequence! We place one full adder for each digit position and connect each digit's Carry-out to the next digit's Carry-in.
 
-With 10 full adders, we can add numbers over 1000, and with 30, we can add numbers over a billion!
+With 10 full adders, we can add numbers over 1000, and with 30, we can add numbers over a billion! In the example below, we calculate 111<sub>2</sub> + 1<sub>2</sub> = 1000<sub>2</sub>.
 
 <Flow 
   id="ripple-carry-adder" 

@@ -1,3 +1,4 @@
+import { PROPAGATION_DELAY_MS } from '@/components/cs/flow/constants';
 import type {
   NodeAtoms,
   NodeCreator,
@@ -33,7 +34,7 @@ export const createNandAtoms: NodeCreator<NandAtoms> = (initialValues) => {
 
     const id = setTimeout(() => {
       set.recurse(outAtom, out);
-    }, 200);
+    }, PROPAGATION_DELAY_MS);
 
     return () => clearTimeout(id);
   });

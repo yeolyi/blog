@@ -1,5 +1,6 @@
 import { createFullAdderAtoms } from '@/components/cs/flow/atoms/fullAdder';
 import { createHalfAdderAtoms } from '@/components/cs/flow/atoms/halfAdder';
+import { createLabelAtoms } from '@/components/cs/flow/atoms/label';
 import { createNandAtoms } from '@/components/cs/flow/atoms/nand';
 import { createOrAtoms } from '@/components/cs/flow/atoms/or';
 import { createBooleanAtoms } from './boolean';
@@ -10,6 +11,7 @@ export const registry = {
   halfAdder: createHalfAdderAtoms,
   or: createOrAtoms,
   fullAdder: createFullAdderAtoms,
+  label: createLabelAtoms,
 } as const;
 
 type Registry = typeof registry;
@@ -20,6 +22,7 @@ export const registryKeys = [
   'halfAdder',
   'or',
   'fullAdder',
+  'label',
 ] satisfies (keyof Registry)[];
 
 export const registryNames = {
@@ -28,6 +31,7 @@ export const registryNames = {
   halfAdder: 'Half Adder',
   or: 'OR',
   fullAdder: 'Full Adder',
+  label: 'Label',
 } satisfies Record<RegistryKey, string>;
 
 export type RegistryKey = (typeof registryKeys)[number];

@@ -16,6 +16,9 @@ export type OutputValue =
   | boolean
   // 4bit 8bit 16bit...
   | number
+  // 라벨 처리 귀찮아서...
+  // InputAtom에서 가려서 받아야할까
+  | string
   // 미정
   | null;
 

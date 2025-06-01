@@ -194,7 +194,7 @@ $$
 
 복잡해보이지만 각 행을 이진수 덧셈이라고 생각해보세요. 예를 들어 마지막 행은 1 + 1 + 1 = 11₂이므로 Sum은 1, Cout은 1이 됩니다.
 
-전가산기는 반가산기와 OR 게이트를 활용해 만들 수 있습니다. 아래 예제에서는 OR 게이트의 출력이 즉 Carry이고, 오른쪽 반가산기의 SUM 출력이 최종 SUM이 됩니다.
+전가산기는 반가산기와 OR 게이트를 활용해 만들 수 있습니다.
 
 <Flow id="half-to-full" initialJSON={full} additionalRegistryKeys={['or', 'halfAdder']} />
 
@@ -204,13 +204,13 @@ $$
 
 자릿수가 바뀐다고 덧셈의 방식이 바뀌는 것은 아니니 단순히 전가산기 여러 개를 차례대로 연결하면 됩니다! 각 자리마다 하나의 전가산기를 배치하고, 한 자리의 Carry-out을 다음 자리의 Carry-in으로 연결하는 거죠. 
 
-전가산기 10개면 1000이 넘는, 30개면 10억이 넘는 수까지의 덧셈도 가능합니다!
+전가산기 10개면 1000이 넘는, 30개면 10억이 넘는 수까지의 덧셈도 가능합니다! 아래 예제에서는 111<sub>2</sub> + 1<sub>2</sub> = 1000<sub>2</sub>를 계산합니다.
 
 <Flow 
   id="ripple-carry-adder" 
   initialJSON={ripple} 
   additionalRegistryKeys={['or', 'halfAdder', 'fullAdder']} 
-  height={500}
+  height={600}
 />
 
 이런 방식을 리플 캐리 가산기라고 부릅니다. 올림이 물결(ripple)처럼 다음 자리로 차례차례 전파되기 때문이에요. 

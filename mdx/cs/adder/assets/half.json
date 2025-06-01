@@ -1,7 +1,7 @@
 {
   "nodes": [
     {
-      "id": "37d0a35c-c522-48d1-972c-7f5ec19d4229",
+      "id": "43f3afc9-30b5-496e-8012-f03053c70ffd",
       "type": "halfAdder",
       "position": { "x": 40, "y": 0 },
       "data": {
@@ -10,7 +10,7 @@
           "inputAtoms": { "in1": { "init": null }, "in2": { "init": null } },
           "outputAtoms": { "sum": { "init": null }, "carry": { "init": null } },
           "effectAtom": {},
-          "id": "37d0a35c-c522-48d1-972c-7f5ec19d4229"
+          "id": "43f3afc9-30b5-496e-8012-f03053c70ffd"
         }
       },
       "measured": { "width": 128, "height": 128 },
@@ -18,70 +18,73 @@
       "dragging": false
     },
     {
-      "id": "db1912ce-e88f-4353-8c80-1cb8136f8eb0",
+      "id": "9d557ed5-599e-47e3-89cb-fb306db35104",
       "type": "number",
-      "position": { "x": -64, "y": 72 },
+      "position": { "x": -64, "y": 76 },
       "data": {
         "atoms": {
           "type": "boolean",
           "inputAtoms": {},
-          "outputAtoms": { "out": { "init": false } },
-          "id": "db1912ce-e88f-4353-8c80-1cb8136f8eb0"
+          "outputAtoms": {
+            "out": { "init": false },
+            "label": { "init": null }
+          },
+          "id": "9d557ed5-599e-47e3-89cb-fb306db35104"
         }
       },
-      "measured": { "width": 48, "height": 48 },
-      "selected": true,
+      "measured": { "width": 40, "height": 40 },
+      "selected": false,
       "dragging": false
     },
     {
-      "id": "390bcc3b-13e6-447c-b78e-170b86f5d8aa",
+      "id": "8a1cde3c-0fd7-4a7c-8b9e-f04d32bf8c2c",
       "type": "number",
-      "position": { "x": -64, "y": 8 },
+      "position": { "x": -64, "y": 12 },
       "data": {
         "atoms": {
           "type": "boolean",
           "inputAtoms": {},
-          "outputAtoms": { "out": { "init": false } },
-          "id": "390bcc3b-13e6-447c-b78e-170b86f5d8aa"
+          "outputAtoms": {
+            "out": { "init": false },
+            "label": { "init": null }
+          },
+          "id": "8a1cde3c-0fd7-4a7c-8b9e-f04d32bf8c2c"
         }
       },
-      "measured": { "width": 48, "height": 48 },
+      "measured": { "width": 40, "height": 40 },
       "selected": false,
       "dragging": false
     }
   ],
   "edges": [
     {
-      "type": "step",
+      "type": "default",
       "animated": true,
       "selectable": true,
-      "source": "390bcc3b-13e6-447c-b78e-170b86f5d8aa",
+      "source": "9d557ed5-599e-47e3-89cb-fb306db35104",
       "sourceHandle": "out",
-      "target": "37d0a35c-c522-48d1-972c-7f5ec19d4229",
-      "targetHandle": "in1",
-      "id": "9aeb86c5-e172-4d82-8cdc-058e1e727b82",
-      "selected": false
+      "target": "43f3afc9-30b5-496e-8012-f03053c70ffd",
+      "targetHandle": "in2",
+      "id": "xy-edge__9d557ed5-599e-47e3-89cb-fb306db35104out-43f3afc9-30b5-496e-8012-f03053c70ffdin2"
     },
     {
-      "type": "step",
+      "type": "default",
       "animated": true,
       "selectable": true,
-      "source": "db1912ce-e88f-4353-8c80-1cb8136f8eb0",
+      "source": "8a1cde3c-0fd7-4a7c-8b9e-f04d32bf8c2c",
       "sourceHandle": "out",
-      "target": "37d0a35c-c522-48d1-972c-7f5ec19d4229",
-      "targetHandle": "in2",
-      "id": "d830cf30-c050-4438-9bff-c451916776e6",
-      "selected": false
+      "target": "43f3afc9-30b5-496e-8012-f03053c70ffd",
+      "targetHandle": "in1",
+      "id": "xy-edge__8a1cde3c-0fd7-4a7c-8b9e-f04d32bf8c2cout-43f3afc9-30b5-496e-8012-f03053c70ffdin1"
     }
   ],
-  "viewport": {
-    "x": 167.11111111111111,
-    "y": 157.33333333333334,
-    "zoom": 0.8888888888888888
-  },
+  "viewport": { "x": 109, "y": 86, "zoom": 1 },
   "nodeOutputs": {
-    "37d0a35c-c522-48d1-972c-7f5ec19d4229": { "sum": false, "carry": false },
-    "db1912ce-e88f-4353-8c80-1cb8136f8eb0": { "out": false },
-    "390bcc3b-13e6-447c-b78e-170b86f5d8aa": { "out": false }
+    "8ccf635f-7331-41a7-81c1-58bd89f14484": { "sum": false, "carry": false },
+    "3d7fb51c-7814-49a1-85c8-4e5816dbdaf9": { "out": false, "label": null },
+    "45da19ca-d3f0-4013-bcff-6c00abcd8898": { "out": false, "label": null },
+    "43f3afc9-30b5-496e-8012-f03053c70ffd": { "sum": false, "carry": false },
+    "9d557ed5-599e-47e3-89cb-fb306db35104": { "out": false, "label": "B" },
+    "8a1cde3c-0fd7-4a7c-8b9e-f04d32bf8c2c": { "out": false, "label": "A" }
   }
 }

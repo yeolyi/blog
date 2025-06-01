@@ -6,9 +6,9 @@ import PixelateImage from '@/components/cs/PixelateImage';
 import TruthTable from '@/components/cs/TruthTable';
 import Flow from '@/components/cs/flow';
 import half from '@/mdx/cs/adder/assets/half.json';
+import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import initialJSON from './assets/flow.json';
 
 export const metadata: Metadata = {
   title: '만들면서 배우는 컴퓨터공학',
@@ -87,7 +87,7 @@ export default async function Home() {
           date="2025-05-25"
           href="/cs/nand-is-all-you-need"
         >
-          <Flow id="/cs" initialJSON={initialJSON} height={250} />
+          <Flow id="/cs" initialJSON={not} height={250} />
         </CSPostListItem>
 
         <CSPostListItem
