@@ -1,18 +1,10 @@
 'use server';
-
-import { getErrMessage } from '@/utils/string';
 import chromium from '@sparticuz/chromium';
 import { delay } from 'es-toolkit';
 import puppeteer, { type Viewport, type Browser, type Page } from 'puppeteer';
 import puppeteerCore from 'puppeteer-core';
 
 export async function crawlImageAction(url: string) {
-  if (url.includes('reddit.com')) {
-    return {
-      success: true as const,
-      value: await getImagesFromReddit(url),
-    };
-  }
   if (url.includes('instagram.com')) {
     return {
       success: true as const,
@@ -155,56 +147,4 @@ async function getInstagramImageList(url: string) {
   await page.close();
 
   return images;
-}
-
-function extractPostIdFromUrl(url: string) {
-  const match = url.match(/comments\/([^/]+)/);
-  if (!match) {
-    throw new Error('올바른 Reddit 게시물 URL이 아닙니다.');
-  }
-  return match[1]; // post_id
-}
-
-async function fetchImagesFromPost(postId: string) {
-  try {
-    const { default: snoowrap } = await import('snoowrap');
-
-    const reddit = new snoowrap({
-      userAgent: 'MyRedditApp/1.0 by u/your_reddit_username',
-      clientId: process.env.REDDIT_CLIENT_ID,
-      clientSecret: process.env.REDDIT_CLIENT_SECRET,
-      refreshToken: process.env.REDDIT_REFRESH_TOKEN,
-    });
-
-    // @ts-expect-error 귀찮음
-    const post = await reddit.getSubmission(postId).fetch();
-    const images = [];
-
-    if (post.is_gallery && post.media_metadata) {
-      const items = post.gallery_data.items;
-      for (const item of items) {
-        const media = post.media_metadata[item.media_id];
-        const url = media.s.u.replace(/&amp;/g, '&');
-        images.push(url);
-      }
-    } else if (post.url?.match(/\.(jpg|jpeg|png|gif)$/)) {
-      images.push(post.url);
-    }
-
-    console.log('📸 이미지 목록:', images);
-    return images;
-  } catch (err) {
-    console.error('❌ 오류:', getErrMessage(err));
-    return [];
-  }
-}
-
-async function getImagesFromReddit(postUrl: string) {
-  try {
-    const postId = extractPostIdFromUrl(postUrl);
-    return await fetchImagesFromPost(postId);
-  } catch (err) {
-    console.error('❌ 에러:', getErrMessage(err));
-    return [];
-  }
 }
