@@ -27,3 +27,13 @@ export async function getMemeTagIdsAtDB(memeId: string) {
       .sort((a, b) => a.localeCompare(b))
   );
 }
+
+export async function getMemeTagsAtDB(memeId: string) {
+  const { data } = await supabase
+    .from('meme_tags')
+    .select('tag_id')
+    .eq('meme_id', memeId)
+    .throwOnError();
+
+  return data;
+}

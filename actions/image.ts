@@ -3,7 +3,7 @@
 import { getErrMessage } from '@/utils/string';
 import sharp from 'sharp';
 
-export const toAVIFAction = async (url: string) => {
+export const urlToAVIFAction = async (url: string) => {
   try {
     const resp = await fetch(url);
     const buffer = await resp.arrayBuffer();
@@ -12,4 +12,10 @@ export const toAVIFAction = async (url: string) => {
   } catch (e) {
     return getErrMessage(e);
   }
+};
+
+export const fileToAVIFAction = async (file: File) => {
+  const avif = await urlToAVIFAction(URL.createObjectURL(file));
+  URL.revokeObjectURL(URL.createObjectURL(file));
+  return avif;
 };

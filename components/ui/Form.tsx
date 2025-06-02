@@ -78,7 +78,7 @@ export const ImageUploader = ({
         {...inputProps}
         type="file"
         accept="image/*"
-        className="w-full text-white bg-stone-700 p-2"
+        className="w-full text-white bg-stone-700 p-2 file:cursor-pointer file:text-base file:not-italic text-sm italic file:mr-2"
       />
     </LabelGroup>
   );
@@ -95,4 +95,4 @@ const Form = ({
   );
 };
 
-export default Object.assign(Form, { Text, Label });
+export default Object.assign(Form, { Text, Label, Image: ImageUploader });

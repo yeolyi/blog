@@ -1,6 +1,10 @@
 import { getMemesFromDB } from '@/db/meme/read';
 import { type UpdateMemeAtDBProps, updateMemeAtDB } from '@/db/meme/update';
-import { getMemeTagIdsAtDB, getTagsAtDB } from '@/db/memeTag/read';
+import {
+  getMemeTagIdsAtDB,
+  getMemeTagsAtDB,
+  getTagsAtDB,
+} from '@/db/memeTag/read';
 import { memeTagKey, memesByTagKey, tagsKey } from '@/swr/key';
 import useSWR, { mutate } from 'swr';
 
@@ -26,6 +30,11 @@ export const updateMeme = async (props: UpdateMemeAtDBProps) => {
   for (const tagId of props.tags ?? []) {
     await mutate(memesByTagKey(tagId));
     await mutate(memeTagKey(tagId));
+    await mutate(memesByTagKey(NO_TAG_ID));
   }
   await mutate(memesByTagKey(NO_TAG_ID));
+};
+
+export const useMemeTags = (memeId: string) => {
+  return useSWR(memeTagKey(memeId), () => getMemeTagsAtDB(memeId));
 };

@@ -1,21 +1,28 @@
+import TagCheckbox from '@/components/meme/TagCheckbox';
+import Button from '@/components/ui/Button';
+import { Checkbox } from '@/components/ui/Checkbox';
+import Form from '@/components/ui/Form';
+import { deleteMemeFromDB } from '@/db/meme/delete';
+import { memesByTagKey } from '@/swr/key';
+import { NO_TAG_ID, updateMeme, useMemeTags, useTags } from '@/swr/meme';
 import type { Meme } from '@/types/helper.types';
-import { useState } from 'react';
-import MemeModal from './MemeModal';
+import clsx from 'clsx';
+import { Save, Trash2 } from 'lucide-react';
+import { useReducer } from 'react';
+import { mutate } from 'swr/_internal';
 
-export type MemeCardProps = Pick<
-  Meme,
-  'id' | 'media_url' | 'title' | 'height' | 'width' | 'hidden'
->;
+export type MemeCardProps = Meme;
 
 const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEdit, toggleIsEdit] = useReducer((prev) => !prev, false);
+  const { data: tags } = useTags();
+  const { data: memeTags } = useMemeTags(meme.id);
 
   return (
     <>
       <button
         type="button"
-        onClick={() => setIsModalOpen(true)}
-        aria-label={`밈 상세 보기: ${meme.title}`}
+        onClick={toggleIsEdit}
         className="flex flex-col bg-stone-700 cursor-pointer hover:opacity-90 transition-opacity text-left w-full p-0"
       >
         <img
@@ -27,8 +34,60 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
         <p className="text-white p-1">{meme.title}</p>
       </button>
 
-      {isModalOpen && (
-        <MemeModal meme={meme} onClose={() => setIsModalOpen(false)} />
+      {isEdit && (
+        <form
+          className={clsx('flex flex-col gap-3 py-4')}
+          onSubmit={async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target as HTMLFormElement);
+            const tagStr = formData.get('tagStr') as string;
+            const tagArr = formData.getAll('tagArr') as string[];
+            const hidden = formData.get('hidden') === 'on';
+
+            const tags = [...new Set(...tagArr, tagStr.split(','))].filter(
+              (tag) => tag !== '',
+            );
+
+            await updateMeme({ id: meme.id, tags, hidden });
+
+            toggleIsEdit();
+          }}
+        >
+          <Form.Text title="태그" name="tagStr" />
+          <TagCheckbox
+            tags={tags ?? []}
+            name="tagArr"
+            initialValues={memeTags?.map((tag) => tag.tag_id ?? '') ?? []}
+          />
+
+          <Form.Label htmlFor="hidden" className="flex items-center gap-2">
+            숨김
+          </Form.Label>
+          <Checkbox name="hidden" defaultChecked={meme.hidden} />
+
+          <div className="flex gap-2 self-end">
+            <Button
+              type="button"
+              bg="red"
+              Icon={Trash2}
+              onClick={async () => {
+                if (confirm('정말 삭제하시겠습니까?')) {
+                  await deleteMemeFromDB(meme.id);
+                  mutate(memesByTagKey(NO_TAG_ID));
+                  for (const tag of memeTags ?? []) {
+                    // TODO: if 필요한가?
+                    if (tag.tag_id) mutate(memesByTagKey(tag.tag_id));
+                  }
+                }
+              }}
+            >
+              삭제
+            </Button>
+            <Button type="submit" bg="green" Icon={Save}>
+              저장
+            </Button>
+          </div>
+        </form>
       )}
     </>
   );
