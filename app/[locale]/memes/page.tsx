@@ -9,6 +9,7 @@ import { border } from '@/components/ui/theme';
 import { uploadMemeToDB } from '@/db/meme/create';
 import { getRandomMemesFromDB } from '@/db/meme/read';
 import { useRouter } from '@/i18n/navigation';
+import { useProfile } from '@/swr/auth';
 import { memesByTagKey } from '@/swr/key';
 import { NO_TAG_ID, useMemes, useTags } from '@/swr/meme';
 import type { Meme } from '@/types/helper.types';
@@ -31,6 +32,7 @@ const Masonry = dynamic(
 export default function MemeViewer() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { data: profile } = useProfile();
 
   const { data: _tags } = useTags();
   const tagSearchParam = searchParams.get('tag');
@@ -65,6 +67,13 @@ export default function MemeViewer() {
     setMemes(shuffled(randomMemes ?? []));
     window.scrollTo({ top: 0 });
   };
+
+  if (profile?.role !== 'admin')
+    return (
+      <p className="text-white text-center mt-20 grow">
+        관리자 권한이 필요해요.
+      </p>
+    );
 
   return (
     <div className="mt-20 px-4 max-w-2xl mx-auto w-full flex flex-col gap-4">
