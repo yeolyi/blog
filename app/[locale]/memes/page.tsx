@@ -5,7 +5,6 @@ import MemeCard, { type MemeCardProps } from '@/components/meme/MemeCard';
 import TagRadio from '@/components/meme/TagRadio';
 import Button from '@/components/ui/Button';
 import Form from '@/components/ui/Form';
-import { border } from '@/components/ui/theme';
 import { uploadMemeToDB } from '@/db/meme/create';
 import { getRandomMemesFromDB } from '@/db/meme/read';
 import { useRouter } from '@/i18n/navigation';
@@ -76,48 +75,48 @@ export default function MemeViewer() {
     );
 
   return (
-    <div className="mt-20 px-4 max-w-2xl mx-auto w-full flex flex-col gap-4">
-      <form
-        className={clsx('flex flex-col gap-4')}
-        onSubmit={async (e) => {
-          e.preventDefault();
-          const form = e.target as HTMLFormElement;
-          const formData = new FormData(form);
-          const title = formData.get('title') as string;
-          const image = formData.get('image') as File;
-
-          const avif = await fileToAVIFAction(image);
-
-          if (typeof avif === 'string') {
-            toast.error(`이미지 변환 실패: ${avif}`);
-            return;
-          }
-
-          try {
-            await uploadMemeToDB(
-              title,
-              // TODO: 타입 해결
-              new Blob([avif as BlobPart], { type: 'image/avif' }),
-            );
-            await mutate(memesByTagKey(NO_TAG_ID));
-            form.reset();
-          } catch (e) {
-            toast.error(getErrMessage(e));
-          }
-        }}
-      >
-        <Form.Text title="제목" name="title" />
-        <Form.Image title="이미지" name="image" />
-        <Button type="submit" bg="green" Icon={Plus} className="self-end">
-          추가
-        </Button>
-      </form>
-
-      <div className={border} />
-
-      <form onChange={onChange} className="mb-4">
+    <div className="mt-20 px-4 max-w-2xl mx-auto w-full flex flex-col gap-8">
+      <form onChange={onChange}>
         <TagRadio tags={tags} name="tag" initialValue={selectedTag} />
       </form>
+
+      {selectedTag === NO_TAG_ID && (
+        <form
+          className={clsx('flex flex-col gap-2')}
+          onSubmit={async (e) => {
+            e.preventDefault();
+            const form = e.target as HTMLFormElement;
+            const formData = new FormData(form);
+            const title = formData.get('title') as string;
+            const image = formData.get('image') as File;
+
+            const avif = await fileToAVIFAction(image);
+
+            if (typeof avif === 'string') {
+              toast.error(`이미지 변환 실패: ${avif}`);
+              return;
+            }
+
+            try {
+              await uploadMemeToDB(
+                title,
+                // TODO: 타입 해결
+                new Blob([avif as BlobPart], { type: 'image/avif' }),
+              );
+              await mutate(memesByTagKey(NO_TAG_ID));
+              form.reset();
+            } catch (e) {
+              toast.error(getErrMessage(e));
+            }
+          }}
+        >
+          <Form.Text title="제목" name="title" />
+          <Form.Image title="이미지" name="image" />
+          <Button type="submit" bg="green" Icon={Plus} className="self-end">
+            추가
+          </Button>
+        </form>
+      )}
 
       <Masonry
         key={masonryKey}
@@ -127,6 +126,7 @@ export default function MemeViewer() {
         columnWidth={300}
         render={MemeCard}
       />
+
       <div className="fixed bottom-8 right-8 flex flex-col gap-2">
         {selectedTag === NO_TAG_ID && (
           <Button type="button" bg="gray" Icon={Shuffle} onClick={onShuffle}>
