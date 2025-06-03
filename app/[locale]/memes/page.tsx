@@ -111,11 +111,13 @@ export default function MemeViewer() {
 }
 
 const AddMemeForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
   return (
     <form
       className={clsx('flex flex-col gap-4')}
       onSubmit={async (e) => {
         e.preventDefault();
+        setIsLoading(true);
         const form = e.target as HTMLFormElement;
         const formData = new FormData(form);
         const title = formData.get('title') as string;
@@ -139,11 +141,18 @@ const AddMemeForm = () => {
         } catch (e) {
           toast.error(getErrMessage(e));
         }
+        setIsLoading(false);
       }}
     >
       <Form.Text title="제목" name="title" />
       <Form.Image title="이미지" name="image" />
-      <Button type="submit" bg="green" Icon={Plus} className="self-end">
+      <Button
+        type="submit"
+        bg="green"
+        Icon={Plus}
+        className="self-end"
+        isLoading={isLoading}
+      >
         추가
       </Button>
     </form>

@@ -1,11 +1,14 @@
+import { getErrMessage } from '@/utils/string';
 import clsx from 'clsx';
-import { Keyboard } from 'lucide-react';
+import { Clipboard, Keyboard } from 'lucide-react';
 import type {
   FormHTMLAttributes,
   InputHTMLAttributes,
   LabelHTMLAttributes,
   ReactNode,
 } from 'react';
+import { useRef } from 'react';
+import { toast } from 'react-toastify';
 
 export const Label = ({
   className,
@@ -71,15 +74,56 @@ export const ImageUploader = ({
   title?: string;
 } & InputHTMLAttributes<HTMLInputElement> &
   Required<Pick<InputHTMLAttributes<HTMLInputElement>, 'name'>>) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handlePaste = async (e?: ClipboardEvent) => {
+    if (!inputRef.current) return;
+
+    try {
+      const clipboardItems = await navigator.clipboard.read();
+      const clipboardItem = clipboardItems[0];
+      const imageType = clipboardItem.types.find((type) =>
+        type.startsWith('image/'),
+      );
+      if (!imageType) throw new Error('이미지가 없습니다.');
+
+      const blob = await clipboardItem.getType(imageType);
+      const extension = imageType.split('/')[1];
+
+      const file = new File([blob], `pasted-image.${extension}`, {
+        type: imageType,
+      });
+
+      const dataTransfer = new DataTransfer();
+      dataTransfer.items.add(file);
+
+      inputRef.current.files = dataTransfer.files;
+      inputRef.current.dispatchEvent(new Event('change', { bubbles: true }));
+    } catch (err) {
+      toast.error(`이미지 붙여넣기 실패: ${getErrMessage(err)}`);
+    }
+  };
+
   return (
     <LabelGroup>
       <Label htmlFor={inputProps.name}>{title}</Label>
-      <input
-        {...inputProps}
-        type="file"
-        accept="image/*"
-        className="w-full text-white bg-stone-700 p-2 file:cursor-pointer file:text-base file:not-italic text-sm italic file:mr-2"
-      />
+      <div className="flex gap-2">
+        <input
+          {...inputProps}
+          ref={inputRef}
+          type="file"
+          accept="image/*"
+          className="w-full text-white bg-stone-700 p-2 file:cursor-pointer file:text-base file:not-italic text-sm italic file:mr-2"
+        />
+        <button
+          type="button"
+          onClick={() => handlePaste()}
+          className="bg-stone-700 p-2 text-white hover:bg-stone-600"
+          title="클립보드에서 붙여넣기"
+        >
+          <Clipboard size={20} />
+        </button>
+      </div>
     </LabelGroup>
   );
 };
