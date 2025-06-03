@@ -1,4 +1,3 @@
-import { getErrMessage } from '@/utils/string';
 import clsx from 'clsx';
 import { Clipboard, Keyboard } from 'lucide-react';
 import type {
@@ -79,29 +78,28 @@ export const ImageUploader = ({
   const handlePaste = async (e?: ClipboardEvent) => {
     if (!inputRef.current) return;
 
-    try {
-      const clipboardItems = await navigator.clipboard.read();
-      const clipboardItem = clipboardItems[0];
-      const imageType = clipboardItem.types.find((type) =>
-        type.startsWith('image/'),
-      );
-      if (!imageType) throw new Error('이미지가 없습니다.');
+    const clipboardItems = await navigator.clipboard.read();
 
-      const blob = await clipboardItem.getType(imageType);
-      const extension = imageType.split('/')[1];
+    for (const item of clipboardItems) {
+      if (item.types.some((type) => type.startsWith('image/'))) {
+        const blob = await item.getType('image/png');
 
-      const file = new File([blob], `pasted-image.${extension}`, {
-        type: imageType,
-      });
+        // 이게 최선인지...
+        // https://stackoverflow.com/questions/47119426/how-to-set-file-objects-and-length-property-at-filelist-object-where-the-files-a
 
-      const dataTransfer = new DataTransfer();
-      dataTransfer.items.add(file);
+        // TODO: 그냥 input type="file"을 안쓰는건 어떠려나
+        const dt = new DataTransfer();
+        dt.items.add(
+          new File([blob], 'pasted-image.png', { type: 'image/png' }),
+        );
 
-      inputRef.current.files = dataTransfer.files;
-      inputRef.current.dispatchEvent(new Event('change', { bubbles: true }));
-    } catch (err) {
-      toast.error(`이미지 붙여넣기 실패: ${getErrMessage(err)}`);
+        inputRef.current.files = dt.files;
+        inputRef.current.dispatchEvent(new Event('change', { bubbles: true }));
+
+        return;
+      }
     }
+    toast.error('이미지 붙여넣기 실패');
   };
 
   return (
