@@ -1,150 +1,129 @@
 'use server';
+import { getErrMessage } from '@/utils/string';
 import chromium from '@sparticuz/chromium';
 import { delay } from 'es-toolkit';
-import puppeteer, { type Viewport, type Browser, type Page } from 'puppeteer';
+import puppeteer, { type Browser } from 'puppeteer';
 import puppeteerCore from 'puppeteer-core';
 
-export async function crawlImageAction(url: string) {
-  if (url.includes('instagram.com')) {
-    return {
-      success: true as const,
-      value: await getInstagramImageList(url),
-    };
-  }
-  return { success: false as const, error: '지원하지 않는 사이트' };
-}
+const VIEWPORT = { width: 375, height: 667 };
+const DELAY_TIME = 500;
 
-const remoteExecutablePath =
-  'https://github.com/Sparticuz/chromium/releases/download/v133.0.0/chromium-v133.0.0-pack.tar';
+const getBrowser = (() => {
+  chromium.setGraphicsMode = false;
 
-chromium.setGraphicsMode = false;
-let browser: Browser;
-const viewport: Viewport = {
-  width: 375,
-  height: 667,
-};
+  let browser: Browser;
 
-async function getBrowser() {
-  if (browser) return browser;
+  return async () => {
+    if (browser) return browser;
 
-  // @ts-expect-error 귀찮음
-  browser =
-    process.env.NODE_ENV === 'development'
-      ? await puppeteer.launch({
-          headless: false,
-          defaultViewport: viewport,
-        })
-      : await puppeteerCore.launch({
-          args: [...chromium.args],
-          executablePath: await chromium.executablePath(remoteExecutablePath),
-          headless: 'shell',
-          defaultViewport: viewport,
-        });
+    // @ts-expect-error 귀찮음
+    browser =
+      process.env.NODE_ENV === 'development'
+        ? await puppeteer.launch({
+            headless: false,
+            defaultViewport: VIEWPORT,
+          })
+        : await puppeteerCore.launch({
+            args: [...chromium.args],
+            executablePath: await chromium.executablePath(
+              'https://github.com/Sparticuz/chromium/releases/download/v133.0.0/chromium-v133.0.0-pack.tar',
+            ),
+            headless: 'shell',
+            defaultViewport: VIEWPORT,
+          });
 
-  return browser;
-}
+    return browser;
+  };
+})();
 
-const closePopup = async (page: Page) => {
-  // 팝업 닫기
-  const closeButton = await page.waitForSelector('svg[aria-label="닫기"]', {
-    timeout: 5000,
-    visible: true,
-  });
-
-  if (!closeButton) throw new Error('닫기 버튼을 찾지 못했습니다.');
-  const buttonPosition = await closeButton.boundingBox();
-  if (!buttonPosition) throw new Error('닫기 버튼 위치를 찾지 못했습니다.');
-
-  const x = buttonPosition.x + buttonPosition.width / 2;
-  const y = buttonPosition.y + buttonPosition.height / 2;
-  await page.mouse.click(x, y);
-};
-
-const DELAY_TIME = 100;
-
-const getNextButton = async (page: Page) => {
-  try {
-    return await page.waitForSelector('button[aria-label="다음"]', {
-      timeout: DELAY_TIME,
-    });
-  } catch {
-    return null;
-  }
-};
-
-const tryImageUrl = async (page: Page) => {
-  return await page.evaluate(({ width, height }) => {
-    const sibling = document.elementFromPoint(
-      width / 2,
-      height / 3,
-    ) as HTMLElement;
-    const parent = sibling.parentElement;
-    const img = parent?.querySelector('img');
-
-    if (img instanceof HTMLImageElement) return img.src;
-    return null;
-  }, viewport);
-};
-
-const getImageUrl = async (
-  page: Page,
-  isDuplicate: (url: string) => boolean,
-) => {
-  while (true) {
-    const imageUrl = await tryImageUrl(page);
-    if (!imageUrl) return null;
-
-    if (!isDuplicate(imageUrl)) return imageUrl;
-
-    // 가끔 버튼이 씹힘
-    const nextButton = await getNextButton(page);
-    if (!nextButton) return null;
-    nextButton.click();
-    await delay(DELAY_TIME);
-  }
-};
-
-const iterateImages = async (
-  page: Page,
-  isDuplicate: (url: string) => boolean,
-): Promise<string[]> => {
-  const imageUrl = await getImageUrl(page, isDuplicate);
-  if (!imageUrl) return [];
-
-  const nextButton = await getNextButton(page);
-  if (!nextButton) return [imageUrl];
-
-  await nextButton.click();
-  await delay(DELAY_TIME);
-
-  return [
-    imageUrl,
-    ...(await iterateImages(
-      page,
-      (url) => isDuplicate(url) || imageUrl === url,
-    )),
-  ];
-};
-
-async function getInstagramImageList(url: string) {
-  const urlWithoutQuery = url.split('?')[0];
+async function crawlInstagram(url: string) {
   const browser = await getBrowser();
-
   const page = await browser.newPage();
-  await page.setExtraHTTPHeaders({
-    'Accept-Language': 'ko-KR',
-  });
 
-  await page.goto(urlWithoutQuery, {
-    waitUntil: 'networkidle0',
-    timeout: 15000,
-  });
+  try {
+    const urlWithoutQuery = url.split('?')[0];
 
-  await closePopup(page);
-  await delay(300);
+    await page.setExtraHTTPHeaders({
+      'Accept-Language': 'ko-KR',
+    });
 
-  const images = await iterateImages(page, () => false);
-  await page.close();
+    await page.goto(urlWithoutQuery, {
+      waitUntil: 'networkidle0',
+      timeout: 15000,
+    });
 
-  return images;
+    // 팝업 닫기
+    const closeButton = await page.waitForSelector('svg[aria-label="닫기"]', {
+      timeout: 5000,
+      visible: true,
+    });
+    const buttonPosition = await closeButton?.boundingBox();
+    if (!buttonPosition) throw new Error('닫기을 찾지 못했습니다.');
+
+    const x = buttonPosition.x + buttonPosition.width / 2;
+    const y = buttonPosition.y + buttonPosition.height / 2;
+    await page.mouse.click(x, y);
+
+    // 잠시 대기
+    await delay(300);
+
+    const clickNext = async () => {
+      const nextButton = await page
+        .waitForSelector('button[aria-label="다음"]', {
+          timeout: DELAY_TIME,
+        })
+        .catch(() => null);
+      if (!nextButton) return false;
+
+      await nextButton.click();
+      return true;
+    };
+
+    // 이미지 가져오기
+    const images: string[] = [];
+    let retry = false;
+
+    while (true) {
+      const imageUrl = await page.evaluate(({ width, height }) => {
+        const sibling = document.elementFromPoint(
+          width / 2,
+          height / 3,
+        ) as HTMLElement;
+        const parent = sibling.parentElement;
+        const img = parent?.querySelector('img');
+
+        if (img instanceof HTMLImageElement) return img.src;
+        return null;
+      }, VIEWPORT);
+
+      if (!imageUrl) break;
+
+      // 버튼이 한번씩 무시돼서 재시도 로직이 있어야 함
+      if (images.includes(imageUrl)) {
+        if (retry) break;
+        retry = true;
+        await clickNext();
+        await delay(DELAY_TIME);
+        continue;
+      }
+      retry = false;
+
+      images.push(imageUrl);
+
+      await clickNext();
+      await delay(DELAY_TIME);
+    }
+
+    return images;
+  } finally {
+    await page.close();
+  }
+}
+
+export async function crawlInstagramAction(url: string) {
+  try {
+    return await crawlInstagram(url);
+  } catch (e) {
+    return getErrMessage(e);
+  }
 }

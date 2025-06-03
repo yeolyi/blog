@@ -1,4 +1,5 @@
 'use client';
+import { crawlInstagramAction } from '@/actions/crawl';
 import { fileToAVIFAction } from '@/actions/image';
 import AddMemeModal from '@/components/meme/AddMemeModal';
 import MemeCard, { type MemeCardProps } from '@/components/meme/MemeCard';
@@ -15,7 +16,7 @@ import type { Meme } from '@/types/helper.types';
 import { shuffled } from '@/utils/array';
 import { getErrMessage } from '@/utils/string';
 import clsx from 'clsx';
-import { Plus, Shuffle } from 'lucide-react';
+import { Instagram, Plus, Shuffle } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useReducer, useState } from 'react';
@@ -40,12 +41,12 @@ export default function MemeViewer() {
   const { data: dbMemes } = useMemes(selectedTag);
 
   const [memes, setMemes] = useState<Meme[]>(dbMemes ?? []);
-  const [masonryKey, setMasonryKey] = useReducer((x) => x + 1, 0);
+  const [masonryKey, increaseMasonryKey] = useReducer((x) => x + 1, 0);
   const [showAddModal, setShowAddModal] = useState(false);
 
   useEffect(() => {
     setMemes(dbMemes ?? []);
-    setMasonryKey();
+    increaseMasonryKey();
   }, [dbMemes]);
 
   const tags = [{ id: NO_TAG_ID, name: '전체' }, ...(_tags ?? [])];
@@ -64,7 +65,7 @@ export default function MemeViewer() {
     const randomMemes = await getRandomMemesFromDB(20);
     // @ts-expect-error TODO
     setMemes(shuffled(randomMemes ?? []));
-    window.scrollTo({ top: 0 });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   if (profile?.role !== 'admin')
@@ -81,41 +82,10 @@ export default function MemeViewer() {
       </form>
 
       {selectedTag === NO_TAG_ID && (
-        <form
-          className={clsx('flex flex-col gap-2')}
-          onSubmit={async (e) => {
-            e.preventDefault();
-            const form = e.target as HTMLFormElement;
-            const formData = new FormData(form);
-            const title = formData.get('title') as string;
-            const image = formData.get('image') as File;
-
-            const avif = await fileToAVIFAction(image);
-
-            if (typeof avif === 'string') {
-              toast.error(`이미지 변환 실패: ${avif}`);
-              return;
-            }
-
-            try {
-              await uploadMemeToDB(
-                title,
-                // TODO: 타입 해결
-                new Blob([avif as BlobPart], { type: 'image/avif' }),
-              );
-              await mutate(memesByTagKey(NO_TAG_ID));
-              form.reset();
-            } catch (e) {
-              toast.error(getErrMessage(e));
-            }
-          }}
-        >
-          <Form.Text title="제목" name="title" />
-          <Form.Image title="이미지" name="image" />
-          <Button type="submit" bg="green" Icon={Plus} className="self-end">
-            추가
-          </Button>
-        </form>
+        <>
+          <AddMemeForm />
+          <CrawlInstagramSection />
+        </>
       )}
 
       <Masonry
@@ -139,3 +109,83 @@ export default function MemeViewer() {
     </div>
   );
 }
+
+const AddMemeForm = () => {
+  return (
+    <form
+      className={clsx('flex flex-col gap-4')}
+      onSubmit={async (e) => {
+        e.preventDefault();
+        const form = e.target as HTMLFormElement;
+        const formData = new FormData(form);
+        const title = formData.get('title') as string;
+        const image = formData.get('image') as File;
+
+        const avif = await fileToAVIFAction(image);
+
+        if (typeof avif === 'string') {
+          toast.error(`이미지 변환 실패: ${avif}`);
+          return;
+        }
+
+        try {
+          await uploadMemeToDB(
+            title,
+            // TODO: 타입 해결
+            new Blob([avif as BlobPart], { type: 'image/avif' }),
+          );
+          await mutate(memesByTagKey(NO_TAG_ID));
+          form.reset();
+        } catch (e) {
+          toast.error(getErrMessage(e));
+        }
+      }}
+    >
+      <Form.Text title="제목" name="title" />
+      <Form.Image title="이미지" name="image" />
+      <Button type="submit" bg="green" Icon={Plus} className="self-end">
+        추가
+      </Button>
+    </form>
+  );
+};
+
+const CrawlInstagramSection = () => {
+  const [instaUrlList, setInstaUrlList] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+
+  return (
+    <div className="flex gap-2 items-center flex-wrap">
+      <Button
+        type="button"
+        bg="green"
+        className="self-start"
+        Icon={Instagram}
+        onClick={async () => {
+          setIsLoading(true);
+          const clipboardText = await navigator.clipboard.readText();
+          const result = await crawlInstagramAction(clipboardText);
+          if (typeof result === 'string') {
+            toast.error(result);
+            return;
+          }
+
+          setInstaUrlList(result);
+          setIsLoading(false);
+        }}
+        isLoading={isLoading}
+      />
+      {instaUrlList.map((url, idx) => (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-white w-10 h-10 flex items-center justify-center hover:underline"
+          key={url}
+        >
+          {idx}
+        </a>
+      ))}
+    </div>
+  );
+};
