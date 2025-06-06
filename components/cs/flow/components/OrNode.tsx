@@ -28,7 +28,8 @@ export const OrNode = ({ id, data, selected }: NodeProps<'or'>) => {
   const backgroundColor = (() => {
     switch (out) {
       case null:
-        return '';
+        // svg라서 그런가 명시 안하니까 검은색이 되네
+        return 'fill-transparent';
       case false:
         return 'fill-red-500';
       case true:

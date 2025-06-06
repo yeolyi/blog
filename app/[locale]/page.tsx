@@ -1,11 +1,14 @@
-import cs from '@/app/[locale]/(mdx)/cs/assets/chasing.png';
 import PostList from '@/components/PostList';
+import { layerBg } from '@/components/ui/theme';
 import { Link } from '@/i18n/navigation';
+import clsx from 'clsx';
 import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
 import type { StaticImageData } from 'next/image';
+import cs from './assets/cs.gif';
 import me from './assets/me.jpg';
+import react from './assets/react.png';
 
 export type PostType = {
   titleKey: string;
@@ -73,22 +76,54 @@ export default async function Home({
         <h2 className="text-2xl font-bold mb-[1em] text-white">
           {t('series')}
         </h2>
-        <Link
-          href="/cs"
-          className="group cursor-pointer relative w-fit flex flex-col"
-          draggable={false}
-        >
-          <Image
-            src={cs}
-            alt="cs"
-            className="w-[512px] max-w-full aspect-video object-cover"
-            draggable={false}
-          />
-          <h3 className="text-xl font-semibold text-black bg-white p-2 group-hover:tracking-wide group-active:tracking-wider transition-all ease-in-out duration-200">
-            {t('curriculum')}
-          </h3>
-        </Link>
+        <div className="flex gap-8 flex-col">
+          <SeriesCard href="/cs" src={cs} title={t('curriculum')} />
+          {locale === 'ko' && (
+            <SeriesCard
+              href="/react"
+              src={react}
+              title={t('react')}
+              imgClassName="object-top"
+            />
+          )}
+        </div>
       </div>
     </div>
   );
 }
+
+const SeriesCard = ({
+  href,
+  imgClassName,
+  src,
+  title,
+}: {
+  imgClassName?: string;
+  href: string;
+  src: StaticImageData;
+  title: string;
+}) => (
+  <Link
+    href={href}
+    className="cursor-pointer relative w-fit flex flex-col group"
+    draggable={false}
+  >
+    <Image
+      src={src}
+      alt={title}
+      className={clsx(
+        'w-[512px] max-w-full aspect-video object-cover',
+        imgClassName,
+      )}
+      draggable={false}
+    />
+    <h3
+      className={clsx(
+        'text-xl font-semibold text-white p-2 group-hover:tracking-wide group-active:tracking-wider transition-all ease-in-out duration-200',
+        layerBg,
+      )}
+    >
+      {title}
+    </h3>
+  </Link>
+);

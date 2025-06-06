@@ -1,7 +1,6 @@
 'use client';
 import { crawlInstagramAction } from '@/actions/crawl';
 import { fileToAVIFAction } from '@/actions/image';
-import AddMemeModal from '@/components/meme/AddMemeModal';
 import MemeCard, { type MemeCardProps } from '@/components/meme/MemeCard';
 import TagRadio from '@/components/meme/TagRadio';
 import Button from '@/components/ui/Button';
@@ -42,7 +41,6 @@ export default function MemeViewer() {
 
   const [memes, setMemes] = useState<Meme[]>(dbMemes ?? []);
   const [masonryKey, increaseMasonryKey] = useReducer((x) => x + 1, 0);
-  const [showAddModal, setShowAddModal] = useState(false);
 
   useEffect(() => {
     setMemes(dbMemes ?? []);
@@ -104,8 +102,6 @@ export default function MemeViewer() {
           </Button>
         )}
       </div>
-
-      {showAddModal && <AddMemeModal onClose={() => setShowAddModal(false)} />}
     </div>
   );
 }

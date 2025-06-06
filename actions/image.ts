@@ -3,7 +3,10 @@
 import { getErrMessage } from '@/utils/string';
 import sharp from 'sharp';
 
-export const urlToAVIFAction = async (url: string) => {
+// https://github.com/lovell/sharp/issues/4250
+// webp로 바꿔야하나...
+export const fileToAVIFAction = async (file: File) => {
+  const url = URL.createObjectURL(file);
   try {
     const resp = await fetch(url);
     const buffer = await resp.arrayBuffer();
@@ -11,11 +14,7 @@ export const urlToAVIFAction = async (url: string) => {
     return avif;
   } catch (e) {
     return getErrMessage(e);
+  } finally {
+    URL.revokeObjectURL(url);
   }
-};
-
-export const fileToAVIFAction = async (file: File) => {
-  const avif = await urlToAVIFAction(URL.createObjectURL(file));
-  URL.revokeObjectURL(URL.createObjectURL(file));
-  return avif;
 };

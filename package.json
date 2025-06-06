@@ -12,7 +12,6 @@
     "db-type": "supabase gen types typescript --project-id jfzhtdcyaqwgugipnmhs > database.types.ts"
   },
   "dependencies": {
-    "@dagrejs/dagre": "^1.1.4",
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
     "@next/bundle-analyzer": "^15.4.0-canary.51",
@@ -65,7 +64,6 @@
     "husky": "^9.1.7",
     "knip": "^5.56.0",
     "lint-staged": "^15.5.1",
-    "playwright": "^1.52.0",
     "typescript": "^5.8.3"
   }
 }
