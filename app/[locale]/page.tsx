@@ -1,5 +1,5 @@
 import PostList from '@/components/PostList';
-import { layerBg } from '@/components/ui/theme';
+import { border, layerBg } from '@/components/ui/theme';
 import { Link } from '@/i18n/navigation';
 import clsx from 'clsx';
 import type { Locale } from 'next-intl';
@@ -105,7 +105,10 @@ const SeriesCard = ({
 }) => (
   <Link
     href={href}
-    className="cursor-pointer relative w-fit flex flex-col group"
+    className={clsx(
+      'cursor-pointer relative w-fit flex flex-col group',
+      border,
+    )}
     draggable={false}
   >
     <Image
@@ -119,7 +122,7 @@ const SeriesCard = ({
     />
     <h3
       className={clsx(
-        'text-xl font-semibold text-white p-2 group-hover:tracking-wide group-active:tracking-wider transition-all ease-in-out duration-200',
+        'text-xl font-semibold text-white p-2 group-hover:tracking-wider group-active:tracking-widest transition-all ease-in-out duration-200',
         layerBg,
       )}
     >

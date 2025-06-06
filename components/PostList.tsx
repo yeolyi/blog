@@ -22,14 +22,14 @@ export default async function PostList() {
   return (
     <ul>
       {sortedMetadataList.map(({ id, title, date }) => (
-        <li key={id} className="group py-2">
+        <li key={id} className="group">
           <Link
             href={`/post/${id}`}
-            className="flex w-full no-underline text-base flex-col sm:flex-row"
+            className="flex w-full no-underline text-base flex-col sm:flex-row py-2"
           >
             <span
               className={clsx(
-                'text-gray-500 shrink-0 font-normal mr-2',
+                'text-stone-500 shrink-0 font-normal mr-2',
                 skewOnHover,
               )}
             >
