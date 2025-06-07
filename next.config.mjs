@@ -35,7 +35,6 @@ const nextConfig = {
   experimental: {
     serverActions: { bodySizeLimit: '2mb' },
   },
-  serverExternalPackages: ['snoowrap'],
 };
 
 const withMDX = createMDX({
@@ -48,7 +47,7 @@ const withMDX = createMDX({
         rehypeShiki,
         {
           inline: 'tailing-curly-colon',
-          theme: 'one-dark-pro',
+          theme: 'github-dark',
           transformers: [
             transformerNotationHighlight(),
             transformerNotationFocus(),

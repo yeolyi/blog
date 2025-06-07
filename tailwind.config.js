@@ -65,9 +65,7 @@ module.exports = {
             },
             code: {
               // backgroundColor: 'white',
-              // color: 'black',
               fontWeight: 'inherit',
-              // fontSize: 'inherit',
             },
             'code span': {
               whiteSpace: 'pre-wrap',
@@ -87,6 +85,9 @@ module.exports = {
               '&:hover': {
                 cursor: 'pointer',
               },
+            },
+            li: {
+              overflowWrap: 'anywhere',
             },
           },
         },

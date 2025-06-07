@@ -20,7 +20,7 @@ export default function Pre({
   return (
     <pre {...props} ref={ref} className={clsx(props.className, 'relative')}>
       <Button
-        bg="transparent"
+        bg="gray"
         Icon={isCopied ? CheckIcon : CopyIcon}
         className={clsx('absolute top-0 right-0')}
         onClick={() => {

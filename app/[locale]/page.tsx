@@ -83,7 +83,7 @@ export default async function Home({
               href="/react"
               src={react}
               title={t('react')}
-              imgClassName="object-top"
+              imgClassName="object-left"
             />
           )}
         </div>
