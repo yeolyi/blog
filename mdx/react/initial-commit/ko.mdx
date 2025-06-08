@@ -1,0 +1,198 @@
+export const title = 'DOM이 준비되었으니 실제로 반영해보자'
+
+드디어 `<App/>`을 보고 만든 새로운 Fiber 트리가 `workInProgress`에 완성됐다! 각 트리 노드에 연관된 DOM 노드도 연결되어있다!
+
+이제 Commit phase에서 이걸 실제 DOM에 적용하는 작업을 해야한다. 
+
+방법은 모르겠지만 적당한 때에 `commitMutationEffectsOnFiber`가 실행된다고 한다. 받아들이자... 참고를 위해 예전에 살펴본 Call stack을 보면 아래 경로로 호출된다.
+
+- performWorkUntilDeadline
+  - performWorkOnRootViaSchedularTask
+    - performWorkOnRoot
+      - commitRootWhenReady
+        - commitRoot
+          - flushMutationEffects
+            - **commitMutationEffectsOnFiber**
+
+뎁스에 숨이 가빠오지만 무시하고 `commitMutationEffectsOnFiber`를 살펴보자. 
+
+```js
+function commitMutationEffectsOnFiber(
+  // [!code highlight:4]
+  // workInProgress에 대응되는 것 같다.
+  // 로그를 찍어보면 RootFiber로 한 번 (flag=1024),
+  // App에 해당하는 FiberNode로 한 번 호출된다(flag=67108865).
+  finishedWork: Fiber,
+
+  // [!code highlight:3]
+  // FiberRootNode
+  // finishedWork는 바뀌는데 얘는 루트로 고정인게 인상깊다.
+  root: FiberRoot,
+  lanes: Lanes,
+) {
+  ...
+  switch (finishedWork.tag) {
+    ...
+    case FunctionComponent: {
+      // [!code highlight:2]
+      recursivelyTraverseMutationEffects(root, finishedWork, lanes);
+      commitReconciliationEffects(finishedWork, lanes);
+      ...
+      break;
+    }
+    case HostRoot: {
+      ...
+      if (supportsResources) {
+        ...
+      } else {
+        // [!code highlight:2]
+        recursivelyTraverseMutationEffects(root, finishedWork, lanes);
+        commitReconciliationEffects(finishedWork, lanes);
+      }
+      ...
+      break;
+    }
+  }
+  ...
+}
+```
+
+뭐가 됐든 `recursivelyTraverseMutationEffects`와 `commitReconciliationEffects`가 호출된다. 한 번 봐주자:
+
+`recursivelyTraverseMutationEffects`는 특정 노드의 직계 자식 노드들 중 삭제되어야할 것들을 삭제하고 모든 직계 자식 노드들에 대해서 `commitMutationEffectsOnFiber`를 호출한다. 호출된 `commitMutationEffectsOnFiber`에서도 재귀적으로 동일한 작업을 할테니 특정 노드에 대해 `recursivelyTraverseMutationEffects`가 호출되고 반환되었다면 해당 노드의 모~든 자식 노드들에 대해 `commitDeletionEffects`가 되었음을 알 수 있다.
+
+```js
+function recursivelyTraverseMutationEffects(
+  root: FiberRoot,
+  parentFiber: Fiber,
+  lanes: Lanes,
+) {
+  // [!code highlight:8]
+  // 삭제해야할 자식 노드들을 삭제한다.
+  const deletions = parentFiber.deletions;
+  if (deletions !== null) {
+    for (let i = 0; i < deletions.length; i++) {
+      const childToDelete = deletions[i];
+      commitDeletionEffects(root, parentFiber, childToDelete);
+    }
+  }
+
+  if (
+    parentFiber.subtreeFlags &
+    (enablePersistedModeClonedFlag ? MutationMask | Cloned : MutationMask)
+  ) {
+    let child = parentFiber.child;
+    // [!code highlight:5]
+    // 자식 노드들을 처리한다.
+    while (child !== null) {
+      commitMutationEffectsOnFiber(child, root, lanes);
+      child = child.sibling;
+    }
+  }
+}
+```
+
+`commitReconciliationEffects`를 살펴보자:
+
+```js
+function commitReconciliationEffects(
+  finishedWork: Fiber,
+  committedLanes: Lanes,
+) {
+  const flags = finishedWork.flags;
+  if (flags & Placement) {
+    // [!code highlight:3]
+    // 드디어 DOM을 브라우저에 추가하나보다!
+    // App에 해당하는 Fiber만 이곳으로 온다.
+    commitHostPlacement(finishedWork);
+    finishedWork.flags &= ~Placement;
+  }
+  if (flags & Hydrating) {
+    ...
+  }
+}
+```
+
+```js
+export function commitHostPlacement(finishedWork: Fiber) {
+  try {
+    // [!code highlight]
+    commitPlacement(finishedWork);
+  } catch (error) {
+    captureCommitPhaseError(finishedWork, finishedWork.return, error);
+  }
+}
+```
+
+```js
+// [!code highlight:2]
+// finishedWork는 App에 해당하는 FiberNode이다.
+function commitPlacement(finishedWork: Fiber): void {
+  ...
+  let hostParentFiber;
+  let parentFiber = finishedWork.return;
+
+  // [!code highlight:12]
+  // Function Component같은건 리액트에만 있는 개념이지
+  // 실제로 DOM에는 없으므로 거기에 DOM 노드를 추가할 수는 없다. 
+  // 따라서 노드의 부모를 찾아 올라가며
+  // HostComponent, HostRoot같은 실물? 노드를 여기서 찾는다. 
+  while (parentFiber !== null) {
+    ...
+    if (isHostParent(parentFiber)) {
+      hostParentFiber = parentFiber;
+      break;
+    }
+    parentFiber = parentFiber.return;
+  }
+
+  switch (hostParentFiber.tag) {
+    ...
+    case HostRoot: {
+      // [!code highlight:2]
+      // <div id="root"></div> 이다!!
+      const parent: Container = hostParentFiber.stateNode.containerInfo;
+      const before = getHostSibling(finishedWork);
+
+      // [!code highlight:6]
+      insertOrAppendPlacementNodeIntoContainer(
+        finishedWork,
+        before,
+        parent,
+        parentFragmentInstances,
+      );
+      break;
+    }
+    ...
+  }
+}
+```
+
+```js
+function insertOrAppendPlacementNodeIntoContainer(
+  node: Fiber,
+  before: ?Instance,
+  parent: Container,
+  parentFragmentInstances: null | Array<FragmentInstanceType>,
+): void {
+  const {tag} = node;
+  const isHost = tag === HostComponent || tag === HostText;
+
+  if (isHost) {
+    const stateNode = node.stateNode;
+    // [!code highlight:7]
+    // 여기서부터는 ReactFiberConfig로 react reconciler에 전달해준 
+    // DOM 관련 함수들이다.
+    if (before) {
+      insertInContainerBefore(parent, stateNode, before);
+    } else {
+      appendChildToContainer(parent, stateNode);
+    }
+    ...
+    return;
+  } else {
+    ...
+  }
+
+}
+```

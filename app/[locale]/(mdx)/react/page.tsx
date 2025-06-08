@@ -1,22 +1,85 @@
-import Comments from '@/components/comment';
-import TableOfContents from '@/components/layout/TableOfContents';
+import Code from '@/components/mdx/Code';
+import { Link } from '@/i18n/navigation';
+import { order } from '@/mdx/react';
 
 export default async function PostPage() {
-  const { default: Component } = await import('@/mdx/react/index.mdx');
+  const metadataList = await Promise.all(
+    order.map(async (id) => {
+      const { default: _, ...metadata } = await import(
+        `@/mdx/react/${id}/ko.mdx`
+      );
+      return { id, ...metadata };
+    }),
+  );
 
   return (
-    <>
-      <div className="prose prose-stone prose-invert mb-12">
-        <Component />
-      </div>
+    <div className="prose prose-stone prose-invert">
+      <h1>2025 리액트 기여자 되기</h1>
+      <p>
+        리액트 소스코드에 기여를 한번쯤은 해보고싶다는 마음이 있습니다. 그래서
+        회사에서 리액트 소스코드 스터디도 열었는데요, 거기서 공부한걸 여기에
+        써내려나갈 계획입니다.
+      </p>
+      <p>
+        다른 블로그 글들과 달리 이건 저도 잘 모르는 내용이라서 주저리주저리 배운
+        것들을 써나갈 예정입니다. 나중에 돌아보면 재밌을 것 같네요 🤗
+      </p>
+      <p>
+        <a href="https://jser.dev/series/react-source-code-walkthrough">
+          React source code deep dive 시리즈
+        </a>
+        의 도움을 많이 받았습니다. 자료를 참고해 리액트 코드를 살펴보면서
+        개인적으로 궁금했던 내용, 따로 찾아본 내용, React 19에서 달라진 내용들을
+        추가로 기록했습니다.
+      </p>
 
-      <Comments postId="react" />
+      <h2>시작하기 앞서</h2>
+      <ol>
+        {metadataList.slice(0, 2).map(({ id, title }) => (
+          <li key={id}>
+            <Link href={`/react/${id}`}>{title}</Link>
+          </li>
+        ))}
+      </ol>
+      <h2>처음 UI를 그리는 과정</h2>
+      <p>아래 코드가 초기 렌더되기까지 벌어지는 일을 알아봅시다.</p>
+      <Code
+        template="react"
+        files={{
+          'App.js': `import { useState } from 'react';
 
-      <div className="fixed top-[15vh] left-[calc(50vw+24rem)] hidden xl:block">
-        <TableOfContents />
-      </div>
-    </>
-  );
+function Link() {
+  return <a href="https://yeolyi.com">yeolyi.com</a>;
 }
 
-export const dynamicParams = false;
+export default function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>
+        <Link />
+        <br />
+        <button onClick={() => setCount((count) => count + 1)}>
+          click me - {count}
+        </button>
+      </p>
+    </div>
+  );
+}
+          `,
+        }}
+      />
+      <ol>
+        {metadataList.slice(2).map(({ id, title }) => (
+          <li key={id}>
+            <Link href={`/react/${id}`}>{title}</Link>
+          </li>
+        ))}
+      </ol>
+
+      <h2>UI를 다시 그리는 과정</h2>
+      <p>버튼을 눌러 setState가 호출된 뒤 UI에 반영되는 과정을 살펴봅시다.</p>
+    </div>
+  );
+}

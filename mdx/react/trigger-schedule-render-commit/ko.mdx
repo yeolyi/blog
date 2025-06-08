@@ -1,0 +1,74 @@
+export const title = 'Trigger, Schedule, Render, Commit'
+
+import renderStack from './assets/render-stack.png'
+import domStack from './assets/dom-stack.png'
+import effectStack from './assets/effect-stack.png'
+
+리액트 코드 곳곳에 breakpoint를 걸어서 함수 콜스택을 살펴보자. 리액트 내부 코드와 익숙해져보는 시간이니 함수명들에 압도되지 말고 가볍게~ 살펴보자.
+
+개발자도구를 켜고 아래 샌박을 새로고침해보자. 모바일이면... 구경만 하자.
+
+<Code template="react" files={{
+    'App.js': `
+import { useState, useEffect } from "react";
+import ReactDOM from "react-dom/client";
+
+export default function App() {
+    const [count, setCount] = useState(1);
+    debugger; // breakpoint 1
+
+    useEffect(() => {
+    debugger; // breakpoint 3
+    setCount((count) => count + 1);
+    }, []);
+
+    return <button>{count}</button>;
+}
+`
+}}/>
+
+- 크롬에서 call stack이 몇 개밖에 안보인다면 show ignore-listed frames 옵션을 체크했는지 확인하자 🥲
+- 이전 게시물처럼 리액트를 직접 설치해서 쓴다면 https://stackoverflow.com/questions/77657008/ 을 참고하자. 
+
+## 리액트가 내가 만든 컴포넌트를 실행
+
+<Image src={renderStack} alt="" className="object-contain max-w-[256px]"/>
+
+breakpoint1에서 멈춘다. 리액트가 내가 만든 App 함수를 실행하는 순간이다. 위쪽이 callee 함수, 아래쪽이 caller 함수이다.
+
+샌박 관련된 함수는 무시하고 리액트 스크립트쪽 함수들만 살펴보자. <Link locale="ko" href="/react/setup">리액트 초기 설정</Link> 게시물을 참고해 직접 로컬에서 확인해봐도 좋다. 이러면 샌박 관련 함수들이 없어져 콜스택이 좀 더 깔끔해진다.
+
+뭐가 뭔지 하나도 모르겠는게 정상이다. render 함수도 보이고 FunctionComponent 어쩌구 함수도 보인다.
+
+## 리액트가 DOM을 수정
+
+크롬 inspector에서 DOM 요소 우클릭을 하면 DOM이 바뀔 때 breakpoint를 설정할 수 있다. `<div id="root"></div>` 에 breakpoint를 걸고 스크립트 실행을 재개해보자. 
+
+<Image src={domStack} alt=""  className="object-contain max-w-[256px]" />
+
+리액트가 DOM을 수정하는 순간이다. commit이란 단어가 많이 보인다. 
+
+## 리액트가 이펙트를 실행
+
+다시 스크립트 실행을 재개해보다. 이번엔 breakpoint 3에서 멈춘다. 리액트가 useEffect에 건넨 함수를 실행하는 순간이다.
+
+<Image src={effectStack} alt="" className="object-contain max-w-[256px]" />
+
+여기도 commit이라는 이름의 함수가 좀 보인다. 
+
+지금까지 사진을 보면 모두 `performWorkUntilDeadline`에서 시작함이 인상깊다. 
+
+## Trigger, Schedule, Render, Commit
+
+상황별로 호출되는 함수가 다름을 확인했다. 리액트가 우리가 만든 컴포넌트를 렌더하고 리렌더하는 과정은 아래와 같이 나눌 수 있다. [출처](https://jser.dev/2023-07-11-overall-of-react-internals)
+
+1. **트리거(Trigger)**: 초기 마운트든 state hook으로 인한 재렌더링이든 상관없이, 앱의 어느 부분을 렌더링해야 하는지와 어떻게 수행해야 하는지를 React 런타임에 알려줌.
+
+2. **스케줄(Schedule)**: 기본적으로 우선순위에 따라 작업을 처리하는 우선순위 큐. 런타임 코드에서 렌더링이나 이펙트 실행과 같은 작업을 스케줄링하기 위해 호출된다. 
+
+3. **렌더(Render)**: 새로운 파이버 트리를 계산하고 호스트 DOM에 적용해야 할 업데이트가 무엇인지 파악한다. **파이버 트리**는 앱의 현재 상태를 나타내는 내부 트리 구조이다. **이전에는 가상 DOM이라고 불렸지만, 이제는 DOM만을 위한 것이 아니며 React 팀에서도 더 이상 가상 DOM이라고 부르지 않는다**.
+Concurrent 모드 때문에 렌더 단계가 중단되고 재개될 수 있어서 상당히 복잡해졌다.
+
+4. **커밋(Commit)**: 호스트 DOM에 변경사항을 적용한다. 이외에도 모든 종류의 이펙트들도 여기서 처리된다.
+
+이제 이 과정이 어떻게 구현되어있는지 간단한 `<App/>`이 렌더되는 과정을 살펴보며 배워보자.

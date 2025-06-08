@@ -8,6 +8,7 @@ import '@/app/[locale]/globals.css';
 import { AuthProvider } from '@/components/AuthProvider';
 import SWRProvider from '@/components/SWRProvider';
 import ScrollRetoration from '@/components/ScrollRestore';
+import { SandPackCSS } from '@/components/layout/SandPackCSS';
 import { routing } from '@/i18n/routing';
 import { Provider as JotaiProvider } from 'jotai';
 import { type Locale, NextIntlClientProvider, hasLocale } from 'next-intl';
@@ -67,6 +68,7 @@ export default async function RootLayout({
           integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+"
           crossOrigin="anonymous"
         />
+        <SandPackCSS />
       </head>
       <body className="min-h-dvh flex flex-col">
         <NextIntlClientProvider>

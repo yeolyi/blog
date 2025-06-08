@@ -1,0 +1,165 @@
+export const title = '우선 두 개의 트리를 준비하자'
+
+`ReactDOM.render`를 호출해 업데이트 큐에 넣은 작업은 `performWorkOnRoot`에서 처리된다고 한다. 그 과정은 나중에 알아보고 일단 받아들이자. 
+
+Stack trace를 보면 아래 경로로 호출됨을 확인할 수 있다. 
+
+- performWorkUntilDeadline
+  - performWornOnRootViaSchedularTask
+    - **performWorkOnRoot**
+
+## performWorkOnRoot
+
+```js
+export function performWorkOnRoot(
+  root: FiberRoot,
+  lanes: Lanes,
+  forceSync: boolean,
+): void {
+  ...
+  const shouldTimeSlice =
+    (!forceSync &&
+      // [!code highlight:2]
+      // 초기 렌더에서는 blocking lane이 포함돼서 
+      // shouldTimeSlice가 false가 되고...
+      !includesBlockingLane(lanes) &&
+      !includesExpiredLane(root, lanes)) ||
+    (enableSiblingPrerendering && checkIfRootIsPrerendering(root, lanes));
+
+  let exitStatus = shouldTimeSlice
+    ? renderRootConcurrent(root, lanes)
+    // [!code highlight:3]
+    // 이게 실행된다.
+    : renderRootSync(root, lanes, true);
+
+  ...
+}
+```
+
+lane은 렌더의 우선순위에 대한 것이라고만 알아두자. [useTransition](https://ko.react.dev/reference/react/useTransition)을 사용하면 우선순위가 밀리는 것처럼 렌더가 트리거된 이유에 따라 우선순위를 정하는 시스템이 리액트 내부에 존재한다.
+
+## renderRootSync
+
+```js
+function renderRootSync(
+  root: FiberRoot,
+  lanes: Lanes,
+  shouldYieldForPrerendering: boolean,
+): RootExitStatus {
+  ...
+  if (...) {
+    // [!code highlight]
+    prepareFreshStack(root, lanes);
+  }
+  ...
+  do {
+    try {
+      // [!code highlight]
+      workLoopSync();
+      break;
+    } catch (thrownValue) {
+      handleThrow(root, thrownValue);
+    }
+  } while (true);
+  ...
+}
+```
+
+`prepareFreshStack` 이후 `workLoopSync`를 호출한다. 각각을 알아보자.
+
+### prepareFreshStack
+
+리액트는 내부적으로 두 개의 Fiber 트리를 활용한다. **리액트 소스코드에서 `current`는 기존 트리의 노드를 의미하고 `workInProgress`는 새로운 트리의 노드를 의미한다.** 두 변수를 각 트리를 순회하기 위한 포인터 변수로서 활용한다.
+
+상태에 업데이트가 발생하면 리액트는 이에 맞게 workInProgress 트리를 구성하고 이를 기반으로 렌더링을 진행한다. 작업이 끝나면 workInProgress가 새로운 current가 되는 셈이다.
+
+`prepareFreshStack`에서는 `workInProgress`를 초기화한다. 
+
+```js
+// react-reconciler/src/ReactFiberWorkLoop.js
+
+// The fiber we're working on
+let workInProgress: Fiber | null = null;
+...
+function prepareFreshStack(root: FiberRoot, lanes: Lanes): Fiber {
+  ...
+  const rootWorkInProgress = createWorkInProgress(root.current, null);
+  workInProgress = rootWorkInProgress;
+  ...
+}
+
+// 초기 렌더하는 지금은 current가 HostRootFiber를 의미한다.
+export function createWorkInProgress(current: Fiber, pendingProps: any): Fibers {
+  // alternate는 현재 노드의 이전 버전을 의미한다.
+  let workInProgress = current.alternate;
+  
+  // 하지만 초기 렌더니 이전 버전이 있을리 없다.
+  if (workInProgress === null) {
+    workInProgress = createFiber(
+        // HostRootFiber와 동일한 태그를 사용해 workInProgress를 만든다. 
+        current.tag,
+        pendingProps,
+        current.key,
+        current.mode,
+      );
+  }
+  ...
+}
+```
+
+### workLoopSync
+
+생략 없이 그대로 가져왔다. 아주 단순한 함수다!
+
+```js
+// The work loop is an extremely hot path. Tell Closure not to inline it.
+/** @noinline */
+function workLoopSync() {
+  // Perform work without checking if we need to yield between fiber.
+  while (workInProgress !== null) {
+    performUnitOfWork(workInProgress);
+  }
+}
+```
+
+저 while문이 무한루프는 아닐테니 performUnitOfWork 호출 후 어딘가에서는 `workInProgress`를 설정함을 의미한다. 보통 트리 순회는 재귀로 구현하는데 여기서는 while로 구현한게 인상깊다. 
+
+## performUnitOfWork
+
+`performUnitOfWork`에서는 현재 workInProgress가 가르키고 있는 노드에 대해 `beginWork`를 호출한다. 정황상 beginWork는 다음에 작업할 노드를 반환하는 것 같다. 
+
+beginWork가 null을 반환하면, 즉 뿌리 노드라면 `completeUnitOfWork`를 호출한다. 
+
+```js
+function performUnitOfWork(unitOfWork: Fiber): void {
+  const current = unitOfWork.alternate;
+  const next = beginWork(current, unitOfWork, entangledRenderLanes);
+
+  unitOfWork.memoizedProps = unitOfWork.pendingProps;
+  if (next === null) {
+    // If this doesn't spawn new work, complete the current work.
+    completeUnitOfWork(unitOfWork);
+  } else {
+    workInProgress = next;
+  }
+}
+```
+
+## 직접 확인해보기
+
+예제 앱에서 `performUnitOfWork`의 인자 `unitOfWork`를 로그찍어보면 아래 순서로 순회됨을 확인할 수 있다. DFS 순회와 유사하다. 
+
+```txt
+HostRoot
+FunctionComponent (App)
+HostComponent (div)
+HostComponent (p)
+FunctionComponent (Link)
+HostComponent (a, completeUnitOfWork 호출됨)
+HostComponent (br, completeUnitOfWork 호출됨)
+HostComponent (button)
+HostText (click me -, completeUnitOfWork 호출됨)
+HostText ({count}, completeUnitOfWork 호출됨)
+```
+
+첫번째 순회 대상인 HostRoot가 어떻게 처리되는지 이어서 알아보자. 

@@ -1,0 +1,237 @@
+import fiberRoot1 from './assets/fiber-root1.png'
+
+export const title = 'render를 호출하면 할 일을 예약한다'
+
+아래 코드가 실행되면 결과적으로는 react-reconciler의 `createContainer`와 `updateContainer` 함수가 호출됨을 확인했다. 
+
+```js
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+```
+
+`react-reconciler/src/ReactFiberReconciler.js` 파일에 있는 두 함수를 살펴보자.
+
+## createContainer
+
+트리를 구성하는 노드 두 개를 만든다. 
+
+```js
+export function createContainer(
+  containerInfo: Container,
+  ...
+): OpaqueRoot {
+  return createFiberRoot(
+    containerInfo,
+    ...
+  );
+}
+
+export function createFiberRoot(
+  containerInfo: Container,
+  ...
+): FiberRoot {
+  const root: FiberRoot = (new FiberRootNode(
+    containerInfo,
+    ...
+  ): any);
+
+  // [!code highlight:4]
+  // 두 노드 서로가 서로에 접근할 수 있다.
+  const uninitializedFiber = createHostRootFiber(tag, isStrictMode);
+  root.current = uninitializedFiber;
+  uninitializedFiber.stateNode = root;
+
+  return root;
+}
+```
+
+직접 확인해보자:
+
+<Code template="react" files={{
+    'index.js': `import ReactDOM from "react-dom/client";
+import App from "./App";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+
+const fiberRoot = root._internalRoot;
+const hostRootFiber = fiberRoot.current;
+const fiberRoot2 = hostRootFiber.stateNode;
+
+console.log(fiberRoot.constructor.name);
+console.log(hostRootFiber.constructor.name);
+console.log(fiberRoot2.constructor.name);
+`,
+'App.js': `export default function App() {
+    return <h1>Hello</h1>;
+}
+`
+}}
+showTabs
+options={{ activeFile: 'index.js' }}
+/>
+
+`FiberRootNode`와 `HostRootFiber`가 등장했다. 이름이 헷갈리는데 각각 무엇인지 살펴보자. 
+
+### FiberRootNode
+
+```js
+function FiberRootNode(
+  // [!code highlight:3]
+  // 호출할 때는 없었던 this 인자가 생겼다. 
+  // 파이썬 self랑 비슷한건가? Flow의 기능일지도... 모르겠다.
+  this: $FlowFixMe,
+
+  // [!code highlight:2]
+  // 우리가 건넨 document.getElementById("root")
+  containerInfo: any,
+  tag,
+  hydrate: any,
+  identifierPrefix: any,
+  onUncaughtError: any,
+  onCaughtError: any,
+  onRecoverableError: any,
+  formState: ReactFormState<any, any> | null,
+) {
+  this.tag = disableLegacyMode ? ConcurrentRoot : tag;
+  this.containerInfo = containerInfo;
+  this.pendingChildren = null;
+  this.current = null;
+  ...
+  // 열심히열심히 this.xx = yy 하는 코드들...
+}
+```
+
+트리의 루트 역할을 하는 객체이다. 다음에 살펴보겠지만 Fiber와는 별개의 함수로 만들어진다.
+
+### HostRootFiber
+
+`createHostRootFiber` 함수는 결국 HostRoot 태그를 가진 Fiber를 만든다. 
+
+```js
+export function createHostRootFiber(
+  tag: RootTag,
+  isStrictMode: boolean,
+): Fiber {
+  ...
+  return createFiber(HostRoot, null, null, mode);
+}
+```
+
+리액트가 Fiber 트리로 비교하고 어쩐다는 얘기를 많이 들어봤을 것이다. Fiber가 중요해보이니 `createFiber`를 타고 들어가 Fiber의 구조를 살펴보자. 
+
+```js
+function FiberNode(
+  this: $FlowFixMe,
+  // [!code highlight]
+  tag: WorkTag,
+  pendingProps: mixed,
+  key: null | string,
+  mode: TypeOfMode,
+) {
+  this.tag = tag;
+  this.key = key;
+  this.elementType = null;
+  this.type = null;
+  this.stateNode = null;
+  ...
+  // 열심히열심히 this.xx = yy 하는 코드들...
+}
+```
+
+자세히는 보지 않겠지만 암튼 WorkTag란걸로 Fiber의 종류를 구분함을 알 수 있다. HostRootFiber는 HostRoot 태그를 가진다. 
+
+`WorkTag` 타입을 구경가보면 이런게 있다:
+
+```js
+export const FunctionComponent = 0;
+export const ClassComponent = 1;
+// 2는 왜 없지
+export const HostRoot = 3;
+export const HostPortal = 4;
+export const HostComponent = 5;
+export const HostText = 6;
+export const Fragment = 7;
+...
+```
+
+직접 확인해보면서 `createContainer` 살펴보는걸 마무리하자. 
+
+<Code template="react" files={{
+    'index.js': `
+import ReactDOM from "react-dom/client";
+import App from "./App";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+
+const fiberRoot = root._internalRoot;
+const hostRootFiber = fiberRoot.current;
+
+console.log(fiberRoot.containerInfo);
+console.log(hostRootFiber.tag);
+`,
+'App.js': `export default function App() {
+    return <h1>Hello</h1>;
+}
+`
+}}
+  showTabs
+  options={{
+      activeFile: 'index.js',
+  }}
+/>
+
+## updateContainer
+
+```js
+// react-reconciler/src/ReactFiberReconciler.js
+export function updateContainer(
+  // [!code highlight:2]
+  element: ReactNodeList, // 우리가 건넨 <App/>
+  container: OpaqueRoot, // FiberRootNode
+  ...
+): Lane {
+  // [!code highlight:2]
+  // HostRootFiber임을 아까 살펴봤다.
+  const current = container.current;
+  const lane = requestUpdateLane(current);
+  updateContainerImpl(
+    current,
+    lane,
+    element,
+    container,
+    parentComponent,
+    callback,
+  );
+  return lane;
+}
+```
+
+`enqueueUpdate`로 업데이트를 예약함만 이해하고 챙겨가자. 큐의 payload에는 우리가 건넨 `<App/>`이 들어있다. 
+
+```js
+function updateContainerImpl(
+  // [!code highlight]
+  rootFiber: Fiber, // HostRootFiber
+  lane: Lane,
+  // [!code highlight:2]
+  element: ReactNodeList, // 우리가 건넨 <App/>
+  container: OpaqueRoot, // FiberRootNode
+  ...
+): void {
+
+  // [!code highlight:5]
+  // 우리가 건넨 <App/>을 업데이트 큐에 넣는다.
+  const update = createUpdate(lane);
+  update.payload = {element};
+
+  const root = enqueueUpdate(rootFiber, update, lane);
+
+  if (root !== null) {
+    startUpdateTimerByLane(lane);
+    scheduleUpdateOnFiber(root, rootFiber, lane);
+    entangleTransitions(root, rootFiber, lane);
+  }
+}
+```

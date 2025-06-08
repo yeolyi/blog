@@ -1,0 +1,192 @@
+export const title = '이제 DOM 요소가 만들어진다'
+
+`performUnitOfWork`에서 `beginWork`가 null을 반환하면 `completeUnitOfWork`가 호출됨을 언급했다. 
+
+```js
+next = beginWork(current, unitOfWork, entangledRenderLanes);
+
+unitOfWork.memoizedProps = unitOfWork.pendingProps;
+if (next === null) {
+  // If this doesn't spawn new work, complete the current work.
+  // [!code highlight]
+  completeUnitOfWork(unitOfWork);
+} else {
+  workInProgress = next;
+}
+```
+
+`beginWork`에서는 `workInProgress`를 처리하고 다음에 처리할 자식 Fiber를 반환하는데, 반환값이 없다는건 잎 노드로 왔다는 것이다. 우리 예제의 경우 표시된 Fiber에 대해 `completeUnitOfWork`가 호출된다. 모두 잎 노드이다.
+
+```text
+HostRootFiber
+FunctionComponentFiber (App)
+HostComponentFiber (div)
+HostComponentFiber (p)
+FunctionComponentFiber (Link)
+// [!code highlight]
+HostComponentFiber (a)
+// [!code highlight]
+HostComponentFiber (br)
+HostComponentFiber (button)
+// [!code highlight]
+HostTextFiber 
+// [!code highlight]
+HostTextFiber 
+```
+
+`completeUnitOfWork`를 살펴보자:
+
+```js
+function completeUnitOfWork(unitOfWork: Fiber): void {
+  // [!code highlight:2]
+  // Attempt to complete the current unit of work, then move to the next
+  // sibling. If there are no more siblings, return to the parent fiber.
+  let completedWork: Fiber = unitOfWork;
+  do {
+    ...
+    const current = completedWork.alternate;
+    const returnFiber = completedWork.return;
+
+    const next = completeWork(current, completedWork, entangledRenderLanes);
+    ...
+
+    // [!code highlight:6]
+    // sibling fiber가 있으면 workInProgress를 이로 지정하고 리턴한다.
+    const siblingFiber = completedWork.sibling;
+    if (siblingFiber !== null) {
+      workInProgress = siblingFiber;
+      return;
+    }
+    
+    // [!code highlight:2]
+    // sibling fiber가 없으면 부모 노드로 올라가 반복한다.
+    completedWork = returnFiber;
+  } while (completedWork !== null);
+
+  ...
+}
+```
+
+`beginWork`에서는 아래로 내려갈 때 `workInProgress`를 설정하고, `completeUnitOfWork`에서는 위로 올라갈 때 `workInProgress`를 설정한다고 이해하면 되겠다.
+
+위 코드에서 `siblingFiber`가 없다는건 현재 노드가 부모 노드의 마지막 자식 노드라는 것이다. 따라서 부모 노드에 대해 `completeWork`가 호출되었다면 모든 자식 노드에 대해 이미 `completeWork`가 호출되었음을 보장할 수 있다.
+
+이해를 돕기 위해 completeWork가 호출되는 순서를 찍어보면 다음과 같다:
+
+```
+HostComponentFiber (a)
+FunctionComponentFiber (Link)
+HostComponentFiber (br)
+HostTextFiber ("click me -")
+HostTextFiber ("0")
+HostComponentFiber (button)
+HostComponentFiber (p)
+HostComponentFiber (div)
+FunctionComponentFiber (App)
+HostRootFiber
+```
+
+## completeWork
+
+`completeWork`에서는 마침내! DOM을 실제로 생성한다. 900줄짜리 함수지만 핵심만 살펴보자... Fiber의 stateNode 필드에 DOM node를 설정함을 기억하자.
+
+```js
+import {
+  createInstance,
+  ...
+} from './ReactFiberConfig';
+
+function completeWork(
+  current: Fiber | null,
+  workInProgress: Fiber,
+  renderLanes: Lanes,
+): Fiber | null {
+  const newProps = workInProgress.pendingProps;
+  popTreeContext(workInProgress);
+  switch (workInProgress.tag) {
+    ...
+    case FunctionComponent:
+       bubbleProperties(workInProgress);
+       return null;
+    ...
+    case HostComponent: {
+      popHostContext(workInProgress);
+      const type = workInProgress.type;
+
+      if (current !== null && workInProgress.stateNode != null) {
+       ...
+      } else {
+          ...
+        if (wasHydrated) {
+          ...
+        } else {
+          const rootContainerInstance = getRootHostContainer();
+          // [!code highlight:7]
+          const instance = createInstance(
+            type,
+            newProps,
+            rootContainerInstance,
+            currentHostContext,
+            workInProgress,
+          );
+          
+          markCloned(workInProgress);
+          // [!code highlight:2]
+          // 이미 만들어졌을 자식 Fiber들의 DOM node들을 연결한다.
+          appendAllChildren(instance, workInProgress, false, false);
+
+          // [!code highlight:2]
+          // 이제 이 workInProgress의 DOM node가 설정되었다.
+          workInProgress.stateNode = instance;
+
+          // a 태그의 자식 텍스트는 여기서 설정한다.
+          if (
+            finalizeInitialChildren(
+              instance,
+              type,
+              newProps,
+              currentHostContext,
+            )
+          ) {
+            markUpdate(workInProgress);
+          }
+        }
+      }
+      ...
+      return null;
+    }
+    // 아까 button의 자식 텍스트들은 여기서 처리한다.
+    case HostText: {
+      const newText = newProps;
+      if (current && workInProgress.stateNode != null) {
+        ...
+      } else {
+        ...
+        const rootContainerInstance = getRootHostContainer();
+        const currentHostContext = getHostContext();
+        const wasHydrated = popHydrationState(workInProgress);
+        if (wasHydrated) {
+          ...
+        } else {
+          markCloned(workInProgress);
+          // [!code highlight:5]
+          workInProgress.stateNode = createTextInstance(
+            newText,
+            rootContainerInstance,
+            currentHostContext,
+            workInProgress,
+          );
+        }
+      }
+      bubbleProperties(workInProgress);
+      return null;
+    }
+    ...
+  }
+
+  throw new Error(
+    `Unknown unit of work tag (${workInProgress.tag}). This error is likely caused by a bug in ` +
+      'React. Please file an issue.',
+  );
+}
+```

@@ -1,0 +1,7 @@
+.sp-layout {
+  --sp-layout-height: 384px;
+}
+
+.sp-console {
+  max-height: 128px;
+}

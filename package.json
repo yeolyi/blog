@@ -12,6 +12,7 @@
     "db-type": "supabase gen types typescript --project-id jfzhtdcyaqwgugipnmhs > database.types.ts"
   },
   "dependencies": {
+    "@codesandbox/sandpack-react": "^2.20.0",
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
     "@next/bundle-analyzer": "^15.4.0-canary.51",

@@ -1,0 +1,12 @@
+export const order = [
+  'setup',
+  'trigger-schedule-render-commit',
+  'react-dom-is-simple',
+  'initial-trigger',
+  'fiber-traverse',
+  'perform-unit-of-work',
+  'begin-work-host-root',
+  'begin-work-app',
+  'complete-work',
+  'initial-commit',
+];

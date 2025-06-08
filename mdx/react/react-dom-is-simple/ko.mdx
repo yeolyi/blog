@@ -1,0 +1,142 @@
+export const title = 'ReactDOM은 생각보다 뭐 없다'
+
+## ReactDOM API 살펴보기
+
+리액트 프로젝트를 초기 설정할 때 아래와 같은 코드를 사용한다.
+
+```js
+import ReactDOM from 'react-dom/client';
+...
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+```
+
+ReactDOM의 `createRoot`만 써도 단순한 리액트 앱을 렌더하는데 문제 없다.
+
+## react-dom/client의 API는 3개뿐이다.
+
+'react-dom/client'의 진입점을 살펴보자. 아주 단순하다!
+
+```js
+export {createRoot, hydrateRoot, version} from './src/client/ReactDOMClient';
+```
+
+`hydrateRoot`는 SSR 관련이니 일단 넘어가고 `version`은 단순 string이다. 
+
+## createRoot는 껍데기이다.
+
+마지막 남은 `createRoot`를 살펴보기 위해 `ReactDOMClient.js` 파일을 살펴보자. 
+
+```js
+import {createRoot, hydrateRoot} from './ReactDOMRoot';
+import ReactVersion from 'shared/ReactVersion';
+...
+export {ReactVersion as version, createRoot, hydrateRoot};
+```
+
+`ReactDomRoot.js`에서 import한걸 그대로 reexport한다. 간략화시킨 `ReactDOMRoot.js`를 살펴보자.
+
+```js
+// [!code highlight:3]
+import {
+  createContainer,
+  updateContainer,
+} from 'react-reconciler/src/ReactFiberReconciler';
+
+function ReactDOMRoot(internalRoot) {
+  this._internalRoot = internalRoot;
+}
+
+// [!code highlight:3]
+// 최종적으로 updateContainer를 호출한다.
+// 이전에 만든 createRoot의 반환값과 우리가 render에 넘긴 컴포넌트를 인자로 넘긴다.
+ReactDOMRoot.prototype.render =
+  function (children) {
+    const root = this._internalRoot;
+    updateContainer(children, root, ...);
+  };
+
+// [!code highlight:3]
+// createContainer의 반환값을 ReactDOMRoot로 감싸 반환한다.
+export function createRoot(container, options?) {
+  const root = createContainer(container, ... );
+  return new ReactDOMRoot(root);
+}
+```
+
+이렇게 보면 ReactDOM은 사실상 `createContainer`와 `updateContainer`를 호출해주는 래퍼 객체 느낌이다. 얘네들은 **react-reconciler** 패키지에서 가져오는데 이건 뭐하는 패키지일까?
+
+## react-reconciler
+
+React의 상태 변화와 컴포넌트 트리 업데이트를 처리하는 핵심 알고리즘을 구현한 패키지이다. ReactDOM, ReactNative, ReactART(벡터 그래픽) 모두 내부적으로 이걸 사용한다.
+
+react-reconciler를 사용하는 쪽에서 reconciler에 HostConfig를 제공하면 reconciler에서 이 설정을 기반으로 어떤 요소를 언제 만들고 업데이트할지 계산하고 실제 조작하는 작업은 HostConfig에 위임한다. 
+
+**즉, react-reconciler는 리액트의 렌더링 로직을 플랫폼과 분리해 공통화하고, 다양한 환경에 대응 가능한 유연한 렌더러 구조를 가능하게 해준다**.
+
+하지만 코드를 보면 알겠지만 ReactDOM에서 `HostConfig`라는걸 설정하는 부분을 찾아볼 수 없다. 냅다 react-reconciler 패키지를 가져다 쓰는데 DOM 관련된 코드는 어디있는걸까??
+
+react-reconciler의 `ReactFiberConfig.js` 파일을 보면 알 수 있다:
+
+```js
+// [!code highlight:7]
+// We expect that our Rollup, Jest, and Flow configurations
+// always shim this module with the corresponding host config
+// (either provided by a renderer, or a generic shim for npm).
+//
+// We should never resolve to this file, but it exists to make
+// sure that if we *do* accidentally break the configuration,
+// the failure isn't silent.
+
+throw new Error('This module must be shimmed by a specific renderer.');
+
+```
+
+ReactDOM를 빌드할 때 바꿔치기?가 되나보다. 상상도 못한 방법이라서 찾는데 한참 걸렸다... 왜 외부에서 명시적으로 주입하지 않고 이런 방식을 사용했는지는 아직 모르겠다. 최적화가 잘되나?
+
+관련 코드는 react-dom-bindings 패키지에 있다. 살펴보면 아래처럼 `createElement`같은 DOM 함수들이 드문드문 보인다. 
+
+```js
+// react-dom-bindings/src/client/ReactFiberConfigDOM.js
+function preloadStylesheet(ownerDocument, ... ) {
+  ...
+  const instance = ownerDocument.createElement('link');
+  ...
+  instance.addEventListener('load', () => (state.loading |= Loaded));
+  instance.addEventListener('error', () => (state.loading |= Errored));
+  ...
+  ownerDocument.head.appendChild(instance);
+}
+```
+
+암튼 이제부터는 ReactDOM보다는 react-reconciler 위주로 살펴보자. 
+
+## 직접 확인해보기
+
+`createRoot`의 반환값에서 `_internalRoot`를 찍어보면 아래처럼 나온다.
+
+<Code template="react" files={{
+    'index.js': `
+import ReactDOM from "react-dom/client";
+import App from "./App";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+// 맘같아서는 root를 바로 프린트하고 싶은데
+// 샌박 환경이라그런가 이상하게 나와서 constructor.name으로 했다.
+console.log(root._internalRoot.constructor.name);
+root.render(<App />);
+
+`,
+'App.js': `
+import React from "react";
+
+export default function App() {
+    return <h1>Hello</h1>;
+}
+`
+}}
+showTabs
+options={{
+    activeFile: 'index.js',
+}}
+/>

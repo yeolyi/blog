@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { Locale } from 'next-intl';
 
-const fetchPostIds = async (locale: Locale, subDir?: string) => {
+export const getMdxIds = async (locale: Locale, subDir?: string) => {
   const postsDirectory = path.join(process.cwd(), 'mdx', subDir ?? '');
   const directories = fs.readdirSync(postsDirectory, { withFileTypes: true });
 
@@ -16,6 +16,7 @@ const fetchPostIds = async (locale: Locale, subDir?: string) => {
     .map((dirent) => dirent.name);
 };
 
+// TODO: 없애기
 export const getPostIds = async (locale: Locale, subDir?: string) => {
-  return await fetchPostIds(locale, subDir);
+  return await getMdxIds(locale, subDir);
 };

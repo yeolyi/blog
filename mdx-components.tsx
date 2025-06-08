@@ -1,5 +1,7 @@
+import Code from '@/components/mdx/Code';
 import Image from '@/components/mdx/Image';
 import Pre from '@/components/mdx/Pre';
+import { Link } from '@/i18n/navigation';
 import type { MDXComponents } from 'mdx/types';
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
@@ -15,5 +17,7 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     },
     pre: Pre,
     Image,
+    Code,
+    Link,
   };
 }

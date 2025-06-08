@@ -1,0 +1,327 @@
+export const title = '첫번째 Fiber의 처리 과정'
+
+import typeOfSymbol from './assets/type-of-symbol.png'
+
+HostRootFiber가 beginWork에서 처리되는 과정을 살펴보자.
+
+## beginWork
+
+`beginWork`는 사실상 커다란 switch-case문으로 workInProgress의 tag에 따라 서로 다른 update 함수를 호출한다.
+
+```js
+function beginWork(
+  current: Fiber | null,
+  workInProgress: Fiber,
+  renderLanes: Lanes,
+): Fiber | null {
+  ...
+  switch (workInProgress.tag) {
+    case FunctionComponent: {
+      ...
+      return updateFunctionComponent(
+        current,
+        workInProgress,
+        Component,
+        resolvedProps,
+        renderLanes,
+      );
+    }
+    // [!code highlight:2]
+    case HostRoot:
+      return updateHostRoot(current, workInProgress, renderLanes);
+    case HostComponent:
+      return updateHostComponent(current, workInProgress, renderLanes);
+    case HostText:
+      return updateHostText(current, workInProgress);
+    ...
+  }
+}
+```
+
+## updateHostRoot
+
+```js
+function updateHostRoot(
+  current: null | Fiber,
+  workInProgress: Fiber,
+  renderLanes: Lanes,
+) {
+  // [!code highlight:3]
+  // trigger phase에서 넘겼던 데이터를 추출해 
+  // workInProgress의 memoizedState에 할당한다.
+  processUpdateQueue(workInProgress, nextProps, null, renderLanes);
+
+  const nextState: RootState = workInProgress.memoizedState;
+  // [!code highlight:2]
+  // root.render에 넘겼던 element을 얻어냈다!
+  const nextChildren = nextState.element;
+
+  if (supportsHydration && prevState.isDehydrated) {
+    ...
+  } else {
+    ...
+    if (nextChildren === prevChildren) {
+      return bailoutOnAlreadyFinishedWork(current, workInProgress, renderLanes);
+    }
+    // [!code highlight]
+    reconcileChildren(current, workInProgress, nextChildren, renderLanes);
+  }
+  return workInProgress.child;
+}
+```
+
+Update queue를 처리한 뒤 reconcileChildren을 호출한다. 
+
+## reconcileChildren
+
+`reconcileChildren`은 아주 핵심적인 함수이다.
+
+`nextChildren`(여기서는 `<App/>`)을 보며 `workInProgress` 트리를 만들어내되 기존 UI를 나타내는 `current`트리와 비교하며 삭제하거나 수정해야할 Fiber의 플래그를 세운다.
+
+이 작업은 한 번에 한 개 Fiber씩 하는데 필요하다면 다음에 방문해야할 노드를 `workInProgress.child`에 설정해 다음 performUnitOfWork에서 방문한다.
+
+```js
+export function reconcileChildren(
+  // updateContainer에서 업데이트 큐에 넣어둔 HostRootFiber
+  current: Fiber | null,
+  // prepareFreshStack에서 만든 HostRootFiber
+  workInProgress: Fiber,
+  // <App/>
+  nextChildren: any,
+  renderLanes: Lanes,
+) {
+  if (current === null) {
+    workInProgress.child = mountChildFibers(
+      workInProgress,
+      null,
+      nextChildren,
+      renderLanes,
+    );
+  } else {
+    // [!code highlight:7]
+    // 지금 current는 HostRootFiber이므로 여기로 간다.
+    workInProgress.child = reconcileChildFibers(
+      workInProgress,
+      current.child,
+      nextChildren,
+      renderLanes,
+    );
+  }
+}
+```
+
+## mountChildFibers vs reconcileChildFibers
+
+두 함수는 `createChildReconciler`에 전달되는 인자만 다르다. 
+
+```js
+export const reconcileChildFibers: ChildReconciler =
+  createChildReconciler(true);
+export const mountChildFibers: ChildReconciler = createChildReconciler(false);
+```
+
+`createChildReconciler`는 아래와 같이 구현되어있다. `shouldTrackSideEffects`을 사용하는 여러 함수가 본문에 정의되어있다. 
+
+```js
+function createChildReconciler(
+  shouldTrackSideEffects: boolean,
+): ChildReconciler {
+  function deleteChild(){}
+  function deleteRemainingChildren(){}
+  ...
+  function placeChild(){}
+  function placeSingleChild(){}
+  function updateTextNode(){}
+  function updateElement(){}
+  ...
+  function createChild(){}
+  ...
+  function reconcileChildrenArray(){}
+  ...
+  function reconcileSingleTextNode(){}
+  function reconcileSingleElement(){}
+  ...
+
+  // [!code highlight:4]
+  function reconcileChildFibersImpl(){}
+  function reconcileChildFibers(){}
+
+  return reconcileChildFibers;
+}
+```
+
+`reconcileChildFibers`면 `shouldTrackSideEffects`가 true, `shouldTrackSideEffects`가 false이다. 원래 없던 Fiber 노드를 새로 마운트하는 경우에는 side effect (자식이 바뀌었다던가)가 있을 수 없고 그냥 새로 붙이면 되므로 따로 side effect를 추적하지 않음으로서 최적화한다.
+
+## reconcileChildFibers
+
+`reconcileChildFibers`에 전달하는 인자들을 돌아보자. 
+
+```js
+workInProgress.child = reconcileChildFibers(
+    // prepareFreshStack에서 만든 HostRootFiber
+    workInProgress,
+    // current는 updateContainer에서 업데이트 큐에 넣어둔 HostRootFiber
+    // current가 아닌 current.child를 넘겨주는데
+    // current.child를 보고 workInProgress.child를 만드는 함수라고 이해하자.
+    current.child,
+    // <App/>
+    nextChildren,
+    renderLanes,
+);
+```
+
+`reconcileChildFibers`는 `reconcileChildFibersImpl`을 호출하고 예외처리를 한 것이다. 바로 `reconcileChildFibersImpl`을 살펴보자. newChild의 종류에 따라 분기한다. 
+
+```js  
+function reconcileChildFibersImpl(
+  // [!code highlight:3]
+  // 전달인자명은 workInProgress이었지만 매개변수명은 returnFiber이다
+  // 현재 처리중인 Fiber의 부모 노드가 될 것이니 맞긴하다.
+  returnFiber: Fiber,
+  currentFirstChild: Fiber | null,
+  newChild: any,
+  lanes: Lanes,
+): Fiber | null {
+  // Handle object types
+  if (typeof newChild === 'object' && newChild !== null) {
+    switch (newChild.$$typeof) {
+      // [!code highlight:15]
+      // 여기서는 React Element를 처리한다.
+      // 예를 들어 <App/>의 $$typeof는 REACT_ELEMENT_TYPE이다.
+      case REACT_ELEMENT_TYPE: {
+        const prevDebugInfo = pushDebugInfo(newChild._debugInfo);
+        const firstChild = placeSingleChild(
+          reconcileSingleElement(
+            returnFiber,
+            currentFirstChild,
+            newChild,
+            lanes,
+          ),
+        );
+        currentDebugInfo = prevDebugInfo;
+        return firstChild;
+      }
+      case REACT_PORTAL_TYPE:
+        ...
+      case REACT_LAZY_TYPE: 
+        ...
+    }
+
+    ...
+
+    throwOnInvalidObjectType(returnFiber, newChild);
+  }
+
+  if (
+    (typeof newChild === 'string' && newChild !== '') ||
+    typeof newChild === 'number' ||
+    typeof newChild === 'bigint'
+  ) {
+    // [!code highlight:8]
+    // 여기서는 텍스트 노드를 처리한다.
+    return placeSingleChild(
+      reconcileSingleTextNode(
+        returnFiber,
+        currentFirstChild,
+        '' + newChild,
+        lanes,
+      ),
+    );
+  }
+
+  // Remaining cases are all treated as empty.
+  return deleteRemainingChildren(returnFiber, currentFirstChild);
+}
+```
+
+`beginWork`에서 했던 분기와 헷갈릴 수 있는데 그 때는 Fiber의 종류에 따른 분기, 이번에는 Element의 종류에 따른 분기이다. 
+
+분기들에 `reconcileSingleTextNode`와 `placeSingleChild`가 공통적으로 사용됨을 확인할 수 있다.
+
+<details>
+<summary>$$typeof 구경</summary>
+
+`$$typeof`가 나온김에 살펴보자면 `shared/ReactSymbols.js`에 아래와 같이 이것저것 심볼로 정의되어있다:
+
+```js
+// The Symbol used to tag the ReactElement-like types.
+export const REACT_LEGACY_ELEMENT_TYPE: symbol = Symbol.for('react.element');
+export const REACT_ELEMENT_TYPE: symbol = renameElementSymbol
+  ? Symbol.for('react.transitional.element')
+  : REACT_LEGACY_ELEMENT_TYPE;
+export const REACT_PORTAL_TYPE: symbol = Symbol.for('react.portal');
+export const REACT_FRAGMENT_TYPE: symbol = Symbol.for('react.fragment');
+...
+```
+
+`console.log(<App/>)`만 찍어봐도 바로 확인할 수 있다. `$$typeof`에 대한 더 많은 내용은 https://overreacted.io/why-do-react-elements-have-typeof-property/ 에서 확인할 수 있다.
+
+<Image src={typeOfSymbol} alt=""/>
+
+</details>
+
+### reconcileSingleElement
+
+```js
+  function reconcileSingleElement(
+    returnFiber: Fiber,
+    currentFirstChild: Fiber | null,
+    element: ReactElement,
+    lanes: Lanes,
+  ): Fiber {
+    const key = element.key;
+    let child = currentFirstChild;
+    while (child !== null) {
+      // 초기 렌더시에는 child가 null이므로 해당하지 않는다.
+      ...
+    }
+
+    if (element.type === REACT_FRAGMENT_TYPE) {
+      ...
+    } else {
+      // [!code highlight:4]
+      const created = createFiberFromElement(element, returnFiber.mode, lanes);
+      coerceRef(created, element);
+      created.return = returnFiber;
+      return created;
+    }
+  }
+```
+
+간단하다.  `createFiberFromElement`로 `<App/>` element를 나타내는 **새로운 Fiber**를 만들어 반환한다. createFiberFromElement의 내부 코드를 보면 element의 타입에 따라 Fiber의 tag를 결정하는 길고 긴 switch문이 있음을 확인할 수 있다.
+
+자세히는 살펴보지 않겠지만 여기서 App 함수가 실행되는 것은 아니라는 점을 참고하자. 그저 App 함수 컴포넌트를 나타내는 Fiber 객체를 만들 뿐이다. 
+
+반환값을 보면 아래처럼 생겼다:
+
+```txt
+FiberNode {
+  ...
+  elementType: App,
+  tag: 0, 
+  type: App,
+  ...
+}
+```
+
+### placeSingleChild
+
+만들어진 Fiber는 `placeSingleChild`에서 Placement 플래그가 세워진다.
+
+```js
+function placeSingleChild(newFiber: Fiber): Fiber {
+  // [!code highlight:4]
+  // 아까 reconcile vs mount할 때 봤던 shouldTrackSideEffects가 나온다.
+  // 지금은 reconcile중이라 true이므로 newFiber에 flag를 세운다.
+  if (shouldTrackSideEffects && newFiber.alternate === null) {
+    newFiber.flags |= Placement | PlacementDEV;
+  }
+  return newFiber;
+}
+```
+
+## 다음 순회
+
+`placeSingleChild`에서 반환한 값은 `beginWork`에서 그대로 반환하고 `performUnitOfWork`에서 다음 `workInProgress`로 설정된다. 
+
+결과적으로 다음 `performUnitOfWork`에서는 이 새로 만든 Fiber에 대해 작업을 시작한다. 

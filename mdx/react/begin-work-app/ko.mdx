@@ -1,0 +1,336 @@
+export const title = '나머지 Fiber를 조립하는 과정'
+
+## 복습
+
+잠시 복습을 해보자. 아래 App 컴포넌트가 렌더되는 과정을 따라가고 있었다. 
+
+```jsx
+import { useState } from 'react';
+
+function Link() {
+  return <a href="https://yeolyi.com">yeolyi.com</a>;
+}
+
+export default function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>
+        <Link />
+        <br />
+        <button onClick={() => setCount((count) => count + 1)}>
+          click me - {count}
+        </button>
+      </p>
+    </div>
+  );
+}
+```
+
+리액트 렌더링 과정은 새로운 Fiber 트리를 만들어내는 과정이다. `workInProgress` 변수는 새로운 Fiber 트리에서 현재 작업중인 Fiber를 가리킨다. `current`는 기존 Fiber 트리에서 `workInProgress`에 대응되는 노드를 가리킨다. 
+
+`performUnitOfWork`는 `workInProgress`를 인자로 받아 작업을 수행하며 리턴할 시점에 `workInProgress`는 다음 작업해야할 Fiber 노드를 가리키게 된다. 
+
+```js
+// The work loop is an extremely hot path. Tell Closure not to inline it.
+/** @noinline */
+function workLoopSync() {
+  // Perform work without checking if we need to yield between fiber.
+  while (workInProgress !== null) {
+    performUnitOfWork(workInProgress);
+  }
+}
+```
+
+초기 렌더링 시에 `current`는 ReactDOM.createRoot 시점에 만들어진 HostRootFiber를 가리키며 `workInProgress`는 `prepareFreshStack`에서 만들어진 HostRootFiber를 가리킨다. 
+
+**따라서 첫 `performUnitOfWork`의 인자로는 `HostRootFiber`가 건네진다. **
+
+이후 `reconcileChildFibers`에서는 `workInProgress`를 처리하며 `<App/>`을 나타내는 Fiber를 만들고 이를 `workinProgress`의 child 노드로 설정한다. 이후 작업을 마치면 `workInProgress = workInProgress.child`로 설정된다. 
+
+**따라서 두번째 `performUnitOfWork`의 인자로는 `<App/>`을 나타내는 Fiber가 건네진다.**
+
+## performUnitOfWork
+
+```js
+function performUnitOfWork(unitOfWork: Fiber): void {
+  // [!code highlight:3]
+  // `<App/>`에 대응되는 기존 Fiber는 없다.
+  // 즉 current는 null이다.
+  const current = unitOfWork.alternate;
+
+  const next = beginWork(current, unitOfWork, entangledRenderLanes);
+
+  unitOfWork.memoizedProps = unitOfWork.pendingProps;
+
+  if (next === null) {
+    // If this doesn't spawn new work, complete the current work.
+    completeUnitOfWork(unitOfWork);
+  } else {
+    workInProgress = next;
+  }
+}
+```
+
+unitOfWork = workInProgress = `<App/>` Fiber 임을 기억하자. 
+
+## beginWork
+
+이전에 만든 App을 나타내는 Fiber는 `FunctionComponent tag(0)`를 가지고 있다. 따라서 이번에는 HostRoot가 아닌 FunctionComponent tag에 대한 분기로 빠진다. 
+
+```js
+function beginWork(
+  current: Fiber | null,
+  workInProgress: Fiber,
+  renderLanes: Lanes,
+): Fiber | null {
+  ...
+  switch (workInProgress.tag) {
+    case FunctionComponent: {
+      const Component = workInProgress.type;
+      const unresolvedProps = workInProgress.pendingProps;
+      const resolvedProps =
+        disableDefaultPropsExceptForClasses ||
+        workInProgress.elementType === Component
+          ? unresolvedProps
+          : resolveDefaultPropsOnNonClassComponent(Component, unresolvedProps);
+      // [!code highlight:7]
+      return updateFunctionComponent(
+        current,
+        workInProgress,
+        Component,
+        resolvedProps,
+        renderLanes,
+      );
+    }
+    ...
+  }
+}
+```
+
+우리가 만든 컴포넌트 함수가 `Component`라는 이름으로 등장한다! 해당 함수를 호출할 때 필요한 prop도 추출되었다. 프린트를 찍어보면 각각 `App`, `{}`임을 확인할 수 있다.
+
+## updateFunctionComponent
+
+`reconcileChildren`이 호출되는건 `updateHostRoot`와 동일하지만 업데이트 큐에서 자식 Element를 얻어낸 지난번과 다르게 이번에는 `renderWithHooks`에서 `nextChildren`을 얻어낸다. 
+
+```js
+function updateFunctionComponent(
+  // null
+  current: null | Fiber,
+  // <App/>에 대응되는 Fiber
+  workInProgress: Fiber,
+  // App 함수
+  Component: any,
+  nextProps: any,
+  renderLanes: Lanes,
+) {
+  let context;
+  let nextChildren;
+  let hasId;
+
+  prepareToReadContext(workInProgress, renderLanes);
+
+  // [!code highlight:8]
+  nextChildren = renderWithHooks(
+    current,
+    workInProgress,
+    Component,
+    nextProps,
+    context,
+    renderLanes,
+  );
+
+  if (current !== null && !didReceiveUpdate) {
+    bailoutHooks(current, workInProgress, renderLanes);
+    return bailoutOnAlreadyFinishedWork(current, workInProgress, renderLanes);
+  }
+
+  if (getIsHydrating() && hasId) {
+    pushMaterializedTreeId(workInProgress);
+  }
+
+  // [!code highlight:4]
+  // current가 null이므로 이번에는 mountChildFibers가 호출된다.
+  reconcileChildren(current, workInProgress, nextChildren, renderLanes);
+  // App 하위의 div가 workInProgress.child로 설정되었다.
+  return workInProgress.child;
+}
+```
+
+`renderWithHooks`의 구현은 훅을 살펴봐야하기에 나중에 살펴보겠지만 아래처럼 우리가 만든 Component 함수를 호출하는 부분이 있음만 짚고 넘어가자. 
+
+```js
+let children = __DEV__
+    ? callComponentInDEV(Component, props, secondArg)
+    : Component(props, secondArg);
+```
+
+`nextChildren`을 로그 찍어보면 아래와 같으니 참고. App의 반환값에 최상단 div를 나타내는 Element가 있음을 확인할 수 있다. div의 자식 요소들은 props.children에 담겨있다.
+
+```txt
+{$$typeof: Symbol(react.transitional.element), type: 'div', key: null, props: {…}, _owner: FiberNode, …}
+```
+
+## reconcileChildren
+
+최적화를 위해 기존 Fiber 트리의 유무에 따라 side effect를 추적하는 플래그를 기록할지 말지 결정하는 분기가 있음을 살펴봤었다. 
+
+App fiber에 해당하는 기존 Fiber 노드가 없으므로 이번에는 `mountChildFibers`가 호출되어 따로 수정사항에 대한 플래그를 기록하지 않는다 👍
+
+```js
+export function reconcileChildren(
+  current: Fiber | null,
+  workInProgress: Fiber,
+  nextChildren: any,
+  renderLanes: Lanes,
+) {
+  if (current === null) {
+    // [!code highlight:10]
+    // If this is a fresh new component that hasn't been rendered yet, we
+    // won't update its child set by applying minimal side-effects. Instead,
+    // we will add them all to the child before it gets rendered. That means
+    // we can optimize this reconciliation pass by not tracking side-effects.
+    workInProgress.child = mountChildFibers(
+      workInProgress,
+      null,
+      nextChildren,
+      renderLanes,
+    );
+  } else {
+   ...
+  }
+}
+```
+
+workInProgress.child는 div에 해당하는 Fiber를 가리키게 되고 다음 performUnitOfWork에서는 이 Fiber를 처리할 것이다. 
+
+`mountChildFibers`의 내부는 지난번과 유사하니 넘어가고, 반환값만 찍어보자. 
+
+```text
+FiberNode {tag: 5, key: null, elementType: 'div', type: 'div',… }
+```
+
+지난번에 App Fiber 때와는 다르게 tag가 이번에는 0(FunctionComponent, App)이 아니고 5(HostComponent, div)임을 확인할 수 있다. 
+
+## 나머지...
+
+div와 p에 해당하는 Fiber를 처리할 때는 기존과 유사하다. `updateHostComponent`도 결국 `mountChildFibers`와 `reconcileChildren`을 호출한다.
+
+다만 p를 처리할 때는 배열을 자식으로 가지기에 `reconcileChildren` 내부에서 `reconcileChildrenArry`가 호출되는데 이건 `key`에 연관되어 목잡해지므로 다음에 살펴보자. 
+
+a, br, button을 처리할 때 모두 `updateHostComponent`가 호출된다. 다만 a와 button 모두 텍스트를 자식으로 가지지만 처리가 조금씩 다르니 이 부분만 확인해보자. 참고로 두 부분은 각각 이렇게 생겼었다:
+
+```jsx
+// a
+<a href="https://yeolyi.com">yeolyi.com</a>
+
+// button
+<button onClick={() => setCount((count) => count + 1)}>
+    click me - {count}
+</button>
+```
+
+### 텍스트 자식을 가진 경우
+
+`workInProgress`가 a에 해당하는 Fiber일 때 `workInProgress`를 찍어보면 아래와 같다:
+
+```txt
+FiberNode {
+    ...
+    pendingProps: {
+        href: 'https://yeolyi.com',
+        children: 'yeolyi.com'
+    },
+    ...
+}
+```
+
+`updateHostComponent`에서 이 Fiber를 어떻게 처리하는지 확인해보자:
+
+```js
+function updateHostComponent(
+  current: Fiber | null,
+  workInProgress: Fiber,
+  renderLanes: Lanes,
+) {
+  ...
+  const type = workInProgress.type;
+  const nextProps = workInProgress.pendingProps;
+  const prevProps = current !== null ? current.memoizedProps : null;
+
+  let nextChildren = nextProps.children;
+  const isDirectTextChild = shouldSetTextContent(type, nextProps);
+
+  if (isDirectTextChild) {
+    // [!code highlight:5]
+    // We special case a direct text child of a host node. This is a common
+    // case. We won't handle it as a reified child. We will instead handle
+    // this in the host environment that also has access to this prop. That
+    // avoids allocating another HostText fiber and traversing it.
+    nextChildren = null;
+  } else {
+    ...
+  }
+
+  ...
+  reconcileChildren(current, workInProgress, nextChildren, renderLanes);
+  return workInProgress.child;
+}
+```
+
+주석이 말하는대로 텍스트 자식을 가지는 경우에는 nextChildren을 null로 설정하고 `reconcileChildren`를 호출한다. 
+
+### 텍스트 자식들을 가지는 경우
+
+`workInProgress`가 button에 해당하는 Fiber일 때 `workInProgress`를 찍어보면 아래와 같다:
+
+```txt
+FiberNode {
+    ...
+    pendingProps: {
+        onClick: ƒ,
+        children: ['click me - ', 0]
+    },
+    ...
+}
+```
+
+
+`updateHostComponent`에서는 이전처럼 `nextChildren`을 null처리하지 않고 이 배열을 `reconcileChildren`에 건네준다. 이후 아래와 같이 텍스트를 나타내는 Fiber가 두 개 만들어진다:
+
+```txt
+FiberNode { tag: 6, pendingProps: "click me -"}
+FiberNode { tag: 6, pendingProps: "0"}
+```
+
+나중에 이들 Fiber를 처리할 때가 되면 `updateHostTest`가 호출된다. 의외로 `updateHostTest`는 별다른 처리 없이 그냥 리턴한다. 텍스트를 추가하는 작업은 Commit phase에서 하기 때문이다.
+
+```js
+function updateHostText(current: null | Fiber, workInProgress: Fiber) {
+  if (current === null) {
+    tryToClaimNextHydratableTextInstance(workInProgress);
+  }
+  // Nothing to do here. This is terminal. We'll do the completion step
+  // immediately after.
+  return null;
+}
+```
+
+이를 통해 Fiber 순회 순서를 로그 찍어봤을 때 a 하위에 Text Fiber는 없는데 button에는 있는 이유를 알 수 있다.
+
+```text
+HostRootFiber
+FunctionComponentFiber (App)
+HostComponentFiber (div)
+HostComponentFiber (p)
+FunctionComponentFiber (Link)
+// [!code highlight]
+HostComponentFiber (a)
+HostComponentFiber (br)
+// [!code highlight:3]
+HostComponentFiber (button)
+HostTextFiber 
+HostTextFiber 
+```

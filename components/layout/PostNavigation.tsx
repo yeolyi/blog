@@ -3,19 +3,21 @@
 import { ChevronLeft, ChevronRight, List } from 'lucide-react';
 
 import { Link } from '@/i18n/navigation';
-import { order } from '@/mdx/cs';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
 
 export default function PostNavigation({
   id,
+  subDir,
   className,
+  order,
 }: {
   id: string;
+  subDir: string;
   className?: string;
+  order: string[];
 }) {
   const t = useTranslations('PostNavigation');
-  const tCurriculum = useTranslations('Curriculum');
 
   const currentIndex = order.indexOf(id);
   const prevPostIndex = currentIndex > 0 ? currentIndex - 1 : null;
@@ -34,7 +36,7 @@ export default function PostNavigation({
     >
       {prevPostId ? (
         <Link
-          href={`/cs/${prevPostId}`}
+          href={`/${subDir}/${prevPostId}`}
           className="flex items-center gap-1 flex-1 justify-start"
         >
           <ChevronLeft size={16} />
@@ -45,7 +47,7 @@ export default function PostNavigation({
       )}
 
       <Link
-        href="/cs"
+        href={`/${subDir}`}
         className="flex items-center gap-1 justify-center flex-1justify-center"
       >
         <List size={16} />
@@ -54,7 +56,7 @@ export default function PostNavigation({
 
       {nextPostId ? (
         <Link
-          href={`/cs/${nextPostId}`}
+          href={`/${subDir}/${nextPostId}`}
           className="flex items-center gap-1 flex-1 justify-end"
         >
           <span>{t('next')}</span>
