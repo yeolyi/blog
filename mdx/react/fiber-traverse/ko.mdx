@@ -1,6 +1,6 @@
 export const title = '리액트는 트리를 조금 다르게 순회함'
 
-본격적인 렌더 과정을 보기 전에, 리액트 Fiber 트리가 어떻게 구성되어있는지 살펴보자.
+본격적인 렌더 과정을 보기 전에 사전지식으로 리액트 Fiber 트리가 어떻게 구성되어있는지 살펴보자.
 
 ## 일반적인 트리 구성
 
@@ -42,6 +42,8 @@ export type Fiber = {
 `children` 배열 대신에 `child`, `sibling` 필드를 사용한다. 즉 부모 노드에서 모든 자식 노드를 배열로 관리하는 것이 아니라 부모 노드는 첫번쨰 자식만 `child`로 가지고 있고 나머지 자식 노드는 첫번째 자식 노드의 `sibling`으로 접근하는 식이다. 
 
 ## 직접 확인해보기
+
+이런 형태의 트리는 아래 `traverse` 함수처럼 순회할 수 있다. `App` 컴포넌트의 구조와 함수 출력을 비교해보자.
 
 <Code template="react" files={{
     'index.js': `import React from "react";

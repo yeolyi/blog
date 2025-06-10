@@ -1,6 +1,6 @@
 export const title = '이제 DOM 요소가 만들어진다'
 
-`performUnitOfWork`에서 `beginWork`가 null을 반환하면 `completeUnitOfWork`가 호출됨을 언급했다. 
+`performUnitOfWork`에서 `beginWork`가 null을 반환하면 `completeUnitOfWork`가 호출된다.
 
 ```js
 next = beginWork(current, unitOfWork, entangledRenderLanes);
@@ -34,7 +34,8 @@ HostTextFiber
 HostTextFiber 
 ```
 
-`completeUnitOfWork`를 살펴보자:
+`completeUnitOfWork`를 살펴보자. 주석을 보며 `completeUnitOfWork`가 
+Fiber 트리를 어떻게 순회하는지 살펴보자.
 
 ```js
 function completeUnitOfWork(unitOfWork: Fiber): void {
@@ -67,11 +68,10 @@ function completeUnitOfWork(unitOfWork: Fiber): void {
 }
 ```
 
-`beginWork`에서는 아래로 내려갈 때 `workInProgress`를 설정하고, `completeUnitOfWork`에서는 위로 올라갈 때 `workInProgress`를 설정한다고 이해하면 되겠다.
+`siblingFiber`가 없다는건 현재 노드가 부모 노드의 마지막 자식 노드라는 것이다.
+따라서 부모 노드에 대해 `completeWork`가 호출되었다면 모든 자식 노드에 대해 이미 `completeWork`가 호출되었음을 보장할 수 있다.
 
-위 코드에서 `siblingFiber`가 없다는건 현재 노드가 부모 노드의 마지막 자식 노드라는 것이다. 따라서 부모 노드에 대해 `completeWork`가 호출되었다면 모든 자식 노드에 대해 이미 `completeWork`가 호출되었음을 보장할 수 있다.
-
-이해를 돕기 위해 completeWork가 호출되는 순서를 찍어보면 다음과 같다:
+이해를 돕기 위해 예제 앱에서 completeWork가 호출되는 순서를 찍어보면 다음과 같다:
 
 ```
 HostComponentFiber (a)
@@ -88,7 +88,8 @@ HostRootFiber
 
 ## completeWork
 
-`completeWork`에서는 마침내! DOM을 실제로 생성한다. 900줄짜리 함수지만 핵심만 살펴보자... Fiber의 stateNode 필드에 DOM node를 설정함을 기억하자.
+`completeWork`에서는 마침내! DOM을 실제로 생성한다. 900줄짜리 함수지만 핵심만 살펴보자. 
+Fiber의 stateNode 필드에 DOM node를 할당한다. ReactFiberConfig에서 필요한 함수를 가져다 쓴다.
 
 ```js
 import {
@@ -132,14 +133,14 @@ function completeWork(
           
           markCloned(workInProgress);
           // [!code highlight:2]
-          // 이미 만들어졌을 자식 Fiber들의 DOM node들을 연결한다.
+          // 자식 Fiber들의 DOM node들을 연결한다.
           appendAllChildren(instance, workInProgress, false, false);
 
           // [!code highlight:2]
-          // 이제 이 workInProgress의 DOM node가 설정되었다.
+          // workInProgress의 DOM node를 설정한다.
           workInProgress.stateNode = instance;
 
-          // a 태그의 자식 텍스트는 여기서 설정한다.
+          // a 태그의 자식 텍스트는 여기서 처리한다.
           if (
             finalizeInitialChildren(
               instance,

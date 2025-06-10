@@ -1,13 +1,11 @@
 'use client';
 
-import './style.css';
-
 import {
   SandpackConsole,
-  SandpackLayout,
   SandpackPreview,
   type SandpackProps,
   SandpackProvider,
+  defaultDark,
 } from '@codesandbox/sandpack-react';
 import dynamic from 'next/dynamic';
 
@@ -27,7 +25,15 @@ export default function Code(
   return (
     <SandpackProvider
       className="not-prose"
-      theme="dark"
+      theme={{
+        ...defaultDark,
+        font: {
+          ...defaultDark.font,
+          body: 'var(--font-monoplex-kr)',
+          mono: 'var(--font-monoplex-kr)',
+          size: '14px',
+        },
+      }}
       template="react"
       {...props}
       files={{
@@ -45,23 +51,33 @@ root.render(<App />);
         ...props.files,
       }}
       options={{
-        classes: {
-          'sp-editor': 'min-w-[384px]',
-          'sp-preview': 'min-w-[200px]',
-          'sp-console': 'min-w-[200px]',
-        },
         ...props.options,
+        bundlerURL: 'https://sandpack.yeolyi.com',
+        recompileDelay: 1000,
       }}
     >
-      <SandpackLayout>
+      <>
         <SandpackCodeEditor
+          className="h-fit"
           showTabs={props.showTabs ?? false}
           showLineNumbers={false}
           showInlineErrors={false}
         />
-        <SandpackPreview />
-        <SandpackConsole />
-      </SandpackLayout>
+        <PreviewWithLog />
+      </>
     </SandpackProvider>
   );
 }
+
+const PreviewWithLog = () => {
+  return (
+    <>
+      <SandpackPreview showOpenInCodeSandbox={false} />
+      <SandpackConsole
+        resetOnPreviewRestart
+        className="h-fit font-(var(--font-monoplex-kr)) text-base"
+        showResetConsoleButton={false}
+      />
+    </>
+  );
+};

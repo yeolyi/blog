@@ -107,7 +107,6 @@ export default async function Home() {
         <CSPostListItem
           title={tCS('hw5Title')}
           description={tCS('hw5Description')}
-          date="2025-06-09T08:00:00Z"
         />
 
         {[...Array(3)].map((_, idx) => (

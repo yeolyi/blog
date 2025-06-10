@@ -11,7 +11,7 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);
 ```
 
-ReactDOM의 `createRoot`만 써도 단순한 리액트 앱을 렌더하는데 문제 없다.
+ReactDOM의 `createRoot`만 사용해도 단순한 리액트 앱을 렌더하는데 충분함을 확인할 수 있다.
 
 ## react-dom/client의 API는 3개뿐이다.
 
@@ -34,10 +34,10 @@ import ReactVersion from 'shared/ReactVersion';
 export {ReactVersion as version, createRoot, hydrateRoot};
 ```
 
-`ReactDomRoot.js`에서 import한걸 그대로 reexport한다. 간략화시킨 `ReactDOMRoot.js`를 살펴보자.
+`./ReactDomRoot`에서 import한걸 그대로 reexport한다. 간략화시킨 `./ReactDOMRoot` 파일을 살펴보자.
 
 ```js
-// [!code highlight:3]
+// [!code highlight:4]
 import {
   createContainer,
   updateContainer,
@@ -48,15 +48,15 @@ function ReactDOMRoot(internalRoot) {
 }
 
 // [!code highlight:3]
-// 최종적으로 updateContainer를 호출한다.
-// 이전에 만든 createRoot의 반환값과 우리가 render에 넘긴 컴포넌트를 인자로 넘긴다.
+// 이전에 만든 createRoot의 반환값과 우리가 render에 넘긴 컴포넌트를 인자로 넘겨
+// updateContainer를 호출한다.
 ReactDOMRoot.prototype.render =
   function (children) {
     const root = this._internalRoot;
     updateContainer(children, root, ...);
   };
 
-// [!code highlight:3]
+// [!code highlight:5]
 // createContainer의 반환값을 ReactDOMRoot로 감싸 반환한다.
 export function createRoot(container, options?) {
   const root = createContainer(container, ... );
@@ -94,7 +94,7 @@ throw new Error('This module must be shimmed by a specific renderer.');
 
 ReactDOM를 빌드할 때 바꿔치기?가 되나보다. 상상도 못한 방법이라서 찾는데 한참 걸렸다... 왜 외부에서 명시적으로 주입하지 않고 이런 방식을 사용했는지는 아직 모르겠다. 최적화가 잘되나?
 
-관련 코드는 react-dom-bindings 패키지에 있다. 살펴보면 아래처럼 `createElement`같은 DOM 함수들이 드문드문 보인다. 
+HostConfig 관련 코드는 react-dom-bindings 패키지에 있다. 살펴보면 아래처럼 `createElement`같은 DOM 함수들이 드문드문 보인다. 
 
 ```js
 // react-dom-bindings/src/client/ReactFiberConfigDOM.js
@@ -122,7 +122,7 @@ import App from "./App";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 // 맘같아서는 root를 바로 프린트하고 싶은데
-// 샌박 환경이라그런가 이상하게 나와서 constructor.name으로 했다.
+// 라이브러리에서 지원을 안해 아쉽지만 name을 프린트하자.
 console.log(root._internalRoot.constructor.name);
 root.render(<App />);
 

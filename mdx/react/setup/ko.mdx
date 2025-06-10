@@ -177,7 +177,7 @@ export default defineConfig({
 ```
 
 <details>
-<summary>React, ReactDOM은 알겠는데 jsv-dev-runtime과 scheduler는 뭘까요?</summary>
+<summary>React, ReactDOM은 알겠는데 jsv-dev-runtime과 scheduler는?</summary>
 
 vite-plugin-react의 [소스코드](https://github.com/vitejs/vite-plugin-react/blob/2e368a65aaf8314142538c369c296e277fdfb69b/packages/plugin-react/src/index.ts#L99)를 봅시다. 
 
@@ -209,6 +209,8 @@ var Scheduler = require("scheduler"),
 [소스코드](https://github.com/facebook/react/tree/main/packages/scheduler)를 확인해보면 scheduler를 아래와 같이 설명하네요:
 
 > This is a package for cooperative scheduling in a browser environment. It is currently used internally by React, but we plan to make it more generic.
+
+왜 자동으로 포함안되고 따로 명시해야되는지는 모르겠네요 ㅎㅎ
 
 </details>
 

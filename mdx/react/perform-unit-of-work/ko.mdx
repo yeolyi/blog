@@ -1,8 +1,8 @@
-export const title = '우선 두 개의 트리를 준비하자'
+export const title = '두 개의 트리가 필요하다'
 
-`ReactDOM.render`를 호출해 업데이트 큐에 넣은 작업은 `performWorkOnRoot`에서 처리된다고 한다. 그 과정은 나중에 알아보고 일단 받아들이자. 
+`ReactDOM.render`를 호출해 업데이트 큐에 넣은 작업은 `performWorkOnRoot`에서 처리된다고 한다. 일단 받아들이자. 
 
-Stack trace를 보면 아래 경로로 호출됨을 확인할 수 있다. 
+참고로 Stack trace를 보면 아래 경로로 호출됨을 확인할 수 있다. 
 
 - performWorkUntilDeadline
   - performWornOnRootViaSchedularTask
@@ -65,15 +65,17 @@ function renderRootSync(
 }
 ```
 
-`prepareFreshStack` 이후 `workLoopSync`를 호출한다. 각각을 알아보자.
+`prepareFreshStack` 이후 `workLoopSync`를 호출한다. 각각을 살펴보자.
 
 ### prepareFreshStack
 
-리액트는 내부적으로 두 개의 Fiber 트리를 활용한다. **리액트 소스코드에서 `current`는 기존 트리의 노드를 의미하고 `workInProgress`는 새로운 트리의 노드를 의미한다.** 두 변수를 각 트리를 순회하기 위한 포인터 변수로서 활용한다.
+리액트는 내부적으로 두 개의 Fiber 트리를 활용한다. 하나는 기존 UI, 다른 하나는 새로운 UI를 나타낸다.
 
-상태에 업데이트가 발생하면 리액트는 이에 맞게 workInProgress 트리를 구성하고 이를 기반으로 렌더링을 진행한다. 작업이 끝나면 workInProgress가 새로운 current가 되는 셈이다.
+**리액트 소스코드에서 `current`는 기존 트리의 노드를 의미하고 `workInProgress`는 새로운 트리의 노드를 의미한다.** 두 변수를 각 트리를 순회하기 위한 포인터 변수로서 활용한다.
 
-`prepareFreshStack`에서는 `workInProgress`를 초기화한다. 
+상태에 업데이트가 발생하면 리액트는 이에 맞게 workInProgress 트리를 만들고 이를 기반으로 렌더링을 진행한다. 작업이 끝나면 workInProgress가 새로운 current가 된다.
+
+`prepareFreshStack`에서는 본격적인 렌더를 시작하기 전에 `workInProgress` 변수를 초기화한다. 
 
 ```js
 // react-reconciler/src/ReactFiberWorkLoop.js
@@ -83,12 +85,15 @@ let workInProgress: Fiber | null = null;
 ...
 function prepareFreshStack(root: FiberRoot, lanes: Lanes): Fiber {
   ...
+  // [!code highlight:2]
+  // `createContainer`에서 만든 HostRootFiber가...
   const rootWorkInProgress = createWorkInProgress(root.current, null);
   workInProgress = rootWorkInProgress;
   ...
 }
 
-// 초기 렌더하는 지금은 current가 HostRootFiber를 의미한다.
+// [!code highlight:2]
+// current로서 건네진다
 export function createWorkInProgress(current: Fiber, pendingProps: any): Fibers {
   // alternate는 현재 노드의 이전 버전을 의미한다.
   let workInProgress = current.alternate;
@@ -106,6 +111,8 @@ export function createWorkInProgress(current: Fiber, pendingProps: any): Fibers 
   ...
 }
 ```
+
+`alternate` 필드는 해당 노드의 이전 버전을 의미함을 기억하자. 물론 지금은 첫 렌더니 존재하지 않는다.
 
 ### workLoopSync
 
@@ -126,9 +133,9 @@ function workLoopSync() {
 
 ## performUnitOfWork
 
-`performUnitOfWork`에서는 현재 workInProgress가 가르키고 있는 노드에 대해 `beginWork`를 호출한다. 정황상 beginWork는 다음에 작업할 노드를 반환하는 것 같다. 
+`performUnitOfWork`에서는 현재 workInProgress가 가르키고 있는 노드에 대해 `beginWork`를 호출한다. 
 
-beginWork가 null을 반환하면, 즉 뿌리 노드라면 `completeUnitOfWork`를 호출한다. 
+정황상 beginWork는 다음에 작업할 노드를 반환할 것이다. beginWork가 null을 반환하면, 즉 뿌리 노드라면 `completeUnitOfWork`를 호출한다. 
 
 ```js
 function performUnitOfWork(unitOfWork: Fiber): void {

@@ -2,14 +2,14 @@ import fiberRoot1 from './assets/fiber-root1.png'
 
 export const title = 'render를 호출하면 할 일을 예약한다'
 
-아래 코드가 실행되면 결과적으로는 react-reconciler의 `createContainer`와 `updateContainer` 함수가 호출됨을 확인했다. 
+아래 코드가 실행되면 결과적으로는 react-reconciler의 `createContainer`와 `updateContainer` 함수가 호출됨을 지난 게시물에서 확인했다. 
 
 ```js
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<App />);
 ```
 
-`react-reconciler/src/ReactFiberReconciler.js` 파일에 있는 두 함수를 살펴보자.
+이제 ReactDOM은 잊고 `react-reconciler/src/ReactFiberReconciler.js` 파일에 있는 두 함수를 살펴보자.
 
 ## createContainer
 
@@ -36,7 +36,7 @@ export function createFiberRoot(
   ): any);
 
   // [!code highlight:4]
-  // 두 노드 서로가 서로에 접근할 수 있다.
+  // 두 노드가 서로에게 접근할 수 있다.
   const uninitializedFiber = createHostRootFiber(tag, isStrictMode);
   root.current = uninitializedFiber;
   uninitializedFiber.stateNode = root;
@@ -85,13 +85,7 @@ function FiberRootNode(
   // [!code highlight:2]
   // 우리가 건넨 document.getElementById("root")
   containerInfo: any,
-  tag,
-  hydrate: any,
-  identifierPrefix: any,
-  onUncaughtError: any,
-  onCaughtError: any,
-  onRecoverableError: any,
-  formState: ReactFormState<any, any> | null,
+  ...
 ) {
   this.tag = disableLegacyMode ? ConcurrentRoot : tag;
   this.containerInfo = containerInfo;
@@ -102,11 +96,11 @@ function FiberRootNode(
 }
 ```
 
-트리의 루트 역할을 하는 객체이다. 다음에 살펴보겠지만 Fiber와는 별개의 함수로 만들어진다.
+`FiberRootNode`는 `createRoot` 함수에서 건넨 컨테이너 DOM 객체를 관리한다.
 
 ### HostRootFiber
 
-`createHostRootFiber` 함수는 결국 HostRoot 태그를 가진 Fiber를 만든다. 
+`createHostRootFiber` 함수는 HostRoot 태그를 가진 Fiber를 만든다. 
 
 ```js
 export function createHostRootFiber(
@@ -114,11 +108,15 @@ export function createHostRootFiber(
   isStrictMode: boolean,
 ): Fiber {
   ...
+  // [!code highlight]
   return createFiber(HostRoot, null, null, mode);
 }
 ```
 
-리액트가 Fiber 트리로 비교하고 어쩐다는 얘기를 많이 들어봤을 것이다. Fiber가 중요해보이니 `createFiber`를 타고 들어가 Fiber의 구조를 살펴보자. 
+`FiberRootNode`와 `HostRootFiber` 모두 이름에 `Fiber`가 들어가지만 FiberRootNode는 Fiber의 한 종류라기보단
+Fiber 트리의 루트와 관련된 메타데이터를 담고 있는 다른 종류의 객체라고 이해하자. 
+
+Fiber가 중요해보이니 `createFiber`를 타고 들어가 Fiber의 구조를 살펴보자. 
 
 ```js
 function FiberNode(
@@ -155,7 +153,7 @@ export const Fragment = 7;
 ...
 ```
 
-직접 확인해보면서 `createContainer` 살펴보는걸 마무리하자. 
+지금까지 살펴본걸 직접 로그찍어보며 `createContainer` 살펴보는걸 마무리하자. 
 
 <Code template="react" files={{
     'index.js': `
@@ -184,6 +182,8 @@ console.log(hostRootFiber.tag);
 
 ## updateContainer
 
+`updateContainerImpl`을 호출한다. 리액트 소스코드에는 이런 식으로 함수 + impl함수 식으로 구현된 경우가 많다.
+
 ```js
 // react-reconciler/src/ReactFiberReconciler.js
 export function updateContainer(
@@ -208,7 +208,7 @@ export function updateContainer(
 }
 ```
 
-`enqueueUpdate`로 업데이트를 예약함만 이해하고 챙겨가자. 큐의 payload에는 우리가 건넨 `<App/>`이 들어있다. 
+업데이트 객체를 만들어 `enqueueUpdate`로 업데이트를 예약한다. 큐의 payload에는 우리가 건넨 `<App/>`이 들어있다. 
 
 ```js
 function updateContainerImpl(
@@ -235,3 +235,5 @@ function updateContainerImpl(
   }
 }
 ```
+
+업데이트 큐가 어떻게 관리되는지는 나~중에 삺펴보자.

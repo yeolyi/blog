@@ -4,11 +4,10 @@ export const title = '나머지 Fiber를 조립하는 과정'
 
 잠시 복습을 해보자. 아래 App 컴포넌트가 렌더되는 과정을 따라가고 있었다. 
 
-```jsx
-import { useState } from 'react';
+<Code files={{ '/App.js': { code: `import { useState } from 'react';
 
 function Link() {
-  return <a href="https://yeolyi.com">yeolyi.com</a>;
+    return <a href="https://yeolyi.com">yeolyi.com</a>;
 }
 
 export default function App() {
@@ -25,10 +24,9 @@ export default function App() {
       </p>
     </div>
   );
-}
-```
+}` } }} />
 
-리액트 렌더링 과정은 새로운 Fiber 트리를 만들어내는 과정이다. `workInProgress` 변수는 새로운 Fiber 트리에서 현재 작업중인 Fiber를 가리킨다. `current`는 기존 Fiber 트리에서 `workInProgress`에 대응되는 노드를 가리킨다. 
+리액트 렌더링 과정은 새로운 Fiber 트리를 만들어내는 과정이다. `workInProgress` 변수는 새로운 Fiber 트리에서 현재 작업중인 Fiber를 가리킨다. `current`는 기존 Fiber 트리에서 `workInProgress`에 대응되는 기존 노드를 가리킨다. 
 
 `performUnitOfWork`는 `workInProgress`를 인자로 받아 작업을 수행하며 리턴할 시점에 `workInProgress`는 다음 작업해야할 Fiber 노드를 가리키게 된다. 
 
@@ -44,8 +42,6 @@ function workLoopSync() {
 ```
 
 초기 렌더링 시에 `current`는 ReactDOM.createRoot 시점에 만들어진 HostRootFiber를 가리키며 `workInProgress`는 `prepareFreshStack`에서 만들어진 HostRootFiber를 가리킨다. 
-
-**따라서 첫 `performUnitOfWork`의 인자로는 `HostRootFiber`가 건네진다. **
 
 이후 `reconcileChildFibers`에서는 `workInProgress`를 처리하며 `<App/>`을 나타내는 Fiber를 만들고 이를 `workinProgress`의 child 노드로 설정한다. 이후 작업을 마치면 `workInProgress = workInProgress.child`로 설정된다. 
 
@@ -73,11 +69,11 @@ function performUnitOfWork(unitOfWork: Fiber): void {
 }
 ```
 
-unitOfWork = workInProgress = `<App/>` Fiber 임을 기억하자. 
+여기서 unitOfWork = workInProgress = `<App/>` Fiber 임을 기억하자. 
 
 ## beginWork
 
-이전에 만든 App을 나타내는 Fiber는 `FunctionComponent tag(0)`를 가지고 있다. 따라서 이번에는 HostRoot가 아닌 FunctionComponent tag에 대한 분기로 빠진다. 
+App을 나타내는 Fiber는 `FunctionComponent 태그(0)`를 가지고 있다. 따라서 이번에는 HostRoot가 아닌 FunctionComponent 분기로 빠진다. 
 
 ```js
 function beginWork(
@@ -109,11 +105,12 @@ function beginWork(
 }
 ```
 
-우리가 만든 컴포넌트 함수가 `Component`라는 이름으로 등장한다! 해당 함수를 호출할 때 필요한 prop도 추출되었다. 프린트를 찍어보면 각각 `App`, `{}`임을 확인할 수 있다.
+우리가 만든 `App` 함수가 `Component`라는 이름으로 등장한다! 해당 함수를 호출할 때 필요한 prop도 추출되었다. 프린트를 찍어보면 각각 `App`, `{}`(비어있음)임을 확인할 수 있다. 
 
 ## updateFunctionComponent
 
-`reconcileChildren`이 호출되는건 `updateHostRoot`와 동일하지만 업데이트 큐에서 자식 Element를 얻어낸 지난번과 다르게 이번에는 `renderWithHooks`에서 `nextChildren`을 얻어낸다. 
+`updateHostRoot`때와 동일하게 `reconcileChildren`이 호출되지만 
+업데이트 큐에서 Element를 꺼내 `nextChildren`을 얻어낸 지난번과 다르게 이번에는 `renderWithHooks`을 호출해 얻어낸다. 
 
 ```js
 function updateFunctionComponent(
@@ -170,14 +167,21 @@ let children = __DEV__
 `nextChildren`을 로그 찍어보면 아래와 같으니 참고. App의 반환값에 최상단 div를 나타내는 Element가 있음을 확인할 수 있다. div의 자식 요소들은 props.children에 담겨있다.
 
 ```txt
-{$$typeof: Symbol(react.transitional.element), type: 'div', key: null, props: {…}, _owner: FiberNode, …}
+{
+  $$typeof: Symbol(react.transitional.element),
+  type: 'div',
+  key: null,
+  props: {…},
+  _owner: FiberNode,
+  ...
+}
 ```
 
 ## reconcileChildren
 
-최적화를 위해 기존 Fiber 트리의 유무에 따라 side effect를 추적하는 플래그를 기록할지 말지 결정하는 분기가 있음을 살펴봤었다. 
+`reconcileChildren`에는 최적화를 위해 기존 Fiber 트리의 유무에 따라 side effect를 추적하는 플래그를 기록할지 말지 결정하는 분기가 있음을 살펴봤었다. 
 
-App fiber에 해당하는 기존 Fiber 노드가 없으므로 이번에는 `mountChildFibers`가 호출되어 따로 수정사항에 대한 플래그를 기록하지 않는다 👍
+App fiber에 해당하는 기존 Fiber 노드가 없으므로 이₩번에는 `mountChildFibers`가 호출되어 따로 수정사항에 대한 플래그를 기록하지 않는다 👍
 
 ```js
 export function reconcileChildren(
@@ -204,7 +208,7 @@ export function reconcileChildren(
 }
 ```
 
-workInProgress.child는 div에 해당하는 Fiber를 가리키게 되고 다음 performUnitOfWork에서는 이 Fiber를 처리할 것이다. 
+`mountChildFibers` 호출 이후 `workInProgress.child`는 div에 해당하는 Fiber를 가리키게 되고 다음 `performUnitOfWork`에서는 이 Fiber를 처리할 것이다. 
 
 `mountChildFibers`의 내부는 지난번과 유사하니 넘어가고, 반환값만 찍어보자. 
 
@@ -216,11 +220,11 @@ FiberNode {tag: 5, key: null, elementType: 'div', type: 'div',… }
 
 ## 나머지...
 
-div와 p에 해당하는 Fiber를 처리할 때는 기존과 유사하다. `updateHostComponent`도 결국 `mountChildFibers`와 `reconcileChildren`을 호출한다.
+div, p, a, button에 해당하는 Fiber를 처리할 때는 기존과 유사하다. `updateHostComponent`도 결국 `mountChildFibers`와 `reconcileChildren`을 호출한다.
 
-다만 p를 처리할 때는 배열을 자식으로 가지기에 `reconcileChildren` 내부에서 `reconcileChildrenArry`가 호출되는데 이건 `key`에 연관되어 목잡해지므로 다음에 살펴보자. 
+다만 p를 처리할 때는 배열을 자식으로 가지기에 `reconcileChildren`에서 `reconcileChildrenArry`가 호출되는데 이건 `key`에 연관되어 복잡해지므로 다음에 살펴보자. 
 
-a, br, button을 처리할 때 모두 `updateHostComponent`가 호출된다. 다만 a와 button 모두 텍스트를 자식으로 가지지만 처리가 조금씩 다르니 이 부분만 확인해보자. 참고로 두 부분은 각각 이렇게 생겼었다:
+a와 button 모두 텍스트를 자식으로 가지지만 처리가 조금씩 다르니 이 부분만 확인해보자. 참고로 두 부분은 각각 이렇게 생겼었다:
 
 ```jsx
 // a
@@ -298,7 +302,8 @@ FiberNode {
 ```
 
 
-`updateHostComponent`에서는 이전처럼 `nextChildren`을 null처리하지 않고 이 배열을 `reconcileChildren`에 건네준다. 이후 아래와 같이 텍스트를 나타내는 Fiber가 두 개 만들어진다:
+`updateHostComponent`에서 이번에는 null이 아닌 이 배열을 `reconcileChildren`에 건네준다. 
+이후 아래와 같이 텍스트를 나타내는 Fiber가 두 개 만들어진다:
 
 ```txt
 FiberNode { tag: 6, pendingProps: "click me -"}
@@ -326,10 +331,15 @@ FunctionComponentFiber (App)
 HostComponentFiber (div)
 HostComponentFiber (p)
 FunctionComponentFiber (Link)
-// [!code highlight]
+
+// [!code highlight:2]
+// a만 호출하고 끝난다.
 HostComponentFiber (a)
+
 HostComponentFiber (br)
-// [!code highlight:3]
+
+// [!code highlight:4]
+// button과 두 child를 호출한다.
 HostComponentFiber (button)
 HostTextFiber 
 HostTextFiber 

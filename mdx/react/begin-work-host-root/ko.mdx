@@ -6,7 +6,8 @@ HostRootFiber가 beginWork에서 처리되는 과정을 살펴보자.
 
 ## beginWork
 
-`beginWork`는 사실상 커다란 switch-case문으로 workInProgress의 tag에 따라 서로 다른 update 함수를 호출한다.
+`beginWork`는 커다란 switch-case문으로 workInProgress의 Fiber tag에 따라 서로 다른 update 함수를 호출한다. 
+`HostRootFiber`는 `HostRoot` case로 이동한다.
 
 ```js
 function beginWork(
@@ -40,6 +41,8 @@ function beginWork(
 
 ## updateHostRoot
 
+Update queue를 처리해 `<App/>`을 얻어낸 뒤 `reconcileChildren`을 호출한다. 큐의 처리 방법은 넘어가고 다음에 알아보자.
+
 ```js
 function updateHostRoot(
   current: null | Fiber,
@@ -70,15 +73,12 @@ function updateHostRoot(
 }
 ```
 
-Update queue를 처리한 뒤 reconcileChildren을 호출한다. 
-
 ## reconcileChildren
 
-`reconcileChildren`은 아주 핵심적인 함수이다.
+**`reconcileChildren`은 아주 핵심적인 함수이다.**
 
-`nextChildren`(여기서는 `<App/>`)을 보며 `workInProgress` 트리를 만들어내되 기존 UI를 나타내는 `current`트리와 비교하며 삭제하거나 수정해야할 Fiber의 플래그를 세운다.
-
-이 작업은 한 번에 한 개 Fiber씩 하는데 필요하다면 다음에 방문해야할 노드를 `workInProgress.child`에 설정해 다음 performUnitOfWork에서 방문한다.
+1. `nextChildren`(여기서는 `<App/>`)을 보며 `workInProgress` 트리의 `child` 노드를 만든다.
+1. 이 과정에서 기존 UI를 나타내는 `current`트리와 비교하며 Fiber의 삭제, 수정같은 side effect들을 체크한다.
 
 ```js
 export function reconcileChildren(
@@ -110,6 +110,8 @@ export function reconcileChildren(
 }
 ```
 
+`current`의 유무에 따라, `mountChildFibers` 혹은 `reconcileChildFibers`를 호출한다. 두 함수의 차이점을 이어서 살펴보자.
+
 ## mountChildFibers vs reconcileChildFibers
 
 두 함수는 `createChildReconciler`에 전달되는 인자만 다르다. 
@@ -120,7 +122,7 @@ export const reconcileChildFibers: ChildReconciler =
 export const mountChildFibers: ChildReconciler = createChildReconciler(false);
 ```
 
-`createChildReconciler`는 아래와 같이 구현되어있다. `shouldTrackSideEffects`을 사용하는 여러 함수가 본문에 정의되어있다. 
+`createChildReconciler`는 아래와 같이 구현되어있다. `shouldTrackSideEffects`을 사용하는 함수들이 본문에 정의되어있다. 
 
 ```js
 function createChildReconciler(
@@ -150,19 +152,19 @@ function createChildReconciler(
 }
 ```
 
-`reconcileChildFibers`면 `shouldTrackSideEffects`가 true, `shouldTrackSideEffects`가 false이다. 원래 없던 Fiber 노드를 새로 마운트하는 경우에는 side effect (자식이 바뀌었다던가)가 있을 수 없고 그냥 새로 붙이면 되므로 따로 side effect를 추적하지 않음으로서 최적화한다.
+`reconcileChildFibers`면 `shouldTrackSideEffects`가 true, `shouldTrackSideEffects`가 false이다. 
+원래 없던 Fiber 노드를 새로 마운트하는 경우에는 side effect가 있을 수 없고 그냥 새로 붙이면 되므로 따로 side effect를 추적하지 않음으로서 최적화하는 것이다.
 
 ## reconcileChildFibers
 
-`reconcileChildFibers`에 전달하는 인자들을 돌아보자. 
+지금 시점에는 `reconcileChildFibers`가 호출된다고 했다. `reconcileChildFibers`에 전달하는 인자들을 돌아보자. 
 
 ```js
 workInProgress.child = reconcileChildFibers(
     // prepareFreshStack에서 만든 HostRootFiber
     workInProgress,
     // current는 updateContainer에서 업데이트 큐에 넣어둔 HostRootFiber
-    // current가 아닌 current.child를 넘겨주는데
-    // current.child를 보고 workInProgress.child를 만드는 함수라고 이해하자.
+    // current가 아닌 current.child를 넘겨준다.
     current.child,
     // <App/>
     nextChildren,
@@ -170,13 +172,14 @@ workInProgress.child = reconcileChildFibers(
 );
 ```
 
-`reconcileChildFibers`는 `reconcileChildFibersImpl`을 호출하고 예외처리를 한 것이다. 바로 `reconcileChildFibersImpl`을 살펴보자. newChild의 종류에 따라 분기한다. 
+`reconcileChildFibers`는 `reconcileChildFibersImpl`을 호출하고 예외처리를 한 것이다. 
+`reconcileChildFibers`는 넘어가고 바로 `reconcileChildFibersImpl`을 살펴보자. newChild의 종류에 따라 분기한다. 
 
 ```js  
 function reconcileChildFibersImpl(
   // [!code highlight:3]
   // 전달인자명은 workInProgress이었지만 매개변수명은 returnFiber이다
-  // 현재 처리중인 Fiber의 부모 노드가 될 것이니 맞긴하다.
+  // 현재 처리중인 Fiber의 부모 노드(return필드)가 workInProgress가 될 것이니 의미상 적절하다
   returnFiber: Fiber,
   currentFirstChild: Fiber | null,
   newChild: any,
@@ -234,9 +237,7 @@ function reconcileChildFibersImpl(
 }
 ```
 
-`beginWork`에서 했던 분기와 헷갈릴 수 있는데 그 때는 Fiber의 종류에 따른 분기, 이번에는 Element의 종류에 따른 분기이다. 
-
-분기들에 `reconcileSingleTextNode`와 `placeSingleChild`가 공통적으로 사용됨을 확인할 수 있다.
+`beginWork`에서 했던 분기와 헷갈릴 수 있는데 그 때는 Fiber의 종류에 따른 분기, 이번에는 newChild Element의 종류에 따른 분기이다. 
 
 <details>
 <summary>$$typeof 구경</summary>
@@ -259,6 +260,8 @@ export const REACT_FRAGMENT_TYPE: symbol = Symbol.for('react.fragment');
 <Image src={typeOfSymbol} alt=""/>
 
 </details>
+
+Element 종류 무관하게 분기들에 `reconcileSingleTextNode`와 `placeSingleChild`가 공통적으로 사용됨을 확인할 수 있다. 이 둘을 살펴보자.
 
 ### reconcileSingleElement
 
@@ -292,7 +295,7 @@ export const REACT_FRAGMENT_TYPE: symbol = Symbol.for('react.fragment');
 
 자세히는 살펴보지 않겠지만 여기서 App 함수가 실행되는 것은 아니라는 점을 참고하자. 그저 App 함수 컴포넌트를 나타내는 Fiber 객체를 만들 뿐이다. 
 
-반환값을 보면 아래처럼 생겼다:
+만들어진 Fiber 객체를 보면 아래처럼 생겼다:
 
 ```txt
 FiberNode {
@@ -324,4 +327,4 @@ function placeSingleChild(newFiber: Fiber): Fiber {
 
 `placeSingleChild`에서 반환한 값은 `beginWork`에서 그대로 반환하고 `performUnitOfWork`에서 다음 `workInProgress`로 설정된다. 
 
-결과적으로 다음 `performUnitOfWork`에서는 이 새로 만든 Fiber에 대해 작업을 시작한다. 
+결과적으로 다음 `performUnitOfWork`에서는 방금 새로 만든 Fiber에 대해 작업을 시작한다. 
