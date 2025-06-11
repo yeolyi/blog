@@ -18,6 +18,22 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
   const { data: tags } = useTags();
   const { data: memeTags } = useMemeTags(meme.id);
 
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.target as HTMLFormElement);
+    const tagStr = formData.get('tagStr') as string;
+    const tagArr = formData.getAll('tagArr') as string[];
+    const hidden = formData.get('hidden') === 'on';
+
+    const set = new Set(
+      [...tagArr, ...tagStr.split(',')].filter((tag) => tag !== ''),
+    );
+    const tags = Array.from(set);
+    await updateMeme({ id: meme.id, tags, hidden });
+
+    toggleIsEdit();
+  };
+
   return (
     <>
       <button
@@ -35,24 +51,7 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
       </button>
 
       {isEdit && (
-        <form
-          className={clsx('flex flex-col gap-3 py-4')}
-          onSubmit={async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target as HTMLFormElement);
-            const tagStr = formData.get('tagStr') as string;
-            const tagArr = formData.getAll('tagArr') as string[];
-            const hidden = formData.get('hidden') === 'on';
-
-            const tags = [...new Set(...tagArr, tagStr.split(','))].filter(
-              (tag) => tag !== '',
-            );
-
-            await updateMeme({ id: meme.id, tags, hidden });
-
-            toggleIsEdit();
-          }}
-        >
+        <form className={clsx('flex flex-col gap-3 py-4')} onSubmit={onSubmit}>
           <Form.Text title="태그" name="tagStr" />
           <TagCheckbox
             tags={tags ?? []}
