@@ -1,4 +1,4 @@
-export const title = 'DOM이 준비되었으니 실제로 반영해보자'
+export const title = '만든 DOM 화면에 반영하기'
 
 드디어 `<App/>`을 보고 만든 새로운 Fiber 트리가 `workInProgress`에 완성됐다! 
 각 트리 노드에 연관된 DOM 노드도 `stateNode` 필드에 연결되있다.
@@ -15,6 +15,8 @@ export const title = 'DOM이 준비되었으니 실제로 반영해보자'
 - commitRoot
 - flushMutationEffects
 - **commitMutationEffectsOnFiber**
+
+## commitMutationEffectsOnFiber
 
 함수들에 숨이 가빠오지만 무시하고 `commitMutationEffectsOnFiber`만 살펴보자. `finishedWork`로 
 HostRootFiber가 들어온다.
@@ -54,11 +56,11 @@ function commitMutationEffectsOnFiber(
 }
 ```
 
-`recursivelyTraverseMutationEffects`와 `commitReconciliationEffects`를 살펴보자. 
+공통적으로 호출되는 `recursivelyTraverseMutationEffects`와 `commitReconciliationEffects`를 살펴보자. 
 
 ### recursivelyTraverseMutationEffects
 
-`recursivelyTraverseMutationEffects`는 삭제되어야할 자식노드들을 삭제하고 
+삭제되어야할 자식노드들을 삭제하고 
 남은 자식 노드들에 대해 `commitMutationEffectsOnFiber`를 호출한다.
 
 ```js
@@ -95,11 +97,11 @@ function recursivelyTraverseMutationEffects(
 
 호출된 `commitMutationEffectsOnFiber`에서도 재귀적으로 동일한 작업을 할테니 특정 노드에 대해 
 `recursivelyTraverseMutationEffects`가 호출되었다면 해당 노드와 후손 노드들에 대해 
-`commitDeletionEffects`와 `commitReconciliationEffects`이 실행되었음을 알 수 있다.
+`commitDeletionEffects`와 `commitReconciliationEffects`이 모두 실행되었음을 알 수 있다.
 
 ### commitReconciliationEffects
 
-여기서 노드를 삽입한다.
+`Placement` 플래그가 있다면 노드를 삽입한다.
 
 ```js
 function commitReconciliationEffects(
@@ -108,7 +110,6 @@ function commitReconciliationEffects(
 ) {
   const flags = finishedWork.flags;
   if (flags & Placement) {
-    // Placement effects (insertions, reorders) can be scheduled on any fiber type. 
     commitHostPlacement(finishedWork);
     // Clear the "placement" from effect tag so that we know that this is
     // inserted, before any life-cycles like componentDidMount gets called.
@@ -121,6 +122,7 @@ function commitReconciliationEffects(
 ```
 
 기억을 더듬어보자면 Placement 플래그는 HostRootFiber를 만들 때 `placeSingleChild`에서 설정되었다. 
+따라서 초기 렌더에서는 HostRootFiber에 대해 `commitHostPlacement`이 호출된다.
 
 ```js
 function placeSingleChild(newFiber: Fiber): Fiber {
@@ -131,7 +133,7 @@ function placeSingleChild(newFiber: Fiber): Fiber {
 }
 ```
 
-`commitHostPlacement`는 간단하다. 
+`commitHostPlacement`는 간단하다.
 
 ```js
 export function commitHostPlacement(finishedWork: Fiber) {
@@ -143,6 +145,8 @@ export function commitHostPlacement(finishedWork: Fiber) {
   }
 }
 ```
+
+`commitPlacement`에 실제 로직이 있다. 노드를 삽입할 구체적인 Fiber를 찾는 것이 인상깊다.
 
 ```js
 // [!code highlight:2]
@@ -186,9 +190,14 @@ function commitPlacement(finishedWork: Fiber): void {
 }
 ```
 
-`containerInfo`로 `<div id="root"></div>`를 찾아내 그곳에 `finishedWork`의 `stateNode`를 삽입한다. 
+`HostParentFiber`의 `containerInfo` 필드로 찾아낸 `<div id="root"></div>`에 `finishedWork`의 `stateNode`를 삽입한다. 
 
 ```js
+import {
+  appendChildToContainer,
+  insertInContainerBefore,
+} from './ReactFiberConfig';
+
 function insertOrAppendPlacementNodeIntoContainer(
   node: Fiber,
   before: ?Instance,
@@ -217,4 +226,7 @@ function insertOrAppendPlacementNodeIntoContainer(
 }
 ```
 
-이렇게 초기 렌더를 마쳤다.
+이렇게 초기 렌더를 마쳤다 🎉
+
+하지만 초기 렌더만 필요하다면 리액트가 아닌 정적 HTML을 썼을 것이다. 리액트가 더욱 의미있어지는 순간인 
+'상태 변경에 의한 리렌더링' 과정을 이어서 살펴보자.

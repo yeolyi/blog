@@ -27,6 +27,12 @@ export default function Code(
       className="not-prose"
       theme={{
         ...defaultDark,
+        colors: {
+          ...defaultDark.colors,
+          // TODO: tailwind 변수 그대로 쓰기
+          surface1: 'oklch(0.268 0.007 34.298)',
+          surface2: 'oklch(0.444 0.011 73.639)',
+        },
         font: {
           ...defaultDark.font,
           body: 'var(--font-monoplex-kr)',
@@ -72,7 +78,7 @@ root.render(<App />);
 const PreviewWithLog = () => {
   return (
     <>
-      <SandpackPreview showOpenInCodeSandbox={false} />
+      <SandpackPreview showOpenInCodeSandbox={false} className="bg-white" />
       <SandpackConsole
         resetOnPreviewRestart
         className="h-fit font-(var(--font-monoplex-kr)) text-base"

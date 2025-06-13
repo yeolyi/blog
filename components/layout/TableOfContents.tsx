@@ -1,7 +1,6 @@
 'use client';
 
 import { Link } from '@/i18n/navigation';
-import { useTranslations } from 'next-intl';
 import { ScrollArea } from 'radix-ui';
 import { useEffect, useState } from 'react';
 
@@ -13,24 +12,24 @@ interface TOCItem {
 
 export default function TableOfContents() {
   const { headings, activeId } = useTableOfContents();
-  const t = useTranslations('TableOfContents');
 
   if (headings.length === 0) return null;
 
   return (
-    <ScrollArea.Root className="w-56 h-[70vh] overflow-hidden">
-      <ScrollArea.Viewport className="w-full h-full">
+    <ScrollArea.Root className="w-56 h-[70vh]">
+      {/* https://github.com/radix-ui/primitives/issues/2722 */}
+      <ScrollArea.Viewport className="w-full h-full [&>div]:!block">
         <nav>
           <ul className="space-y-3">
             {headings.map(({ id, level, text }) => {
               const isActive = activeId === id;
-              const paddingLeft = `${(level - 2) * 0.5}rem`;
+              const paddingLeft = `${level - 2}rem`;
 
               return (
                 <li key={id}>
                   <Link
                     href={`#${id}`}
-                    className={`block hover:text-white break-keep ${
+                    className={`hover:text-white w-full truncate line-clamp-1 ${
                       isActive ? 'text-white font-medium' : 'text-gray-400'
                     }`}
                     style={{ paddingLeft }}
