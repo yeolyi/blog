@@ -153,17 +153,6 @@ export default async function Home() {
 
       <Border />
 
-      <h2>{tComment('title')}</h2>
-      <p>{tComment('description')}</p>
-      <ul>
-        <li>{tComment('example1')}</li>
-        <li>{tComment('example2')}</li>
-        <li>{tComment('example3')}</li>
-      </ul>
-      <p>{tComment('encouragement')}</p>
-      <p className="italic text-stone-400 mb-12">
-        {tComment('githubLoginNotice')}
-      </p>
       <Comment postId="index" />
     </div>
   );
