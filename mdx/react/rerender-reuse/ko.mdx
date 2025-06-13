@@ -1,0 +1,73 @@
+export const title = '재활용되는 Fiber'
+
+초기 렌더링 시에는 기존에 생성된 Fiber 객체가 없기 때문에, 
+모든 컴포넌트에 대해 새로운 Fiber 객체를 매번 생성하게 된다. 
+그러나 이후 업데이트 렌더링에서는 성능 최적화를 고려해야 하므로
+기존에 생성된 객체를 재활용하는 전략이 필요하다.
+
+## alternate 필드
+
+리액트는 두 개의 Fiber 트리를 번갈아 가며 사용한다고 했었다. 
+이 구조 덕분에 이전 렌더링에서 사용되었던 Fiber 객체를 버리지 않고, 
+다음 렌더링을 위한 트리에 재활용할 수 있다. 
+
+리액트에서는 두 개의 트리간에 대응되는 노드를 `alternate` 필드로 관리한다. 
+초기 렌더링이 완료된 이후에는 workInProgress 트리가 새로운 current 트리가 되며 
+이들은 서로의 `alternate` 필드로 접근할 수 있다.
+
+아래 코드에서 확인해보자:
+
+<Code template="react" files={{
+    'index.js': `import ReactDOM from "react-dom/client";
+import App from "./App";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
+
+// 초기 렌더 전
+const hostRootFiber1 = root._internalRoot.current;
+
+setTimeout(() => {
+    // 초기 렌더 후
+    const hostRootFiber2 = root._internalRoot.current;
+    console.log(hostRootFiber1 === hostRootFiber2);
+    console.log(hostRootFiber2.alternate === hostRootFiber1);
+}, 1000);
+`,
+'App.js': `export default function App() {
+    return <h1>Hello</h1>;
+}
+`
+}}
+showTabs
+options={{ activeFile: 'index.js' }}
+/>
+
+
+## 재활용 예시
+
+아래는 이전에 살펴봤던 `createWorkInProgress` 함수의 구현이다. 
+현재 Fiber 노드(current)에 대응되는 alternate 노드가 존재하는 경우, 
+해당 노드를 재사용하여 새로운 렌더링 트리를 구성한다.
+
+```js
+export function createWorkInProgress(current: Fiber, pendingProps: any): Fiber {
+  // current.alternate는 current 노드에 대응되는 다른 트리의 노드를 가리킨다.
+  // 즉, 이전 렌더링에서 사용된 Fiber 노드이다.
+  let workInProgress = current.alternate;
+  if (workInProgress === null) {
+    // alternate가 없는 경우에는 새로 생성
+    ...
+  } else {
+    // 기존 노드를 재사용
+    workInProgress.pendingProps = pendingProps;
+    workInProgress.type = current.type;
+    // ...기타 workInProgress 초기화 코드
+  }
+  ...
+}
+```
+
+이처럼 alternate를 통해 기존 객체를 재활용함으로써, 객체 생성 비용을 줄이고 GC 부담을 완화할 수 있다. 
+
+재사용 로직을 제거했을 때 리액트의 렌더링 성능이 얼마나 저하되는지 실험해 보는 것도 흥미롭겠다.

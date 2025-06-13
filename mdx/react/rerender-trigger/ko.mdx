@@ -1,0 +1,53 @@
+export const title = '확인할 노드가 마킹된다'
+
+## Lane
+
+Lane은 Fiber 노드에 해야하는 작업의 우선순위를 의미한다. setState를 호출하면 연관된 컴포넌트들의 lane이 설정된다. 
+
+## 직접 확인해보기
+
+어떤 과정으로 설정되는지는 나중에 `useState`를 공부할 때 확인해보고 일단 결과만 출력해 보자. 
+`workLoopSync`에 아래 코드를 추가하면 setState 이후 Fiber 트리의 상태를 출력할 수 있다:
+
+```js
+function workLoopSync() {
+  // [!code highlight:8]
+  const traverse = fiber => {
+    if (!fiber) return;
+    console.log(fiber);
+    traverse(fiber.child);
+    traverse(fiber.sibling);
+  };
+
+  traverse(workInProgress.alternate);
+
+  // Perform work without checking if we need to yield between fiber.
+  while (workInProgress !== null) {
+    performUnitOfWork(workInProgress);
+  }
+}
+```
+
+버튼을 누른 뒤 출력 결과이다:
+
+```txt
+// [!code highlight:3]
+HostRootFiber { ... lanes: 0, childLanes: 2}
+App Fiber { ... lanes: 0, childLanes: 2}
+div Fiber { ... lanes: 0, childLanes: 2}
+Link Fiber { ... lanes: 0, childLanes: 0}
+a Fiber { ... lanes: 0, childLanes: 0}
+br Fiber { ... lanes: 0, childLanes: 0}
+// [!code highlight]
+Component Fiber { ... lanes: 2, childLanes: 0}
+div Fiber { ... lanes: 0, childLanes: 0}
+button Fiber { ... lanes: 0, childLanes: 0}
+text Fiber { ... lanes: 0, childLanes: 0}
+text Fiber{ ... lanes: 0, childLanes: 0}
+text Fiber{ ... lanes: 0, childLanes: 0}
+text Fiber{ ... lanes: 0, childLanes: 0}
+```
+
+HostRootFiber, App, div의 childLanes가 2, Component의 lane이 2가 되었음을 확인해볼 수 있다. 
+이를 통해 childLanes는 자식 컴포넌트들 중 리렌더가 필요한 것이 있음을, 
+lane은 스스로의 리렌더가 필요함을 나타낸다는 것을 유추할 수 있다.

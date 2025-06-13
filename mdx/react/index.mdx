@@ -1,100 +1,5 @@
-
-
-### 
-
-## 3. React는 내부적으로 어떻게 리렌더링하나요?  
-
-> React가 업데이트를 처리하고 그에 따라 리렌더링하는 방식을 설명합니다.
-
-이번엔 아래 코드에서 버튼을 누르면 어떻게 리렌더링되는지 알아보자. 
-
-```js
-import ReactDOM from "react-dom/client";
-import { useState } from "react";
-
-function Link() {
-  return <a href="https://yeolyi.com">yeolyi.com</a>;
-}
-
-function Component() {
-  const [count, setCount] = useState(0);
-  return (
-    <div>
-      <button onClick={() => setCount((count) => count + 1)}>
-        click me - {count}
-      </button>{" "}
-      ({count % 2 === 0 ? <span>even</span> : <b>odd</b>})
-    </div>
-  );
-}
-export default function App() {
-  return (
-    <div>
-      <Link />
-      <br />
-      <Component />
-    </div>
-  );
-}
-
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
-```
-
-2강에서 살펴본 초기 렌더와의 차이점을 위주로 살펴보자. 
-
-### Trigger phase
-
-Lane은 Fiber 노드에 해야하는 작업의 우선순위를 의미한다고 한다. setState를 호출하면 연관된 컴포넌트들의 lane이 설정된다. 
-
-어떤 과정으로 설정되는지는 일단 넘어가고 일단 결과만 보자. 
-
-setState로 트리거된 리렌더는 우선순위가 높아 동기적으로 처리된다고 한다. `workLoopSync`에 아래 코드를 추가해 setState 이후 Fiber 트리의 상태가 어떤지 확인해보자:
-
-```js
-function workLoopSync() {
-  // [!code highlight:8]
-  const traverse = fiber => {
-    if (!fiber) return;
-    console.log(fiber);
-    traverse(fiber.child);
-    traverse(fiber.sibling);
-  };
-
-  traverse(workInProgress.alternate);
-
-  // Perform work without checking if we need to yield between fiber.
-  while (workInProgress !== null) {
-    performUnitOfWork(workInProgress);
-  }
-}
-```
-
-출력해보면 HostRootFiber, App, div의 childLanes가 2, Component의 lane이 2가 되었음을 확인해볼 수 있다. 이를 통해 childLanes는 자식 컴포넌트들 중 업데이트가 필요한 것이 있음을, lane은 스스로의 업데이트가 필요함을 유추할 수 있다.
-
-### Render phase
-
-리액트의 함수형 컴포넌트에서 입력이 같으면 출력이 같아야한다는 원칙을 들어봤을 것이다. 리렌더링 때는 이 원칙이 더 중요해진다. 이전 prop과 새로운 prop을 비교해야하기 때문이다. 일단 Fiber에서 `memoizedProps`는 이미 적용된 prop을, `pendingProps`는 적용해야할 prop이라고 이해하자. 
-
-초기 렌더 때는 기존에 만들어놓은게 없으므로 재활용은 생각도 안했지만 이제 고려해야한다. 안쓰는 Fiber 객체가 있다면 가져다 쓸 수 있다:
-
-```js
-export function createWorkInProgress(current: Fiber, pendingProps: any): Fiber {
-  // 리액트는 current와 workInProgress로 두 개의 Fiber 트리를 관리한다. 
-  // current.alternate는 current 노드에 대응되는 다른 트리의 노드를 가리킨다.
-  // 다르게 말하면 이전 버전의 Fiber 노드로 볼 수 있다.
-  // 암튼 이게 있으면 새로 Fiber 노드를 만들 필요 없이 이걸 재활용할 수 있다.
-  let workInProgress = current.alternate;
-  if (workInProgress === null) {
-    ...
-  } else {
-    workInProgress.pendingProps = pendingProps;
-    workInProgress.type = current.type;
-    // ...기타 workInProgress 초기화 코드
-  }
-  ...
-}
-```
+리액트의 함수형 컴포넌트에서 입력이 같으면 출력이 같아야한다는 원칙을 들어봤을 것이다. 리렌더링 때는 이 원칙이 더 중요해진다. 
+이전 prop과 새로운 prop을 비교해야하기 때문이다. 일단 Fiber에서 `memoizedProps`는 이미 적용된 prop을, `pendingProps`는 적용해야할 prop이라고 이해하자. 
 
 초기 렌더때는 모든 컴포넌트들에 대해 beginWork가 호출되었다. 이번에도 그런지 `beginWork`가 호출될 때마다 `current`와 `workInProgress`를 출력하고 버튼을 눌러보자:
 
@@ -228,7 +133,7 @@ function bailoutOnAlreadyFinishedWork(
   }
 
   // [!code highlight:5]
-  // 자식 노드에 할 일이 있으면 자식 노드를 복제해 반환한다.
+  // 자식 노드에 할 일이 있으면 자식 노드를 복제 혹은 재활용해 반환한다.
   // This fiber doesn't have work, but its subtree does. Clone the child
   // fibers and continue.
   cloneChildFibers(current, workInProgress);
@@ -236,7 +141,10 @@ function bailoutOnAlreadyFinishedWork(
 }
 ```
 
-방금 `childLanes`의 활용처를 찾았다! 이를 통해 childLanes가 0이 아닌 HostRootFiber, App, div를 처리할 때는 아래 `cloneChildFibers`가 호출된 후 `workInProgress.child`에 대해서 순회를 지속함을 알 수 있다. 하지만 childLanes가 0인 Link는 null이 반환되어 자식까지 가지 않고 순회를 멈춤을 알 수 있다.
+방금 `childLanes`의 활용처를 찾았다! 
+이를 통해 childLanes가 0이 아닌 HostRootFiber, App, div를 처리할 때는 아래 `cloneChildFibers`가 호출된 후 
+`workInProgress.child`에 대해서 순회를 지속함을 알 수 있다. 
+하지만 childLanes가 0인 Link는 null이 반환되어 자식까지 가지 않고 순회를 멈춤을 알 수 있다.
 
 Link와 br을 지나 Component에서는 lane이 2이므로 `updateFunctionComponent`가 호출된다. 
 
@@ -287,7 +195,7 @@ let children = __DEV__
   : Component(props, secondArg);
 ```
 
-Component 함수가 실행될 때마다 아래처럼 prop 객체의 참조가 달라진다.
+참고로 Component 함수가 실행될 때마다 아래처럼 prop 객체의 참조가 달라진다.
 
 ```js
 const element1 = <Component />;
@@ -378,146 +286,3 @@ button 하위 "click me"는 bail out되지만 그 다음 TextNode는 0에서 1�
 
 ...
 
-## 4. useEffect()는 내부적으로 어떻게 작동하나요?  
-
-> React에서 가장 혼란스러운 훅 중 하나인 useEffect()의 내부 작동 방식을 설명합니다.
-
-## 5. useState는 내부적으로 어떻게 작동하나요?  
-
-> useState()가 React에서 리렌더링을 어떻게 유발하는지 알아봅니다.
-
-## 6. ErrorBoundary는 내부적으로 어떻게 작동하나요?  
-
-> ErrorBoundary의 내부 작동 방식을 다룹니다.
-
-## 7. Suspense는 내부적으로 어떻게 작동하나요?  
-
-> 현대 React 개발에서 중요한 구성 요소인 Suspense의 내부 작동 방식을 다룹니다.
-
-## 8. useTransition()은 내부적으로 어떻게 작동하나요?  
-
-> Suspense에 이어, useTransition은 React 서버 구성 요소와 함께 사용하기 유용한 고급 주제입니다.
-
-## 9. React에서 Context는 내부적으로 어떻게 작동하나요?  
-
-> React의 강력한 도구인 Context의 작동 방식을 설명합니다.
-
-## 10. useLayoutEffect()는 내부적으로 어떻게 작동하나요?  
-
-> useLayoutEffect()는 UI 페인팅 전에 효과를 실행할 수 있게 해줍니다. 그 내부 작동 방식을 살펴봅니다.
-
-## 11. useRef()는 내부적으로 어떻게 작동하나요?  
-
-> 간단하면서도 강력한 훅인 useRef()의 내부 작동 방식을 설명합니다.
-
-## 12. useImperativeHandle()은 내부적으로 어떻게 작동하나요?  
-
-> 자주 사용되지는 않지만, useImperativeHandle()의 내부 작동 방식을 알아봅니다.
-
-## 13. React의 재조정에서 bailout은 어떻게 작동하나요?  
-
-> React는 "모든 것을 리렌더링"하는 정신 모델을 가지고 있지만, 불필요한 렌더링을 피하기 위한 내부 최적화인 bailout도 존재합니다.
-
-## 14. React.memo()는 내부적으로 어떻게 작동하나요?  
-
-> memo()는 내장된 bailout이 감지할 수 없는 불필요한 리렌더링을 줄여 성능을 향상시킵니다.
-
-## 15. React는 Fiber 트리를 내부적으로 어떻게 순회하나요?  
-
-> React는 내부적으로 Fiber 트리를 유지합니다. 그 순회 방식을 알아봅니다.
-
-## 16. React에서 효과 훅의 생명주기  
-
-> useEffect()의 내부 작동 방식을 자세히 설명합니다.
-
-## 17. useDeferredValue()는 내부적으로 어떻게 작동하나요?  
-
-> useDeferredValue()는 동시 모드의 강점을 보여주는 훅입니다. 그 작동 방식을 살펴봅니다.
-
-## 18. React는 빈 값을 내부적으로 어떻게 처리하나요?  
-
-> React에서 빈 값이 어떻게 무시되는지 내부적으로 살펴봅니다.
-
-## 19. 'key'는 어떻게 작동하나요? React에서의 리스트 디핑  
-
-> React에서 'key'가 실제로 어떻게 작동하는지 알아봅니다.
-
-## 20. React Scheduler는 내부적으로 어떻게 작동하나요?  
-
-> Scheduler는 React의 가장 중요한 부분 중 하나입니다. 다양한 우선순위의 작업을 어떻게 스케줄링하는지 이해하는 데 유용합니다.
-
-## 21. React 소스 코드에서 Lanes란 무엇인가요?  
-
-> Lanes는 우선순위를 의미합니다. 그것이 무엇이며 동시 모드를 어떻게 가능하게 하는지 살펴봅니다.
-
-## 22. 동시 모드에서 Suspense는 내부적으로 어떻게 작동하나요? 1 - 재조정 흐름  
-
-> Suspense는 ErrorBoundary와 유사하게 작동하지만 훨씬 더 복잡합니다. 기본 렌더링 메커니즘을 설명합니다.
-
-## 23. 동시 모드에서 Suspense는 내부적으로 어떻게 작동하나요? 2 - Offscreen 구성 요소  
-
-> Offscreen 구성 요소는 Suspense의 내부에서 사용되며 매우 유용합니다.
-
-## 24. React에서 act()는 내부적으로 어떻게 작동하나요?  
-
-> act()는 React 테스트에서 유용하며, React 스케줄러를 이해하는 데도 도움이 됩니다.
-
-## 25. React에서 SuspenseList는 내부적으로 어떻게 작동하나요?  
-
-> Suspense 위에 구축된 SuspenseList는 더 나은 사용자 경험을 제공하는 구성 요소입니다.
-
-## 26. React에서 Portal은 내부적으로 어떻게 작동하나요?  
-
-> Portal은 React 요소를 다른 DOM 컨테이너에 렌더링할 수 있게 해줍니다. 모달에 적합합니다.
-
-## 27. React에서 기본 하이드레이션은 내부적으로 어떻게 작동하나요?  
-
-> 하이드레이션은 서버 측에서 렌더링된 DOM을 인터랙티브하게 만드는 과정입니다. 이 에피소드에서는 기본 사례를 다룹니다.
-
-## 28. React에서 useEffectEvent()는 내부적으로 어떻게 작동하나요?  
-
-> useEffectEvent()는 useEffect()와 함께 이벤트 핸들러를 처리하는 것을 더 쉽게 만들어줍니다.
-
-## 29. React에서 Suspense와 함께 하이드레이션은 내부적으로 어떻게 작동하나요?  
-
-> 서버 측 렌더링은 멋지지만, Suspense가 어떻게 처리되는지 궁금하지 않으셨나요?
-
-## 30. 점진적 하이드레이션이란 무엇이며 React에서 내부적으로 어떻게 작동하나요?  
-
-> 점진적 하이드레이션은 Suspense가 하이드레이션을 원활하게 처리할 수 있게 해주는 마법입니다.
-
-## 31. React 서버 구성 요소(RSC)는 React에서 내부적으로 어떻게 작동하나요?  
-
-> React 서버 구성 요소는 React의 새로운 가능성을 열어줍니다. 전체 스택 경험을 구축하는 데 완벽한 도구입니다.
-
-## 32. React에서 useId()는 내부적으로 어떻게 작동하나요?  
-
-> useId()는 고유한 ID를 생성하는 간단하지만 흥미로운 훅입니다. 그 알고리즘이 어떻게 작동하는지 살펴봅니다.
-
-## 33. React에서 useInsertionEffect()는 내부적으로 어떻게 작동하나요?  
-
-> useInsertionEffect()는 DOM 변형이 완료되기 전에 일부 효과를 실행할 수 있게 해줍니다. 이는 효과 훅 중 가장 이른 타이밍입니다.
-
-## 34. React에서 lazy()는 내부적으로 어떻게 작동하나요?  
-
-> 내장된 `lazy()`는 렌더링 시 컴포넌트를 지연 로드하는 쉬운 방법입니다. 이 에피소드에서 그 내부 작동 방식을 알아봅니다.
-
-## 35. React에서 forwardRef()는 내부적으로 어떻게 작동하나요?  
-
-> React의 forwardRef()는 props에서 ref를 추출할 수 있는 컴포넌트를 생성할 수 있게 해줍니다. ref는 특별하게 처리되므로 직접 구현할 수 없습니다. 오늘 그 내부 작동 방식을 살펴봅니다.
-
-## 36. React에서 useSyncExternalStore()는 내부적으로 어떻게 작동하나요?  
-
-> useSyncExternalStore()는 외부 스토어에 쉽게 구독할 수 있게 해주는 React 훅으로, tearing이나 감지되지 않은 데이터 변경 문제를 해결합니다.
-
-## 37. useEffect() 콜백은 언제 실행되나요? 페인트 전인가요, 후인가요?  
-
-> 대부분의 경우 useEffect() 콜백은 페인트 후에 실행되지만, 때때로 페인트 전에 실행되기도 합니다.
-
-## 38. React에서 use()는 내부적으로 어떻게 작동하나요?  
-
-> use()는 Promise나 context를 리소스로 쉽게 사용할 수 있게 해줍니다.
-
-## 39. React에서 useOptimistic()은 내부적으로 어떻게 작동하나요?  
-
-> useOptimistic()은 낙관적 UI를 구축하여 인지된 성능을 향상시키는 데 도움이 됩니다.

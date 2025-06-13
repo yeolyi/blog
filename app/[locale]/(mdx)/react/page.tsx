@@ -70,7 +70,7 @@ export default function App() {
         }}
       />
       <ol>
-        {metadataList.slice(2).map(({ id, title }) => (
+        {metadataList.slice(2, 10).map(({ id, title }) => (
           <li key={id}>
             <Link href={`/react/${id}`}>{title}</Link>
           </li>
@@ -78,7 +78,45 @@ export default function App() {
       </ol>
 
       <h2>UI를 다시 그리는 과정</h2>
-      <p>버튼을 눌러 setState가 호출된 뒤 UI에 반영되는 과정을 살펴봅시다.</p>
+      <p>아래 코드에서 버튼을 눌렀을 때 리렌더되는 과정을 따라가봅시다.</p>
+      <Code
+        template="react"
+        files={{
+          'App.js': `import { useState } from 'react';
+
+function Link() {
+  return <a href="https://yeolyi.com">yeolyi.com</a>;
+}
+
+function Component() {
+  const [count, setCount] = useState(0);
+  return (
+    <div>
+    <button onClick={() => setCount((count) => count + 1)}>
+      click me - {count} 
+    </button> ({count % 2 === 0 ? <span>even</span> : <b>odd</b>})
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <div>
+      <Link />
+      <br />
+      <Component />
+    </div>
+  );
+}`,
+        }}
+      />
+      <ol>
+        {metadataList.slice(10).map(({ id, title }) => (
+          <li key={id}>
+            <Link href={`/react/${id}`}>{title}</Link>
+          </li>
+        ))}
+      </ol>
     </div>
   );
 }

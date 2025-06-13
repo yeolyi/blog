@@ -9,4 +9,6 @@ export const order = [
   'begin-work-app',
   'complete-work',
   'initial-commit',
+  'rerender-trigger',
+  'rerender-reuse',
 ];
