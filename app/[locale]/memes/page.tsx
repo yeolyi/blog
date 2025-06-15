@@ -74,7 +74,7 @@ export default function MemeViewer() {
     );
 
   return (
-    <div className="mt-20 px-4 max-w-2xl mx-auto w-full flex flex-col gap-8">
+    <div className="mt-20 px-4 mx-auto w-full flex flex-col gap-8">
       <form onChange={onChange}>
         <TagRadio tags={tags} name="tag" initialValue={selectedTag} />
       </form>

@@ -1,0 +1,682 @@
+export const title = 'useState'
+
+직전 게시물에서 동일한 `useState` 호출이어도 실제로 호출되는 함수는 상황별로 다름을 알아봤다. 
+
+```js
+const HooksDispatcherOnMount: Dispatcher = {
+  // [!code highlight]
+  useState: mountState,
+  ...
+};
+
+const HooksDispatcherOnUpdate: Dispatcher = {
+  // [!code highlight]
+  useState: updateState,
+  ...
+};
+```
+
+## 초기 렌더
+
+`mountState`가 호출된다. 
+
+반환되는 배열의 첫번째 인자인 `hook.memoizedState`는 우리가 건넨 `initialState`와 같다. 이 값이 초기 렌더링 때 사용된다.
+
+반환되는 배열의 두번째 인자는 현재 Fiber와 queue를 `dispatchSetState`에 바인딩한 것이다. 
+
+현재 Fiber를 나타내는 `currentlyRenderingFiber`는 
+동일 파일의 전역 변수로 선언되어있다. 아마 다른 곳에서 잘 설정해주나보다. 
+
+```js
+function mountState<S>(
+  initialState: (() => S) | S,
+): [S, Dispatch<BasicStateAction<S>>] {
+  const hook = mountStateImpl(initialState);
+  const queue = hook.queue;
+  // [!code highlight:5]
+  const dispatch: Dispatch<BasicStateAction<S>> = (dispatchSetState.bind(
+    null,
+    currentlyRenderingFiber,
+    queue,
+  ): any);
+  queue.dispatch = dispatch;
+  return [hook.memoizedState, dispatch];
+}
+```
+
+`mountStateImpl`은 `mountWorkInProgressHook`으로 만든 훅 객체에 초기 상태와 queue를 할당한다. 
+큐가 뭘 하는지는 나중에 살펴보자.
+
+```js
+function basicStateReducer<S>(state: S, action: BasicStateAction<S>): S {
+  return typeof action === 'function' ? action(state) : action;
+}
+
+function mountStateImpl<S>(initialState: (() => S) | S): Hook {
+  const hook = mountWorkInProgressHook();
+  hook.memoizedState = hook.baseState = initialState;
+
+  const queue: UpdateQueue<S, BasicStateAction<S>> = {
+    pending: null,
+    lanes: NoLanes,
+    dispatch: null,
+    lastRenderedReducer: basicStateReducer,
+    lastRenderedState: initialState,
+  };
+
+  hook.queue = queue;
+  return hook;
+}
+```
+
+`mountWorkInProgressHook`를 통해 훅은 단순 객체로 표현됨을 알 수 있다. Fiber의 훅이 어떻게 관리되는지 주석을 읽고 이해해보자.
+
+```js
+// [!code highlight:4]
+// Hooks are stored as a linked list on the fiber's memoizedState field. The
+// current hook list is the list that belongs to the current fiber. The
+// work-in-progress hook list is a new list that will be added to the
+// work-in-progress fiber.
+let currentHook: Hook | null = null;
+let workInProgressHook: Hook | null = null;
+
+function mountWorkInProgressHook(): Hook {
+  const hook: Hook = {
+    memoizedState: null,
+
+    baseState: null,
+    baseQueue: null,
+    queue: null,
+
+    next: null,
+  };
+
+  // [!code highlight:5]
+  // 연결리스트이다!
+  if (workInProgressHook === null) {
+    currentlyRenderingFiber.memoizedState = workInProgressHook = hook;
+  } else {
+    workInProgressHook = workInProgressHook.next = hook;
+  }
+  return workInProgressHook;
+}
+```
+
+Fiber 객체의 `memoizedState`와 훅 객체의 `memoizedState`를 헷갈려하지 말자. 
+전자는 현재 렌더링 중인 Fiber의 훅 리스트를 가리키고 후자의 `memoizedState`는 현재 훅의 상태를 가리킨다. 
+
+## 트리거
+
+`setState`는 Fiber와 큐가 바인딩된 `dispatchSetState`임을 확인했다. 
+
+```js
+function dispatchSetState<S, A>(
+  // [!code highlight:2]
+  // setState가 불린 Fiber
+  fiber: Fiber,
+  // [!code highlight:2]
+  // 훅 객체 속 큐
+  queue: UpdateQueue<S, A>,
+  // [!code highlight:2]
+  // 우리가 건넨 액션
+  action: A,
+): void {
+ // 이 업데이트의 우선순위 정도로 이해하자.
+  const lane = requestUpdateLane(fiber);
+  const didScheduleUpdate = dispatchSetStateInternal(
+    fiber,
+    queue,
+    action,
+    lane,
+  );
+  if (didScheduleUpdate) {
+    startUpdateTimerByLane(lane);
+  }
+}
+```
+
+`dispatchSetStateInternal`은 아래 케이스를 나누어 처리한다.
+
+1. 렌더 도중 setState가 불린 경우
+1. 이전과 같은 값으로 setState가 불린 경우
+1. 나머지 경우
+
+```js
+function dispatchSetStateInternal<S, A>(
+  fiber: Fiber,
+  queue: UpdateQueue<S, A>,
+  action: A,
+  lane: Lane,
+): boolean {
+  const update: Update<S, A> = {
+    lane,
+    revertLane: NoLane,
+    action,
+    hasEagerState: false,
+    eagerState: null,
+    next: null,
+  };
+
+  if (isRenderPhaseUpdate(fiber)) {
+    // 1. 렌더 중에 setState가 호출됨
+    enqueueRenderPhaseUpdate(queue, update);
+  } else {
+    const alternate = fiber.alternate;
+    if (
+      fiber.lanes === NoLanes &&
+      (alternate === null || alternate.lanes === NoLanes)
+    ) {
+      // 2. 
+      // The queue is currently empty, which means we can eagerly compute the
+      // next state before entering the render phase. If the new state is the
+      // same as the current state, we may be able to bail out entirely.
+      const lastRenderedReducer = queue.lastRenderedReducer;
+      if (lastRenderedReducer !== null) {
+        try {
+          const currentState: S = (queue.lastRenderedState: any);
+          const eagerState = lastRenderedReducer(currentState, action);
+          // Stash the eagerly computed state, and the reducer used to compute
+          // it, on the update object. If the reducer hasn't changed by the
+          // time we enter the render phase, then the eager state can be used
+          // without calling the reducer again.
+          update.hasEagerState = true;
+          update.eagerState = eagerState;
+          if (is(eagerState, currentState)) {
+            // Fast path. We can bail out without scheduling React to re-render.
+            // It's still possible that we'll need to rebase this update later,
+            // if the component re-renders for a different reason and by that
+            // time the reducer has changed.
+            // TODO: Do we still need to entangle transitions in this case?
+            enqueueConcurrentHookUpdateAndEagerlyBailout(fiber, queue, update);
+            return false;
+          }
+        } catch (error) {
+          // Suppress the error. It will throw again in the render phase.
+        }
+    }
+
+    // 3.
+    // [!code highlight]
+    const root = enqueueConcurrentHookUpdate(fiber, queue, update, lane);
+    if (root !== null) {
+      // [!code highlight]
+      scheduleUpdateOnFiber(root, fiber, lane);
+      entangleTransitionUpdate(root, queue, lane);
+      return true;
+    }
+  }
+  return false;
+}
+```
+
+가장 일반적인 경우인 3번 경우를 우선 살펴보자. `concurrentQueues`에 필요한 데이터들을 넣는다.
+
+```js
+export function enqueueConcurrentHookUpdate<S, A>(
+  fiber: Fiber,
+  queue: HookQueue<S, A>,
+  update: HookUpdate<S, A>,
+  lane: Lane,
+): FiberRoot | null {
+  const concurrentQueue: ConcurrentQueue = queue;
+  const concurrentUpdate: ConcurrentUpdate = update;
+  enqueueUpdate(fiber, concurrentQueue, concurrentUpdate, lane);
+  return getRootForUpdatedFiber(fiber);
+}
+```
+
+```js
+function enqueueUpdate(
+  fiber: Fiber,
+  queue: ConcurrentQueue | null,
+  update: ConcurrentUpdate | null,
+  lane: Lane,
+) {
+  // concurrentQueues는 전역 변수 배열이고
+  // queue는 훅 객체에 있는 큐이다. 헷갈리지 말자.
+  concurrentQueues[concurrentQueuesIndex++] = fiber;
+  concurrentQueues[concurrentQueuesIndex++] = queue;
+  concurrentQueues[concurrentQueuesIndex++] = update;
+  concurrentQueues[concurrentQueuesIndex++] = lane;
+
+  concurrentlyUpdatedLanes = mergeLanes(concurrentlyUpdatedLanes, lane);
+
+  // fiber 및 fiber에 대응되는 alternate fiber의 lane을 두 개 다 업데이트한다.
+  fiber.lanes = mergeLanes(fiber.lanes, lane);
+  const alternate = fiber.alternate;
+  if (alternate !== null) {
+    alternate.lanes = mergeLanes(alternate.lanes, lane);
+  }
+}
+```
+
+왜 두 개 다 업데이트할까? 
+
+> React는 렌더링할 때 어떤 Fiber 트리(current/alternate)를 기준으로 작업할지 미리 정해진 게 아님. 
+> 그래서 업데이트가 들어오면 두 트리에 모두 반영해야, 나중에 어떤 트리를 선택하든 상태가 누락되지 않음.
+
+이후 `scheduleUpdateOnFiber`에서 `ensureRootIsScheduled`로 리렌더링을 트리거한다.
+관련 내용은 나중에 리액트 스케줄러를 살펴볼 떄 알아보자.
+
+### 리렌더
+
+`prepareFreshStack`에서는 본격적인 렌더를 시작하기 전에 `workInProgress` 변수를 초기화함을 살펴봤다. 
+여기서는 `finishQueueingConcurrentUpdates`도 호출해 `concurrentQueues`에 담긴 정보를 훅 객체에 저장한다.
+
+```js
+export function finishQueueingConcurrentUpdates(): void {
+  const endIndex = concurrentQueuesIndex;
+  concurrentQueuesIndex = 0;
+
+  concurrentlyUpdatedLanes = NoLanes;
+
+  let i = 0;
+  while (i < endIndex) {
+    const fiber: Fiber = concurrentQueues[i];
+    concurrentQueues[i++] = null;
+    const queue: ConcurrentQueue = concurrentQueues[i];
+    concurrentQueues[i++] = null;
+    const update: ConcurrentUpdate = concurrentQueues[i];
+    concurrentQueues[i++] = null;
+    const lane: Lane = concurrentQueues[i];
+    concurrentQueues[i++] = null;
+
+    if (queue !== null && update !== null) {
+      const pending = queue.pending;
+      if (pending === null) {
+        // This is the first update. Create a circular list.
+        update.next = update;
+      } else {
+        update.next = pending.next;
+        pending.next = update;
+      }
+      queue.pending = update;
+    }
+
+    if (lane !== NoLane) {
+      markUpdateLaneFromFiberToRoot(fiber, update, lane);
+    }
+  }
+}
+```
+
+```js
+function markUpdateLaneFromFiberToRoot(
+  sourceFiber: Fiber,
+  update: ConcurrentUpdate | null,
+  lane: Lane,
+): null | FiberRoot {
+  // Update the source fiber's lanes
+  sourceFiber.lanes = mergeLanes(sourceFiber.lanes, lane);
+  let alternate = sourceFiber.alternate;
+  if (alternate !== null) {
+    alternate.lanes = mergeLanes(alternate.lanes, lane);
+  }
+  // Walk the parent path to the root and update the child lanes.
+  let isHidden = false;
+  let parent = sourceFiber.return;
+  let node = sourceFiber;
+  while (parent !== null) {
+    parent.childLanes = mergeLanes(parent.childLanes, lane);
+    alternate = parent.alternate;
+    if (alternate !== null) {
+      alternate.childLanes = mergeLanes(alternate.childLanes, lane);
+    }
+
+    node = parent;
+    parent = parent.return;
+  }
+
+  if (node.tag === HostRoot) {
+    const root: FiberRoot = node.stateNode;
+    if (isHidden && update !== null) {
+      markHiddenUpdate(root, update, lane);
+    }
+    return root;
+  }
+  return null;
+}
+```
+
+`finishQueueingConcurrentUpdates`에 console.log를 추가해 setState로 인한
+리렌더 시점에 큐에 뭐가 들었는지 확인해보자.
+
+```
+0 fiber: FiberNode (Component)
+1 queue: { 
+    dispatch: [Function], // setState 함수
+    lanes: 0, 
+    lastRenderedReducer: [Function], // basicStateReducer
+    lastRenderedState: 0, // 초기 상태
+    pending: null 
+}
+2 update: { 
+    action: (count2) => count2 + 1, 
+    eagerState: 1, 
+    hasEagerState: true, 
+    lane: 2, 
+    next: null
+}
+3 lane: 2
+```
+
+update 객체의 hasEagerState가 true이므로 3번이 아닌 2번 (bail out) 경로로 갔음을 알 수 있다.
+
+함튼 중요한건 저 4개의 정보가 트리거 단계에서 렌더 단계로 전달된다는 것. 
+
+```js
+function updateState<S>(
+  initialState: (() => S) | S,
+): [S, Dispatch<BasicStateAction<S>>] {
+  return updateReducer(basicStateReducer, initialState);
+}
+```
+
+ updateWorkInProgressHook은 useState 등의 훅이 업데이트(render) 중 호출될 때, 
+ 현재 작업 중인 Fiber에서 해당 훅에 대응하는 work-in-progress 훅 객체를 가져오거나 새로 복제해 생성하는 역할을 한다. 
+ 이를 통해 훅 호출 순서를 유지하면서, 이전 상태와 큐 정보를 그대로 이어받아 상태 업데이트 로직을 수행할 수 있게 한다.
+
+hook은 현재 렌더링 중인 Fiber의 work-in-progress 훅으로, 이번 렌더에서 상태 업데이트를 반영할 대상이다. 
+currentHook은 이전 렌더에서 사용된 훅으로, 현재 훅의 상태를 복제하거나 비교하기 위해 참조된다.
+React는 이 둘을 비교·복제하여 훅 호출 순서를 유지하면서 상태를 갱신한다.
+
+```js
+function updateReducer<S, I, A>(
+  reducer: (S, A) => S,
+  initialArg: I,
+  init?: I => S,
+): [S, Dispatch<A>] {
+  // currentHook 변수도 여기서 설정한다.
+  const hook = updateWorkInProgressHook();
+  return updateReducerImpl(hook, ((currentHook: any): Hook), reducer);
+}
+```
+
+```js
+function updateReducerImpl<S, A>(
+  // 결과를 저장할 훅
+  hook: Hook,
+  // 기준이 되는 이전 상태
+  current: Hook,
+  reducer: (S, A) => S,
+): [S, Dispatch<A>] {
+  // 이전에 발생한 setState 액션들이 쌓여있다.
+  const queue = hook.queue;
+
+  if (queue === null) {
+    throw new Error(
+      'Should have a queue. You are likely calling Hooks conditionally, ' +
+        'which is not allowed. (https://react.dev/link/invalid-hook-call)',
+    );
+  }
+
+  queue.lastRenderedReducer = reducer;
+
+  // The last rebase update that is NOT part of the base state.
+  let baseQueue = hook.baseQueue;
+
+  // [!code highlight]
+  // pendingQueue -> baseQueue 병합
+  // The last pending update that hasn't been processed yet.
+  const pendingQueue = queue.pending;
+  if (pendingQueue !== null) {
+    // We have new updates that haven't been processed yet.
+    // We'll add them to the base queue.
+    if (baseQueue !== null) {
+      // Merge the pending queue and the base queue.
+      const baseFirst = baseQueue.next;
+      const pendingFirst = pendingQueue.next;
+      baseQueue.next = pendingFirst;
+      pendingQueue.next = baseFirst;
+    }
+    // 왜 두 개 다?? current도 설정하네?
+    // 여기 말고는 current는 더이상 등장 안한다.
+    current.baseQueue = baseQueue = pendingQueue;
+    queue.pending = null;
+  }
+
+  const baseState = hook.baseState;
+  if (baseQueue === null) {
+    // If there are no pending updates, then the memoized state should be the
+    // same as the base state. Currently these only diverge in the case of
+    // useOptimistic, because useOptimistic accepts a new baseState on
+    // every render.
+    hook.memoizedState = baseState;
+    // We don't need to call markWorkInProgressReceivedUpdate because
+    // baseState is derived from other reactive values.
+  } else {
+    // We have a queue to process.
+    const first = baseQueue.next;
+    let newState = baseState;
+
+    let newBaseState = null;
+    let newBaseQueueFirst = null;
+    let newBaseQueueLast: Update<S, A> | null = null;
+    let update = first;
+    let didReadFromEntangledAsyncAction = false;
+    do {
+      // An extra OffscreenLane bit is added to updates that were made to
+      // a hidden tree, so that we can distinguish them from updates that were
+      // already there when the tree was hidden.
+      const updateLane = removeLanes(update.lane, OffscreenLane);
+      const isHiddenUpdate = updateLane !== update.lane;
+
+      // Check if this update was made while the tree was hidden. If so, then
+      // it's not a "base" update and we should disregard the extra base lanes
+      // that were added to renderLanes when we entered the Offscreen tree.
+      const shouldSkipUpdate = isHiddenUpdate
+        ? !isSubsetOfLanes(getWorkInProgressRootRenderLanes(), updateLane)
+        : !isSubsetOfLanes(renderLanes, updateLane);
+
+      // 우선순위가 부족하면 스킵한다.
+      // baseQueue에 복제되어 저장한다.
+      if (shouldSkipUpdate) {
+        // Priority is insufficient. Skip this update. If this is the first
+        // skipped update, the previous update/state is the new base
+        // update/state.
+        const clone: Update<S, A> = {
+          lane: updateLane,
+          revertLane: update.revertLane,
+          action: update.action,
+          hasEagerState: update.hasEagerState,
+          eagerState: update.eagerState,
+          next: (null: any),
+        };
+        if (newBaseQueueLast === null) {
+          newBaseQueueFirst = newBaseQueueLast = clone;
+          newBaseState = newState;
+        } else {
+          newBaseQueueLast = newBaseQueueLast.next = clone;
+        }
+        // Update the remaining priority in the queue.
+        // TODO: Don't need to accumulate this. Instead, we can remove
+        // renderLanes from the original lanes.
+        currentlyRenderingFiber.lanes = mergeLanes(
+          currentlyRenderingFiber.lanes,
+          updateLane,
+        );
+        markSkippedUpdateLanes(updateLane);
+      } else {
+        // This update does have sufficient priority.
+
+        // Check if this is an optimistic update.
+        const revertLane = update.revertLane;
+        if (revertLane === NoLane) {
+          // This is not an optimistic update, and we're going to apply it now.
+          // But, if there were earlier updates that were skipped, we need to
+          // leave this update in the queue so it can be rebased later.
+          if (newBaseQueueLast !== null) {
+            const clone: Update<S, A> = {
+              // This update is going to be committed so we never want uncommit
+              // it. Using NoLane works because 0 is a subset of all bitmasks, so
+              // this will never be skipped by the check above.
+              lane: NoLane,
+              revertLane: NoLane,
+              action: update.action,
+              hasEagerState: update.hasEagerState,
+              eagerState: update.eagerState,
+              next: (null: any),
+            };
+            newBaseQueueLast = newBaseQueueLast.next = clone;
+          }
+
+          // Check if this update is part of a pending async action. If so,
+          // we'll need to suspend until the action has finished, so that it's
+          // batched together with future updates in the same action.
+          if (updateLane === peekEntangledActionLane()) {
+            didReadFromEntangledAsyncAction = true;
+          }
+        } else {
+          // This is an optimistic update. If the "revert" priority is
+          // sufficient, don't apply the update. Otherwise, apply the update,
+          // but leave it in the queue so it can be either reverted or
+          // rebased in a subsequent render.
+          if (isSubsetOfLanes(renderLanes, revertLane)) {
+            // The transition that this optimistic update is associated with
+            // has finished. Pretend the update doesn't exist by skipping
+            // over it.
+            update = update.next;
+
+            // Check if this update is part of a pending async action. If so,
+            // we'll need to suspend until the action has finished, so that it's
+            // batched together with future updates in the same action.
+            if (revertLane === peekEntangledActionLane()) {
+              didReadFromEntangledAsyncAction = true;
+            }
+            continue;
+          } else {
+            const clone: Update<S, A> = {
+              // Once we commit an optimistic update, we shouldn't uncommit it
+              // until the transition it is associated with has finished
+              // (represented by revertLane). Using NoLane here works because 0
+              // is a subset of all bitmasks, so this will never be skipped by
+              // the check above.
+              lane: NoLane,
+              // Reuse the same revertLane so we know when the transition
+              // has finished.
+              revertLane: update.revertLane,
+              action: update.action,
+              hasEagerState: update.hasEagerState,
+              eagerState: update.eagerState,
+              next: (null: any),
+            };
+            if (newBaseQueueLast === null) {
+              newBaseQueueFirst = newBaseQueueLast = clone;
+              newBaseState = newState;
+            } else {
+              newBaseQueueLast = newBaseQueueLast.next = clone;
+            }
+            // Update the remaining priority in the queue.
+            // TODO: Don't need to accumulate this. Instead, we can remove
+            // renderLanes from the original lanes.
+            currentlyRenderingFiber.lanes = mergeLanes(
+              currentlyRenderingFiber.lanes,
+              revertLane,
+            );
+            markSkippedUpdateLanes(revertLane);
+          }
+        }
+
+        // Process this update.
+        const action = update.action;
+        if (shouldDoubleInvokeUserFnsInHooksDEV) {
+          reducer(newState, action);
+        }
+        if (update.hasEagerState) {
+          // If this update is a state update (not a reducer) and was processed eagerly,
+          // we can use the eagerly computed state
+          newState = ((update.eagerState: any): S);
+        } else {
+          newState = reducer(newState, action);
+        }
+      }
+      update = update.next;
+    } while (update !== null && update !== first);
+
+    if (newBaseQueueLast === null) {
+      newBaseState = newState;
+    } else {
+      newBaseQueueLast.next = (newBaseQueueFirst: any);
+    }
+
+    // Mark that the fiber performed work, but only if the new state is
+    // different from the current state.
+    if (!is(newState, hook.memoizedState)) {
+      markWorkInProgressReceivedUpdate();
+
+      // Check if this update is part of a pending async action. If so, we'll
+      // need to suspend until the action has finished, so that it's batched
+      // together with future updates in the same action.
+      // TODO: Once we support hooks inside useMemo (or an equivalent
+      // memoization boundary like Forget), hoist this logic so that it only
+      // suspends if the memo boundary produces a new value.
+      if (didReadFromEntangledAsyncAction) {
+        const entangledActionThenable = peekEntangledActionThenable();
+        if (entangledActionThenable !== null) {
+          // TODO: Instead of the throwing the thenable directly, throw a
+          // special object like `use` does so we can detect if it's captured
+          // by userspace.
+          throw entangledActionThenable;
+        }
+      }
+    }
+
+    hook.memoizedState = newState;
+    hook.baseState = newBaseState;
+    hook.baseQueue = newBaseQueueLast;
+
+    queue.lastRenderedState = newState;
+  }
+
+  if (baseQueue === null) {
+    // `queue.lanes` is used for entangling transitions. We can set it back to
+    // zero once the queue is empty.
+    queue.lanes = NoLanes;
+  }
+
+  const dispatch: Dispatch<A> = (queue.dispatch: any);
+  return [hook.memoizedState, dispatch];
+}
+```
+
+<Code
+files={{
+    'App.js': `import React, { useState, useTransition } from 'react';
+
+function App() {
+  const [count, setCount] = useState(0);
+  const [isPending, startTransition] = useTransition();
+
+  const handleClick = () => {
+    // 동기 업데이트 1: +1
+    setCount(prev => prev + 1);
+
+    // 비동기 업데이트 1: +10
+    startTransition(() => {
+      setCount(prev => prev + 10);
+    });
+
+    // 동기 업데이트 2: +100
+    setCount(prev => prev + 100);
+
+    // 비동기 업데이트 2: +1000
+    startTransition(() => {
+      setCount(prev => prev + 1000);
+    });
+  };
+
+  console.log('count', count);
+
+  return (
+    <div>
+      <button onClick={handleClick}>Update Count</button>
+      <p>Count: {count}</p>
+      {isPending && <p>⏳ Transition pending...</p>}
+    </div>
+  );
+}
+
+export default App;`
+}}
+
+/>

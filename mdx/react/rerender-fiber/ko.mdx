@@ -1,0 +1,23 @@
+export const title = 'Fiber 다시 만들기'
+
+RootFiber, App, div, Link, br 까지는 bailout되지만 App Fiber는 예약된 작업이 있어 bailout되지 않는다. 
+
+따라서 App Fiber를 처리하기 위한 `updateFunctionComponent`가 호출될 것이고 이어서 `reconcileChildren`이 호출될 것이다. 
+
+초기 렌더링 때 `reconcileChildren` 호출 이후 Fiber 종류에 따라 `placeSingleChild`, `reconcileSingleElement`, `reconcileSingleTextNode` 등의 함수를 호출함을 살펴봤다.
+
+리렌더링 때는 기존 Fiber들을 삭제/수정하고 새로운 Fiber를 삽입해야하는 경우가 있을 것이다. 
+이와 관련된 차이점 위주로 살펴보자.
+
+## reconcileSingleElement
+
+TODO
+
+## reconcileSingleTextNode
+
+TODO
+
+button 하위 "click me"는 bail out되지만 그 다음 TextNode는 0에서 1이 되었기에 bail out되지 않고 `updateHostText`를 호출한다. 
+여기는 초기 렌더링때와 마찬가지로 아무것도 안하고 리턴한다. 텍스트 관련 작업과 DOM을 만드는 작업은 `completeWork`에서 처리된다. 
+
+

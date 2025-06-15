@@ -11,6 +11,7 @@ import rehypeKatex from 'rehype-katex';
 import rehypeSlug from 'rehype-slug';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
+import customGithubDark from './custom-github-dark.json' with { type: 'json' };
 
 const nextConfig = {
   images: {
@@ -47,7 +48,7 @@ const withMDX = createMDX({
         rehypeShiki,
         {
           inline: 'tailing-curly-colon',
-          theme: 'github-dark',
+          theme: customGithubDark,
           transformers: [
             transformerNotationHighlight(),
             transformerNotationFocus(),

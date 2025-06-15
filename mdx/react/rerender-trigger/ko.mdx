@@ -42,10 +42,10 @@ br Fiber { ... lanes: 0, childLanes: 0}
 Component Fiber { ... lanes: 2, childLanes: 0}
 div Fiber { ... lanes: 0, childLanes: 0}
 button Fiber { ... lanes: 0, childLanes: 0}
-text Fiber { ... lanes: 0, childLanes: 0}
+text '(' Fiber { ... lanes: 0, childLanes: 0}
 text Fiber{ ... lanes: 0, childLanes: 0}
 text Fiber{ ... lanes: 0, childLanes: 0}
-text Fiber{ ... lanes: 0, childLanes: 0}
+text ')' Fiber{ ... lanes: 0, childLanes: 0}
 ```
 
 HostRootFiber, App, div의 childLanes가 2, Component의 lane이 2가 되었음을 확인해볼 수 있다. 

@@ -45,11 +45,11 @@ export default async function Home({
   const t = await getTranslations('HomePage');
 
   return (
-    <div className="max-w-2xl mx-auto my-24 px-4 flex flex-col gap-12">
+    <div className="mx-auto my-24 px-4 flex flex-col gap-12">
       <Image
         src={me}
         alt="me"
-        className="object-cover w-full h-full aspect-square"
+        className="object-cover w-full h-full aspect-square max-w-prose"
         draggable={false}
       />
 

@@ -203,7 +203,7 @@ function Flow({
               ]}
             />
             <Background
-              bgColor="var(--color-stone-900)"
+              bgColor="var(--color-stone-800)"
               variant={BackgroundVariant.Dots}
               id={id}
             />

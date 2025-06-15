@@ -7,6 +7,7 @@ import TruthTable from '@/components/cs/TruthTable';
 import Flow from '@/components/cs/flow';
 import half from '@/mdx/cs/adder/assets/half.json';
 import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
+import srLatch from '@/mdx/cs/sequential/assets/srLatch.json';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
@@ -107,7 +108,16 @@ export default async function Home() {
         <CSPostListItem
           title={tCS('hw5Title')}
           description={tCS('hw5Description')}
-        />
+          date="2025-06-15"
+          href="/cs/sequential"
+        >
+          <Flow
+            id="sequential"
+            initialJSON={srLatch}
+            height={300}
+            additionalRegistryKeys={['nor']}
+          />
+        </CSPostListItem>
 
         {[...Array(3)].map((_, idx) => (
           <CSPostListItem

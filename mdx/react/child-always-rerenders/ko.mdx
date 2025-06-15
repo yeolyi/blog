@@ -1,0 +1,64 @@
+export const title = '자식은 항상 리렌더링된다'
+
+`beginWork`에서 `Component`를 처리할 때 `renderWithHooks`함수에서 우리가 만든 함수 컴포넌트를 실행시킨다:
+
+```js
+let children = __DEV__
+  ? callComponentInDEV(Component, props, secondArg)
+  : Component(props, secondArg);
+```
+
+참고로 Component 함수가 실행되면 아래처럼 prop 객체의 참조가 달라진다:
+
+<Code template="react" files={{
+    'index.js': `import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+
+const app1 = <App/>
+const app2 = <App/>
+
+console.log(app1.props, app2.props);
+console.log(app1.props === app2.props);`,
+'App.js': `
+export default function App() {
+    return <h1>Hello</h1>
+}`
+}}
+showTabs
+options={{ activeFile: 'index.js' }}
+/>
+
+이로 인해 workInProgress가 Component 하위 div에 대응하는 다음 `beginWork`에서는 `oldProps === newProps`가 성립하지 않아 리렌더링된다. **일반화하자면 리렌더링된 컴포넌트의 하위 컴포넌트들은 실제로 프롭이 바꼈든 안바꼈든 기본적으로 전부 리렌더링된다.** 
+
+이를 보다 명확하게 보여주는 예시로 확인해보자:
+
+<Code template="react" files={{
+'App.js': `import { useState } from "react";
+
+function Child2() {
+    console.log('Child2 rerendered');
+    return <p>Child2</p>;
+}
+
+function Child1() {
+    const [_, setCount] = useState(0);
+
+    return (
+        <div>
+            <button onClick={() => setCount((count) => count + 1)}>
+                click me
+            </button>
+            <Child2 />
+        </div>
+    );
+}
+
+export default function App() {
+    return <Child1 />;
+}`
+}}
+/>
+
+setCount로 Child1의 리렌더링을 트리거했지만 렌더링 결과는 전혀 바뀌지 않는다. 하지만 Child1이 `renderWithHooks`로 리렌더링되면서 div 객체도 함께 다시 만들어지고 이어서 div가 리렌더링되면서
+Child2의 이전 이후 props 객체의 참조가 바뀌어 Child2도 리렌더링된다.

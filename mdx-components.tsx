@@ -19,5 +19,10 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
     Image,
     Code,
     Link,
+    table: (props) => (
+      <div className="overflow-x-auto w-full">
+        <table {...props} />
+      </div>
+    ),
   };
 }

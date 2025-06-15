@@ -89,6 +89,9 @@ module.exports = {
             li: {
               overflowWrap: 'anywhere',
             },
+            'thead, tbody, tr': {
+              'white-space': 'nowrap',
+            },
           },
         },
       },

@@ -23,7 +23,7 @@ const Button = ({
     <button
       onClick={onClick}
       className={clsx(
-        'flex text-base font-normal items-center gap-2 cursor-pointer disabled:cursor-not-allowed text-white',
+        'flex text-base font-normal items-center gap-2 cursor-pointer disabled:cursor-not-allowed text-white select-none',
         bgMap[theme],
         className,
         children ? 'px-4 py-2' : 'p-3',

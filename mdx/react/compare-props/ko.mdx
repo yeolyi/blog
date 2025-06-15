@@ -1,0 +1,212 @@
+export const title = 'prop 비교해 건너뛰기'
+
+초기 렌더때는 당연하게도 모든 컴포넌트들에 대해 beginWork가 호출되었다. 
+이번에도 그런지 `beginWork`에 `console.log(current, workInProgress)`를 추가하고 
+버튼을 눌러 리렌더링해보자.
+
+```txt
+RootFiber / RootFiber
+App / App
+div / div
+// [!code highlight:2]
+// Link 컴포넌트 하위 a는 방문하지 않는다.
+Link / Link
+br / br
+Component / Component
+div / div
+button / button
+text / text
+text / text
+text / text
+// [!code highlight:2]
+// 기존에 없던 Fiber가 생겼다는 의미이다.
+undefined / b
+text / text
+```
+
+Link 컴포넌트 하위 a는 방문하지 않는 것을 확인할 수 있다. 무언가 처리하는 로직이 있을 것이다:
+
+## memoizedProps, pendingProps
+
+우선 중요한 두 필드의 역할을 확인하자. Fiber 객체에는 prop 관련된 두 개의 필드가 있다.
+
+`memoizedProps`는 이미 적용되어 UI에서 사용중(?)인 prop을, 
+`pendingProps`는 적용해야할 prop이라고 이해하자. 
+
+## beginWork
+
+각 Fiber에 대한 작업을 시작하는 `beginWork` 함수를 보자. 
+리액트에서는 리렌더링을 건너뛰는 행위를 bail out이라고 하나보다.
+
+```ts
+function beginWork(
+  current: Fiber | null,
+  workInProgress: Fiber,
+  renderLanes: Lanes,
+): Fiber | null {
+  if (current !== null) {
+    const oldProps = current.memoizedProps;
+    const newProps = workInProgress.pendingProps;
+
+    if (
+      // [!code highlight:2]
+      // 이전 prop과 새로운 prop을 참조 비교한다.
+      oldProps !== newProps ||
+      hasLegacyContextChanged()
+    ) {
+      // [!code highlight]
+      didReceiveUpdate = true;
+    } else {
+      // [!code highlight:5]
+      // prop이나 context가 동일하다면 예약된 리렌더가 있는지 확인한다. 
+      // lane을 활용하는데 나중에 알아보자.
+      const hasScheduledUpdateOrContext = checkScheduledUpdateOrContext(
+        current,
+        renderLanes,
+      );
+      if (
+        !hasScheduledUpdateOrContext &&
+        // If this is the second pass of an error or suspense boundary, there
+        // may not be work scheduled on `current`, so we check for this flag.
+        (workInProgress.flags & DidCapture) === NoFlags
+      ) {
+        // [!code highlight:2]
+        // 업데이트도 없으니 이 Fiber는 건너뛰어도 좋다.
+        didReceiveUpdate = false;
+
+        // [!code highlight:5]
+        return attemptEarlyBailoutIfNoScheduledUpdate(
+          current,
+          workInProgress,
+          renderLanes,
+        );
+      }
+      ...
+    }
+  } else {
+    // 초기 렌더 때 여기로 온다 
+  }
+
+  // 위 체크들에서 해당사항이 없으면 
+  // 초기 렌더때와 같게 update 함수들을 호출한다.
+  workInProgress.lanes = NoLanes;
+
+  switch (workInProgress.tag) {
+    ...
+  }
+}
+```
+
+prop/context 변화가 없고 예약된 작업(lane)이 없다면 리렌더링을 건너뛰기 위해 
+`attemptEarlyBailoutIfNoScheduledUpdate`이 호출된다.
+
+우리 예제에서 각 Fiber별로 로그를 찍어보자. 
+
+
+| Fiber       |   oldProps                          | newProps                          | prop 같음 | hasScheduledUpdateOrContext |
+|----------------|-----------------------------------|-----------------------------------|------------------------|------------------------------|
+| RootFiber           | null                              | null                              | true                   | false                        |
+| App                | \{}                                | \{}                                | true                   | false                        |
+| div                | \{children: Array(3)}              | \{children: Array(3)}              | true                   | false                        |
+| Link           | \{}                                | \{}                                | true                   | false                        |
+| br             | \{}                                | \{}                                | true                   | false                        |
+| Component      | \{}                                |\{}                                | true                   | **true**                         |
+| div            | \{children: Array(5)}              | \{children: Array(5)}              | false                  | -                            |
+| button         | \{children: Array(2), onClick: f}  | \{children: Array(2), onClick: f}  | false                  | -                            |
+| text ('click') | 'click me - '                     | 'click me - '                     | true                   | false                        |
+| text ('count') | '0'                               | '1'                               | false                  | -                            |
+| text (' ')     | ' '                               | ' '                               | true                   | false                        |
+| text ('(')     | '('                               | '('                               | true                   | false                        |
+| text (')')     | ')'                               | ')'                               | true                   | false                        |
+
+Link는 prop이 같고 `hasScheduledUpdateOrContext`도 false여서 bail out되어 a까지 가지 않는다.
+
+Component는 prop은 같지만 hasScheduledUpdateOrContext가 true라서, 즉 예약된게 있어서 bail out되지 않는다.
+
+'even'과 'odd'에 해당하는 Fiber가 안보이는데 이는 기존에 없던 Fiber라서 `if (current !== null)`에 걸리지 않아서이다. 
+따라서 bail out할 수 없다.
+
+## attemptEarlyBailoutIfNoScheduledUpdate
+
+자 지금까지 bail out되는 조건을 살펴봤고 이제 bail out시 어떤 작업을 하는지 살펴보자.
+
+```ts
+function attemptEarlyBailoutIfNoScheduledUpdate(
+  current: Fiber,
+  workInProgress: Fiber,
+  renderLanes: Lanes,
+) {
+  // [!code highlight:3]
+  // This fiber does not have any pending work. Bailout without entering
+  // the begin phase. There's still some bookkeeping we that needs to be done
+  // in this optimized path, mostly pushing stuff onto the stack.
+  switch (workInProgress.tag) {
+    case HostRoot: {
+      pushHostRootContext(workInProgress);
+      const root: FiberRoot = workInProgress.stateNode;
+      pushRootTransition(workInProgress, root, renderLanes);
+      ...
+      break;
+    }
+    case HostSingleton:
+    case HostComponent:
+      pushHostContext(workInProgress);
+      break;
+    ...
+  }
+  return bailoutOnAlreadyFinishedWork(current, workInProgress, renderLanes);
+}
+```
+
+여기서 말하는 bookkeeping이 뭔지는 아직 모르겠다. 
+넘어가고 `bailoutOnAlreadyFinishedWork` 함수를 살펴보자.
+
+## bailoutOnAlreadyFinishedWork
+
+주석이 아주 잘 써져있다. 각 분기별로 어떤 상황인지 확인해보자.
+
+```ts
+function bailoutOnAlreadyFinishedWork(
+  current: Fiber | null,
+  workInProgress: Fiber,
+  renderLanes: Lanes,
+): Fiber | null {
+  if (current !== null) {
+    // Reuse previous dependencies
+    workInProgress.dependencies = current.dependencies;
+  }
+
+  markSkippedUpdateLanes(workInProgress.lanes);
+
+  // Check if the children have any pending work.
+  if (!includesSomeLane(renderLanes, workInProgress.childLanes)) {
+    // [!code highlight]
+    // The children don't have any work either. We can skip them.
+    if (current !== null) {
+      // Before bailing out, check if there are any context changes in
+      // the children.
+      lazilyPropagateParentContextChanges(current, workInProgress, renderLanes);
+      // [!code highlight:2]
+      // 동일한 체크를 다시 한다. 
+      // 아직 이해는 잘 안되지만 context 관련 로직인가?
+      if (!includesSomeLane(renderLanes, workInProgress.childLanes)) {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
+
+  // [!code highlight:2]
+  // This fiber doesn't have work, but its subtree does. Clone the child
+  // fibers and continue.
+  cloneChildFibers(current, workInProgress);
+  return workInProgress.child;
+}
+```
+
+방금 `childLanes`의 활용처를 찾았다! 이를 통해 childLanes가 0이 아닌 HostRootFiber, App, div를 처리할 때는 
+아래 `cloneChildFibers`가 호출된 후 `workInProgress.child`에 대해서 순회를 지속함을 알 수 있다. 
+하지만 childLanes가 0인 Link에서는 null이 반환되어 자식까지 가지 않고 순회를 멈춤을 알 수 있다.
+
+`cloneChildFibers`는 자세히 살펴보지 않겠지만 `current`를 재활용할 수 있다면 재활용한다.

@@ -111,7 +111,16 @@ export default function App() {
         }}
       />
       <ol>
-        {metadataList.slice(10).map(({ id, title }) => (
+        {metadataList.slice(10, 15).map(({ id, title }) => (
+          <li key={id}>
+            <Link href={`/react/${id}`}>{title}</Link>
+          </li>
+        ))}
+      </ol>
+
+      <h2>리액트 훅 뜯어보기</h2>
+      <ol>
+        {metadataList.slice(15).map(({ id, title }) => (
           <li key={id}>
             <Link href={`/react/${id}`}>{title}</Link>
           </li>

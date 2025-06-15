@@ -11,4 +11,8 @@ export const order = [
   'initial-commit',
   'rerender-trigger',
   'rerender-reuse',
+  'compare-props',
+  'child-always-rerenders',
+  'rerender-fiber',
+  'hook-dispatcher',
 ];

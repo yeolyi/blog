@@ -3,4 +3,5 @@ export const order = [
   'and-or-not',
   'nand-is-all-you-need',
   'adder',
+  'sequential',
 ];

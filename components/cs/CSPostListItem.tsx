@@ -82,19 +82,6 @@ export default function CSPostListItem(
   );
 }
 
-// 날짜 문자열을 파싱하고 번역 파일의 형식으로 변환하는 함수
-function formatDate(
-  dateString: string,
-  t: (key: string, values?: Record<string, unknown>) => string,
-) {
-  const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = date.toLocaleString('default', { month: 'long' });
-  const day = date.getDate();
-
-  return t('dateFormat', { year, month, day });
-}
-
 const Container = ({
   href,
   children,
