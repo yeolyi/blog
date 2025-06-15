@@ -9,7 +9,7 @@ export default function LogicCircuitsDemo() {
   const [isPressed, setIsPressed] = useState(false);
 
   return (
-    <div className="flex flex-row gap-16 justify-center my-10">
+    <div className="flex flex-row gap-8 justify-center my-10">
       <div className="flex flex-col items-center gap-5">
         <Bulb isOn={isPressed} />
         <Button

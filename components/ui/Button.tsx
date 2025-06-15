@@ -2,6 +2,7 @@ import { type Bg, bgMap } from '@/components/ui/theme';
 import clsx from 'clsx';
 import { Loader2, type LucideProps } from 'lucide-react';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
+import { useHaptic } from 'use-haptic';
 
 // https://github.com/radix-ui/primitives/issues/892
 const Button = ({
@@ -19,9 +20,14 @@ const Button = ({
   isLoading?: boolean;
   ref?: React.RefObject<HTMLButtonElement | null>;
 } & ButtonHTMLAttributes<HTMLButtonElement>) => {
+  const { triggerHaptic } = useHaptic();
+
   return (
     <button
-      onClick={onClick}
+      onClick={(e) => {
+        triggerHaptic();
+        onClick?.(e);
+      }}
       className={clsx(
         'flex text-base font-normal items-center gap-2 cursor-pointer disabled:cursor-not-allowed text-white select-none',
         bgMap[theme],
