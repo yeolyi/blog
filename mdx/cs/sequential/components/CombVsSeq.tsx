@@ -2,9 +2,11 @@
 
 import Button from '@/components/ui/Button';
 import { Bird, Brain, LightbulbIcon, LightbulbOff } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 export default function LogicCircuitsDemo() {
+  const t = useTranslations('Sequential.CombVsSeq');
   const [isToggleOn, setIsToggleOn] = useState(false);
   const [isPressed, setIsPressed] = useState(false);
 
@@ -22,7 +24,7 @@ export default function LogicCircuitsDemo() {
           onTouchEnd={() => setIsPressed(false)}
           onTouchCancel={() => setIsPressed(false)}
         >
-          기억을 못할 때
+          {t('cannotRemember')}
         </Button>
       </div>
 
@@ -33,7 +35,7 @@ export default function LogicCircuitsDemo() {
           bg="gray"
           onClick={() => setIsToggleOn((prev) => !prev)}
         >
-          기억이 가능할 때
+          {t('canRemember')}
         </Button>
       </div>
     </div>

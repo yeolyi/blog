@@ -1,0 +1,143 @@
+export const title = 'Fixing the Computer with Amnesia'
+export const description = 'Going beyond the limitations of combinational logic circuits that forget calculation results, we explore the fundamental principles of sequential logic circuits and memory that enable computers to "remember" information.'
+
+import Flow from '@/components/cs/flow';
+import srLatch from '@/mdx/cs/sequential/assets/srLatch.json';
+import dLatch from '@/mdx/cs/sequential/assets/dLatch.json';
+import CombVsSeq from '@/mdx/cs/sequential/components/CombVsSeq';
+import ClockSyncVisualizer from '@/mdx/cs/sequential/components/ClockSyncVisualizer';
+import EdgeTriggerDemo from '@/mdx/cs/sequential/components/EdgeTriggerDemo';
+import dFlipFlop from '@/mdx/cs/sequential/assets/dFlipFlop.json';
+
+In the previous post, we learned that we can create calculators that perform addition by combining logic gates like AND, OR, and NOT. However, this calculator had one major limitation: **it couldn't remember the calculation results**.
+
+It's like a wall light switch that only turns on the light while you're pressing it and immediately turns off when you let go. A typical light switch works in a toggle manner—press once to turn on, press again to turn off—but with what we've learned so far, this kind of behavior is impossible.
+
+<CombVsSeq />
+
+To achieve this, we need a circuit that **remembers** what the previous state was (light bulb off/on) and calculates the new state (turn on if off/turn off if on).
+
+Today, let's explore the circuit that will cure the computer's amnesia: **Sequential Logic Circuits**.
+
+## Combinational Logic Circuits vs Sequential Logic Circuits
+
+Circuits like the adder we covered last time, where the output is immediately determined solely by current input values, are called **Combinational Logic Circuits**. Past inputs or states have no influence on the current output.
+
+In contrast, circuits with memory capability are called **Sequential Logic Circuits**. Sequential logic circuits determine their output **depending not only on current inputs but also on previous states (stored values)**.
+
+## The First Step to Memory: SR Latch
+
+So how do sequential logic circuits remember information? **Feedback**—a structure where the circuit's output returns as input—is the key. Using this feedback loop, we can create the simplest form of memory device: the **SR Latch**.
+
+Remarkably, an SR Latch can be built with just **two NOR gates**.
+
+<Flow
+    id="srLatch"
+    initialJSON={srLatch}
+    height={300}
+    additionalRegistryKeys={['nor']}
+/>
+
+Try setting S to 1 to set Q, then setting S back to 0—you'll see that Q's value is maintained!
+
+The SR latch has two inputs and two outputs:
+
+| S | R | Q | Q̅ | Operation |
+|---|---|---|---|-----------|
+| 0 | 0 | Previous state maintained | Previous state maintained | Hold |
+| 0 | 1 | 0 | 1 | Reset |
+| 1 | 0 | 1 | 0 | Set |
+| 1 | 1 | Unstable | Unstable | Forbidden state |
+
+Looking at the role of each input and output:
+- **Set (S) input:** When S becomes 1, the latch 'sets' the Q output to 1. In other words, it remembers 1.
+- **Reset (R) input:** When R becomes 1, the latch 'resets' the Q output to 0. In other words, it remembers 0.
+- **Q output:** Represents the value the latch currently remembers.
+- **Q̅ output:** Always has the opposite value of Q.
+
+The most important characteristic is that when both S and R inputs return to 0, the latch continues to **maintain** the previously remembered value.
+
+## Problems with SR Latch
+
+While the SR latch provides basic 'memory' functionality, it has several problems for actual computer use.
+
+The biggest problem is the **unstable state that occurs when S and R are both 1 simultaneously**. When both S and R are 1, the outputs of both NOR gates are forced to 0. This means Q=0 and Q̅=0, which violates the basic definition of the SR latch that "Q and Q̅ always have opposite values."
+
+A bigger problem occurs when changing back to S=0, R=0 from this state. Without going into detail, the transition state becomes unpredictable. **Sometimes Q=1 and sometimes Q=0**. (Note that this physical uncertainty is not implemented in the blog example 🥲)
+
+## D Latch: A Safer Memory Device
+
+To solve these problems with the SR latch, the **D Latch** was developed. The D latch uses AND gates to modify the input circuit of the SR latch, fundamentally preventing the unstable state where S and R are simultaneously active.
+
+<Flow
+    id="dLatch"
+    initialJSON={dLatch}
+    height={300}
+    additionalRegistryKeys={['nor', 'and', 'not']}
+/>
+
+The D latch has only one 'Data (D)' input and one 'Enable (E)' input.
+
+The value of the Data (D) input is reflected in Q only while the Enable (E) signal is on. When the enable signal is off, the latch maintains its previous value no matter how much the D input changes.
+
+You can think of E as the lock that secures Q!
+
+## The Need for Synchronization
+
+The D latch we examined earlier is a simple and useful circuit for storing inputs. However, there's one fundamental limitation in how D latches operate.
+
+The D latch follows changes in the D input directly while the Enable (E) signal is on. That is, if the D value changes multiple times while E is on, the output Q will continuously fluctuate. This makes it **difficult to reliably receive data from just one specific moment**.
+
+For example, suppose there are three latches that need to transfer data in the order A → B → C. The value calculated by A should go through B to reach C, but what happens if B is activated too quickly? B might receive incomplete values while A is still calculating. Or if A's output fluctuates multiple times over a short period, B might randomly accept values from the middle of those fluctuations.
+
+If each circuit operates at different times like this, data can be transmitted incorrectly or conflicts can occur, causing the entire system to malfunction.
+
+## Clock: The Conductor of Circuits
+
+Therefore, we need to synchronize all circuits to operate at the same timing. This synchronization is the responsibility of the Clock.
+
+A clock is a **regular signal that repeats at constant intervals** within a computer. Just like a conductor uses a baton to coordinate the timing of orchestra musicians, the clock simultaneously tells all circuits "Operate now!" with its beat.
+
+<ClockSyncVisualizer />
+
+Without a clock, circuits would move at their own speeds, and the flow of data would become chaotic.
+
+You've probably seen numbers like "3.2GHz" in computer specifications. This represents the clock frequency, meaning it sends 3.2 billion beats per second. The higher this clock frequency, the more frequently circuits can operate, enabling faster processing of more calculations.
+
+In other words, the clock goes beyond just coordinating timing—it's also a key factor that determines computer performance itself.
+
+## D Flip-Flop: A Precise Latch that Moves Only on Edges
+
+So how exactly does memory operate according to clock changes? Let's understand this by looking at the implementation of the **D Flip-Flop**.
+
+A D flip-flop receives and stores data like a D latch, but accepts data only at **specific moments (edges) of the clock**. You can choose either rising edge or falling edge.
+
+- Rising edge: The moment when the clock changes from 0 to 1
+- Falling edge: The moment when the clock changes from 1 to 0
+
+<EdgeTriggerDemo />
+
+The edge-triggered method is predictable and stable because it accepts data only at designated clock edges, no matter how much the input signal fluctuates.
+
+A rising-edge D flip-flop can be implemented using two D latches as shown below. Test how Q changes when CLK goes from 0 to 1:
+
+<Flow
+    id="dFlipFlop"
+    initialJSON={dFlipFlop}
+    height={300}
+    additionalRegistryKeys={['dLatch', 'not']}
+/>
+
+## From Flip-Flop to Register: Storing Larger Information
+
+One D flip-flop can store only one bit (0 or 1). However, computers represent and process numbers in **Word** units of multiple bits, such as 8-bit, 16-bit, 32-bit, and 64-bit.
+
+To store such multi-bit information at once, multiple D flip-flops are connected in parallel to create a **Register**. For example, an 8-bit register consists of 8 D flip-flops and can store 8 bits simultaneously. Since all flip-flops share the same clock signal, 8-bit data is stored and output simultaneously.
+
+Registers are located inside the CPU and serve to very quickly temporarily store critical information that the CPU needs to process immediately, such as values for the arithmetic unit to calculate or addresses for the control unit to fetch the next instruction. Because they're located inside chips like the CPU, they have very fast access speeds, but they're expensive and take up a lot of space.
+
+## Conclusion
+
+We now know how to give computers not only the ability to perform addition but also the ability to 'remember' those calculation results.
+
+In the next post, we'll examine in detail the structure and operation of the computer's **Central Processing Unit (CPU)**, which commands and controls circuits with both computational and memory capabilities. We'll also encounter the **Von Neumann Architecture**, which is the basic structure of modern computers.

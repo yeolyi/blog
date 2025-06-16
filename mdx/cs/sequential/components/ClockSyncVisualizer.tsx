@@ -4,6 +4,7 @@ import Button from '@/components/ui/Button';
 import { border, layerBg } from '@/components/ui/theme';
 import clsx from 'clsx';
 import { Clock, RefreshCcw } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { Fragment, useState } from 'react';
 
 const computeFunctions = [
@@ -21,6 +22,7 @@ const functionDescriptions = [
 ];
 
 export default function ClockSyncVisualizer() {
+  const t = useTranslations('Sequential.ClockSyncVisualizer');
   const [values, setValues] = useState<(number | null)[]>([
     1,
     null,
@@ -71,7 +73,7 @@ export default function ClockSyncVisualizer() {
           bg="transparent"
           Icon={RefreshCcw}
         >
-          초기화
+          {t('reset')}
         </Button>
         <Button
           onClick={handleClockClick}
@@ -79,7 +81,7 @@ export default function ClockSyncVisualizer() {
           bg="gray"
           Icon={Clock}
         >
-          클럭 신호 주기
+          {t('clockSignal')}
         </Button>
       </div>
     </div>

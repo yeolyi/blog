@@ -147,5 +147,20 @@
     "backToList": "목록으로",
     "prev": "이전글",
     "next": "다음글"
+  },
+  "Sequential": {
+    "ClockSyncVisualizer": {
+      "reset": "초기화",
+      "clockSignal": "클럭 신호 주기"
+    },
+    "EdgeTriggerDemo": {
+      "risingEdge": "상승 엣지",
+      "fallingEdge": "하강 엣지",
+      "clock": "클럭"
+    },
+    "CombVsSeq": {
+      "cannotRemember": "기억을 못할 때",
+      "canRemember": "기억이 가능할 때"
+    }
   }
 }

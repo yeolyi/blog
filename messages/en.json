@@ -146,5 +146,20 @@
     "backToList": "Back to List",
     "prev": "Previous",
     "next": "Next"
+  },
+  "Sequential": {
+    "ClockSyncVisualizer": {
+      "reset": "Reset",
+      "clockSignal": "Clock Signal"
+    },
+    "EdgeTriggerDemo": {
+      "risingEdge": "Rising Edge",
+      "fallingEdge": "Falling Edge",
+      "clock": "Clock"
+    },
+    "CombVsSeq": {
+      "cannotRemember": "When it can't remember",
+      "canRemember": "When it can remember"
+    }
   }
 }
