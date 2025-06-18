@@ -1,0 +1,741 @@
+export const title = 'Suspense';
+
+import SuspenseDemo from './Demo';
+import KeepChildFiber from './KeepChildFiber';
+import Use from './Use';
+
+## how Suspense reconciles
+
+<SuspenseDemo />
+
+### 예제 렌더 순서
+
+**버튼 누르기 전.**
+
+fallback이 OffscreenComponent에 쌓여있다. 
+
+```text
+3 HostRoot
+0 FunctionComponent App
+5 HostComponent div 
+5 HostComponent button 
+// [!code highlight:4]
+13 SuspenseComponent
+22 OffscreenComponent
+0 FunctionComponent Child
+5 HostComponent div
+```
+
+**버튼 누른 직후.**
+
+Suspense는 왜 두 번 나오지??? 아 위처럼 렌더링하다가 도중에 throw돼서 돌아간거다. 
+
+```text
+3 HostRoot
+0 FunctionComponent App
+5 HostComponent div 
+5 HostComponent button 
+13 SuspenseComponent
+22 OffscreenComponent
+0 FunctionComponent Child (throw)
+// [!code highlight:3]
+13 SuspenseComponent
+7 Fragment
+5 HostComponent p
+```
+
+아래는 뭐지??
+
+```text
+3 HostRoot
+0 FunctionComponent App
+5 HostComponent div 
+5 HostComponent button 
+13 SuspenseComponent
+22 OffscreenComponent
+0 FunctionComponent Child (throw)
+13 SuspenseComponent
+7 Fragment
+```
+
+N초 후
+
+```text
+3 HostRoot
+0 FunctionComponent App
+5 HostComponent div 
+5 HostComponent button 
+13 SuspenseComponent
+22 OffscreenComponent
+0 FunctionComponent Child
+5 HostComponent div
+```
+
+
+```js
+function updateSuspenseComponent(
+  current: null | Fiber,
+  workInProgress: Fiber,
+  renderLanes: Lanes,
+) {
+  const nextProps = workInProgress.pendingProps;
+
+  let showFallback = false;
+
+  // DidCapture는 검색해보니 Suspense 맥락에서 자주 등장하는 플래그이다.
+  // 예를 들어 attemptEarlyBailoutIfNoScheduledUpdate 에서
+  //
+  // We know that this component will suspend again because if it has
+  // been unsuspended it has committed as a resolved Suspense component.
+  // If it needs to be retried, it should have work scheduled on it.
+  // workInProgress.flags |= DidCapture;
+
+  const didSuspend = (workInProgress.flags & DidCapture) !== NoFlags;
+  if (didSuspend || ...) {
+    // Something in this boundary's subtree already suspended. Switch to
+    // rendering the fallback children.
+    showFallback = true;
+    workInProgress.flags &= ~DidCapture;
+  }
+
+  // OK, the next part is confusing. We're about to reconcile the Suspense
+  // boundary's children. This involves some custom reconciliation logic. Two
+  // main reasons this is so complicated.
+  //
+  // First, Legacy Mode has different semantics for backwards compatibility. The
+  // primary tree will commit in an inconsistent state, so when we do the
+  // second pass to render the fallback, we do some exceedingly, uh, clever
+  // hacks to make that not totally break. Like transferring effects and
+  // deletions from hidden tree. In Concurrent Mode, it's much simpler,
+  // because we bailout on the primary tree completely and leave it in its old
+  // state, no effects. Same as what we do for Offscreen (except that
+  // Offscreen doesn't have the first render pass).
+  //
+  // Second is hydration. During hydration, the Suspense fiber has a slightly
+  // different layout, where the child points to a dehydrated fragment, which
+  // contains the DOM rendered by the server.
+  //
+  // Third, even if you set all that aside, Suspense is like error boundaries in
+  // that we first we try to render one tree, and if that fails, we render again
+  // and switch to a different tree. Like a try/catch block. So we have to track
+  // which branch we're currently rendering. Ideally we would model this using
+  // a stack.
+  if (current === null) {
+    // Initial mount
+    const nextPrimaryChildren = nextProps.children;
+    const nextFallbackChildren = nextProps.fallback;
+
+    if (showFallback) {
+      pushFallbackTreeSuspenseHandler(workInProgress);
+
+      const fallbackFragment = mountSuspenseFallbackChildren(
+        workInProgress,
+        nextPrimaryChildren,
+        nextFallbackChildren,
+        renderLanes,
+      );
+      const primaryChildFragment: Fiber = workInProgress.child;
+      primaryChildFragment.memoizedState =
+        mountSuspenseOffscreenState(renderLanes);
+      primaryChildFragment.childLanes = getRemainingWorkInPrimaryTree(
+        current,
+        didPrimaryChildrenDefer,
+        renderLanes,
+      );
+      workInProgress.memoizedState = SUSPENDED_MARKER;
+     
+      return fallbackFragment;
+    } else {
+      // [!code highlight:5]
+      // Suspense를 썼어도 초기 렌더에 fallback이 아닌 내용물이 보일 수 있다.
+      // 지금까지 항상 네트워크 맥락에서만 써서 몰랐다. 
+      pushPrimaryTreeSuspenseHandler(workInProgress);
+      return mountSuspensePrimaryChildren(
+        workInProgress,
+        nextPrimaryChildren,
+        renderLanes,
+      );
+    }
+  } else {
+    // This is an update.
+    // 강의와 다르게 prev에 따른 분기처리가 없다. 
+    if (showFallback) {
+      // prev: -, now: fallback
+      pushFallbackTreeSuspenseHandler(workInProgress);
+
+      const nextFallbackChildren = nextProps.fallback;
+      const nextPrimaryChildren = nextProps.children;
+      const fallbackChildFragment = updateSuspenseFallbackChildren(
+        current,
+        workInProgress,
+        nextPrimaryChildren,
+        nextFallbackChildren,
+        renderLanes,
+      );
+      const primaryChildFragment: Fiber = (workInProgress.child: any);
+      const prevOffscreenState: OffscreenState | null = (current.child: any)
+        .memoizedState;
+      primaryChildFragment.memoizedState =
+        prevOffscreenState === null
+          ? mountSuspenseOffscreenState(renderLanes)
+          : updateSuspenseOffscreenState(prevOffscreenState, renderLanes);
+      primaryChildFragment.childLanes = getRemainingWorkInPrimaryTree(
+        current,
+        didPrimaryChildrenDefer,
+        renderLanes,
+      );
+      workInProgress.memoizedState = SUSPENDED_MARKER;
+      return fallbackChildFragment;
+    } else {
+      // prev: -, now: content
+      pushPrimaryTreeSuspenseHandler(workInProgress);
+
+      const nextPrimaryChildren = nextProps.children;
+      const primaryChildFragment = updateSuspensePrimaryChildren(
+        current,
+        workInProgress,
+        nextPrimaryChildren,
+        renderLanes,
+      );
+      workInProgress.memoizedState = null;
+      return primaryChildFragment;
+    }
+  }
+}
+```
+
+### enableCPUSuspense
+
+원본 코드 정리하다가 본건데 어떤 기능일까?
+
+{/* https://github.com/facebook/react/pull/24038/files */}
+
+https://github.com/facebook/react/pull/19936
+
+expectedLoadTime 관련. 
+
+React의 Suspense 컴포넌트에 새롭게 추가된 unstable_expectedLoadTime prop은 렌더링 비용이 큰(=CPU-bound) 서브트리를 식별하는 데 사용됩니다. 이 prop이 존재하면 React는 해당 컴포넌트를 초기 마운트 시 스킵하고, 플레이스홀더 UI를 먼저 보여준 뒤 다음 커밋에서 나중에 렌더링합니다. 현재는 숫자 값 자체는 의미 없고, 유무만 판단하는 사실상 boolean처럼 동작하지만, 향후에는 SuspenseList 등에서 우선순위 판단에 활용할 여지가 있습니다.
+
+배경에는 React 팀의 실험적 전략 변화가 있습니다. 예전엔 '로딩 UI를 무조건 바로 보여주는 것이 아니라, 잠깐 기다렸다가 실제 데이터가 금방 올 수 있다면 로딩 UI 자체를 생략하자'고 판단했지만, 전체 페이지 전환 시에는 최대한 빠르게 스켈레톤 화면을 먼저 보여주는 쪽이 더 반응성이 좋아 보인다는 연구 결과가 나왔습니다. 이 전략은 원래 IO 지연에 대응하기 위한 것이었지만, 최근에는 CPU 지연에도 동일하게 적용하려는 움직임이 강해지고 있습니다. 결국 Suspense는 “데이터가 없을 때만 쓰는 것”이 아니라, **“렌더링이 느릴 것 같을 때 어떤 것이든 defer하는 범용 도구”**로 진화하고 있는 셈입니다.
+
+아래는 테스트 코드 중 일부
+
+```js
+  // @gate enableCPUSuspense
+  it('skips CPU-bound trees on initial mount', async () => {
+    function App() {
+      return (
+        <>
+          <Text text="Outer" />
+          <div>
+            <Suspense
+              // [!code highlight]
+              unstable_expectedLoadTime={2000}
+              fallback={<Text text="Loading..." />}>
+              <Text text="Inner" />
+            </Suspense>
+          </div>
+        </>
+      );
+    }
+
+    const root = ReactNoop.createRoot();
+    await act(async () => {
+      root.render(<App />);
+      await waitForPaint(['Outer', 'Loading...']);
+      expect(root).toMatchRenderedOutput(
+        <>
+          Outer
+          <div>Loading...</div>
+        </>,
+      );
+    });
+    // Inner contents finish in separate commit from outer
+    assertLog(['Inner']);
+    expect(root).toMatchRenderedOutput(
+      <>
+        Outer
+        <div>Inner</div>
+      </>,
+    );
+  });
+```
+
+## mountSuspenseFallbackChildren
+
+workInProgress 자식 노드로 primaryChildFragment(Offscreen Fiber)와 fallbackChildFragment(Fragment Fiber)를 만든다. 
+
+```tsx
+function mountSuspenseFallbackChildren(
+  workInProgress: Fiber,
+  primaryChildren: $FlowFixMe,
+  fallbackChildren: $FlowFixMe,
+  renderLanes: Lanes,
+) {
+  const mode = workInProgress.mode;
+  const progressedPrimaryFragment: Fiber | null = workInProgress.child;
+
+  const primaryChildProps: OffscreenProps = {
+    mode: 'hidden',
+    children: primaryChildren,
+  };
+
+  const primaryChildFragment = mountWorkInProgressOffscreenFiber(
+      primaryChildProps,
+      mode,
+      NoLanes,
+  );
+  const fallbackChildFragment = createFiberFromFragment(
+      fallbackChildren,
+      mode,
+      renderLanes,
+      null,
+  );
+
+  primaryChildFragment.return = workInProgress;
+  fallbackChildFragment.return = workInProgress;
+  primaryChildFragment.sibling = fallbackChildFragment;
+  workInProgress.child = primaryChildFragment;
+  return fallbackChildFragment;
+}
+```
+
+```tsx
+function mountWorkInProgressOffscreenFiber(
+  offscreenProps: OffscreenProps,
+  mode: TypeOfMode,
+  renderLanes: Lanes,
+) {
+  // The props argument to `createFiberFromOffscreen` is `any` typed, so we use
+  // this wrapper function to constrain it.
+  return createFiberFromOffscreen(offscreenProps, mode, NoLanes, null);
+}
+```
+
+**Fallback을 보일 때도 Child Fiber를 유지하는 이유. We don’t want everything to be fresh new after switching back from fallback.**
+
+<KeepChildFiber />
+
+## How Promise is caught in Suspense and update is triggered?
+
+```tsx
+function renderRootSync(
+  root: FiberRoot,
+  lanes: Lanes,
+  shouldYieldForPrerendering: boolean,
+): RootExitStatus {
+  ...
+  outer: do {
+    try {
+      ...
+      workLoopSync();
+      ...
+    } catch (thrownValue) {
+      handleThrow(root, thrownValue);
+    }
+  } while (true);
+...
+}
+```
+
+handleError가 아닌 handleThrow로 있다. 주석이 많다. 여기서부터 게시물과 꽤 다르게 간다. 
+
+thrownValue를 찍어보면 당연하게도 pending Promise이다. 
+
+`workInProgressSuspendedReason = isWakeable`, `workInProgressThrownValue = thrownValue;` 이것만 기억하자. 나머지 작업은 밖으로 돌아가 한다. 
+
+```tsx
+function handleThrow(root: FiberRoot, thrownValue: any): void {
+  // A component threw an exception. Usually this is because it suspended, but
+  // it also includes regular program errors.
+  //
+  // We're either going to unwind the stack to show a Suspense or error
+  // boundary, or we're going to replay the component again. Like after a
+  // promise resolves.
+  //
+  // Until we decide whether we're going to unwind or replay, we should preserve
+  // the current state of the work loop without resetting anything.
+  //
+  // If we do decide to unwind the stack, module-level variables will be reset
+  // in resetSuspendedWorkLoopOnUnwind.
+
+  // These should be reset immediately because they're only supposed to be set
+  // when React is executing user code.
+  resetHooksAfterThrow();
+
+  if (
+    thrownValue === SuspenseException ||
+    thrownValue === SuspenseActionException
+  ) {
+    // This is a special type of exception used for Suspense. For historical
+    // reasons, the rest of the Suspense implementation expects the thrown value
+    // to be a thenable, because before `use` existed that was the (unstable)
+    // API for suspending. This implementation detail can change later, once we
+    // deprecate the old API in favor of `use`.
+    ...
+  } else if (thrownValue === SuspenseyCommitException) {
+    ...
+  } else if (thrownValue === SelectiveHydrationException) {
+    // An update flowed into a dehydrated boundary. Before we can apply the
+    // update, we need to finish hydrating. Interrupt the work-in-progress
+    // render so we can restart at the hydration lane.
+    //
+    // The ideal implementation would be able to switch contexts without
+    // unwinding the current stack.
+    //
+    // We could name this something more general but as of now it's the only
+    // case where we think this should happen.
+    ...
+  } else {
+    // This is a regular error.
+    const isWakeable =
+      thrownValue !== null &&
+      typeof thrownValue === 'object' &&
+      typeof thrownValue.then === 'function';
+
+    // thenable로 판단한다. 
+
+    workInProgressSuspendedReason = isWakeable
+    // [!code highlight:4]
+    // deprecated이다. use의 사용을 권장하는 느낌...?   
+      ? // A wakeable object was thrown by a legacy Suspense implementation.
+        // This has slightly different behavior than suspending with `use`.
+        SuspendedOnDeprecatedThrowPromise
+      : // This is a regular error. If something earlier in the component already
+        // suspended, we must clear the thenable state to unblock the work loop.
+        SuspendedOnError;
+  }
+
+  // [!code highlight]
+  workInProgressThrownValue = thrownValue;
+
+ ...
+}
+```
+
+<Use/>
+
+이런 것도 있었다. 일단 우리 구현에서는 직접 만든 프로미스를 던졌으니 이 경우는 아니다. 
+
+```jsx
+// An error that is thrown (e.g. by `use`) to trigger Suspense. If we
+// detect this is caught by userspace, we'll log a warning in development.
+export const SuspenseException: mixed = new Error(
+  "Suspense Exception: This is not a real error! It's an implementation " +
+    'detail of `use` to interrupt the current render. You must either ' +
+    'rethrow it immediately, or move the `use` call outside of the ' +
+    '`try/catch` block. Capturing without rethrowing will lead to ' +
+    'unexpected behavior.\n\n' +
+    'To handle async errors, wrap your component in an error boundary, or ' +
+    "call the promise's `.catch` method and pass the result to `use`.",
+);
+```
+
+**get data()는 누가 호출하는거지? JSON.stringify 도중에 불린다. 이벤트 핸들러에서 throw되는게 아니라 렌더링중에 throw되는게 맞다.  **
+
+```jsx
+function renderRootSync(
+  root: FiberRoot,
+  lanes: Lanes,
+  shouldYieldForPrerendering: boolean,
+): RootExitStatus {
+  ...
+
+  let didSuspendInShell = false;
+  let exitStatus = workInProgressRootExitStatus;
+  outer: do {
+    try {
+      if (
+        workInProgressSuspendedReason !== NotSuspended &&
+        workInProgress !== null
+      ) {
+        // The work loop is suspended. During a synchronous render, we don't
+        // yield to the main thread. Immediately unwind the stack. This will
+        // trigger either a fallback or an error boundary.
+        const unitOfWork = workInProgress;
+        const thrownValue = workInProgressThrownValue;
+        switch (workInProgressSuspendedReason) {
+          ...
+          case SuspendedOnImmediate:
+          case SuspendedOnData:
+          case SuspendedOnAction:
+          case SuspendedOnDeprecatedThrowPromise: {
+            if (getSuspenseHandler() === null) {
+              didSuspendInShell = true;
+            }
+            const reason = workInProgressSuspendedReason;
+            workInProgressSuspendedReason = NotSuspended;
+            workInProgressThrownValue = null;
+            throwAndUnwindWorkLoop(root, unitOfWork, thrownValue, reason);
+            if (
+              enableSiblingPrerendering &&
+              shouldYieldForPrerendering &&
+              workInProgressRootIsPrerendering
+            ) {
+              // We've switched into prerendering mode. This implies that we
+              // suspended outside of a Suspense boundary, which means this
+              // render will be blocked from committing. Yield to the main
+              // thread so we can switch to prerendering using the concurrent
+              // work loop.
+              exitStatus = RootInProgress;
+              break outer;
+            }
+            break;
+          }
+          default: {
+           ...
+          }
+        }
+      }
+      workLoopSync();
+      exitStatus = workInProgressRootExitStatus;
+      break;
+    } catch (thrownValue) {
+      handleThrow(root, thrownValue);
+    }
+  } while (true);
+
+  ...
+}
+```
+
+아래 함수가 핵심! 이다. `unitOfWork`는 정황상 그대로...일 것 같다. 
+
+```tsx
+function throwAndUnwindWorkLoop(
+  root: FiberRoot,
+  unitOfWork: Fiber,
+  thrownValue: mixed,
+  suspendedReason: SuspendedReason,
+) {
+  // This is a fork of performUnitOfWork specifcally for unwinding a fiber
+  // that threw an exception.
+  //
+  // Return to the normal work loop. This will unwind the stack, and potentially
+  // result in showing a fallback.
+  resetSuspendedWorkLoopOnUnwind(unitOfWork);
+
+  const returnFiber = unitOfWork.return;
+  try {
+    // Find and mark the nearest Suspense or error boundary that can handle
+    // this "exception".
+    const didFatal = throwException(
+      root,
+      returnFiber,
+      unitOfWork,
+      thrownValue,
+      workInProgressRootRenderLanes,
+    );
+    if (didFatal) {
+      panicOnRootError(root, thrownValue);
+      return;
+    }
+  } catch (error) {
+    // We had trouble processing the error. An example of this happening is
+    // when accessing the `componentDidCatch` property of an error boundary
+    // throws an error. A weird edge case. There's a regression test for this.
+    // To prevent an infinite loop, bubble the error up to the next parent.
+    ...
+  }
+
+  if (unitOfWork.flags & Incomplete) {
+    // Unwind the stack until we reach the nearest boundary.
+    let skipSiblings;
+    if (!enableSiblingPrerendering) {
+      skipSiblings = true;
+    } else {
+      if (
+        getIsHydrating() ||
+        suspendedReason === SuspendedOnError
+      ) {
+       ...
+      } else if (
+        // Check whether this is a prerender
+        !workInProgressRootIsPrerendering &&
+        // Offscreen rendering is also a form of speculative rendering
+        !includesSomeLane(workInProgressRootRenderLanes, OffscreenLane)
+      ) {
+        // This is not a prerender. Skip the siblings during this render. A
+        // separate prerender will be scheduled for later.
+        skipSiblings = true;
+        workInProgressRootDidSkipSuspendedSiblings = true;
+
+        // Because we're skipping the siblings, schedule an immediate retry of
+        // this boundary.
+        //
+        // The reason we do this is because a prerender is only scheduled when
+        // the root is blocked from committing, i.e. RootSuspendedWithDelay.
+        // When the root is not blocked, as in the case when we render a
+        // fallback, the original lane is considered to be finished, and
+        // therefore no longer in need of being prerendered. However, there's
+        // still a pending retry that will happen once the data streams in.
+        // We should start rendering that even before the data streams in so we
+        // can prerender the siblings.
+        if (
+          suspendedReason === SuspendedOnData ||
+          suspendedReason === SuspendedOnAction ||
+          suspendedReason === SuspendedOnImmediate ||
+          suspendedReason === SuspendedOnDeprecatedThrowPromise
+        ) {
+          const boundary = getSuspenseHandler();
+          if (boundary !== null && boundary.tag === SuspenseComponent) {
+            boundary.flags |= ScheduleRetry;
+          }
+        }
+      } else {
+        ...
+      }
+    }
+    unwindUnitOfWork(unitOfWork, skipSiblings);
+  } else {
+    // Although the fiber suspended, we're intentionally going to commit it in
+    // an inconsistent state. We can do this safely in cases where we know the
+    // inconsistent tree will be hidden.
+    //
+    // This currently only applies to Legacy Suspense implementation...
+    completeUnitOfWork(unitOfWork);
+  }
+}
+```
+
+TODO가 무슨 줄마다 있어... 
+
+throwException는 throw 안하는데 이럼이 왜 이런지 모르겠다. 
+
+```jsx
+function throwException(
+  root: FiberRoot,
+  returnFiber: Fiber | null,
+  sourceFiber: Fiber,
+  value: mixed,
+  rootRenderLanes: Lanes,
+): boolean {
+  // The source fiber did not complete.
+  sourceFiber.flags |= Incomplete;
+
+  if (value !== null && typeof value === 'object') {
+    ...
+    if (typeof value.then === 'function') {
+      // This is a wakeable. The component suspended.
+      const wakeable: Wakeable = value;
+      resetSuspendedComponent(sourceFiber, rootRenderLanes);
+
+      // Mark the nearest Suspense boundary to switch to rendering a fallback.
+      const suspenseBoundary = getSuspenseHandler();
+      if (suspenseBoundary !== null) {
+        switch (suspenseBoundary.tag) {
+          case SuspenseComponent: {
+            // If this suspense boundary is not already showing a fallback, mark
+            // the in-progress render as suspended. We try to perform this logic
+            // as soon as soon as possible during the render phase, so the work
+            // loop can know things like whether it's OK to switch to other tasks,
+            // or whether it can wait for data to resolve before continuing.
+            if (disableLegacyMode || sourceFiber.mode & ConcurrentMode) {
+              if (getShellBoundary() === null) {
+                // Suspended in the "shell" of the app. This is an undesirable
+                // loading state. We should avoid committing this tree.
+                renderDidSuspendDelayIfPossible();
+              } else {
+                // If we suspended deeper than the shell, we don't need to delay
+                // the commmit. However, we still call renderDidSuspend if this is
+                // a new boundary, to tell the work loop that a new fallback has
+                // appeared during this render.
+                const current = suspenseBoundary.alternate;
+                if (current === null) {
+                  renderDidSuspend();
+                }
+              }
+            }
+
+            suspenseBoundary.flags &= ~ForceClientRender;
+            markSuspenseBoundaryShouldCapture(
+              suspenseBoundary,
+              returnFiber,
+              sourceFiber,
+              root,
+              rootRenderLanes,
+            );
+            // Retry listener
+            //
+            // If the fallback does commit, we need to attach a different type of
+            // listener. This one schedules an update on the Suspense boundary to
+            // turn the fallback state off.
+            //
+            // Stash the wakeable on the boundary fiber so we can access it in the
+            // commit phase.
+            //
+            // When the wakeable resolves, we'll attempt to render the boundary
+            // again ("retry").
+
+            // Check if this is a Suspensey resource. We do not attach retry
+            // listeners to these, because we don't actually need them for
+            // rendering. Only for committing. Instead, if a fallback commits
+            // and the only thing that suspended was a Suspensey resource, we
+            // retry immediately.
+            const isSuspenseyResource =
+              wakeable === noopSuspenseyCommitThenable;
+            if (isSuspenseyResource) {
+              suspenseBoundary.flags |= ScheduleRetry;
+            } else {
+              const retryQueue: RetryQueue | null =
+                (suspenseBoundary.updateQueue: any);
+              if (retryQueue === null) {
+                suspenseBoundary.updateQueue = new Set([wakeable]);
+              } else {
+                retryQueue.add(wakeable);
+              }
+
+              // We only attach ping listeners in concurrent mode. Legacy
+              // Suspense always commits fallbacks synchronously, so there are
+              // no pings.
+              if (disableLegacyMode || suspenseBoundary.mode & ConcurrentMode) {
+                attachPingListener(root, wakeable, rootRenderLanes);
+              }
+            }
+            return false;
+          }
+          case OffscreenComponent: {
+            // 여기서도 attachPingListener를 사용하는데 이건 나중에 다루는 것 같다.  
+          }
+        }
+        throw new Error(
+          `Unexpected Suspense handler tag (${suspenseBoundary.tag}). This ` +
+            'is a bug in React.',
+        );
+      } else {
+        // No boundary was found. Unless this is a sync update, this is OK.
+        // We can suspend and wait for more data to arrive.
+
+        if (disableLegacyMode || root.tag === ConcurrentRoot) {
+          // In a concurrent root, suspending without a Suspense boundary is
+          // allowed. It will suspend indefinitely without committing.
+          attachPingListener(root, wakeable, rootRenderLanes);
+          renderDidSuspendDelayIfPossible();
+          return false;
+        } else {
+          // In a legacy root, suspending without a boundary is always an error.
+          const uncaughtSuspenseError = new Error(
+            'A component suspended while responding to synchronous input. This ' +
+              'will cause the UI to be replaced with a loading indicator. To ' +
+              'fix, updates that suspend should be wrapped ' +
+              'with startTransition.',
+          );
+          value = uncaughtSuspenseError;
+        }
+      }
+    }
+  }
+
+  // This is a regular error, not a Suspense wakeable.
+  ...
+}
+```
+
+enablePostpone https://github.com/facebook/react/commit/ac1a16c67e268fcb2c52e91717cbc918c7c24446
+
+## Offscreen component 
+
+
+또 다른 예시는 **재사용 가능한 상태(reusable state)**입니다. Concurrent React는 UI의 일부를 화면에서 제거한 뒤, 나중에 다시 추가하면서 이전 상태를 재사용할 수 있습니다. 예를 들어, 사용자가 어떤 화면에서 다른 탭으로 전환했다가 다시 돌아올 경우, React는 해당 화면을 이전과 동일한 상태로 복원할 수 있어야 합니다. 다가오는 마이너 버전에서는 이러한 패턴을 구현하는 새로운 컴포넌트인 \<Offscreen\>을 도입할 계획입니다. 비슷하게, Offscreen을 사용하면 사용자에게 보여지기 전에 백그라운드에서 새로운 UI를 미리 준비해둘 수도 있습니다.
+
+Yep the whole purpose of this process is to put the rendering of hidden stuff into a lower priority -> this is the gold of concurrent mode.

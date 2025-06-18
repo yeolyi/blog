@@ -34,7 +34,9 @@
     "mdx/react-internal/Lane.js",
     "components/cs/flow/index.tsx",
     "tmp.js",
-    "script/uploadAvif.js"
+    "script/uploadAvif.js",
+    "mdx/react/suspense/Demo.jsx",
+    "mdx/react/suspense/KeepChildFiber.jsx"
   ],
   "exclude": ["node_modules"]
 }
