@@ -29,7 +29,6 @@ export default async function Home() {
   const t = await getTranslations('HomePage');
   const tCS = await getTranslations('Curriculum');
   const tEmail = await getTranslations('EmailSubscribe');
-  const tComment = await getTranslations('Comment');
   const subscriberCount = await getSubscriberCount();
   const count = subscriberCount.success ? subscriberCount.value : undefined;
 
@@ -37,8 +36,6 @@ export default async function Home() {
     <div className="prose prose-invert prose-stone">
       <h1>{t('curriculum')}</h1>
       <p>{t('curriculumIntro1')}</p>
-      <p>{t('curriculumIntro2')}</p>
-      <p>{t('curriculumIntro3')}</p>
 
       <h2>{tEmail('title')}</h2>
       <p>
