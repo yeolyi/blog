@@ -24,8 +24,8 @@ const TableCell = ({
 }) => (
   <td
     className={clsx(
-      'p-2 border border-stone-700 font-mono',
-      header && 'bg-stone-900',
+      'p-2 border border-stone-700 font-mono whitespace-nowrap',
+      header && 'bg-stone-900 text-sm',
     )}
   >
     {children}
