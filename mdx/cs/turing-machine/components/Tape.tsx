@@ -23,7 +23,7 @@ export const Tape = ({
           <div
             key={idx}
             className={clsx(
-              'relative w-12 h-12 border border-stone-700 flex items-center justify-center text-xl font-mono shrink-0 mb-4',
+              'relative w-12 h-12 border border-stone-700 flex items-center justify-center text-xl font-mono shrink-0 mb-6',
               {
                 'bg-stone-400 text-black':
                   idx === head && currentState !== 'q_halt',
@@ -33,11 +33,13 @@ export const Tape = ({
             )}
           >
             {cell}
+            {idx === head && (
+              <p className="absolute -bottom-0 translate-y-full text-sm text-white">
+                {t('head')}
+              </p>
+            )}
           </div>
         ))}
-        <p className="absolute -bottom-2 text-sm" style={{ left: 48 * head }}>
-          {t('head')}
-        </p>
       </div>
     </div>
   );
