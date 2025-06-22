@@ -161,5 +161,20 @@
       "cannotRemember": "When it can't remember",
       "canRemember": "When it can remember"
     }
+  },
+  "TuringMachine": {
+    "title": "Turing Machine",
+    "ControlUnit": {
+      "title": "Control Unit",
+      "currentState": "Current State",
+      "readSymbol": "Read Symbol",
+      "nextState": "Next State",
+      "writeSymbol": "Write Symbol",
+      "move": "Move"
+    },
+    "Tape": {
+      "title": "Tape",
+      "head": "▲ Head"
+    }
   }
 }

@@ -11,6 +11,7 @@ import {
 import { useTuringMachine } from '@/mdx/cs/turing-machine/hooks/useTuringMachine';
 import clsx from 'clsx';
 import { Forward, Pause, Play, RotateCcw } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
 const TuringMachineContent = ({
@@ -24,6 +25,7 @@ const TuringMachineContent = ({
   rulesCsv: string;
   editable?: boolean;
 }) => {
+  const t = useTranslations('TuringMachine');
   const [isEditing, setIsEditing] = useState(false);
   const [rulesCsv, setRulesCsv] = useState(initialRulesCsv);
   const {
@@ -49,7 +51,7 @@ const TuringMachineContent = ({
   return (
     <div className={clsx(layerBg, 'p-4 my-8 not-prose text-white')}>
       <div className="flex items-center justify-between mb-4">
-        <p className="text-xl font-semibold">튜링 머신</p>
+        <p className="text-xl font-semibold">{t('title')}</p>
         <div className="flex items-center gap-2">
           {isRunning ? (
             <Button

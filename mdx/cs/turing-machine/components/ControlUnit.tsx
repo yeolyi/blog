@@ -8,6 +8,7 @@ import type {
 } from '@/mdx/cs/turing-machine/hooks/turingMachineStore';
 import clsx from 'clsx';
 import { Check, ChevronDown, ChevronUp, Pencil, X } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import {
   type Dispatch,
   type ReactNode,
@@ -51,6 +52,7 @@ export const ControlUnit = ({
   isEditing: boolean;
   setIsEditing: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const t = useTranslations('TuringMachine.ControlUnit');
   const [isExpanded, setIsExpanded] = useState(false);
   const [hasScroll, setHasScroll] = useState(false);
   const [editedCsv, setEditedCsv] = useState(rulesCsv.trim());
@@ -68,7 +70,7 @@ export const ControlUnit = ({
   return (
     <div className="mt-6">
       <div className="flex mb-2 w-full items-center justify-between">
-        <p className="text-md font-semibold">제어 장치</p>
+        <p className="text-md font-semibold">{t('title')}</p>
         <div className="flex items-center gap-2">
           {editable && !isEditing && (
             <Button
@@ -111,11 +113,11 @@ export const ControlUnit = ({
           <table className="w-full text-left border-collapse">
             <thead>
               <tr>
-                <TableCell header>현재 상태</TableCell>
-                <TableCell header>읽은 기호</TableCell>
-                <TableCell header>다음 상태</TableCell>
-                <TableCell header>쓸 기호</TableCell>
-                <TableCell header>이동</TableCell>
+                <TableCell header>{t('currentState')}</TableCell>
+                <TableCell header>{t('readSymbol')}</TableCell>
+                <TableCell header>{t('nextState')}</TableCell>
+                <TableCell header>{t('writeSymbol')}</TableCell>
+                <TableCell header>{t('move')}</TableCell>
               </tr>
             </thead>
             <tbody>

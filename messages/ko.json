@@ -162,5 +162,20 @@
       "cannotRemember": "기억을 못할 때",
       "canRemember": "기억이 가능할 때"
     }
+  },
+  "TuringMachine": {
+    "title": "튜링 머신",
+    "ControlUnit": {
+      "title": "제어 장치",
+      "currentState": "현재 상태",
+      "readSymbol": "읽은 기호",
+      "nextState": "다음 상태",
+      "writeSymbol": "쓸 기호",
+      "move": "이동"
+    },
+    "Tape": {
+      "title": "테이프",
+      "head": "▲ 헤드"
+    }
   }
 }

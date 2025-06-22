@@ -3,6 +3,7 @@ import type {
   TapeSymbol,
 } from '@/mdx/cs/turing-machine/hooks/turingMachineStore';
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 
 export const Tape = ({
   tape,
@@ -13,9 +14,10 @@ export const Tape = ({
   head: number;
   currentState: State;
 }) => {
+  const t = useTranslations('TuringMachine.Tape');
   return (
     <div>
-      <p className="mb-2 text-md font-semibold">테이프</p>
+      <p className="mb-2 text-md font-semibold">{t('title')}</p>
       <div className="relative flex flex-wrap">
         {tape.map((cell, idx) => (
           <div
@@ -34,7 +36,7 @@ export const Tape = ({
           </div>
         ))}
         <p className="absolute -bottom-2 text-sm" style={{ left: 48 * head }}>
-          ▲ 헤드
+          {t('head')}
         </p>
       </div>
     </div>
