@@ -24,7 +24,7 @@ export default function EdgeTriggerDemo() {
   };
 
   return (
-    <div className="flex flex-col items-center gap-2 p-6">
+    <div className="flex flex-col items-start gap-2 p-6">
       <div className="flex items-center gap-8">
         <div className="flex flex-col items-center">
           <Lightbulb
@@ -44,7 +44,7 @@ export default function EdgeTriggerDemo() {
         </div>
       </div>
       <Button
-        bg="green"
+        bg="gray"
         onPointerDown={handlePointerDown}
         onPointerUp={handlePointerUp}
         Icon={Clock}

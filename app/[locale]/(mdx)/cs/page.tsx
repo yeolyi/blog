@@ -7,7 +7,8 @@ import TruthTable from '@/components/cs/TruthTable';
 import Flow from '@/components/cs/flow';
 import half from '@/mdx/cs/adder/assets/half.json';
 import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
-import srLatch from '@/mdx/cs/sequential/assets/srLatch.json';
+import EdgeTriggerDemo from '@/mdx/cs/sequential/components/EdgeTriggerDemo';
+import AddingTuringMachine from '@/mdx/cs/turing-machine/components/AddingTuringMachine';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
@@ -111,21 +112,25 @@ export default async function Home() {
           date="2025-06-15"
           href="/cs/sequential"
         >
-          <Flow
-            id="sequential"
-            initialJSON={srLatch}
-            height={300}
-            additionalRegistryKeys={['nor']}
-          />
+          <EdgeTriggerDemo />
         </CSPostListItem>
 
-        {[...Array(3)].map((_, idx) => (
+        <CSPostListItem
+          title={tCS('hw6Title')}
+          description={tCS('hw6Description')}
+          date="2025-06-22"
+          href="/cs/turing-machine"
+        >
+          <AddingTuringMachine />
+        </CSPostListItem>
+
+        {[...Array(2)].map((_, idx) => (
           <CSPostListItem
             key={idx}
             // @ts-expect-error
-            title={tCS(`hw${idx + 6}Title`)}
+            title={tCS(`hw${idx + 7}Title`)}
             // @ts-expect-error
-            description={tCS(`hw${idx + 6}Description`)}
+            description={tCS(`hw${idx + 7}Description`)}
           />
         ))}
       </div>

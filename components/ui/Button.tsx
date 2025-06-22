@@ -33,6 +33,7 @@ const Button = ({
         bgMap[theme],
         className,
         children ? 'px-4 py-2' : 'p-3',
+        props.disabled && 'opacity-50',
       )}
       disabled={isLoading}
       {...props}

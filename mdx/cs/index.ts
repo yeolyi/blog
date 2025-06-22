@@ -4,4 +4,5 @@ export const order = [
   'nand-is-all-you-need',
   'adder',
   'sequential',
+  'turing-machine',
 ];

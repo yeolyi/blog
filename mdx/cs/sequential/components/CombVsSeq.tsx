@@ -5,7 +5,7 @@ import { Bird, Brain, LightbulbIcon, LightbulbOff } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 
-export default function LogicCircuitsDemo() {
+export default function CombVsSeq() {
   const t = useTranslations('Sequential.CombVsSeq');
   const [isToggleOn, setIsToggleOn] = useState(false);
   const [isPressed, setIsPressed] = useState(false);

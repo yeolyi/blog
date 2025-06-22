@@ -23,20 +23,6 @@
     },
     "baseUrl": "."
   },
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    ".next/types/**/*.ts",
-    "script/programmerhumor.js",
-    "app/[locale]/(mdx)/post/react-internal/page.mdx",
-    "next.config.mjs",
-    "mdx/react-internal/Lane.js",
-    "components/cs/flow/index.tsx",
-    "tmp.js",
-    "script/uploadAvif.js",
-    "mdx/react/suspense/Demo.jsx",
-    "mdx/react/suspense/KeepChildFiber.jsx"
-  ],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }
