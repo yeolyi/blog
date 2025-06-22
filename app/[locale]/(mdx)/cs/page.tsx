@@ -52,7 +52,7 @@ export default async function Home() {
 
       <h2>{tCS('part1Title')}</h2>
 
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-12">
         <CSPostListItem
           title={tCS('hw1Title')}
           description={tCS('hw1Description')}

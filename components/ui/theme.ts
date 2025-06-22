@@ -11,7 +11,9 @@ export const border = 'outline-stone-700 outline';
 export type Bg = keyof typeof bgMap;
 
 export const skewOnHover =
-  'transition-transform group-hover:-skew-x-15 group-active:-skew-x-25 ease-in-out duration-200';
+  'transition-transform group-hover:-skew-x-5 group-active:-skew-x-10 ease-in-out duration-200';
+
+export const opacityOnHover = 'group-hover:opacity-80 group-active:opacity-60';
 
 export const layerBg = 'bg-stone-800';
 

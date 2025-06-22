@@ -1,7 +1,6 @@
-import { skewOnHover } from '@/components/ui/theme';
+import { opacityOnHover } from '@/components/ui/theme';
 import { Link } from '@/i18n/navigation';
 import clsx from 'clsx';
-import { CornerDownRight } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
 
 export default function CSPostListItem(
@@ -29,12 +28,13 @@ export default function CSPostListItem(
   const children = 'children' in props ? props.children : null;
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className={clsx('flex flex-col gap-4')}>
+      {children}
       <Container href={href}>
         <h3
           className={clsx(
-            'm-0 p-0 font-semibold break-keep',
-            href && skewOnHover,
+            'm-0 p-0 font-semibold text-xl break-keep',
+            href && opacityOnHover,
             href ? 'text-white' : 'text-stone-500',
           )}
         >
@@ -55,29 +55,19 @@ export default function CSPostListItem(
         <p
           className={clsx(
             'm-0 p-0 font-light',
-            href && skewOnHover,
+            href && opacityOnHover,
             href ? 'text-[var(--tw-prose-body)]' : 'text-stone-500',
           )}
         >
           {description}
           {'  '}
-          {date && href && (
-            <span className="text-stone-500">
-              {` ${t('dateFormat', { date: new Date(date) })}`}
-            </span>
-          )}
         </p>
+        {date && href && (
+          <span className="text-stone-500">
+            {` ${t('dateFormat', { date: new Date(date) })}`}
+          </span>
+        )}
       </Container>
-      {children && (
-        <div className="w-full flex gap-2 pl-1">
-          <CornerDownRight
-            size={24}
-            className="text-stone-400"
-            strokeWidth={1.6}
-          />
-          <div className="pt-1 max-w-[384px] w-full">{children}</div>
-        </div>
-      )}
     </div>
   );
 }
@@ -91,7 +81,10 @@ const Container = ({
 }) => {
   if (href) {
     return (
-      <Link href={href} className="not-prose w-fit block text-base group">
+      <Link
+        href={href}
+        className="not-prose w-fit flex flex-col gap-2 text-base group border-b border-stone-700 pb-4"
+      >
         {children}
       </Link>
     );
