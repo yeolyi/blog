@@ -1,0 +1,157 @@
+export const title = "useTransition";
+
+import UseTransitionExample from './components';
+import SyncRenderingExample from './components/SyncRenderingExample';
+import ReportErrorExample from './components/ReportErrorExample';
+
+https://react.dev/reference/react/useTransition
+
+
+### 동기적 렌더링 차단 방지
+
+`useTransition`은 비동기 작업뿐만 아니라, 무거운 동기 렌더링 작업으로 인해 UI가 멈추는 현상을 방지하는 데에도 유용합니다.
+
+아래 예제는 20,000개의 항목을 가진 목록을 필터링합니다. `useTransition`을 끈 상태에서 입력하면, 각 키 입력마다 전체 목록을 다시 렌더링하느라 UI가 버벅이는 것을 느낄 수 있습니다. `useTransition`을 켜면, 상태 업데이트를 긴급하지 않은 것으로 표시하여 렌더링이 진행되는 동안에도 입력이 부드럽게 유지됩니다.
+
+<SyncRenderingExample />
+
+### 원치 않는 로딩 표시기 방지
+
+아래 예시에서 `PostsTab` 컴포넌트는 `use`를 사용해 데이터를 가져옵니다. "Posts" 탭을 클릭하면 `PostsTab` 컴포넌트가 일시 중단되어 가장 가까운 로딩 폴백(fallback)이 나타납니다.
+
+로딩 표시기를 보여주기 위해 전체 탭 컨테이너를 숨기는 것은 거슬리는 사용자 경험을 초래합니다. `TabButton`에 `useTransition`을 추가하면 대신 탭 버튼에 보류 상태(pending state)를 표시할 수 있습니다.
+
+이제 "Posts"를 클릭해도 더 이상 전체 탭 컨테이너가 스피너로 대체되지 않는 것을 확인하세요.
+
+<UseTransitionExample />
+
+
+## mountTransition
+
+We can also see that mountTransition() creates 2 hooks inside:
+
+1. a state hook that holds isPending:boolean.
+1. another hook that holds the startTransition().
+
+사실상 훅 2개로 이루어진게 인상깊다. 
+
+```ts
+function mountTransition(): [
+  boolean,
+  (callback: () => void, options?: StartTransitionOptions) => void,
+] {
+  const stateHook = mountStateImpl((false: Thenable<boolean> | boolean));
+  // The `start` method never changes.
+  const start = startTransition.bind(
+    null,
+    currentlyRenderingFiber,
+    stateHook.queue,
+    true,
+    false,
+  );
+  const hook = mountWorkInProgressHook();
+  hook.memoizedState = start;
+  return [false, start];
+}
+```
+
+## startTransition
+
+게시물과 다르게 react 19에서는 ReactCurrentBatchConfig 대신에 ReactSharedInternals를 활용한다. 
+
+```js
+const prevTransition = ReactSharedInternals.T;
+ReactSharedInternals.T = currentTransition;
+const onStartTransitionFinish = ReactSharedInternals.S;
+```
+
+```js
+export function requestCurrentTransition(): BatchConfigTransition | null {
+  return ReactSharedInternals.T;
+}
+```
+
+transition 관련만 3개
+
+```js
+export type SharedStateClient = {
+  H: null | Dispatcher, // ReactCurrentDispatcher for Hooks
+  A: null | AsyncDispatcher, // ReactCurrentCache for Cache
+  // [!code highlight:3]
+  T: null | BatchConfigTransition, // ReactCurrentBatchConfig for Transitions
+  S: null | ((BatchConfigTransition, mixed) => void), // onStartTransitionFinish
+  V: null | TransitionTypes, // Pending Transition Types for the Next Transition
+};
+```
+
+lane 숫자가 이상했던 이유가 transition이다. 
+
+```ts
+export function claimNextTransitionLane(): Lane {
+  // Cycle through the lanes, assigning each new transition to the next lane.
+  // In most cases, this means every transition gets its own lane, until we
+  // run out of lanes and cycle back to the beginning.
+  const lane = nextTransitionLane;
+  nextTransitionLane <<= 1;
+  if ((nextTransitionLane & TransitionLanes) === NoLanes) {
+    nextTransitionLane = TransitionLane1;
+  }
+  return lane;
+}
+```
+
+## startTransition2
+
+이름이 같지만 헷갈리지 말자
+
+- https://ko.react.dev/reference/react/startTransition
+- https://ko.react.dev/reference/react/useTransition
+
+> startTransition은 useTransition과 매우 유사하지만, Transition이 대기 중인지 추적하는 isPending 플래그를 제공하지 않습니다. 
+> useTransition을 사용할 수 없을 때 startTransition을 호출할 수 있습니다. 
+> 예를 들어, startTransition은 데이터 라이브러리에서와 같이 컴포넌트 외부에서 작동합니다.
+
+```ts
+export function startTransition(
+  scope: () => void,
+  options?: StartTransitionOptions,
+) {
+  const prevTransition = ReactSharedInternals.T;
+  const currentTransition: BatchConfigTransition = {};
+  // [!code highlight]
+  ReactSharedInternals.T = currentTransition;
+
+  try {
+    const returnValue = scope();
+    const onStartTransitionFinish = ReactSharedInternals.S;
+    if (onStartTransitionFinish !== null) {
+      onStartTransitionFinish(currentTransition, returnValue);
+    }
+    if (
+      typeof returnValue === 'object' &&
+      returnValue !== null &&
+      typeof returnValue.then === 'function'
+    ) {
+      returnValue.then(noop, reportGlobalError);
+    }
+  } catch (error) {
+    // [!code highlight]
+    reportGlobalError(error);
+  } finally {
+    warnAboutTransitionSubscriptions(prevTransition, currentTransition);
+    ReactSharedInternals.T = prevTransition;
+  }
+}
+```
+
+`reportGlobalError`는 https://developer.mozilla.org/ko/docs/Web/API/Window/reportError 가 있으면 이걸 호출한다.
+
+## `window.reportError()` 실습
+
+`throw new Error()`는 스크립트 실행을 중단시키고, 잡히지 않은 에러(uncaught error)로 처리됩니다. 이는 React의 에러 경계(Error Boundary)에 의해 처리될 수 있으며, 애플리케이션의 일부 또는 전체 렌더링을 중단시킬 수 있습니다.
+
+반면, `window.reportError()`는 에러를 콘솔에 보고하지만 스크립트 실행을 중단시키지 않습니다. 이는 전역 `error` 이벤트 핸들러를 트리거하지만, 애플리케이션의 흐름을 방해하지 않고 에러를 기록하고 싶을 때 유용합니다.
+
+아래 예제에서 두 버튼을 클릭하여 차이점을 확인해 보세요. "Throw Error"를 클릭하면 스크립트가 중단되어 전역 핸들러에 의해 에러가 기록됩니다. "Report Error"를 클릭하면 에러가 보고된 후에도 스크립트가 계속 실행되는 것을 볼 수 있습니다.
+
+<ReportErrorExample />
