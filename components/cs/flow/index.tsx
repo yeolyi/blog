@@ -211,7 +211,7 @@ function Flow({
             </ReactFlow>
           </div>
           {!hideNodeButtons && (
-            <div className="overflow-x-auto max-w-full flex">
+            <div className="max-w-full flex flex-wrap">
               {registryKeys.map((key) => (
                 <MobileControlButton
                   key={key}
