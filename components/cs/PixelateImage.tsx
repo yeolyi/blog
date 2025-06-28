@@ -100,14 +100,12 @@ export default function PixelateImage() {
         {t('digitalizedImage')} ({pixelCnt}x{pixelCnt})
       </p>
 
-      <div className="relative aspect-video w-full overflow-hidden">
+      <div className="relative w-full h-[180px] overflow-hidden">
         {pixelatedImageSrc && (
           <img
             src={pixelatedImageSrc}
             alt="픽셀화된 이미지"
             className="object-cover w-full h-full"
-            width={1600}
-            height={900}
           />
         )}
       </div>

@@ -98,6 +98,7 @@ function ClockGraph({
         stroke="var(--color-green-500)"
         strokeWidth="2"
         fill="none"
+        suppressHydrationWarning
       />
     </svg>
   );

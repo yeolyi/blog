@@ -59,7 +59,7 @@ export default function Slider({
           />
         </RadixSlider.Track>
         <RadixSlider.Thumb
-          className={`block w-5 h-5 bg-white rounded-full hover:bg-gray-300 focus:bg-gray-300 cursor-pointer ${thumbClassName}`}
+          className={`block w-5 h-5 bg-white rounded-full hover:bg-gray-300 focus:bg-gray-300 cursor-pointer touch-none ${thumbClassName}`}
           aria-label={ariaLabel}
         />
       </RadixSlider.Root>

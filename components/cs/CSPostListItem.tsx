@@ -54,7 +54,7 @@ export default function CSPostListItem(
         </h3>
         <p
           className={clsx(
-            'm-0 p-0 font-light',
+            'm-0 p-0 font-light text-base',
             href && opacityOnHover,
             href ? 'text-[var(--tw-prose-body)]' : 'text-stone-500',
           )}

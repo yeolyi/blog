@@ -5,7 +5,7 @@ import EmailSubscribe from '@/components/cs/EmailSubscribe';
 import PixelateImage from '@/components/cs/PixelateImage';
 import TruthTable from '@/components/cs/TruthTable';
 import Flow from '@/components/cs/flow';
-import { border } from '@/components/ui/theme';
+import { layerBg } from '@/components/ui/theme';
 import half from '@/mdx/cs/adder/assets/half.json';
 import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
 import EdgeTriggerDemo from '@/mdx/cs/sequential/components/EdgeTriggerDemo';
@@ -51,7 +51,7 @@ export default async function Home() {
 
       <h2>{tCS('part1Title')}</h2>
 
-      <div className="flex flex-col gap-12">
+      <div className="flex flex-col gap-6">
         <CSPostListItem
           title={tCS('hw1Title')}
           description={tCS('hw1Description')}
@@ -67,7 +67,7 @@ export default async function Home() {
           date="2025-05-11"
           href="/cs/and-or-not"
         >
-          <div className={clsx('flex justify-center py-4', border)}>
+          <div className={clsx('flex justify-center py-2', layerBg)}>
             <TruthTable
               labels={[
                 { label: 'A', type: 'input' },
@@ -125,13 +125,20 @@ export default async function Home() {
           <AddingTuringMachine />
         </CSPostListItem>
 
+        <CSPostListItem
+          title={tCS('hw7Title')}
+          description={tCS('hw7Description')}
+          // date="2025-06-29"
+          // href="/cs/von-neumann"
+        />
+
         {[...Array(2)].map((_, idx) => (
           <CSPostListItem
             key={idx}
             // @ts-expect-error
-            title={tCS(`hw${idx + 7}Title`)}
+            title={tCS(`hw${idx + 8}Title`)}
             // @ts-expect-error
-            description={tCS(`hw${idx + 7}Description`)}
+            description={tCS(`hw${idx + 8}Description`)}
           />
         ))}
       </div>

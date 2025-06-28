@@ -59,7 +59,7 @@ export default function TruthTable({ labels, data }: TruthTableGateProps) {
   };
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto text-sm">
       <table className={clsx('w-fit not-prose border-collapse', layerBg)}>
         <thead>
           <tr>

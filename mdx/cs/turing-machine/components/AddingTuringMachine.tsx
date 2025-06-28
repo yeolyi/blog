@@ -31,7 +31,7 @@ q5,1,q5,_,R
 q5,_,q_halt,_,N
 `;
 
-const initialTape = Array.from<TapeSymbol>('01110_11_');
+const initialTape = Array.from<TapeSymbol>('011_11_');
 const initialHeadIdx = 1;
 
 const AddingTuringMachineContent = () => {
