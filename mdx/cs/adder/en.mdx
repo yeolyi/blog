@@ -138,7 +138,7 @@ Looking at the truth table, Sum becomes 1 only when A and B are different, and C
 
 Implementing the above truth table with logic gates creates a calculator that can perform single-digit binary addition!
 
-<Flow id="half" initialJSON={half} additionalRegistryKeys={['halfAdder']}/>
+<Flow id="half" initialJSON={half} />
 
 We've already created a single-digit addition calculator! This is called a **half adder**.
 
@@ -147,7 +147,7 @@ We've already created a single-digit addition calculator! This is called a **hal
 
 Referring to the content from [NAND is All You Need](/cs/nand-is-all-you-need), implementing the above circuit with NAND gates looks like this. The top output is Carry, the bottom output is Sum.
 
-<Flow id="half-nand" initialJSON={halfNand} additionalRegistryKeys={['halfAdder']}/>
+<Flow id="half-nand" initialJSON={halfNand}/>
 
 </details>
 
@@ -195,7 +195,7 @@ It looks complex, but think of each row as binary addition. For example, the las
 
 A full adder can be built using half adders and an OR gate. 
 
-<Flow id="half-to-full" initialJSON={full} additionalRegistryKeys={['or', 'halfAdder']} />
+<Flow id="half-to-full" initialJSON={full} />
 
 ## Multi-Digit Addition
 
@@ -208,7 +208,6 @@ With 10 full adders, we can add numbers over 1000, and with 30, we can add numbe
 <Flow 
   id="ripple-carry-adder" 
   initialJSON={ripple} 
-  additionalRegistryKeys={['or', 'halfAdder', 'fullAdder']} 
   height={500}
 />
 

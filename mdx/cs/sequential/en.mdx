@@ -35,7 +35,6 @@ Remarkably, an SR Latch can be built with just **two NOR gates**.
     id="srLatch"
     initialJSON={srLatch}
     height={300}
-    additionalRegistryKeys={['nor']}
 />
 
 Try setting S to 1 to set Q, then setting S back to 0—you'll see that Q's value is maintained!
@@ -73,7 +72,6 @@ To solve these problems with the SR latch, the **D Latch** was developed. The D 
     id="dLatch"
     initialJSON={dLatch}
     height={300}
-    additionalRegistryKeys={['nor', 'and', 'not']}
 />
 
 The D latch has only one 'Data (D)' input and one 'Enable (E)' input.
@@ -125,7 +123,6 @@ A rising-edge D flip-flop can be implemented using two D latches as shown below.
     id="dFlipFlop"
     initialJSON={dFlipFlop}
     height={300}
-    additionalRegistryKeys={['dLatch', 'not']}
 />
 
 ## From Flip-Flop to Register: Storing Larger Information

@@ -26,14 +26,14 @@ type Registry = typeof registry;
 
 export const registryKeys = [
   'number',
-  'nand',
-  'halfAdder',
-  'or',
-  'fullAdder',
   'label',
-  'nor',
+  'nand',
   'and',
+  'or',
   'not',
+  'nor',
+  'halfAdder',
+  'fullAdder',
   'dLatch',
 ] satisfies (keyof Registry)[];
 

@@ -19,9 +19,16 @@ import {
 } from '@xyflow/react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import type { RegistryKey } from '@/components/cs/flow/atoms';
+import {
+  type RegistryKey,
+  registryKeys,
+  registryNames,
+} from '@/components/cs/flow/atoms';
 import { nodeTypes } from '@/components/cs/flow/components';
-import { Controls } from '@/components/cs/flow/components/Controls';
+import {
+  Controls,
+  MobileControlButton,
+} from '@/components/cs/flow/components/Controls';
 import { useTouchDeviceState } from '@/components/cs/flow/hooks/useMobileState';
 import type { SaveFile } from '@/components/cs/flow/model/type';
 import { useNodeAtom } from '@/components/cs/flow/model/useNodeAtom';
@@ -37,12 +44,12 @@ function Flow({
   id,
   initialJSON,
   height = 400,
-  additionalRegistryKeys = [],
+  hideNodeButtons = false,
 }: {
   id: string;
   initialJSON?: ReactFlowJsonObject<Node, Edge>;
   height?: number;
-  additionalRegistryKeys?: RegistryKey[];
+  hideNodeButtons?: boolean;
 }) {
   const store = useMemo(() => createStore(), []);
   const {
@@ -153,61 +160,71 @@ function Flow({
   return (
     <Provider store={store}>
       <ReactFlowProvider>
-        <div
-          className="not-prose font-sans overflow-hidden"
-          style={{ height: `${height}px` }}
-        >
-          <ReactFlow
-            onInit={setRfInstance}
-            id={id}
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            colorMode="dark"
-            nodeTypes={nodeTypes}
-            defaultEdgeOptions={{
-              type: ConnectionLineType.Bezier,
-              animated: true,
-              selectable: true,
-            }}
-            connectionLineType={ConnectionLineType.Bezier}
-            connectionLineStyle={{ stroke: 'lightgray' }}
-            fitView
-            fitViewOptions={minZoomOptions}
-            proOptions={{ hideAttribution: true }}
-            preventScrolling={false}
-            // TODO: 노드가 모바일 드래그를 막는 문제 해결
-            panOnDrag={isInteractionEnabled}
-            nodesDraggable={isInteractionEnabled}
-            nodesConnectable={isInteractionEnabled}
-            zoomOnDoubleClick={false}
-            snapToGrid
-            snapGrid={[4, 4]}
+        <div className="flex flex-col gap-2">
+          <div
+            className="not-prose font-sans overflow-hidden"
+            style={{ height: `${height}px` }}
           >
-            <Controls
-              rfInstance={rfInstance}
-              touchOnlyState={touchOnlyState}
-              setTouchOnlyState={setTouchOnlyState}
-              addNode={addNode}
-              onSave={onSave}
-              onRestore={onRestore}
-              onDeleteNode={(id) => onNodesChange([{ type: 'remove', id }])}
-              onDeleteEdge={(id) => onEdgesChange([{ type: 'remove', id }])}
-              registryKeys={[
-                'number',
-                'nand',
-                'label',
-                ...additionalRegistryKeys,
-              ]}
-            />
-            <Background
-              bgColor="var(--color-stone-800)"
-              variant={BackgroundVariant.Dots}
+            <ReactFlow
+              onInit={setRfInstance}
               id={id}
-            />
-          </ReactFlow>
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onConnect={onConnect}
+              colorMode="dark"
+              nodeTypes={nodeTypes}
+              defaultEdgeOptions={{
+                type: ConnectionLineType.Bezier,
+                animated: true,
+                selectable: true,
+              }}
+              connectionLineType={ConnectionLineType.Bezier}
+              connectionLineStyle={{ stroke: 'lightgray' }}
+              fitView
+              fitViewOptions={minZoomOptions}
+              proOptions={{ hideAttribution: true }}
+              preventScrolling={false}
+              // TODO: 노드가 모바일 드래그를 막는 문제 해결
+              panOnDrag={isInteractionEnabled}
+              nodesDraggable={isInteractionEnabled}
+              nodesConnectable={isInteractionEnabled}
+              zoomOnDoubleClick={false}
+              snapToGrid
+              snapGrid={[4, 4]}
+            >
+              <Controls
+                rfInstance={rfInstance}
+                touchOnlyState={touchOnlyState}
+                setTouchOnlyState={setTouchOnlyState}
+                onSave={onSave}
+                onRestore={onRestore}
+                onDeleteNode={(id) => onNodesChange([{ type: 'remove', id }])}
+                onDeleteEdge={(id) => onEdgesChange([{ type: 'remove', id }])}
+              />
+              <Background
+                bgColor="var(--color-stone-800)"
+                variant={BackgroundVariant.Dots}
+                id={id}
+              />
+            </ReactFlow>
+          </div>
+          {!hideNodeButtons && (
+            <div className="overflow-x-auto max-w-full flex">
+              {registryKeys.map((key) => (
+                <MobileControlButton
+                  key={key}
+                  onClick={addNode(key)}
+                  disabled={
+                    touchOnlyState.type === 'mobile' && !touchOnlyState.value
+                  }
+                >
+                  <span className="text-sm">{registryNames[key]}</span>
+                </MobileControlButton>
+              ))}
+            </div>
+          )}
         </div>
       </ReactFlowProvider>
     </Provider>

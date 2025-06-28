@@ -25,7 +25,6 @@ import {
   useCallback,
   useState,
 } from 'react';
-import { type RegistryKey, registryNames } from '../atoms';
 import type { TouchDeviceState } from '../hooks/useMobileState';
 
 type MobileControlButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
@@ -33,7 +32,7 @@ type MobileControlButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   children?: ReactNode;
 };
 
-function MobileControlButton({
+export function MobileControlButton({
   icon: Icon,
   children,
   className = '',
@@ -43,7 +42,7 @@ function MobileControlButton({
     <button
       type="button"
       className={clsx(
-        'w-8 h-8 flex items-center justify-center m-1 cursor-pointer',
+        'flex items-center justify-center m-1 cursor-pointer shrink-0 p-2',
         bgMap.gray,
         props.disabled && 'opacity-50',
         className,
@@ -63,24 +62,20 @@ interface ControlsProps {
   rfInstance: ReactFlowInstance | null;
   touchOnlyState: TouchDeviceState;
   setTouchOnlyState: (value: TouchDeviceState) => void;
-  addNode: (type: RegistryKey) => () => void;
   onSave: () => void;
   onRestore: () => void;
   onDeleteNode: (id: string) => void;
   onDeleteEdge: (id: string) => void;
-  registryKeys?: RegistryKey[];
 }
 
 export function Controls({
   rfInstance,
   touchOnlyState,
   setTouchOnlyState,
-  addNode,
   onSave,
   onRestore,
   onDeleteNode,
   onDeleteEdge,
-  registryKeys = [],
 }: ControlsProps) {
   const [selectedNodes, setSelectedNodes] = useState<string[]>([]);
   const [selectedEdges, setSelectedEdges] = useState<string[]>([]);
@@ -112,68 +107,48 @@ export function Controls({
     <>
       {(touchOnlyState.type === 'desktop' ||
         (touchOnlyState.type === 'mobile' && touchOnlyState.value)) && (
-        <>
-          <div className="absolute top-0 left-0 right-0 flex justify-center z-10 pointer-events-none">
-            <div className="flex gap-5 m-2 p-2 bg-black/50 pointer-events-auto">
-              <div className="flex">
-                {touchOnlyState.type === 'desktop' && (
-                  <>
-                    <MobileControlButton
-                      icon={Plus}
-                      onClick={() => rfInstance?.zoomIn()}
-                    />
-                    <MobileControlButton
-                      icon={Minus}
-                      onClick={() => rfInstance?.zoomOut()}
-                    />
-                  </>
-                )}
+        <div className="absolute top-0 left-0 right-0 flex justify-center z-10 pointer-events-none">
+          <div className="flex gap-5 m-2 p-2 bg-black/50 pointer-events-auto">
+            <div className="flex">
+              {touchOnlyState.type === 'desktop' && (
+                <>
+                  <MobileControlButton
+                    icon={Plus}
+                    onClick={() => rfInstance?.zoomIn()}
+                  />
+                  <MobileControlButton
+                    icon={Minus}
+                    onClick={() => rfInstance?.zoomOut()}
+                  />
+                </>
+              )}
 
+              <MobileControlButton
+                icon={Maximize}
+                onClick={() => rfInstance?.fitView(minZoomOptions)}
+                disabled={
+                  touchOnlyState.type === 'mobile' && !touchOnlyState.value
+                }
+              />
+
+              {touchOnlyState.type === 'mobile' && (
                 <MobileControlButton
-                  icon={Maximize}
-                  onClick={() => rfInstance?.fitView(minZoomOptions)}
+                  icon={Trash}
+                  onClick={onDelete}
                   disabled={
-                    touchOnlyState.type === 'mobile' && !touchOnlyState.value
+                    !touchOnlyState.value ||
+                    (selectedNodes.length === 0 && selectedEdges.length === 0)
                   }
                 />
+              )}
+            </div>
 
-                {touchOnlyState.type === 'mobile' && (
-                  <MobileControlButton
-                    icon={Trash}
-                    onClick={onDelete}
-                    disabled={
-                      !touchOnlyState.value ||
-                      (selectedNodes.length === 0 && selectedEdges.length === 0)
-                    }
-                  />
-                )}
-              </div>
-
-              <div className="flex">
-                <MobileControlButton icon={Save} onClick={onSave} />
-                <MobileControlButton icon={Folder} onClick={onRestore} />
-              </div>
+            <div className="flex">
+              <MobileControlButton icon={Save} onClick={onSave} />
+              <MobileControlButton icon={Folder} onClick={onRestore} />
             </div>
           </div>
-
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 z-10 pointer-events-none">
-            <div className="p-2 m-2 bg-black/50 pointer-events-auto">
-              <div className="flex gap-2">
-                {registryKeys.map((key) => (
-                  <MobileControlButton
-                    key={key}
-                    onClick={addNode(key)}
-                    disabled={
-                      touchOnlyState.type === 'mobile' && !touchOnlyState.value
-                    }
-                  >
-                    <span className="text-sm">{registryNames[key]}</span>
-                  </MobileControlButton>
-                ))}
-              </div>
-            </div>
-          </div>
-        </>
+        </div>
       )}
 
       {touchOnlyState.type === 'mobile' && (

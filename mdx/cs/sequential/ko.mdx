@@ -35,7 +35,6 @@ import dFlipFlop from '@/mdx/cs/sequential/assets/dFlipFlop.json';
     id="srLatch"
     initialJSON={srLatch}
     height={300}
-    additionalRegistryKeys={['nor']}
 />
 
 S를 1로 만들어 Q를 세팅한 뒤, 다시 S를 0으로 만들어도 Q의 값이 유지됨을 확인해보세요!
@@ -73,7 +72,6 @@ SR 래치는 기본적인 '기억' 기능을 제공하지만, 실제 컴퓨터�
     id="dLatch"
     initialJSON={dLatch}
     height={300}
-    additionalRegistryKeys={['nor', 'and', 'not']}
 />
 
 D 래치는 하나의 '데이터(Data, D)' 입력과 '활성화(Enable, E)' 입력만을 가집니다. 
@@ -125,7 +123,6 @@ D 플립플롭은 D 래치처럼 데이터를 입력받아 저장하지만, **�
     id="dFlipFlop"
     initialJSON={dFlipFlop}
     height={300}
-    additionalRegistryKeys={['dLatch', 'not']}
 />
 
 ## 플립플롭에서 레지스터로: 더 큰 정보 저장

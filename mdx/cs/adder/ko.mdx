@@ -139,7 +139,7 @@ $$
 
 위의 진리표를 논리 게이트로 구현하면 한자리수 이진수 덧셈을 할 수 있는 계산기를 만든 것입니다! 
 
-<Flow id="half" initialJSON={half} additionalRegistryKeys={['halfAdder']}/>
+<Flow id="half" initialJSON={half} />
 
 벌써 한자리 덧셈 계산기가 만들어졌네요! 이걸 **반가산기(half adder)** 라고 합니다.
 
@@ -148,7 +148,7 @@ $$
 
 [사실 엄마 아빠가 둘 다 좋지는 않았던 컴퓨터](/cs/nand-is-all-you-need)의 내용을 참고해 위 회로를 NAND로 구현하면 아래와 같습니다. 
 
-<Flow id="half-nand" initialJSON={halfNand} additionalRegistryKeys={['halfAdder']}/>
+<Flow id="half-nand" initialJSON={halfNand} />
 
 </details>
 
@@ -196,7 +196,7 @@ $$
 
 전가산기는 반가산기와 OR 게이트를 활용해 만들 수 있습니다.
 
-<Flow id="half-to-full" initialJSON={full} additionalRegistryKeys={['or', 'halfAdder']} />
+<Flow id="half-to-full" initialJSON={full}/>
 
 ## 여러자리 덧셈
 
@@ -209,7 +209,6 @@ $$
 <Flow 
   id="ripple-carry-adder" 
   initialJSON={ripple} 
-  additionalRegistryKeys={['or', 'halfAdder', 'fullAdder']} 
   height={600}
 />
 

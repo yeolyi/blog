@@ -90,7 +90,7 @@ export default async function Home() {
           date="2025-05-25"
           href="/cs/nand-is-all-you-need"
         >
-          <Flow id="/cs" initialJSON={not} height={250} />
+          <Flow id="/cs" initialJSON={not} height={250} hideNodeButtons />
         </CSPostListItem>
 
         <CSPostListItem
@@ -102,8 +102,8 @@ export default async function Home() {
           <Flow
             id="ripple-carry-adder"
             initialJSON={half}
-            additionalRegistryKeys={['or', 'halfAdder', 'fullAdder']}
             height={300}
+            hideNodeButtons
           />
         </CSPostListItem>
 
