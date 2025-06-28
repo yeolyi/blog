@@ -5,10 +5,12 @@ import EmailSubscribe from '@/components/cs/EmailSubscribe';
 import PixelateImage from '@/components/cs/PixelateImage';
 import TruthTable from '@/components/cs/TruthTable';
 import Flow from '@/components/cs/flow';
+import { border } from '@/components/ui/theme';
 import half from '@/mdx/cs/adder/assets/half.json';
 import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
 import EdgeTriggerDemo from '@/mdx/cs/sequential/components/EdgeTriggerDemo';
 import AddingTuringMachine from '@/mdx/cs/turing-machine/components/AddingTuringMachine';
+import clsx from 'clsx';
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 
@@ -65,19 +67,21 @@ export default async function Home() {
           date="2025-05-11"
           href="/cs/and-or-not"
         >
-          <TruthTable
-            labels={[
-              { label: 'A', type: 'input' },
-              { label: 'B', type: 'input' },
-              { label: 'A AND B', type: 'output' },
-            ]}
-            data={[
-              [false, false, false],
-              [false, true, false],
-              [true, false, false],
-              [true, true, true],
-            ]}
-          />
+          <div className={clsx('flex justify-center py-4', border)}>
+            <TruthTable
+              labels={[
+                { label: 'A', type: 'input' },
+                { label: 'B', type: 'input' },
+                { label: 'A AND B', type: 'output' },
+              ]}
+              data={[
+                [false, false, false],
+                [false, true, false],
+                [true, false, false],
+                [true, true, true],
+              ]}
+            />
+          </div>
         </CSPostListItem>
 
         <CSPostListItem

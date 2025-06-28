@@ -1,11 +1,13 @@
 'use client';
 
+import { layerBg } from '@/components/ui/theme';
 import { Tape } from '@/mdx/cs/turing-machine/components/Tape';
 import {
   type TapeSymbol,
   TuringMachineProvider,
 } from '@/mdx/cs/turing-machine/hooks/turingMachineStore';
 import { useTuringMachine } from '@/mdx/cs/turing-machine/hooks/useTuringMachine';
+import clsx from 'clsx';
 import { useEffect } from 'react';
 
 const rulesCsv = `
@@ -29,7 +31,7 @@ q5,1,q5,_,R
 q5,_,q_halt,_,N
 `;
 
-const initialTape = Array.from<TapeSymbol>('011_1_');
+const initialTape = Array.from<TapeSymbol>('01110_11_');
 const initialHeadIdx = 1;
 
 const AddingTuringMachineContent = () => {
@@ -61,7 +63,7 @@ const AddingTuringMachineContent = () => {
 
 export default function AddingTuringMachine() {
   return (
-    <div className="not-prose">
+    <div className={clsx('not-prose flex justify-center p-4', layerBg)}>
       <TuringMachineProvider>
         <AddingTuringMachineContent />
       </TuringMachineProvider>

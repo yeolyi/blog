@@ -85,17 +85,12 @@ export default function PixelateImage() {
   );
 
   return (
-    <div
-      className={clsx(
-        'p-4 not-prose flex flex-col gap-4 max-w-[512px] w-full',
-        layerBg,
-      )}
-    >
+    <div className={clsx('p-4 not-prose flex flex-col gap-4 w-full', layerBg)}>
       <Image
         ref={setImageRef}
         src={changdeokgung}
-        alt="원본 이미지"
-        className="object-cover aspect-video opacity-0 absolute pointer-events-none w-[256px]"
+        alt="창덕궁"
+        className="object-cover aspect-video opacity-0 absolute pointer-events-none"
         onLoad={handleImageLoad}
         unoptimized
       />
