@@ -86,11 +86,12 @@ export default function PixelateImage() {
 
   return (
     <div className={clsx('p-4 not-prose flex flex-col gap-4 w-full', layerBg)}>
+      {/* 숨어있는 이미지고 스크롤 방지하려면 max-w 설정 필요 */}
       <Image
         ref={setImageRef}
         src={changdeokgung}
         alt="창덕궁"
-        className="object-cover aspect-video opacity-0 absolute pointer-events-none"
+        className="object-cover aspect-video opacity-0 absolute pointer-events-none max-w-[256px]"
         onLoad={handleImageLoad}
         unoptimized
       />
