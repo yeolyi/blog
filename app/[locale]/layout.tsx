@@ -4,6 +4,8 @@ import Footer from '../../components/layout/Footer';
 import Header from '../../components/layout/Header';
 
 import '@/app/[locale]/globals.css';
+// css가 script 태그로 들어가서 mdx 안에서 import해서 그런건가싶어서 여기로 이동
+import './style.css';
 
 import { AuthProvider } from '@/components/AuthProvider';
 import SWRProvider from '@/components/SWRProvider';

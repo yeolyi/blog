@@ -38,11 +38,11 @@ export default function NameTag({ atom }: { atom: OutputAtom }) {
           className="cursor-pointer shrink-0"
         >
           {label ? (
-            <span className="text-xs font-mono min-w-fit">
+            <span className="text-xs font-mono min-w-fit text-white">
               {label.toString()}
             </span>
           ) : (
-            <Tag size={12} />
+            <Tag size={12} color="white" />
           )}
         </button>
       )}

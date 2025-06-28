@@ -220,7 +220,9 @@ function Flow({
                     touchOnlyState.type === 'mobile' && !touchOnlyState.value
                   }
                 >
-                  <span className="text-sm">{registryNames[key]}</span>
+                  <span className="text-sm text-white">
+                    {registryNames[key]}
+                  </span>
                 </MobileControlButton>
               ))}
             </div>
