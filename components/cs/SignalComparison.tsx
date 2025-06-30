@@ -1,6 +1,14 @@
 'use client';
 
-import Slider from '@/components/ui/Slider';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
 import { border, failBg, layerBg, successBg } from '@/components/ui/theme';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
@@ -76,32 +84,43 @@ export default function SignalComparison(): React.ReactElement {
   }, [applyRandomNoise]);
 
   return (
-    <div className={`p-6 not-prose ${layerBg} text-white`}>
-      <div className="flex flex-col md:flex-row items-start gap-6">
-        <div className="w-full md:w-1/2">
-          <p className="font-bold text-md mb-2">
-            이진법 <span className="text-sm">목표값 1</span>
-          </p>
-          <SignalVisualizer value={noisyBinarySignal} range={[0.5, 1]} />
+    <Card className="not-prose">
+      <CardHeader>
+        <CardTitle>아날로그 vs 디지털 신호</CardTitle>
+        <CardDescription>
+          노이즈가 아날로그 신호와 디지털 신호의 값 해석에 어떤 영향을 미치는지
+          비교해 보세요.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-col md:flex-row items-start gap-6">
+          <div className="w-full md:w-1/2">
+            <p className="font-bold text-md mb-2">
+              디지털 신호 <span className="text-sm">목표값 1</span>
+            </p>
+            <SignalVisualizer value={noisyBinarySignal} range={[0.5, 1]} />
+          </div>
+
+          <div className="w-full md:w-1/2">
+            <p className="font-bold text-md">
+              아날로그 신호 <span className="text-sm mb-2">목표값 5</span>
+            </p>
+            <SignalVisualizer value={noisyDecimalSignal} range={[0.45, 0.55]} />
+          </div>
         </div>
 
-        <div className="w-full md:w-1/2">
-          <p className="font-bold text-md">
-            십진법 <span className="text-sm mb-2">목표값 5</span>
-          </p>
-          <SignalVisualizer value={noisyDecimalSignal} range={[0.45, 0.55]} />
+        <div className="flex flex-col gap-2 pt-4">
+          <Label>오차 범위</Label>
+          <Slider
+            value={[errorRate]}
+            onValueChange={(value) => setErrorRate(value[0])}
+            min={0}
+            max={50}
+            step={1}
+            className="w-full"
+          />
         </div>
-      </div>
-
-      <Slider
-        label="오차 범위"
-        value={errorRate}
-        onValueChange={setErrorRate}
-        min={0}
-        max={50}
-        step={1}
-        className="w-full"
-      />
-    </div>
+      </CardContent>
+    </Card>
   );
 }

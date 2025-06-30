@@ -2,10 +2,23 @@
 import mediumZoom from 'medium-zoom/dist/pure';
 import NextImage from 'next/image';
 
-export default function Image({
-  className,
-  ...props
-}: React.ComponentProps<typeof NextImage>) {
+type Props = React.ComponentProps<typeof NextImage> & {
+  caption?: string;
+};
+
+export default function Image({ className, caption, ...props }: Props) {
+  if (caption) {
+    return (
+      <div className="flex flex-col gap-2 not-prose">
+        <ZoomableImage {...props} className={className} />
+        <p className="text-sm text-gray-500 mx-auto">{caption}</p>
+      </div>
+    );
+  }
+  return <ZoomableImage {...props} className={className} />;
+}
+
+const ZoomableImage = ({ className, ...props }: Props) => {
   return (
     <NextImage
       {...props}
@@ -22,4 +35,4 @@ export default function Image({
       }}
     />
   );
-}
+};

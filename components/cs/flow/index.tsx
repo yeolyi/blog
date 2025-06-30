@@ -25,13 +25,11 @@ import {
   registryNames,
 } from '@/components/cs/flow/atoms';
 import { nodeTypes } from '@/components/cs/flow/components';
-import {
-  Controls,
-  MobileControlButton,
-} from '@/components/cs/flow/components/Controls';
+import { Controls } from '@/components/cs/flow/components/Controls';
 import { useTouchDeviceState } from '@/components/cs/flow/hooks/useMobileState';
 import type { SaveFile } from '@/components/cs/flow/model/type';
 import { useNodeAtom } from '@/components/cs/flow/model/useNodeAtom';
+import { Button } from '@/components/ui/button';
 import { saveJSONToFile, selectJSONFromFile } from '@/utils/string';
 import { Provider, createStore } from 'jotai';
 
@@ -204,26 +202,26 @@ function Flow({
                 onDeleteEdge={(id) => onEdgesChange([{ type: 'remove', id }])}
               />
               <Background
-                bgColor="var(--color-stone-800)"
+                bgColor="var(--card)"
                 variant={BackgroundVariant.Dots}
                 id={id}
               />
             </ReactFlow>
           </div>
           {!hideNodeButtons && (
-            <div className="max-w-full flex flex-wrap">
+            <div className="max-w-full flex flex-wrap gap-1">
               {registryKeys.map((key) => (
-                <MobileControlButton
+                <Button
+                  variant="secondary"
+                  size="sm"
                   key={key}
                   onClick={addNode(key)}
                   disabled={
                     touchOnlyState.type === 'mobile' && !touchOnlyState.value
                   }
                 >
-                  <span className="text-sm text-white">
-                    {registryNames[key]}
-                  </span>
-                </MobileControlButton>
+                  {registryNames[key]}
+                </Button>
               ))}
             </div>
           )}

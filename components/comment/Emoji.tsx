@@ -1,9 +1,8 @@
-import { bgMap, border } from '@/components/ui/theme';
+import { Toggle } from '@/components/ui/toggle';
 import { addEmojiReactionInDB } from '@/db/comment/update';
 import { useSessionStore } from '@/store/session';
 import { useEmojiComment } from '@/swr/comment';
 import { confetti } from '@/utils/confetti';
-import clsx from 'clsx';
 import Image from 'next/image';
 import clap from './assets/clap.webp';
 import heart from './assets/heart.webp';
@@ -84,16 +83,13 @@ export default function Emoji({ postId }: { postId: string }) {
     };
 
   return (
-    <div className="flex flex-wrap gap-2 mt-2 not-prose">
+    <div className="flex flex-wrap gap-2 not-prose">
       {reactionArr.map(({ emoji, count, user_reacted }) => (
-        <button
+        <Toggle
           key={emoji}
-          className={clsx(
-            'flex items-center gap-2 px-2 py-1 cursor-pointer text-white font-normal',
-            user_reacted ? bgMap.gray : `${bgMap.transparent} ${border}`,
-          )}
           type="button"
           onClick={onClick(emoji, count, user_reacted)}
+          pressed={user_reacted}
         >
           <Image
             src={EMOJI_TO_ANIMATED[emoji]}
@@ -103,8 +99,8 @@ export default function Emoji({ postId }: { postId: string }) {
             width={25}
             height={25}
           />
-          <span className="text-sm">{count}</span>
-        </button>
+          {count}
+        </Toggle>
       ))}
     </div>
   );

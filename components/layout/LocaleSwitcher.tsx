@@ -1,12 +1,10 @@
 'use client';
 
+import { Button } from '@/components/ui/button';
 import { usePathname, useRouter } from '@/i18n/navigation';
-import { routing } from '@/i18n/routing';
-import clsx from 'clsx';
 import { useLocale, useTranslations } from 'next-intl';
 import type { Locale } from 'next-intl';
 import { useParams } from 'next/navigation';
-import { ToggleGroup } from 'radix-ui';
 
 export default function LocaleSwitcher() {
   const t = useTranslations('LocaleSwitcher');
@@ -28,28 +26,17 @@ export default function LocaleSwitcher() {
   }
 
   return (
-    <div className="relative">
-      <p className="sr-only">{t('label')}</p>
-      <ToggleGroup.Root
-        type="single"
-        value={locale}
-        onValueChange={onValueChange}
-        className="inline-flex border border-white"
-      >
-        {routing.locales.map((cur) => (
-          <ToggleGroup.Item
-            key={cur}
-            value={cur}
-            className={clsx(
-              'text-white px-2 py-1 text-sm font-semibold cursor-pointer',
-              'data-[state=on]:bg-white data-[state=on]:text-black',
-              'hover:bg-white hover:text-black',
-            )}
-          >
-            {t('locale', { locale: cur })}
-          </ToggleGroup.Item>
-        ))}
-      </ToggleGroup.Root>
+    <div className="flex items-center gap-2">
+      {locale !== 'ko' && (
+        <Button variant="link" onClick={() => onValueChange('ko')}>
+          한국어
+        </Button>
+      )}
+      {locale !== 'en' && (
+        <Button variant="link" onClick={() => onValueChange('en')}>
+          English
+        </Button>
+      )}
     </div>
   );
 }

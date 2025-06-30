@@ -1,5 +1,5 @@
 import Tag from '@/components/meme/Tag';
-import { Label } from '@/components/ui/Form';
+import { Label } from '@/components/ui/label';
 import type { Tag as TagType } from '@/types/helper.types';
 
 const TagRadio = ({

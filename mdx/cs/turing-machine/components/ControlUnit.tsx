@@ -1,6 +1,14 @@
 'use client';
 
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import type {
   Rules,
   State,
@@ -9,29 +17,7 @@ import type {
 import clsx from 'clsx';
 import { Check, ChevronDown, ChevronUp, Pencil, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import {
-  type Dispatch,
-  type ReactNode,
-  type SetStateAction,
-  useState,
-} from 'react';
-
-const TableCell = ({
-  children,
-  header,
-}: {
-  children: ReactNode;
-  header?: boolean;
-}) => (
-  <td
-    className={clsx(
-      'p-2 border border-stone-700 font-mono whitespace-nowrap',
-      header && 'bg-stone-900 text-sm',
-    )}
-  >
-    {children}
-  </td>
-);
+import { type Dispatch, type SetStateAction, useState } from 'react';
 
 export const ControlUnit = ({
   rules,
@@ -74,17 +60,21 @@ export const ControlUnit = ({
         <div className="flex items-center gap-2">
           {editable && !isEditing && (
             <Button
-              bg="gray"
-              Icon={Pencil}
+              variant="secondary"
+              size="icon"
               onClick={() => setIsEditing(true)}
-            />
+            >
+              <Pencil />
+            </Button>
           )}
           {hasScroll && !isEditing && (
             <Button
-              bg="gray"
-              Icon={isExpanded ? ChevronUp : ChevronDown}
+              variant="secondary"
+              size="icon"
               onClick={() => setIsExpanded((prev) => !prev)}
-            />
+            >
+              {isExpanded ? <ChevronUp /> : <ChevronDown />}
+            </Button>
           )}
         </div>
       </div>
@@ -96,8 +86,12 @@ export const ControlUnit = ({
             onChange={(e) => setEditedCsv(e.target.value)}
           />
           <div className="flex items-center justify-end gap-2">
-            <Button bg="green" Icon={Check} onClick={handleApply} />
-            <Button bg="gray" Icon={X} onClick={handleCancel} />
+            <Button variant="destructive" size="icon" onClick={handleCancel}>
+              <X />
+            </Button>
+            <Button variant="default" size="icon" onClick={handleApply}>
+              <Check />
+            </Button>
           </div>
         </div>
       ) : (
@@ -110,41 +104,57 @@ export const ControlUnit = ({
             }
           }}
         >
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr>
-                <TableCell header>{t('currentState')}</TableCell>
-                <TableCell header>{t('readSymbol')}</TableCell>
-                <TableCell header>{t('nextState')}</TableCell>
-                <TableCell header>{t('writeSymbol')}</TableCell>
-                <TableCell header>{t('move')}</TableCell>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="font-mono bg-stone-900">
+                  {t('currentState')}
+                </TableHead>
+                <TableHead className="font-mono bg-stone-900">
+                  {t('readSymbol')}
+                </TableHead>
+                <TableHead className="font-mono bg-stone-900">
+                  {t('nextState')}
+                </TableHead>
+                <TableHead className="font-mono bg-stone-900">
+                  {t('writeSymbol')}
+                </TableHead>
+                <TableHead className="font-mono bg-stone-900">
+                  {t('move')}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {Object.entries(rules).flatMap(([state, transitions]) =>
                 Object.entries(transitions).map(
                   ([symbol, rule]) =>
                     rule && (
-                      <tr
+                      <TableRow
                         key={`${state}-${symbol}`}
                         className={clsx({
-                          'bg-stone-400 text-black':
+                          'bg-secondary text-secondary-foreground':
                             state === currentState &&
                             symbol === currentSymbol &&
                             currentState !== 'q-halt',
                         })}
                       >
-                        <TableCell>{state}</TableCell>
-                        <TableCell>{symbol}</TableCell>
-                        <TableCell>{rule.newState}</TableCell>
-                        <TableCell>{rule.newSymbol}</TableCell>
-                        <TableCell>{rule.direction}</TableCell>
-                      </tr>
+                        <TableCell className="font-mono">{state}</TableCell>
+                        <TableCell className="font-mono">{symbol}</TableCell>
+                        <TableCell className="font-mono">
+                          {rule.newState}
+                        </TableCell>
+                        <TableCell className="font-mono">
+                          {rule.newSymbol}
+                        </TableCell>
+                        <TableCell className="font-mono">
+                          {rule.direction}
+                        </TableCell>
+                      </TableRow>
                     ),
                 ),
               )}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       )}
     </div>

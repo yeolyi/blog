@@ -3,8 +3,7 @@ import { crawlInstagramAction } from '@/actions/crawl';
 import { fileToAVIFAction } from '@/actions/image';
 import MemeCard, { type MemeCardProps } from '@/components/meme/MemeCard';
 import TagRadio from '@/components/meme/TagRadio';
-import Button from '@/components/ui/Button';
-import Form from '@/components/ui/Form';
+import { Button } from '@/components/ui/button';
 import { uploadMemeToDB } from '@/db/meme/create';
 import { getRandomMemesFromDB } from '@/db/meme/read';
 import { useRouter } from '@/i18n/navigation';
@@ -97,7 +96,8 @@ export default function MemeViewer() {
 
       <div className="fixed bottom-8 right-8 flex flex-col gap-2">
         {selectedTag === NO_TAG_ID && (
-          <Button type="button" bg="gray" Icon={Shuffle} onClick={onShuffle}>
+          <Button type="button" variant="secondary" onClick={onShuffle}>
+            <Shuffle />
             셔플
           </Button>
         )}
@@ -140,15 +140,13 @@ const AddMemeForm = () => {
         setIsLoading(false);
       }}
     >
-      <Form.Text title="제목" name="title" />
-      <Form.Image title="이미지" name="image" />
       <Button
         type="submit"
-        bg="green"
-        Icon={Plus}
+        variant="default"
         className="self-end"
-        isLoading={isLoading}
+        disabled={isLoading}
       >
+        <Plus />
         추가
       </Button>
     </form>
@@ -163,9 +161,9 @@ const CrawlInstagramSection = () => {
     <div className="flex gap-2 items-center flex-wrap">
       <Button
         type="button"
-        bg="green"
+        variant="default"
+        size="icon"
         className="self-start"
-        Icon={Instagram}
         onClick={async () => {
           setIsLoading(true);
           const clipboardText = await navigator.clipboard.readText();
@@ -178,8 +176,10 @@ const CrawlInstagramSection = () => {
           setInstaUrlList(result);
           setIsLoading(false);
         }}
-        isLoading={isLoading}
-      />
+        disabled={isLoading}
+      >
+        <Instagram />
+      </Button>
       {instaUrlList.map((url, idx) => (
         <a
           href={url}

@@ -1,6 +1,6 @@
 'use client';
 
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { AlertTriangle, MessageSquareWarning, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -70,17 +70,16 @@ export default function ReportErrorExample() {
       </div>
       <div className="p-6 pt-0">
         <div className="flex gap-2">
-          <Button onClick={handleThrowError} bg="red" Icon={AlertTriangle}>
+          <Button onClick={handleThrowError} variant="destructive">
+            <AlertTriangle />
             Throw Error
           </Button>
-          <Button
-            onClick={handleReportError}
-            bg="gray"
-            Icon={MessageSquareWarning}
-          >
+          <Button onClick={handleReportError} variant="secondary">
+            <MessageSquareWarning />
             Report Error
           </Button>
-          <Button onClick={() => setLogs([])} bg="gray" Icon={Trash2}>
+          <Button onClick={() => setLogs([])} variant="secondary">
+            <Trash2 />
             Clear Logs
           </Button>
         </div>

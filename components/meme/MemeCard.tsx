@@ -1,7 +1,6 @@
 import TagCheckbox from '@/components/meme/TagCheckbox';
-import Button from '@/components/ui/Button';
-import { Checkbox } from '@/components/ui/Checkbox';
-import Form from '@/components/ui/Form';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { deleteMemeFromDB } from '@/db/meme/delete';
 import { memesByTagKey } from '@/swr/key';
 import { NO_TAG_ID, updateMeme, useMemeTags, useTags } from '@/swr/meme';
@@ -52,23 +51,18 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
 
       {isEdit && (
         <form className={clsx('flex flex-col gap-3 py-4')} onSubmit={onSubmit}>
-          <Form.Text title="태그" name="tagStr" />
           <TagCheckbox
             tags={tags ?? []}
             name="tagArr"
             initialValues={memeTags?.map((tag) => tag.tag_id ?? '') ?? []}
           />
 
-          <Form.Label htmlFor="hidden" className="flex items-center gap-2">
-            숨김
-          </Form.Label>
           <Checkbox name="hidden" defaultChecked={meme.hidden} />
 
           <div className="flex gap-2 self-end">
             <Button
               type="button"
-              bg="red"
-              Icon={Trash2}
+              variant="destructive"
               onClick={async () => {
                 if (confirm('정말 삭제하시겠습니까?')) {
                   await deleteMemeFromDB(meme.id);
@@ -80,9 +74,11 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
                 }
               }}
             >
+              <Trash2 />
               삭제
             </Button>
-            <Button type="submit" bg="green" Icon={Save}>
+            <Button type="submit" variant="default">
+              <Save />
               저장
             </Button>
           </div>

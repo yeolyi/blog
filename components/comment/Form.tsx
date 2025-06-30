@@ -1,5 +1,6 @@
 'use client';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { border } from '@/components/ui/theme';
 import { useProfile } from '@/swr/auth';
 import { createComment, useComments } from '@/swr/comment';
@@ -44,7 +45,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
           {state}
         </p>
       )}
-      <textarea
+      <Textarea
         name="content"
         placeholder={`${t('placeholder')} ${
           isCommentEmpty ? t('noComments') : ''
@@ -54,12 +55,12 @@ export default function CommentForm({ postId }: CommentFormProps) {
         required
       />
       <Button
-        bg="gray"
         type="submit"
+        variant="secondary"
         disabled={isPending}
-        Icon={Pencil}
         className="absolute bottom-3 right-3"
       >
+        <Pencil />
         {isPending ? t('submitting') : t('submit')}
       </Button>
     </form>

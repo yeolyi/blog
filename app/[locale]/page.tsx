@@ -1,7 +1,9 @@
 import PostList from '@/components/PostList';
-import { border, layerBg } from '@/components/ui/theme';
+import { Button } from '@/components/ui/button';
+import { Card, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Link } from '@/i18n/navigation';
 import clsx from 'clsx';
+import { ArrowRight } from 'lucide-react';
 import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import Image from 'next/image';
@@ -103,30 +105,23 @@ const SeriesCard = ({
   src: StaticImageData;
   title: string;
 }) => (
-  <Link
-    href={href}
-    className={clsx(
-      'cursor-pointer relative w-fit flex flex-col group',
-      border,
-    )}
-    draggable={false}
-  >
+  <Card className="max-w-lg">
+    <CardHeader>
+      <CardTitle>{title}</CardTitle>
+      {/* TODO: add description */}
+    </CardHeader>
     <Image
       src={src}
       alt={title}
-      className={clsx(
-        'w-[512px] max-w-full aspect-video object-cover',
-        imgClassName,
-      )}
-      draggable={false}
+      className={clsx('w-full h-[200px] object-cover', imgClassName)}
     />
-    <h3
-      className={clsx(
-        'text-xl font-semibold text-white p-2 group-hover:tracking-wider group-active:tracking-widest transition-all ease-in-out duration-200',
-        layerBg,
-      )}
-    >
-      {title}
-    </h3>
-  </Link>
+    <CardFooter>
+      <Button variant="default" asChild>
+        <Link href={href}>
+          보러가기
+          <ArrowRight />
+        </Link>
+      </Button>
+    </CardFooter>
+  </Card>
 );

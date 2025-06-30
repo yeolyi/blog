@@ -6,7 +6,7 @@ export default function Footer() {
   const t = useTranslations('Footer');
 
   return (
-    <footer className="p-6 flex flex-wrap gap-4 mx-auto">
+    <footer className="p-6 flex flex-wrap mx-auto gap-3">
       <p className="text-gray-400 whitespace-pre text-xs">
         <Link
           href="/"

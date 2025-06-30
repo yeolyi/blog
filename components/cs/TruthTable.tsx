@@ -1,10 +1,25 @@
 'use client';
 
-import { Label } from '@/components/ui/Form';
-import { failBg, layerBg, successBg } from '@/components/ui/theme';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { failBg, successBg } from '@/components/ui/theme';
 import clsx from 'clsx';
 import { useId, useState } from 'react';
-import { Checkbox } from '../ui/Checkbox';
 
 type LabelType = 'input' | 'output';
 
@@ -36,9 +51,15 @@ type TruthTableGateProps = {
    * ]
    */
   data: boolean[][];
+
+  description?: string;
 };
 
-export default function TruthTable({ labels, data }: TruthTableGateProps) {
+export default function TruthTable({
+  labels,
+  data,
+  description,
+}: TruthTableGateProps) {
   const id = useId();
 
   const inputLabels = labels.filter((l) => l.type === 'input');
@@ -59,55 +80,61 @@ export default function TruthTable({ labels, data }: TruthTableGateProps) {
   };
 
   return (
-    <div className="overflow-x-auto text-sm">
-      <table className={clsx('w-fit not-prose border-collapse', layerBg)}>
-        <thead>
-          <tr>
-            {labels.map((labelObj, index) => (
-              <th
-                key={`header-${labelObj.label}-${index}`}
-                className="p-3 text-left whitespace-nowrap"
-              >
-                {labelObj.type === 'input' ? (
-                  <div className="flex items-center gap-2">
-                    <Label htmlFor={`${id}-${index}`}>{labelObj.label}</Label>
-                    <Checkbox
-                      id={`${id}-${index}`}
-                      checked={inputs[index]}
-                      onCheckedChange={handleCheckedChange(index)}
-                      aria-label={`Toggle ${labelObj.label}`}
-                    />
-                  </div>
-                ) : (
-                  labelObj.label
-                )}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((row, rowIdx) => (
-            <tr key={`row-${rowIdx}`}>
-              {row.map((cell, colIdx) => (
-                <td
-                  key={`cell-${rowIdx}-${colIdx}`}
-                  className={clsx(
-                    'p-2 text-center',
-                    rowIdx === matchingRowIndex &&
-                      (labels[colIdx].type === 'output'
-                        ? cell
-                          ? successBg
-                          : failBg
-                        : 'bg-stone-700'),
-                  )}
+    <Card>
+      <CardHeader>
+        <CardTitle>진리표</CardTitle>
+        {description && <CardDescription>{description}</CardDescription>}
+      </CardHeader>
+      <CardContent>
+        <Table className="not-prose w-fit mx-auto">
+          <TableHeader>
+            <TableRow>
+              {labels.map((labelObj, index) => (
+                <TableHead
+                  key={`header-${labelObj.label}-${index}`}
+                  className="text-center"
                 >
-                  {cell ? '1' : '0'}
-                </td>
+                  {labelObj.type === 'input' ? (
+                    <div className="flex items-center gap-2 justify-center px-4">
+                      <Label htmlFor={`${id}-${index}`}>{labelObj.label}</Label>
+                      <Checkbox
+                        id={`${id}-${index}`}
+                        checked={inputs[index]}
+                        onCheckedChange={handleCheckedChange(index)}
+                        aria-label={`Toggle ${labelObj.label}`}
+                      />
+                    </div>
+                  ) : (
+                    <span className="px-4">{labelObj.label}</span>
+                  )}
+                </TableHead>
               ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {data.map((row, rowIdx) => (
+              <TableRow key={`row-${rowIdx}`}>
+                {row.map((cell, colIdx) => (
+                  <TableCell
+                    key={`cell-${rowIdx}-${colIdx}`}
+                    className={clsx(
+                      'text-center',
+                      rowIdx === matchingRowIndex &&
+                        (labels[colIdx].type === 'output'
+                          ? cell
+                            ? successBg
+                            : failBg
+                          : 'bg-stone-700'),
+                    )}
+                  >
+                    {cell ? '1' : '0'}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Rabbit, Turtle } from 'lucide-react';
 import { useState, useTransition } from 'react';
 
@@ -78,10 +78,10 @@ export default function SyncRenderingExample() {
           />
           <Button
             onClick={() => setUseTransitionEnabled((p) => !p)}
-            bg={useTransitionEnabled ? 'green' : 'gray'}
-            Icon={useTransitionEnabled ? Rabbit : Turtle}
+            variant={useTransitionEnabled ? 'default' : 'secondary'}
             className="flex-shrink-0"
           >
+            {useTransitionEnabled ? <Rabbit /> : <Turtle />}
             {useTransitionEnabled ? 'On' : 'Off'}
           </Button>
         </div>

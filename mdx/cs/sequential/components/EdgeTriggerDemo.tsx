@@ -1,7 +1,14 @@
 'use client';
-
-import Button from '@/components/ui/Button';
-import { border, layerBg } from '@/components/ui/theme';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { border } from '@/components/ui/theme';
 import clsx from 'clsx';
 import { Power } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -116,43 +123,44 @@ export default function EdgeTriggerDemo() {
   } = useEdgeTriggerClock();
 
   return (
-    <div
-      className={clsx(
-        'flex flex-col items-center gap-4 p-6 not-prose',
-        layerBg,
-      )}
-    >
-      <div className="flex items-center gap-8 justify-center">
-        <div className="flex flex-col items-center">
-          <p
-            className={clsx(
-              'text-base',
-              risingActive && 'text-green-400 font-bold',
-            )}
-          >
-            {t('risingEdge')}
+    <Card>
+      <CardHeader>
+        <CardTitle>Edge Trigger 실습</CardTitle>
+        <CardDescription>
+          <p>
+            <span
+              className={clsx(
+                'text-base',
+                risingActive && 'text-green-400 font-bold',
+              )}
+            >
+              {t('risingEdge')}
+            </span>
+            {' / '}
+            <span
+              className={clsx(
+                'text-base',
+                fallingActive && 'text-green-400 font-bold',
+              )}
+            >
+              {t('fallingEdge')}
+            </span>
           </p>
-        </div>
-        <div className="flex flex-col items-center">
-          <p
-            className={clsx(
-              'text-base',
-              fallingActive && 'text-green-400 font-bold',
-            )}
-          >
-            {t('fallingEdge')}
-          </p>
-        </div>
-      </div>
-      <ClockGraph history={history} />
-      <Button
-        bg="gray"
-        onPointerDown={handlePointerDown}
-        onPointerUp={handlePointerUp}
-        Icon={Power}
-      >
-        {t('clock')} ({clock})
-      </Button>
-    </div>
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <ClockGraph history={history} />
+      </CardContent>
+      <CardFooter>
+        <Button
+          variant="secondary"
+          onPointerDown={handlePointerDown}
+          onPointerUp={handlePointerUp}
+        >
+          <Power />
+          {t('clock')} ({clock})
+        </Button>
+      </CardFooter>
+    </Card>
   );
 }

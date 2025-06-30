@@ -1,5 +1,4 @@
-import Button from '@/components/ui/Button';
-import { layerBg } from '@/components/ui/theme';
+import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/navigation';
 import { useProfile } from '@/swr/auth';
 import { deleteComment, useComments } from '@/swr/comment';
@@ -41,9 +40,7 @@ const CommentItem = ({
   const isAuthor = profile?.id === comment.author_id;
 
   return (
-    <div
-      className={`relative prose prose-invert prose-stone prose-p:m-0 prose-a:no-underline ${layerBg} p-4 min-w-full`}
-    >
+    <div className="relative prose prose-invert prose-stone prose-p:m-0 prose-a:no-underline bg-card p-4 min-w-full">
       <p key={comment.id}>
         <Link href={githubUrl} target="_blank" rel="noopener noreferrer">
           {headerT('developer', { number: comment.developernumber })}
@@ -77,15 +74,19 @@ const DeleteButton = ({
         <Button
           type="button"
           onClick={() => setAsked(false)}
-          bg="transparent"
-          Icon={X}
-        />
+          size="icon"
+          variant="ghost"
+        >
+          <X />
+        </Button>
         <Button
           type="button"
           onClick={() => deleteComment(postId, commentId)}
-          bg="transparent"
-          Icon={Check}
-        />
+          size="icon"
+          variant="ghost"
+        >
+          <Check />
+        </Button>
       </div>
     );
   }
@@ -94,9 +95,11 @@ const DeleteButton = ({
     <Button
       type="button"
       onClick={() => setAsked(true)}
-      bg="transparent"
-      Icon={Trash}
+      variant="ghost"
+      size="icon"
       className="absolute top-0 right-0"
-    />
+    >
+      <Trash />
+    </Button>
   );
 };

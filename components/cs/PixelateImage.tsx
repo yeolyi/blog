@@ -1,13 +1,18 @@
 'use client';
 
-import Slider from '@/components/ui/Slider';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Slider } from '@/components/ui/slider';
+import { debounce } from 'es-toolkit';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useCallback, useEffect, useRef, useState } from 'react';
-
-import { layerBg } from '@/components/ui/theme';
-import clsx from 'clsx';
-import { debounce } from 'es-toolkit';
 // https://pixabay.com/photos/changdeokgung-palace-garden-786592/
 import changdeokgung from './assets/changdeokgung.jpg';
 
@@ -85,7 +90,36 @@ export default function PixelateImage() {
   );
 
   return (
-    <div className={clsx('p-4 not-prose flex flex-col gap-4 w-full', layerBg)}>
+    <Card>
+      <CardHeader>
+        <CardTitle>{t('digitalizedImage')}</CardTitle>
+        <CardDescription>
+          {pixelCnt}x{pixelCnt}
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent>
+        <div className="relative w-full h-[250px]">
+          {pixelatedImageSrc && (
+            <img
+              src={pixelatedImageSrc}
+              alt="픽셀화된 이미지"
+              className="object-cover w-full h-full"
+            />
+          )}
+        </div>
+      </CardContent>
+
+      <CardFooter>
+        <Slider
+          value={[pixelCntPow]}
+          onValueChange={([val]) => setPixelCntPow(val)}
+          max={10}
+          min={1}
+          step={1}
+        />
+      </CardFooter>
+
       {/* 숨어있는 이미지고 스크롤 방지하려면 max-w 설정 필요 */}
       <Image
         ref={setImageRef}
@@ -95,34 +129,8 @@ export default function PixelateImage() {
         onLoad={handleImageLoad}
         unoptimized
       />
-
-      <p className="text-sm font-medium">
-        {t('digitalizedImage')} ({pixelCnt}x{pixelCnt})
-      </p>
-
-      <div className="relative w-full h-[180px] overflow-hidden">
-        {pixelatedImageSrc && (
-          <img
-            src={pixelatedImageSrc}
-            alt="픽셀화된 이미지"
-            className="object-cover w-full h-full"
-          />
-        )}
-      </div>
-      <Slider
-        label={`N: ${pixelCnt}`}
-        value={pixelCntPow}
-        onValueChange={setPixelCntPow}
-        max={10}
-        min={1}
-        step={1}
-        ariaLabel={t('pixelSize')}
-        className="w-full"
-        rangeClassName="bg-blue-500"
-      />
-
       {/* 숨겨진 캔버스 */}
       <canvas ref={setCanvasRef} className="hidden" />
-    </div>
+    </Card>
   );
 }

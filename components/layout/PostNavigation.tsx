@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight, List } from 'lucide-react';
 
+import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/navigation';
 import clsx from 'clsx';
 import { useTranslations } from 'next-intl';
@@ -30,40 +31,43 @@ export default function PostNavigation({
   return (
     <div
       className={clsx(
-        'flex gap-2 text-stone-300 text-base font-semibold *:hover:text-stone-400 *:active:text-stone-500',
+        'flex gap-2 text-stone-300 text-base font-semibold *:hover:text-stone-400 *:active:text-stone-500 justify-between',
         className,
       )}
     >
       {prevPostId ? (
-        <Link
-          href={`/${subDir}/${prevPostId}`}
-          className="flex items-center gap-1 flex-1 justify-start"
-        >
+        <Button asChild variant="ghost">
+          <Link href={`/${subDir}/${prevPostId}`}>
+            <ChevronLeft size={16} />
+            <span>{t('prev')}</span>
+          </Link>
+        </Button>
+      ) : (
+        <Button variant="ghost" disabled>
           <ChevronLeft size={16} />
           <span>{t('prev')}</span>
-        </Link>
-      ) : (
-        <div className="flex-1" />
+        </Button>
       )}
 
-      <Link
-        href={`/${subDir}`}
-        className="flex items-center gap-1 justify-center flex-1justify-center"
-      >
-        <List size={16} />
-        {t('backToList')}
-      </Link>
+      <Button asChild variant="ghost">
+        <Link href={`/${subDir}`}>
+          <List size={16} />
+          {t('backToList')}
+        </Link>
+      </Button>
 
       {nextPostId ? (
-        <Link
-          href={`/${subDir}/${nextPostId}`}
-          className="flex items-center gap-1 flex-1 justify-end"
-        >
+        <Button asChild variant="default">
+          <Link href={`/${subDir}/${nextPostId}`}>
+            <span>{t('next')}</span>
+            <ChevronRight size={16} />
+          </Link>
+        </Button>
+      ) : (
+        <Button variant="ghost" disabled>
           <span>{t('next')}</span>
           <ChevronRight size={16} />
-        </Link>
-      ) : (
-        <div className="flex-1" />
+        </Button>
       )}
     </div>
   );

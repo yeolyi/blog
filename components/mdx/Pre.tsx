@@ -1,6 +1,6 @@
 'use client';
 
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import clsx from 'clsx';
 import { debounce } from 'es-toolkit';
 import { CheckIcon, CopyIcon } from 'lucide-react';
@@ -20,15 +20,17 @@ export default function Pre({
   return (
     <pre {...props} ref={ref} className={clsx(props.className, 'relative')}>
       <Button
-        bg="gray"
-        Icon={isCopied ? CheckIcon : CopyIcon}
-        className={clsx('absolute top-0 right-0')}
+        variant="ghost"
+        size="icon"
+        className="absolute top-0 right-0"
         onClick={() => {
           navigator.clipboard.writeText(ref.current?.textContent ?? '');
           setIsCopied(true);
           reset();
         }}
-      />
+      >
+        {isCopied ? <CheckIcon /> : <CopyIcon />}
+      </Button>
       {children}
     </pre>
   );

@@ -1,62 +1,23 @@
 import { minZoomOptions } from '@/components/cs/flow';
-import Button from '@/components/ui/Button';
-import { bgMap } from '@/components/ui/theme';
+import { Button } from '@/components/ui/button';
 import {
   type Edge,
   type Node,
   type ReactFlowInstance,
   useOnSelectionChange,
 } from '@xyflow/react';
-import clsx from 'clsx';
 import {
   Folder,
   Lock,
   LockOpen,
-  type LucideIcon,
   Maximize,
   Minus,
   Plus,
   Save,
   Trash,
 } from 'lucide-react';
-import {
-  type ButtonHTMLAttributes,
-  type ReactNode,
-  useCallback,
-  useState,
-} from 'react';
+import { useCallback, useState } from 'react';
 import type { TouchDeviceState } from '../hooks/useMobileState';
-
-type MobileControlButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  icon?: LucideIcon;
-  children?: ReactNode;
-};
-
-export function MobileControlButton({
-  icon: Icon,
-  children,
-  className = '',
-  ...props
-}: MobileControlButtonProps) {
-  return (
-    <button
-      type="button"
-      className={clsx(
-        'flex items-center justify-center m-1 cursor-pointer shrink-0 p-2',
-        bgMap.gray,
-        props.disabled && 'opacity-50',
-        className,
-      )}
-      {...props}
-    >
-      {Icon ? (
-        <Icon className="w-5 h-5 stroke-1 fill-none text-white" />
-      ) : (
-        children
-      )}
-    </button>
-  );
-}
 
 interface ControlsProps {
   rfInstance: ReactFlowInstance | null;
@@ -109,43 +70,59 @@ export function Controls({
         (touchOnlyState.type === 'mobile' && touchOnlyState.value)) && (
         <div className="absolute top-0 left-0 right-0 flex justify-center z-10 pointer-events-none">
           <div className="flex gap-5 m-2 p-2 bg-black/50 pointer-events-auto">
-            <div className="flex">
+            <div className="flex gap-1">
               {touchOnlyState.type === 'desktop' && (
                 <>
-                  <MobileControlButton
-                    icon={Plus}
+                  <Button
+                    variant="secondary"
+                    size="icon"
                     onClick={() => rfInstance?.zoomIn()}
-                  />
-                  <MobileControlButton
-                    icon={Minus}
+                  >
+                    <Plus />
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="icon"
                     onClick={() => rfInstance?.zoomOut()}
-                  />
+                  >
+                    <Minus />
+                  </Button>
                 </>
               )}
 
-              <MobileControlButton
-                icon={Maximize}
+              <Button
+                variant="secondary"
+                size="icon"
                 onClick={() => rfInstance?.fitView(minZoomOptions)}
                 disabled={
                   touchOnlyState.type === 'mobile' && !touchOnlyState.value
                 }
-              />
+              >
+                <Maximize />
+              </Button>
 
               {touchOnlyState.type === 'mobile' && (
-                <MobileControlButton
-                  icon={Trash}
+                <Button
+                  variant="secondary"
+                  size="icon"
                   onClick={onDelete}
                   disabled={
                     !touchOnlyState.value ||
                     (selectedNodes.length === 0 && selectedEdges.length === 0)
                   }
-                />
+                >
+                  <Trash />
+                </Button>
               )}
             </div>
 
-            <div className="flex">
-              <MobileControlButton icon={Save} onClick={onSave} />
-              <MobileControlButton icon={Folder} onClick={onRestore} />
+            <div className="flex gap-1">
+              <Button variant="secondary" size="icon" onClick={onSave}>
+                <Save />
+              </Button>
+              <Button variant="secondary" size="icon" onClick={onRestore}>
+                <Folder />
+              </Button>
             </div>
           </div>
         </div>
@@ -153,16 +130,18 @@ export function Controls({
 
       {touchOnlyState.type === 'mobile' && (
         <Button
+          variant="secondary"
+          size="icon"
           className="absolute right-0 bottom-0 z-10 m-2"
-          Icon={touchOnlyState.value ? LockOpen : Lock}
-          bg="gray"
           onClick={() =>
             setTouchOnlyState({
               type: 'mobile',
               value: !touchOnlyState.value,
             })
           }
-        />
+        >
+          {touchOnlyState.value ? <LockOpen /> : <Lock />}
+        </Button>
       )}
     </>
   );

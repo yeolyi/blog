@@ -29,7 +29,7 @@
     "dropdown.border": "#1b1f23",
     "dropdown.foreground": "#e1e4e8",
     "dropdown.listBackground": "#24292e",
-    "editor.background": "oklch(26.8% 0.007 34.298)",
+    "editor.background": "oklch(0.216 0.006 56.043)",
     "editor.findMatchBackground": "#ffd33d44",
     "editor.findMatchHighlightBackground": "#ffd33d22",
     "editor.focusedStackFrameHighlightBackground": "#2b6a3033",

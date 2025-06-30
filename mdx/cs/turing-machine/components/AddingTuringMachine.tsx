@@ -1,13 +1,18 @@
 'use client';
 
-import { layerBg } from '@/components/ui/theme';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Tape } from '@/mdx/cs/turing-machine/components/Tape';
 import {
   type TapeSymbol,
   TuringMachineProvider,
 } from '@/mdx/cs/turing-machine/hooks/turingMachineStore';
 import { useTuringMachine } from '@/mdx/cs/turing-machine/hooks/useTuringMachine';
-import clsx from 'clsx';
 import { useEffect } from 'react';
 
 const rulesCsv = `
@@ -63,10 +68,16 @@ const AddingTuringMachineContent = () => {
 
 export default function AddingTuringMachine() {
   return (
-    <div className={clsx('not-prose flex justify-center p-4', layerBg)}>
-      <TuringMachineProvider>
-        <AddingTuringMachineContent />
-      </TuringMachineProvider>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>튜링 머신 실습</CardTitle>
+        <CardDescription>이진수 덧셈 11(2) + 11(2) = 110(2)</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <TuringMachineProvider>
+          <AddingTuringMachineContent />
+        </TuringMachineProvider>
+      </CardContent>
+    </Card>
   );
 }

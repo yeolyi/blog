@@ -1,8 +1,8 @@
 'use client';
 
 import { subscribeEmail } from '@/actions/resend';
-import Button from '@/components/ui/Button';
-import { Input } from '@/components/ui/Form';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { confetti } from '@/utils/confetti';
 import { Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -46,15 +46,11 @@ export default function EmailSubscribe() {
         name="email"
         placeholder={state ?? t('emailPlaceholder')}
         required
+        className="max-w-xs"
       />
 
-      <Button
-        type="submit"
-        bg="gray"
-        Icon={Send}
-        className="shrink-0 "
-        ref={ref}
-      >
+      <Button type="submit" ref={ref}>
+        <Send />
         {isPending ? t('subscribingButton') : t('subscribeButton')}
       </Button>
     </form>

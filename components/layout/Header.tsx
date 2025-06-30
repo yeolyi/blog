@@ -1,9 +1,9 @@
 'use client';
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/navigation';
 import { useSessionStore } from '@/store/session';
 import { useProfile } from '@/swr/auth';
-import { Github, LogOut } from 'lucide-react';
+import { Github, Loader2, LogOut } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 
 export default function Header() {
@@ -22,21 +22,23 @@ export default function Header() {
             {t('developer', { number: profile?.registration_number ?? 0 })}
           </p>
           <Button
-            bg="gray"
-            Icon={LogOut}
             onClick={logout}
             type="button"
-            isLoading={isLoading}
-          />
+            variant="secondary"
+            disabled={isLoading}
+          >
+            {isLoading ? <Loader2 className="animate-spin" /> : <LogOut />}
+            로그아웃
+          </Button>
         </div>
       ) : (
         <Button
-          bg="gray"
-          Icon={Github}
           onClick={login}
           type="button"
-          isLoading={isLoading}
+          variant="secondary"
+          disabled={isLoading}
         >
+          {isLoading ? <Loader2 className="animate-spin" /> : <Github />}
           {t('login')}
         </Button>
       )}

@@ -1,6 +1,6 @@
 'use client';
 
-import Button from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { Loader, Menu } from 'lucide-react';
 import { type ReactNode, useTransition } from 'react';
 
@@ -21,18 +21,16 @@ export default function TabButton({ children, isActive, onClick }: Props) {
 
   if (isPending) {
     return (
-      <Button bg="gray" disabled Icon={Loader}>
+      <Button variant="secondary" disabled>
+        <Loader />
         {children}
       </Button>
     );
   }
 
   return (
-    <Button
-      bg={isActive ? 'green' : 'transparent'}
-      onClick={handleClick}
-      Icon={Menu}
-    >
+    <Button variant={isActive ? 'default' : 'ghost'} onClick={handleClick}>
+      <Menu />
       {children}
     </Button>
   );

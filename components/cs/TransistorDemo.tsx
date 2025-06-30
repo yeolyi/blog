@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import './transistor.css';
-import { Checkbox } from '@/components/ui/Checkbox';
+import { Checkbox } from '@/components/ui/checkbox';
 import { layerBg } from '@/components/ui/theme';
 
 export default function TransistorDemo() {

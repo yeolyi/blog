@@ -60,7 +60,7 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      className={`${ibmPlexSans.variable}`}
+      className={`${ibmPlexSans.variable} dark`}
       style={{ scrollbarGutter: 'stable' }}
     >
       <head>
