@@ -17,7 +17,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { failBg, successBg } from '@/components/ui/theme';
 import clsx from 'clsx';
 import { useId, useState } from 'react';
 
@@ -80,7 +79,7 @@ export default function TruthTable({
   };
 
   return (
-    <Card>
+    <Card className="w-fit max-w-full">
       <CardHeader>
         <CardTitle>진리표</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}
@@ -122,9 +121,9 @@ export default function TruthTable({
                       rowIdx === matchingRowIndex &&
                         (labels[colIdx].type === 'output'
                           ? cell
-                            ? successBg
-                            : failBg
-                          : 'bg-stone-700'),
+                            ? 'bg-success text-success-foreground'
+                            : 'bg-fail text-fail-foreground'
+                          : ''),
                     )}
                   >
                     {cell ? '1' : '0'}

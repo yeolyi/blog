@@ -9,7 +9,7 @@ import './style.css';
 
 import { AuthProvider } from '@/components/AuthProvider';
 import SWRProvider from '@/components/SWRProvider';
-import ScrollRetoration from '@/components/ScrollRestore';
+
 import { SandPackCSS } from '@/components/layout/SandPackCSS';
 import { routing } from '@/i18n/routing';
 import { Provider as JotaiProvider } from 'jotai';
@@ -17,7 +17,6 @@ import { type Locale, NextIntlClientProvider, hasLocale } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import type * as React from 'react';
-import { Suspense } from 'react';
 import { Slide, ToastContainer } from 'react-toastify';
 
 const ibmPlexSans = IBM_Plex_Sans_KR({
@@ -97,9 +96,6 @@ export default async function RootLayout({
           </JotaiProvider>
         </NextIntlClientProvider>
         <Analytics />
-        <Suspense>
-          <ScrollRetoration />
-        </Suspense>
       </body>
     </html>
   );

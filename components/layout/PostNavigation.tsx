@@ -43,7 +43,8 @@ export default function PostNavigation({
           </Link>
         </Button>
       ) : (
-        <Button variant="ghost" disabled>
+        // TODO 나은 방법
+        <Button variant="ghost" className="text-transparent" disabled>
           <ChevronLeft size={16} />
           <span>{t('prev')}</span>
         </Button>
@@ -64,7 +65,7 @@ export default function PostNavigation({
           </Link>
         </Button>
       ) : (
-        <Button variant="ghost" disabled>
+        <Button variant="ghost" className="text-transparent" disabled>
           <span>{t('next')}</span>
           <ChevronRight size={16} />
         </Button>

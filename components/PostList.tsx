@@ -1,7 +1,6 @@
-import { skewOnHover } from '@/components/ui/theme';
+import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/navigation';
 import { getPostIds } from '@/utils/path';
-import clsx from 'clsx';
 import { getLocale } from 'next-intl/server';
 
 export default async function PostList() {
@@ -36,7 +35,7 @@ export default async function PostList() {
   });
 
   return (
-    <ul>
+    <ul className="flex flex-col gap-2">
       {sortedArr.map(({ href, title, date }) => (
         <Item key={href} href={href} title={title} date={date} />
       ))}
@@ -53,22 +52,15 @@ const Item = ({
   title: string;
   date: string;
 }) => (
-  <li className="group">
-    <Link
-      href={href}
-      className="flex w-full no-underline text-base flex-col sm:flex-row py-2"
-    >
-      <span
-        className={clsx(
-          'text-stone-500 shrink-0 font-normal mr-2',
-          skewOnHover,
-        )}
+  <Button asChild variant="ghost">
+    <li>
+      <Link
+        href={href}
+        className="flex w-full no-underline text-base flex-col sm:flex-row py-2"
       >
-        {date}
-      </span>
-      <h3 className={clsx('text-white font-semibold shrink-0', skewOnHover)}>
-        {title}
-      </h3>
-    </Link>
-  </li>
+        <span className="text-stone-500 shrink-0 font-normal mr-2">{date}</span>
+        <h3 className="text-white font-semibold shrink-0">{title}</h3>
+      </Link>
+    </li>
+  </Button>
 );

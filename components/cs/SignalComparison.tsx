@@ -9,7 +9,6 @@ import {
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { border, failBg, layerBg, successBg } from '@/components/ui/theme';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 
@@ -25,7 +24,7 @@ const SignalVisualizer: React.FC<SignalVisualizerProps> = ({
 }) => {
   const isError = value < range[0] || value > range[1];
   return (
-    <div className={`h-48 ${border} relative mb-4 ${layerBg} text-xs`}>
+    <div className="h-48 relative mb-4 border text-xs">
       {/* 유효 범위 상한선 */}
       <div
         className="absolute left-0 w-full border-t-1 border-white z-10"
@@ -49,7 +48,7 @@ const SignalVisualizer: React.FC<SignalVisualizerProps> = ({
       {/* 신호값 */}
       <div
         className={`absolute left-0 w-full transition-all duration-300 ${
-          isError ? failBg : successBg
+          isError ? 'bg-fail' : 'bg-success'
         }`}
         style={{
           bottom: 0,

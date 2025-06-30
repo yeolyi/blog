@@ -8,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { border } from '@/components/ui/theme';
 import clsx from 'clsx';
 import { Power } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -98,7 +97,7 @@ function ClockGraph({
   pathData += ` H ${width}`;
 
   return (
-    <svg width={width} height={height} className={clsx(border)}>
+    <svg width={width} height={height} className="border">
       <title>{'클럭 신호 그래프'}</title>
       <path
         d={pathData}
@@ -123,7 +122,7 @@ export default function EdgeTriggerDemo() {
   } = useEdgeTriggerClock();
 
   return (
-    <Card>
+    <Card className="w-fit max-w-full">
       <CardHeader>
         <CardTitle>Edge Trigger 실습</CardTitle>
         <CardDescription>

@@ -1,6 +1,8 @@
-import { opacityOnHover } from '@/components/ui/theme';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
 import { Link } from '@/i18n/navigation';
 import clsx from 'clsx';
+import { ArrowRightIcon } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
 
 export default function CSPostListItem(
@@ -30,11 +32,10 @@ export default function CSPostListItem(
   return (
     <div className={clsx('flex flex-col gap-4')}>
       {children}
-      <Container href={href}>
+      <div className="flex flex-col gap-1">
         <h3
           className={clsx(
             'm-0 p-0 font-semibold text-xl break-keep',
-            href && opacityOnHover,
             href ? 'text-white' : 'text-stone-500',
           )}
         >
@@ -55,7 +56,6 @@ export default function CSPostListItem(
         <p
           className={clsx(
             'm-0 p-0 font-light text-base',
-            href && opacityOnHover,
             href ? 'text-[var(--tw-prose-body)]' : 'text-stone-500',
           )}
         >
@@ -63,11 +63,22 @@ export default function CSPostListItem(
           {'  '}
         </p>
         {date && href && (
-          <span className="text-stone-500">
-            {` ${t('dateFormat', { date: new Date(date) })}`}
-          </span>
+          <div className="flex items-center gap-6 justify-between">
+            <span className="text-stone-500">
+              {` ${t('dateFormat', { date: new Date(date) })}`}
+            </span>
+          </div>
         )}
-      </Container>
+      </div>
+      {href && (
+        <Button asChild variant="secondary">
+          <Link href={href} className="no-underline">
+            읽기
+            <ArrowRightIcon />
+          </Link>
+        </Button>
+      )}
+      <Separator />
     </div>
   );
 }

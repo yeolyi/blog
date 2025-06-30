@@ -1,7 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { border } from '@/components/ui/theme';
 import { useProfile } from '@/swr/auth';
 import { createComment, useComments } from '@/swr/comment';
 import { getErrMessage } from '@/utils/string';
@@ -50,7 +49,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
         placeholder={`${t('placeholder')} ${
           isCommentEmpty ? t('noComments') : ''
         }`}
-        className={`block w-full resize-none min-h-32 p-3  focus:outline-none focus:ring-1 focus:ring-stone-500 focus:border-stone-500 text-gray-100 overflow-hidden ${border}`}
+        className="block w-full resize-none min-h-32 p-3  focus:outline-none focus:ring-1 focus:ring-stone-500 focus:border-stone-500 text-gray-100 overflow-hidden"
         defaultValue=""
         required
       />
