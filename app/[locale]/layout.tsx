@@ -10,12 +10,12 @@ import './style.css';
 import { AuthProvider } from '@/components/AuthProvider';
 import SWRProvider from '@/components/SWRProvider';
 
+import { ThemeProvider } from '@/components/ThemeProvider';
 import { SandPackCSS } from '@/components/layout/SandPackCSS';
 import { routing } from '@/i18n/routing';
 import { Provider as JotaiProvider } from 'jotai';
 import { type Locale, NextIntlClientProvider, hasLocale } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
-import { ThemeProvider } from 'next-themes';
 import { notFound } from 'next/navigation';
 import type * as React from 'react';
 import { Slide, ToastContainer } from 'react-toastify';
@@ -71,7 +71,7 @@ export default async function RootLayout({
           crossOrigin="anonymous"
         />
         <SandPackCSS />
-        {/* https://github.com/pacocoursey/next-themes/issues/78#issuecomment-1007002169 */}
+        {/* https://github.com/pacocoursey/next-themes/issues/78#issuecomment-2927060208 */}
         <meta name="theme-color" content="var(--background)" />
       </head>
       <body className="min-h-dvh flex flex-col relative">
