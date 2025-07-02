@@ -47,7 +47,7 @@ export default async function Home({
   const t = await getTranslations('HomePage');
 
   return (
-    <div className="mx-auto my-24 px-4 prose prose-stone dark:prose-invert ">
+    <div className="mx-auto mt-4 mb-24 px-4 prose prose-stone dark:prose-invert ">
       <Image
         src={me}
         alt="me"
