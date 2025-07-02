@@ -32,7 +32,7 @@ function InstagramButton() {
       <Button variant="secondary" asChild>
         <Link href="https://instagram.com/yeol.dev" target="_blank">
           <Instagram className="size-4" />
-          2.29K
+          22.9K
         </Link>
       </Button>
     </div>
