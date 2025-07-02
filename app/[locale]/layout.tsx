@@ -72,14 +72,19 @@ export default async function RootLayout({
         />
         <SandPackCSS />
       </head>
-      <body className="min-h-dvh flex flex-col">
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <body className="min-h-dvh flex flex-col relative">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          enableColorScheme
+        >
           <NextIntlClientProvider>
             <JotaiProvider>
               <SWRProvider>
                 <AuthProvider>
-                  {children}
                   <Header />
+                  {children}
                   <Footer />
                   <ToastContainer
                     position="bottom-right"

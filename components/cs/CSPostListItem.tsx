@@ -36,7 +36,7 @@ export default function CSPostListItem(
       <div className="flex flex-col gap-2">
         <h3
           className={clsx(
-            'm-0 p-0 break-keep',
+            'm-0 p-0 break-keep text-lg',
             href ? 'text-foreground' : 'text-muted-foreground',
           )}
         >
