@@ -123,7 +123,7 @@ const SeriesCard = ({
       className={clsx('w-full h-[200px] object-cover', imgClassName)}
     />
     <CardFooter>
-      <Button variant="default" asChild>
+      <Button variant="default" className="ml-auto" asChild>
         <Link href={href}>
           {buttonText}
           <ArrowRight />

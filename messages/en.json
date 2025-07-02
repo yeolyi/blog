@@ -90,7 +90,8 @@
     "appendixTitle": "Appendix",
     "appendix1Title": "Building A Computer In Minecraft",
 
-    "comingSoon": "Coming Soon"
+    "comingSoon": "Coming Soon",
+    "viewPost": "View Post"
   },
   "NotFound": {
     "backHome": "Back to Home"
@@ -99,6 +100,7 @@
     "title": "Get Notified About New Content 💌",
     "description": "I'll keep you posted as the computer takes shape.",
     "subscriberCount": "Currently {count, number} people subscribed.",
+    "subscriberCountHeader": " people joined us!",
     "emailPlaceholder": "Email address",
     "successMessage": "Successfully subscribed!",
     "subscribeButton": "Subscribe",

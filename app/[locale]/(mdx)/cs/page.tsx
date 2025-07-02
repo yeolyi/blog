@@ -5,6 +5,7 @@ import EmailSubscribe from '@/components/cs/EmailSubscribe';
 import PixelateImage from '@/components/cs/PixelateImage';
 import TruthTable from '@/components/cs/TruthTable';
 import Flow from '@/components/cs/flow';
+import { Badge } from '@/components/ui/badge';
 import half from '@/mdx/cs/adder/assets/half.json';
 import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
 import EdgeTriggerDemo from '@/mdx/cs/sequential/components/EdgeTriggerDemo';
@@ -37,14 +38,13 @@ export default async function Home() {
       <h1>{t('curriculum')}</h1>
       <p>{t('curriculumDescription')}</p>
 
-      <h2>{tEmail('title')}</h2>
-      <p>
-        {tEmail('description')}{' '}
-        {count !== undefined &&
-          tEmail.rich('subscriberCount', {
-            count,
-          })}
-      </p>
+      {count !== undefined && (
+        <h2 className="flex items-center gap-2">
+          <Badge className="text-xl">{count.toLocaleString()}</Badge>
+          {tEmail('subscriberCountHeader')}
+        </h2>
+      )}
+      <p>{tEmail('description')}</p>
 
       <EmailSubscribe />
 

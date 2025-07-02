@@ -61,9 +61,9 @@ export default function CSPostListItem(
         )}
       </div>
       {href && (
-        <Button asChild variant="secondary">
+        <Button asChild variant="secondary" className="ml-auto">
           <Link href={href} className="no-underline">
-            읽기
+            {t('viewPost')}
             <ArrowRightIcon />
           </Link>
         </Button>

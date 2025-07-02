@@ -91,7 +91,8 @@
     "appendixTitle": "부록",
     "appendix1Title": "마인크래프트에서 컴퓨터 만들기",
 
-    "comingSoon": "준비중"
+    "comingSoon": "준비중",
+    "viewPost": "보러가기"
   },
   "NotFound": {
     "backHome": "홈으로 돌아가기"
@@ -100,6 +101,7 @@
     "title": "새로운 컨텐츠 알림 받기 💌",
     "description": "컴퓨터가 어느정도 만들어질 때마다 이메일을 드릴게요.",
     "subscriberCount": "현재 {count, number}명 구독중이에요.",
+    "subscriberCountHeader": "명이 함께하고 있어요!",
     "emailPlaceholder": "이메일 주소",
     "successMessage": "구독이 완료되었습니다!",
     "subscribeButton": "구독하기",
