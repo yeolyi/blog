@@ -37,10 +37,15 @@ export default async function PostList() {
   return (
     <div className="not-prose flex flex-col gap-1 items-start">
       {sortedArr.map(({ href, title, date }) => (
-        <Button asChild variant="ghost" key={href} className="pl-0">
+        <Button
+          asChild
+          variant="ghost"
+          key={href}
+          className="pl-0 h-fit flex flex-col gap-0 items-start sm:flex-row sm:gap-2"
+        >
           <Link href={href} key={href}>
             <span className="text-base text-muted-foreground">{date}</span>
-            <h3 className="text-base text-foreground">{title}</h3>
+            <h3 className="text-base text-foreground break-keep">{title}</h3>
           </Link>
         </Button>
       ))}

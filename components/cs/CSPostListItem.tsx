@@ -33,14 +33,18 @@ export default function CSPostListItem(
   return (
     <div className={clsx('flex flex-col gap-4')}>
       {children}
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-2">
         <h3
           className={clsx(
-            'm-0 p-0 break-keep flex items-center gap-1',
+            'm-0 p-0 break-keep',
             href ? 'text-foreground' : 'text-muted-foreground',
           )}
         >
-          {!href && <Badge variant="secondary">{t('comingSoon')}</Badge>}
+          {!href && (
+            <Badge variant="secondary" className="mr-1">
+              {t('comingSoon')}
+            </Badge>
+          )}
           {title}
         </h3>
         <p
