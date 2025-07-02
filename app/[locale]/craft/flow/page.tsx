@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 
 const FlowPlayground = () => {
   return (
-    <div className="flex flex-col justify-center mt-24 p-2">
+    <div className="flex flex-col justify-center p-2">
       <Flow id="flow-playground" height={screen.height - 400} />
     </div>
   );
