@@ -1,3 +1,4 @@
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Link } from '@/i18n/navigation';
@@ -35,28 +36,17 @@ export default function CSPostListItem(
       <div className="flex flex-col gap-1">
         <h3
           className={clsx(
-            'm-0 p-0 font-semibold text-xl break-keep',
-            href ? 'text-white' : 'text-stone-500',
+            'm-0 p-0 break-keep flex items-center gap-1',
+            href ? 'text-foreground' : 'text-muted-foreground',
           )}
         >
-          {!href && (
-            <span
-              className={clsx(
-                'bg-stone-700 mr-1 px-1 text-white relative -top-[1px]',
-                date ? 'text-sm' : 'text-xs',
-              )}
-            >
-              {date
-                ? `⏰ ${formatter.relativeTime(new Date(date), new Date())}`
-                : t('comingSoon')}
-            </span>
-          )}
+          {!href && <Badge variant="secondary">{t('comingSoon')}</Badge>}
           {title}
         </h3>
         <p
           className={clsx(
             'm-0 p-0 font-light text-base',
-            href ? 'text-[var(--tw-prose-body)]' : 'text-stone-500',
+            href ? 'text-foreground' : 'text-muted-foreground',
           )}
         >
           {description}
@@ -64,7 +54,7 @@ export default function CSPostListItem(
         </p>
         {date && href && (
           <div className="flex items-center gap-6 justify-between">
-            <span className="text-stone-500">
+            <span className="text-muted-foreground">
               {` ${t('dateFormat', { date: new Date(date) })}`}
             </span>
           </div>

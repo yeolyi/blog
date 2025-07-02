@@ -33,14 +33,17 @@ export default async function Home() {
   const count = subscriberCount.success ? subscriberCount.value : undefined;
 
   return (
-    <div className="prose prose-invert prose-stone">
+    <div className="prose prose-stone dark:prose-invert">
       <h1>{t('curriculum')}</h1>
       <p>{t('curriculumIntro1')}</p>
 
       <h2>{tEmail('title')}</h2>
       <p>
         {tEmail('description')}{' '}
-        {count !== undefined && tEmail('subscriberCount', { count })}
+        {count !== undefined &&
+          tEmail.rich('subscriberCount', {
+            count,
+          })}
       </p>
 
       <EmailSubscribe />

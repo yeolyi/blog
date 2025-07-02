@@ -47,15 +47,15 @@ export default async function Home({
   const t = await getTranslations('HomePage');
 
   return (
-    <div className="mx-auto my-24 px-4 flex flex-col gap-12">
+    <div className="mx-auto my-24 px-4 prose prose-stone dark:prose-invert ">
       <Image
         src={me}
         alt="me"
-        className="object-cover w-full h-full aspect-square max-w-prose"
+        className="object-cover w-full h-full aspect-square not-prose"
         draggable={false}
       />
 
-      <p className="prose prose-invert break-keep">
+      <p className="break-keep">
         {t.rich('bio', {
           snuLink: (chunks) => (
             <Link href="https://cse.snu.ac.kr">{chunks}</Link>
@@ -69,26 +69,21 @@ export default async function Home({
         })}
       </p>
 
-      <div>
-        <h2 className="text-2xl font-bold mb-[1em] text-white">{t('posts')}</h2>
-        <PostList />
-      </div>
+      <h2>{t('posts')}</h2>
+      <PostList />
 
-      <div>
-        <h2 className="text-2xl font-bold mb-[1em] text-white">
-          {t('series')}
-        </h2>
-        <div className="flex gap-8 flex-col">
-          <SeriesCard href="/cs" src={cs} title={t('curriculum')} />
-          {locale === 'ko' && (
-            <SeriesCard
-              href="/react"
-              src={react}
-              title={t('react')}
-              imgClassName="object-left"
-            />
-          )}
-        </div>
+      <h2>{t('series')}</h2>
+
+      <div className="not-prose flex gap-8 flex-col">
+        <SeriesCard href="/cs" src={cs} title={t('curriculum')} />
+        {locale === 'ko' && (
+          <SeriesCard
+            href="/react"
+            src={react}
+            title={t('react')}
+            imgClassName="object-left"
+          />
+        )}
       </div>
     </div>
   );
@@ -105,7 +100,7 @@ const SeriesCard = ({
   src: StaticImageData;
   title: string;
 }) => (
-  <Card className="max-w-lg">
+  <Card className="max-w-md">
     <CardHeader>
       <CardTitle>{title}</CardTitle>
       {/* TODO: add description */}

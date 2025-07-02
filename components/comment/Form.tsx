@@ -49,7 +49,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
         placeholder={`${t('placeholder')} ${
           isCommentEmpty ? t('noComments') : ''
         }`}
-        className="block w-full resize-none min-h-32 p-3  focus:outline-none focus:ring-1 focus:ring-stone-500 focus:border-stone-500 text-gray-100 overflow-hidden"
+        className="resize-none min-h-32"
         defaultValue=""
         required
       />

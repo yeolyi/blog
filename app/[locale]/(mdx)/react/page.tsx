@@ -13,7 +13,7 @@ export default async function PostPage() {
   );
 
   return (
-    <div className="prose prose-stone prose-invert">
+    <div className="prose prose-stone dark:prose-invert">
       <h1>2025 리액트 기여자 되기</h1>
       <p>
         가장 많이 쓰는 라이브러리가 리액트인데 그만큼 깊게 이해하고 있는 것

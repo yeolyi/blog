@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Link } from '@/i18n/navigation';
 import { useProfile } from '@/swr/auth';
 import { deleteComment, useComments } from '@/swr/comment';
@@ -40,22 +41,22 @@ const CommentItem = ({
   const isAuthor = profile?.id === comment.author_id;
 
   return (
-    <div className="relative prose prose-invert prose-stone prose-p:m-0 prose-a:no-underline bg-card p-4 min-w-full">
-      <p key={comment.id}>
-        <Link href={githubUrl} target="_blank" rel="noopener noreferrer">
-          {headerT('developer', { number: comment.developernumber })}
-        </Link>
+    <Card className="relative">
+      <CardContent>
+        <div className="mb-2">
+          <Link href={githubUrl} target="_blank" rel="noopener noreferrer">
+            {headerT('developer', { number: comment.developernumber })}
+          </Link>
 
-        <code className="text-stone-400">
-          {`  ${dayjs(comment.created_at).format(commentT('dateFormat'))}`}
-        </code>
-
-        <br />
+          <code className="text-sm text-muted-foreground mb-2">
+            {`  ${dayjs(comment.created_at).format(commentT('dateFormat'))}`}
+          </code>
+        </div>
 
         {comment.content}
-      </p>
-      {isAuthor && <DeleteButton postId={postId} commentId={comment.id} />}
-    </div>
+        {isAuthor && <DeleteButton postId={postId} commentId={comment.id} />}
+      </CardContent>
+    </Card>
   );
 };
 

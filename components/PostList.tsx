@@ -35,32 +35,15 @@ export default async function PostList() {
   });
 
   return (
-    <ul className="flex flex-col gap-2">
+    <div className="not-prose flex flex-col gap-1 items-start">
       {sortedArr.map(({ href, title, date }) => (
-        <Item key={href} href={href} title={title} date={date} />
+        <Button asChild variant="ghost" key={href} className="pl-0">
+          <Link href={href} key={href}>
+            <span className="text-base text-muted-foreground">{date}</span>
+            <h3 className="text-base text-foreground">{title}</h3>
+          </Link>
+        </Button>
       ))}
-    </ul>
+    </div>
   );
 }
-
-const Item = ({
-  href,
-  title,
-  date,
-}: {
-  href: string;
-  title: string;
-  date: string;
-}) => (
-  <Button asChild variant="ghost">
-    <li>
-      <Link
-        href={href}
-        className="flex w-full no-underline text-base flex-col sm:flex-row py-2"
-      >
-        <span className="text-stone-500 shrink-0 font-normal mr-2">{date}</span>
-        <h3 className="text-white font-semibold shrink-0">{title}</h3>
-      </Link>
-    </li>
-  </Button>
-);

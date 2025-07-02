@@ -47,10 +47,12 @@
 }
 
 @layer base {
+  html {
+    /* scrollbar-gutter: stable; */
+  }
+
   body {
     font-family: var(--font-ibm-plex-sans);
-    scrollbar-gutter: stable;
-    color-scheme: dark;
   }
 
   /* 1. Use a more-intuitive box-sizing model */

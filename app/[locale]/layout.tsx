@@ -15,6 +15,7 @@ import { routing } from '@/i18n/routing';
 import { Provider as JotaiProvider } from 'jotai';
 import { type Locale, NextIntlClientProvider, hasLocale } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
+import { ThemeProvider } from 'next-themes';
 import { notFound } from 'next/navigation';
 import type * as React from 'react';
 import { Slide, ToastContainer } from 'react-toastify';
@@ -59,8 +60,8 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      className={`${ibmPlexSans.variable} dark`}
-      style={{ scrollbarGutter: 'stable' }}
+      className={`${ibmPlexSans.variable}`}
+      suppressHydrationWarning
     >
       <head>
         <link
@@ -72,29 +73,31 @@ export default async function RootLayout({
         <SandPackCSS />
       </head>
       <body className="min-h-dvh flex flex-col">
-        <NextIntlClientProvider>
-          <JotaiProvider>
-            <SWRProvider>
-              <AuthProvider>
-                {children}
-                <Header />
-                <Footer />
-                <ToastContainer
-                  position="bottom-right"
-                  autoClose={5000}
-                  hideProgressBar={false}
-                  newestOnTop={false}
-                  closeOnClick={false}
-                  rtl={false}
-                  pauseOnFocusLoss
-                  pauseOnHover
-                  theme="dark"
-                  transition={Slide}
-                />
-              </AuthProvider>
-            </SWRProvider>
-          </JotaiProvider>
-        </NextIntlClientProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <NextIntlClientProvider>
+            <JotaiProvider>
+              <SWRProvider>
+                <AuthProvider>
+                  {children}
+                  <Header />
+                  <Footer />
+                  <ToastContainer
+                    position="bottom-right"
+                    autoClose={5000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick={false}
+                    rtl={false}
+                    pauseOnFocusLoss
+                    pauseOnHover
+                    theme="dark"
+                    transition={Slide}
+                  />
+                </AuthProvider>
+              </SWRProvider>
+            </JotaiProvider>
+          </NextIntlClientProvider>
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

@@ -31,7 +31,7 @@ export default function PostNavigation({
   return (
     <div
       className={clsx(
-        'flex gap-2 text-stone-300 text-base font-semibold *:hover:text-stone-400 *:active:text-stone-500 justify-between',
+        'flex gap-2 text-foreground text-base font-semibold justify-between',
         className,
       )}
     >

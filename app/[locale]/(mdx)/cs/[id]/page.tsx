@@ -24,7 +24,7 @@ export default async function PostPage({
 
     return (
       <>
-        <div className="prose prose-stone prose-invert mb-12">
+        <div className="prose prose-stone dark:prose-invert mb-12">
           <h1>{title}</h1>
           <Component />
         </div>

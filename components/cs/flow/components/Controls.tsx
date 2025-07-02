@@ -69,7 +69,7 @@ export function Controls({
       {(touchOnlyState.type === 'desktop' ||
         (touchOnlyState.type === 'mobile' && touchOnlyState.value)) && (
         <div className="absolute top-0 left-0 right-0 flex justify-center z-10 pointer-events-none">
-          <div className="flex gap-5 m-2 p-2 bg-black/50 pointer-events-auto">
+          <div className="flex gap-5 m-2 p-2 pointer-events-auto">
             <div className="flex gap-1">
               {touchOnlyState.type === 'desktop' && (
                 <>

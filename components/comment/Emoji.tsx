@@ -90,6 +90,7 @@ export default function Emoji({ postId }: { postId: string }) {
           type="button"
           onClick={onClick(emoji, count, user_reacted)}
           pressed={user_reacted}
+          variant="outline"
         >
           <Image
             src={EMOJI_TO_ANIMATED[emoji]}
