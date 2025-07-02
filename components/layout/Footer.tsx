@@ -1,4 +1,3 @@
-import LocaleSwitcher from '@/components/layout/LocaleSwitcher';
 import { Link } from '@/i18n/navigation';
 import { useTranslations } from 'next-intl';
 
@@ -17,7 +16,6 @@ export default function Footer() {
         {'   '}
         {t('copyright', { year: new Date().getFullYear() })}
       </p>
-      <LocaleSwitcher />
     </footer>
   );
 }

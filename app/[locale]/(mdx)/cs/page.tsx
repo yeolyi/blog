@@ -35,7 +35,7 @@ export default async function Home() {
   return (
     <div className="prose prose-stone dark:prose-invert">
       <h1>{t('curriculum')}</h1>
-      <p>{t('curriculumIntro1')}</p>
+      <p>{t('curriculumDescription')}</p>
 
       <h2>{tEmail('title')}</h2>
       <p>

@@ -1,0 +1,114 @@
+`Context.Consumer` 대해서는 https://ko.legacy.reactjs.org/docs/context.html#contextconsumer 참고...
+
+```jsx
+import { createContext } from 'react';
+
+const Context = createContext("123");
+
+function Component1() {
+  return <Component2 />;
+}
+
+function Component2() {
+  return <Context.Consumer>
+    {(value) => value}
+  </Context.Consumer>;
+}
+
+export default function App() {
+  return (
+    <Context.Provider value="JSer">
+      <Component1 />
+    </Context.Provider>
+  );
+}
+```
+
+1. it first update the new value by pushProvider().
+1. if value doesn’t change, try bailout.
+1. otherwise update Consumers by propagateContextChange() and render its children.
+
+push가 뭔가했는데 그냥 스택 구현체가 있다. pop은 null 처리만 하는게 인상깊다.
+
+```jsx
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
+import type {Fiber} from './ReactInternalTypes';
+
+export type StackCursor<T> = {|current: T|};
+
+const valueStack: Array<any> = [];
+
+let fiberStack: Array<Fiber | null>;
+
+let index = -1;
+
+function createCursor<T>(defaultValue: T): StackCursor<T> {
+  return {
+    current: defaultValue,
+  };
+}
+
+function isEmpty(): boolean {
+  return index === -1;
+}
+
+function pop<T>(cursor: StackCursor<T>, fiber: Fiber): void {
+  if (index < 0) {
+    return;
+  }
+
+  cursor.current = valueStack[index];
+
+  valueStack[index] = null;
+
+  index--;
+}
+
+function push<T>(cursor: StackCursor<T>, value: T, fiber: Fiber): void {
+  index++;
+
+  valueStack[index] = cursor.current;
+
+  cursor.current = value;
+}
+
+export {
+  createCursor,
+  isEmpty,
+  pop,
+  push
+};
+
+```
+
+- context._currentValue: 글로벌한 최신 값
+- Fiber 스택: 이전 값들을 저장하고 있음 → 즉, Provider가 여러 겹이면 이전 상태로 복구하거나 다음 Fiber에서 다시 사용할 수 있도록 해줍니다.
+
+따라서 렌더링 도중에 값을 바꾸더라도, 이후에 Context가 언마운트되거나 이전 상태로 되돌릴 수 있도록 이전 값도 함께 저장해 두는 것이죠.
+
+Think about an element as a sibling to a Provider, when React goes to this fiber, it should NOT have any information of the Provider, so there need to pop the Context info.
+
+```jsx
+export type Dependencies = {
+  lanes: Lanes,
+  firstContext: ContextDependency<mixed> | null,
+  ...
+};
+
+export type ContextDependency<T> = {
+  context: ReactContext<T>,
+  next: ContextDependency<mixed> | null,
+  memoizedValue: T,
+  ...
+};
+```
+
+dependencies is to keep track of all Contexts used in a component, so later React can know which components to update when Context value changes.

@@ -75,12 +75,20 @@ export default async function Home({
       <h2>{t('series')}</h2>
 
       <div className="not-prose flex gap-8 flex-col">
-        <SeriesCard href="/cs" src={cs} title={t('curriculum')} />
+        <SeriesCard
+          href="/cs"
+          src={cs}
+          title={t('curriculum')}
+          description={t('curriculumDescription')}
+          buttonText={t('viewSeries')}
+        />
         {locale === 'ko' && (
           <SeriesCard
             href="/react"
             src={react}
             title={t('react')}
+            description={t('reactDescription')}
+            buttonText={t('viewSeries')}
             imgClassName="object-left"
           />
         )}
@@ -94,16 +102,20 @@ const SeriesCard = ({
   imgClassName,
   src,
   title,
+  description,
+  buttonText,
 }: {
   imgClassName?: string;
   href: string;
   src: StaticImageData;
   title: string;
+  description: string;
+  buttonText: string;
 }) => (
   <Card className="max-w-md">
     <CardHeader>
       <CardTitle>{title}</CardTitle>
-      {/* TODO: add description */}
+      <p className="text-sm text-muted-foreground">{description}</p>
     </CardHeader>
     <Image
       src={src}
@@ -113,7 +125,7 @@ const SeriesCard = ({
     <CardFooter>
       <Button variant="default" asChild>
         <Link href={href}>
-          보러가기
+          {buttonText}
           <ArrowRight />
         </Link>
       </Button>

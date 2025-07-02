@@ -29,8 +29,10 @@
     "posts": "Posts",
     "series": "Series",
     "curriculum": "Learn CS By Building a Computer",
-    "curriculumIntro1": "This is a series created to share the wonder I felt while learning computer science. Let's follow the process of how small things come together to create a computer!",
-    "react": "Become a React Contributor in 2025 (No English translation)"
+    "curriculumDescription": "This is a series created to share the wonder I felt while learning computer science. Let's follow the process of how small things come together to create a computer!",
+    "react": "Become a React Contributor in 2025 (No English translation)",
+    "reactDescription": "A series where we become developers who can contribute by reading and analyzing React source code directly. Let's deeply understand the core operating principles of React.js!",
+    "viewSeries": "View Series"
   },
   "Curriculum": {
     "dateFormat": "{date, date, long}",

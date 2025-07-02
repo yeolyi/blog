@@ -15,9 +15,7 @@ export default async function PostLayout({
   params: Promise<{ id: string }>;
 }) {
   return (
-    <div
-      className={`${monoplexKR.variable} mx-auto mt-[12vh] mb-32 px-4 grow max-w-full`}
-    >
+    <div className={`${monoplexKR.variable} mx-auto mt-[12vh] mb-32 px-4 grow`}>
       {children}
     </div>
   );
