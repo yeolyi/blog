@@ -71,6 +71,8 @@ export default async function RootLayout({
           crossOrigin="anonymous"
         />
         <SandPackCSS />
+        {/* https://github.com/pacocoursey/next-themes/issues/78#issuecomment-1007002169 */}
+        <meta name="theme-color" content="var(--background)" />
       </head>
       <body className="min-h-dvh flex flex-col relative">
         <ThemeProvider
