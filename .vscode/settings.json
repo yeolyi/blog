@@ -1,21 +1,30 @@
 {
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "biomejs.biome",
-  "[mdx]": {
-    "editor.defaultFormatter": "unifiedjs.vscode-mdx"
-  },
-  // "editor.codeActionsOnSave": {
-  //   "source.fixAll.biome": "explicit",
-  //   "source.organizeImports.biome": "explicit"
-  // },
-  "[json]": {
-    "editor.defaultFormatter": "biomejs.biome"
-  },
-  "[tailwindcss]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[cpp]": {
-    "editor.defaultFormatter": "ms-vscode.cpptools"
-  },
-  "i18n-ally.localesPaths": ["i18n", "messages"]
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "biomejs.biome",
+	"editor.codeActionsOnSave": {
+		"source.fixAll.biome": "explicit",
+		"source.organizeImports.biome": "explicit"
+	},
+	"[typescript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[javascript]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[javascriptreact]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[typescriptreact]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[json]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[jsonc]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"[tailwindcss]": {
+		"editor.defaultFormatter": "biomejs.biome"
+	},
+	"editor.tabSize": 2
 }

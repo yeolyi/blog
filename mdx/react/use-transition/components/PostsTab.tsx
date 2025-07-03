@@ -13,25 +13,25 @@ import { use } from 'react';
 // In a real app, you would use a library like react-query or swr.
 let promise: Promise<string[]> | null = null;
 const fetchPosts = (): Promise<string[]> => {
-  if (promise === null)
-    promise = new Promise((resolve) => {
-      console.log('Fetching posts...');
-      setTimeout(() => {
-        console.log('Fetched posts.');
-        const posts = Array.from({ length: 3 }, (_, i) => `Post #${i + 1}`);
-        resolve(posts);
-      }, 1000);
-    });
-  return promise;
+	if (promise === null)
+		promise = new Promise((resolve) => {
+			console.log('Fetching posts...');
+			setTimeout(() => {
+				console.log('Fetched posts.');
+				const posts = Array.from({ length: 3 }, (_, i) => `Post #${i + 1}`);
+				resolve(posts);
+			}, 1000);
+		});
+	return promise;
 };
 
 export default function PostsTab() {
-  const posts = use(fetchPosts());
-  return (
-    <ul>
-      {posts.map((post: string) => (
-        <li key={post}>{post}</li>
-      ))}
-    </ul>
-  );
+	const posts = use(fetchPosts());
+	return (
+		<ul>
+			{posts.map((post: string) => (
+				<li key={post}>{post}</li>
+			))}
+		</ul>
+	);
 }

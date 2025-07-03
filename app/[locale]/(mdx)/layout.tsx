@@ -4,21 +4,21 @@ import localFont from 'next/font/local';
 import 'medium-zoom/dist/style.css';
 
 const monoplexKR = localFont({
-  src: './assets/MonoplexKR-Text.ttf',
-  variable: '--font-monoplex-kr',
+	src: './assets/MonoplexKR-Text.ttf',
+	variable: '--font-monoplex-kr',
 });
 
 export default async function PostLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
-  params: Promise<{ id: string }>;
+	children: React.ReactNode;
+	params: Promise<{ id: string }>;
 }) {
-  return (
-    <div
-      className={`${monoplexKR.variable} mx-auto mt-12 mb-24 px-4 grow w-full max-w-[65ch]`}
-    >
-      {children}
-    </div>
-  );
+	return (
+		<div
+			className={`${monoplexKR.variable} mx-auto mt-12 mb-24 px-4 grow w-full max-w-[65ch]`}
+		>
+			{children}
+		</div>
+	);
 }

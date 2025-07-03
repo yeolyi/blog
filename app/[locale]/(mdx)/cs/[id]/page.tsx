@@ -1,3 +1,4 @@
+import { notFound } from 'next/navigation';
 import { generateCSMetadata } from '@/app/[locale]/(mdx)/cs/utils/generateCSMetadata';
 import Comments from '@/components/comment';
 import PostNavigation from '@/components/layout/PostNavigation';
@@ -5,56 +6,55 @@ import TableOfContents from '@/components/layout/TableOfContents';
 import { routing } from '@/i18n/routing';
 import { order } from '@/mdx/cs';
 import { getPostIds } from '@/utils/path';
-import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 export const generateMetadata = generateCSMetadata;
 
 export default async function PostPage({
-  params,
+	params,
 }: {
-  params: Promise<{ id: string; locale: string }>;
+	params: Promise<{ id: string; locale: string }>;
 }) {
-  const { id, locale } = await params;
+	const { id, locale } = await params;
 
-  try {
-    const { default: Component, title } = await import(
-      `@/mdx/cs/${id}/${locale}.mdx`
-    );
+	try {
+		const { default: Component, title } = await import(
+			`@/mdx/cs/${id}/${locale}.mdx`
+		);
 
-    return (
-      <>
-        <div className="prose prose-stone dark:prose-invert mb-12">
-          <h1>{title}</h1>
-          <Component />
-        </div>
+		return (
+			<>
+				<div className='prose prose-stone dark:prose-invert mb-12'>
+					<h1>{title}</h1>
+					<Component />
+				</div>
 
-        <PostNavigation id={id} subDir="cs" className="mb-12" order={order} />
+				<PostNavigation id={id} subDir='cs' className='mb-12' order={order} />
 
-        <Comments postId={id} />
+				<Comments postId={id} />
 
-        <div className="fixed top-[15vh] left-[calc(50vw+24rem)] hidden xl:block">
-          <TableOfContents />
-        </div>
-      </>
-    );
-  } catch (error) {
-    notFound();
-  }
+				<div className='fixed top-[15vh] left-[calc(50vw+24rem)] hidden xl:block'>
+					<TableOfContents />
+				</div>
+			</>
+		);
+	} catch {
+		notFound();
+	}
 }
 
 export const generateStaticParams = async () => {
-  const locales = routing.locales;
-  const result = [];
+	const locales = routing.locales;
+	const result = [];
 
-  for (const locale of locales) {
-    const postIds = await getPostIds(locale, 'cs');
-    for (const postId of postIds) {
-      result.push({ id: postId, locale });
-    }
-  }
+	for (const locale of locales) {
+		const postIds = await getPostIds(locale, 'cs');
+		for (const postId of postIds) {
+			result.push({ id: postId, locale });
+		}
+	}
 
-  return result;
+	return result;
 };
 
 export const dynamicParams = false;

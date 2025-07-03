@@ -1,98 +1,98 @@
 {
-  "nodes": [
-    {
-      "id": "d647c134-6b87-42a3-8316-03e5f9cb0708",
-      "type": "number",
-      "position": { "x": -20, "y": 4 },
-      "data": {
-        "atoms": {
-          "type": "boolean",
-          "inputAtoms": {},
-          "outputAtoms": {
-            "out": { "init": false },
-            "label": { "init": null }
-          },
-          "id": "d647c134-6b87-42a3-8316-03e5f9cb0708"
-        }
-      },
-      "measured": { "width": 40, "height": 40 },
-      "selected": true,
-      "dragging": false
-    },
-    {
-      "id": "9e753044-6c92-45d2-8c17-900442a8eca2",
-      "type": "nand",
-      "position": { "x": 84, "y": -8 },
-      "data": {
-        "atoms": {
-          "type": "nand",
-          "inputAtoms": { "in1": { "init": null }, "in2": { "init": null } },
-          "outputAtoms": { "out": { "init": null } },
-          "effectAtom": {},
-          "id": "9e753044-6c92-45d2-8c17-900442a8eca2"
-        }
-      },
-      "measured": { "width": 96, "height": 64 },
-      "selected": false,
-      "dragging": false
-    },
-    {
-      "id": "fb1b6506-1cfd-49bd-9413-01424a8683c2",
-      "type": "label",
-      "position": { "x": 252, "y": 4 },
-      "data": {
-        "atoms": {
-          "type": "label",
-          "inputAtoms": { "in": { "init": null } },
-          "outputAtoms": { "label": { "init": null }, "out": { "init": null } },
-          "effectAtom": {},
-          "id": "fb1b6506-1cfd-49bd-9413-01424a8683c2"
-        }
-      },
-      "measured": { "width": 40, "height": 40 },
-      "selected": false,
-      "dragging": false
-    }
-  ],
-  "edges": [
-    {
-      "type": "default",
-      "animated": true,
-      "selectable": true,
-      "source": "d647c134-6b87-42a3-8316-03e5f9cb0708",
-      "sourceHandle": "out",
-      "target": "9e753044-6c92-45d2-8c17-900442a8eca2",
-      "targetHandle": "in1",
-      "id": "xy-edge__d647c134-6b87-42a3-8316-03e5f9cb0708out-9e753044-6c92-45d2-8c17-900442a8eca2in1"
-    },
-    {
-      "type": "default",
-      "animated": true,
-      "selectable": true,
-      "source": "d647c134-6b87-42a3-8316-03e5f9cb0708",
-      "sourceHandle": "out",
-      "target": "9e753044-6c92-45d2-8c17-900442a8eca2",
-      "targetHandle": "in2",
-      "id": "xy-edge__d647c134-6b87-42a3-8316-03e5f9cb0708out-9e753044-6c92-45d2-8c17-900442a8eca2in2"
-    },
-    {
-      "type": "default",
-      "animated": true,
-      "selectable": true,
-      "source": "9e753044-6c92-45d2-8c17-900442a8eca2",
-      "sourceHandle": "out",
-      "target": "fb1b6506-1cfd-49bd-9413-01424a8683c2",
-      "targetHandle": "in",
-      "id": "xy-edge__9e753044-6c92-45d2-8c17-900442a8eca2out-fb1b6506-1cfd-49bd-9413-01424a8683c2in"
-    }
-  ],
-  "viewport": { "x": 56.33333333333334, "y": 103, "zoom": 0.9166666666666666 },
-  "nodeOutputs": {
-    "3baeb21b-87c8-4203-a3e1-063b6d8873ea": { "out": false, "label": "x" },
-    "d73b5b17-9185-4b9b-bdd9-05b10312b184": { "out": true },
-    "35d73678-1ea0-4402-bfcc-1d12674d19e5": { "label": "NOT x", "out": true },
-    "d647c134-6b87-42a3-8316-03e5f9cb0708": { "out": false, "label": "x" },
-    "9e753044-6c92-45d2-8c17-900442a8eca2": { "out": true },
-    "fb1b6506-1cfd-49bd-9413-01424a8683c2": { "label": "NOT x", "out": true }
-  }
+	"nodes": [
+		{
+			"id": "d647c134-6b87-42a3-8316-03e5f9cb0708",
+			"type": "number",
+			"position": { "x": -20, "y": 4 },
+			"data": {
+				"atoms": {
+					"type": "boolean",
+					"inputAtoms": {},
+					"outputAtoms": {
+						"out": { "init": false },
+						"label": { "init": null }
+					},
+					"id": "d647c134-6b87-42a3-8316-03e5f9cb0708"
+				}
+			},
+			"measured": { "width": 40, "height": 40 },
+			"selected": true,
+			"dragging": false
+		},
+		{
+			"id": "9e753044-6c92-45d2-8c17-900442a8eca2",
+			"type": "nand",
+			"position": { "x": 84, "y": -8 },
+			"data": {
+				"atoms": {
+					"type": "nand",
+					"inputAtoms": { "in1": { "init": null }, "in2": { "init": null } },
+					"outputAtoms": { "out": { "init": null } },
+					"effectAtom": {},
+					"id": "9e753044-6c92-45d2-8c17-900442a8eca2"
+				}
+			},
+			"measured": { "width": 96, "height": 64 },
+			"selected": false,
+			"dragging": false
+		},
+		{
+			"id": "fb1b6506-1cfd-49bd-9413-01424a8683c2",
+			"type": "label",
+			"position": { "x": 252, "y": 4 },
+			"data": {
+				"atoms": {
+					"type": "label",
+					"inputAtoms": { "in": { "init": null } },
+					"outputAtoms": { "label": { "init": null }, "out": { "init": null } },
+					"effectAtom": {},
+					"id": "fb1b6506-1cfd-49bd-9413-01424a8683c2"
+				}
+			},
+			"measured": { "width": 40, "height": 40 },
+			"selected": false,
+			"dragging": false
+		}
+	],
+	"edges": [
+		{
+			"type": "default",
+			"animated": true,
+			"selectable": true,
+			"source": "d647c134-6b87-42a3-8316-03e5f9cb0708",
+			"sourceHandle": "out",
+			"target": "9e753044-6c92-45d2-8c17-900442a8eca2",
+			"targetHandle": "in1",
+			"id": "xy-edge__d647c134-6b87-42a3-8316-03e5f9cb0708out-9e753044-6c92-45d2-8c17-900442a8eca2in1"
+		},
+		{
+			"type": "default",
+			"animated": true,
+			"selectable": true,
+			"source": "d647c134-6b87-42a3-8316-03e5f9cb0708",
+			"sourceHandle": "out",
+			"target": "9e753044-6c92-45d2-8c17-900442a8eca2",
+			"targetHandle": "in2",
+			"id": "xy-edge__d647c134-6b87-42a3-8316-03e5f9cb0708out-9e753044-6c92-45d2-8c17-900442a8eca2in2"
+		},
+		{
+			"type": "default",
+			"animated": true,
+			"selectable": true,
+			"source": "9e753044-6c92-45d2-8c17-900442a8eca2",
+			"sourceHandle": "out",
+			"target": "fb1b6506-1cfd-49bd-9413-01424a8683c2",
+			"targetHandle": "in",
+			"id": "xy-edge__9e753044-6c92-45d2-8c17-900442a8eca2out-fb1b6506-1cfd-49bd-9413-01424a8683c2in"
+		}
+	],
+	"viewport": { "x": 56.33333333333334, "y": 103, "zoom": 0.9166666666666666 },
+	"nodeOutputs": {
+		"3baeb21b-87c8-4203-a3e1-063b6d8873ea": { "out": false, "label": "x" },
+		"d73b5b17-9185-4b9b-bdd9-05b10312b184": { "out": true },
+		"35d73678-1ea0-4402-bfcc-1d12674d19e5": { "label": "NOT x", "out": true },
+		"d647c134-6b87-42a3-8316-03e5f9cb0708": { "out": false, "label": "x" },
+		"9e753044-6c92-45d2-8c17-900442a8eca2": { "out": true },
+		"fb1b6506-1cfd-49bd-9413-01424a8683c2": { "label": "NOT x", "out": true }
+	}
 }

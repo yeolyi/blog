@@ -3,19 +3,19 @@ import { toast } from 'react-toastify';
 import { SWRConfig } from 'swr';
 
 export default function SWRProvider({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  return (
-    <SWRConfig
-      value={{
-        onError: (error) => {
-          toast.error(error.message);
-        },
-      }}
-    >
-      {children}
-    </SWRConfig>
-  );
+	return (
+		<SWRConfig
+			value={{
+				onError: (error) => {
+					toast.error(error.message);
+				},
+			}}
+		>
+			{children}
+		</SWRConfig>
+	);
 }

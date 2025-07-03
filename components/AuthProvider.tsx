@@ -1,12 +1,12 @@
 'use client';
 
-import { initializeAuthListener } from '@/store/session';
 import { useEffect } from 'react';
+import { initializeAuthListener } from '@/store/session';
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    return initializeAuthListener();
-  }, []);
+	useEffect(() => {
+		return initializeAuthListener();
+	}, []);
 
-  return <>{children}</>;
+	return <>{children}</>;
 }

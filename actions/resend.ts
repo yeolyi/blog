@@ -1,7 +1,7 @@
 'use server';
-import { wrapServerAction } from '@/utils/error';
 import { revalidatePath } from 'next/cache';
 import { Resend } from 'resend';
+import { wrapServerAction } from '@/utils/error';
 
 // Resend 객체 생성
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -11,21 +11,21 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID!;
 
 export const subscribeEmail = wrapServerAction(async (email: string) => {
-  const resp = await resend.contacts.create({
-    email,
-    audienceId: AUDIENCE_ID,
-  });
-  if (resp.error) {
-    throw new Error(resp.error.message);
-  }
+	const resp = await resend.contacts.create({
+		email,
+		audienceId: AUDIENCE_ID,
+	});
+	if (resp.error) {
+		throw new Error(resp.error.message);
+	}
 
-  // TODO: 이 페이지 말고 다른 곳에서도 구독자 수를 사용한다면...?
-  revalidatePath('/cs');
-  revalidatePath('/en/cs');
+	// TODO: 이 페이지 말고 다른 곳에서도 구독자 수를 사용한다면...?
+	revalidatePath('/cs');
+	revalidatePath('/en/cs');
 });
 
 // 구독자 수 조회 함수
 export const getSubscriberCount = wrapServerAction(async () => {
-  const response = await resend.contacts.list({ audienceId: AUDIENCE_ID });
-  return response.data?.data.length;
+	const response = await resend.contacts.list({ audienceId: AUDIENCE_ID });
+	return response.data?.data.length;
 });

@@ -1,19 +1,19 @@
 'use client';
 
+import { useEffect } from 'react';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
 } from '@/components/ui/card';
 import { Tape } from '@/mdx/cs/turing-machine/components/Tape';
 import {
-  type TapeSymbol,
-  TuringMachineProvider,
+	type TapeSymbol,
+	TuringMachineProvider,
 } from '@/mdx/cs/turing-machine/hooks/turingMachineStore';
 import { useTuringMachine } from '@/mdx/cs/turing-machine/hooks/useTuringMachine';
-import { useEffect } from 'react';
 
 const rulesCsv = `
 q0,0,q0,0,R
@@ -40,44 +40,44 @@ const initialTape = Array.from<TapeSymbol>('011_11_');
 const initialHeadIdx = 1;
 
 const AddingTuringMachineContent = () => {
-  const { tape, headIdx, state, play, reset, isHalted } = useTuringMachine(
-    initialTape,
-    initialHeadIdx,
-    rulesCsv,
-  );
+	const { tape, headIdx, state, play, reset, isHalted } = useTuringMachine(
+		initialTape,
+		initialHeadIdx,
+		rulesCsv,
+	);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      play();
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, [play]);
+	useEffect(() => {
+		const timer = setTimeout(() => {
+			play();
+		}, 2000);
+		return () => clearTimeout(timer);
+	}, [play]);
 
-  useEffect(() => {
-    if (isHalted) {
-      const timer = setTimeout(() => {
-        reset();
-        play();
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [isHalted, reset, play]);
+	useEffect(() => {
+		if (isHalted) {
+			const timer = setTimeout(() => {
+				reset();
+				play();
+			}, 2000);
+			return () => clearTimeout(timer);
+		}
+	}, [isHalted, reset, play]);
 
-  return <Tape tape={tape} head={headIdx} currentState={state} />;
+	return <Tape tape={tape} head={headIdx} currentState={state} />;
 };
 
 export default function AddingTuringMachine() {
-  return (
-    <Card className="w-fit max-w-full">
-      <CardHeader>
-        <CardTitle>튜링 머신 실습</CardTitle>
-        <CardDescription>이진수 덧셈 11(2) + 11(2) = 110(2)</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <TuringMachineProvider>
-          <AddingTuringMachineContent />
-        </TuringMachineProvider>
-      </CardContent>
-    </Card>
-  );
+	return (
+		<Card className='w-fit max-w-full'>
+			<CardHeader>
+				<CardTitle>튜링 머신 실습</CardTitle>
+				<CardDescription>이진수 덧셈 11(2) + 11(2) = 110(2)</CardDescription>
+			</CardHeader>
+			<CardContent>
+				<TuringMachineProvider>
+					<AddingTuringMachineContent />
+				</TuringMachineProvider>
+			</CardContent>
+		</Card>
+	);
 }

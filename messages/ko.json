@@ -1,185 +1,185 @@
 {
-  "Header": {
-    "title": "seongyeol",
-    "loading": "로딩 중...",
-    "developer": "#{number}번째 개발자님",
-    "logout": "로그아웃",
-    "login": "로그인",
-    "changeLocale": "언어 변경"
-  },
-  "LocaleSwitcher": {
-    "label": "언어",
-    "locale": "{locale}"
-  },
-  "TableOfContents": {
-    "title": "목차"
-  },
-  "Footer": {
-    "title": "seongyeol",
-    "copyright": "© {year} 모든 권리 보유.",
-    "navigation": "네비게이션",
-    "home": "홈",
-    "works": "작업물",
-    "blog": "블로그",
-    "connect": "연결하기",
-    "email": "이메일"
-  },
-  "HomePage": {
-    "bio": "안녕하세요👋 개발자 이성열입니다. <snuLink>서울대 컴공 홈페이지</snuLink> 리뉴얼 프로젝트에 프론트엔드 개발자로 참여했습니다. 지금은 <kakaoLink>카카오</kakaoLink>에서 근무합니다. <instagramLink>인스타그램</instagramLink>에는 개발자를 위한 컨텐츠를 공유해요.",
-    "posts": "게시글",
-    "series": "시리즈",
-    "curriculum": "만들면서 배우는 컴퓨터공학",
-    "curriculumDescription": "컴퓨터공학을 배우며 느꼈던 경이로움을 나누고자 만든 시리즈입니다. 작은 것들이 모여 컴퓨터가 만들어지는 과정을 함께 따라가봐요!",
-    "react": "2025 리액트 기여자 되기",
-    "reactDescription": "리액트 소스코드를 직접 읽고 분석하며 기여할 수 있는 개발자가 되어보는 시리즈입니다. React.js의 핵심 동작 원리를 깊이 있게 이해해봅시다!",
-    "viewSeries": "보러가기"
-  },
-  "Curriculum": {
-    "dateFormat": "{date, date, long}",
-    "plannedDateFormat": "{date, date, long}",
+	"Header": {
+		"title": "seongyeol",
+		"loading": "로딩 중...",
+		"developer": "#{number}번째 개발자님",
+		"logout": "로그아웃",
+		"login": "로그인",
+		"changeLocale": "언어 변경"
+	},
+	"LocaleSwitcher": {
+		"label": "언어",
+		"locale": "{locale}"
+	},
+	"TableOfContents": {
+		"title": "목차"
+	},
+	"Footer": {
+		"title": "seongyeol",
+		"copyright": "© {year} 모든 권리 보유.",
+		"navigation": "네비게이션",
+		"home": "홈",
+		"works": "작업물",
+		"blog": "블로그",
+		"connect": "연결하기",
+		"email": "이메일"
+	},
+	"HomePage": {
+		"bio": "안녕하세요👋 개발자 이성열입니다. <snuLink>서울대 컴공 홈페이지</snuLink> 리뉴얼 프로젝트에 프론트엔드 개발자로 참여했습니다. 지금은 <kakaoLink>카카오</kakaoLink>에서 근무합니다. <instagramLink>인스타그램</instagramLink>에는 개발자를 위한 컨텐츠를 공유해요.",
+		"posts": "게시글",
+		"series": "시리즈",
+		"curriculum": "만들면서 배우는 컴퓨터공학",
+		"curriculumDescription": "컴퓨터공학을 배우며 느꼈던 경이로움을 나누고자 만든 시리즈입니다. 작은 것들이 모여 컴퓨터가 만들어지는 과정을 함께 따라가봐요!",
+		"react": "2025 리액트 기여자 되기",
+		"reactDescription": "리액트 소스코드를 직접 읽고 분석하며 기여할 수 있는 개발자가 되어보는 시리즈입니다. React.js의 핵심 동작 원리를 깊이 있게 이해해봅시다!",
+		"viewSeries": "보러가기"
+	},
+	"Curriculum": {
+		"dateFormat": "{date, date, long}",
+		"plannedDateFormat": "{date, date, long}",
 
-    "part1Title": "파트 1: 0과 1로 컴퓨터 조립하기",
-    "hw1Title": "컴퓨터의 손가락이 두 개인 이유",
-    "hw1Description": "컴퓨터는 왜 0과 1을 쓸까요? 이 두 숫자가 어떻게 소리, 이미지, 그리고 우리가 상상하는 모든 것을 담아낼 수 있는 첫걸음이 되는지 알아봅시다.",
-    "hw2Title": "컴퓨터는 엄마가 좋은지 아빠가 좋은지로 구성됨",
-    "hw2Description": "'비가 올 때 외출하면 우산을 챙긴다'는 논리적 규칙을 실제로 어떻게 회로로 구현할 수 있을까요? 단 세 가지 기본 게이트의 조합으로 세상 모든 논리 회로를 만들 수 있음을 확인해봅시다.",
-    "hw3Title": "사실 엄마 아빠가 둘 다 좋지는 않았던 컴퓨터",
-    "hw3Description": "컴퓨터를 만들려면 얼마나 많은 종류의 게이트를 알아야 할까요? 단 하나의 게이트로 AND, OR, NOT은 물론 모든 디지털 논리 회로를 구성할 수 있음을 확인해봅시다.",
-    "hw4Title": "이제 여러분들은 계산기를 만들 수 있어요 (진짜로)",
-    "hw4Description": "지금까지 배운 내용을 활용해 우리보다 덧셈을 잘하는 계산기를 만들어봅시다. 무인도에 NAND 더미와 남겨졌을 때 덧셈 못할 걱정은 없겠네요.",
-    "hw5Title": "기억상실증 걸린 컴퓨터 고쳐주기",
-    "hw5Description": "지금까지 만든 회로는 계산 결과를 전혀 기억하지 못합니다. NOR 게이트 두 개를 교묘하게 연결해 정보를 저장할 수 있음을 확인해봅시다.",
-    "hw6Title": "계산만 할 줄 알면 계산기지 그게 컴퓨터니?",
-    "hw6Description": "덧셈, 뺄셈을 하는 회로를 만들었으니 '컴퓨터'를 만든걸까요? 컴퓨터의 본질이 무엇인지, 그리고 하나의 기계로 어떻게 무한한 가능성을 구현할 수 있는지 함께 알아봅시다.",
-    "hw7Title": "폰 노이만 또 당신이야?",
-    "hw7Description": "'프로그램을 데이터와 같은 공간에 저장한다'는 단순하지만 강력한 아이디어. 이 발상 하나가 어떻게 CPU, 메모리, 버스라는 현대 컴퓨터의 기본 골격을 만들었는지 알아봅시다.",
-    "hw8Title": "CPU가 일초에 10억 번 하는 루틴",
-    "hw8Description": "명령어 사이클 (Fetch-Decode-Execute)",
-    "hw9Title": "아니 엄마 이건 방정리를 안한게 아니라 캐시라니까?",
-    "hw9Description": "메모리 계층 구조",
+		"part1Title": "파트 1: 0과 1로 컴퓨터 조립하기",
+		"hw1Title": "컴퓨터의 손가락이 두 개인 이유",
+		"hw1Description": "컴퓨터는 왜 0과 1을 쓸까요? 이 두 숫자가 어떻게 소리, 이미지, 그리고 우리가 상상하는 모든 것을 담아낼 수 있는 첫걸음이 되는지 알아봅시다.",
+		"hw2Title": "컴퓨터는 엄마가 좋은지 아빠가 좋은지로 구성됨",
+		"hw2Description": "'비가 올 때 외출하면 우산을 챙긴다'는 논리적 규칙을 실제로 어떻게 회로로 구현할 수 있을까요? 단 세 가지 기본 게이트의 조합으로 세상 모든 논리 회로를 만들 수 있음을 확인해봅시다.",
+		"hw3Title": "사실 엄마 아빠가 둘 다 좋지는 않았던 컴퓨터",
+		"hw3Description": "컴퓨터를 만들려면 얼마나 많은 종류의 게이트를 알아야 할까요? 단 하나의 게이트로 AND, OR, NOT은 물론 모든 디지털 논리 회로를 구성할 수 있음을 확인해봅시다.",
+		"hw4Title": "이제 여러분들은 계산기를 만들 수 있어요 (진짜로)",
+		"hw4Description": "지금까지 배운 내용을 활용해 우리보다 덧셈을 잘하는 계산기를 만들어봅시다. 무인도에 NAND 더미와 남겨졌을 때 덧셈 못할 걱정은 없겠네요.",
+		"hw5Title": "기억상실증 걸린 컴퓨터 고쳐주기",
+		"hw5Description": "지금까지 만든 회로는 계산 결과를 전혀 기억하지 못합니다. NOR 게이트 두 개를 교묘하게 연결해 정보를 저장할 수 있음을 확인해봅시다.",
+		"hw6Title": "계산만 할 줄 알면 계산기지 그게 컴퓨터니?",
+		"hw6Description": "덧셈, 뺄셈을 하는 회로를 만들었으니 '컴퓨터'를 만든걸까요? 컴퓨터의 본질이 무엇인지, 그리고 하나의 기계로 어떻게 무한한 가능성을 구현할 수 있는지 함께 알아봅시다.",
+		"hw7Title": "폰 노이만 또 당신이야?",
+		"hw7Description": "'프로그램을 데이터와 같은 공간에 저장한다'는 단순하지만 강력한 아이디어. 이 발상 하나가 어떻게 CPU, 메모리, 버스라는 현대 컴퓨터의 기본 골격을 만들었는지 알아봅시다.",
+		"hw8Title": "CPU가 일초에 10억 번 하는 루틴",
+		"hw8Description": "명령어 사이클 (Fetch-Decode-Execute)",
+		"hw9Title": "아니 엄마 이건 방정리를 안한게 아니라 캐시라니까?",
+		"hw9Description": "메모리 계층 구조",
 
-    "part2Title": "파트 2: 컴퓨터스럽게 문제 해결하기",
-    "ds1Title": "방 정리는 안하니 데이터 정리라도 잘해보자",
-    "ds1Description": "배열과 연결 리스트",
-    "ds2Title": "늦게 온 사람이 먼저 들어가는 식당",
-    "ds2Description": "스택과 큐",
-    "ds3Title": "신분 상승이 쉽지않은 알고리즘 세계",
-    "ds3Description": "시간 복잡도",
-    "ds4Title": "정렬 알고리즘 계급도",
-    "ds4Description": "버블, 선택, 삽입, 머지, 퀵, 힙 정렬",
-    "ds5Title": "컴공생들은 나무가 어떻게 생겼는지도 몰라",
-    "ds5Description": "트리",
-    "ds6Title": "하나만 파는 애 vs 정신이 좀 산만한 애",
-    "ds6Description": "DFS, BFS",
-    "ds7Title": "될 때까지 해보는데 성과도 좋은 자료구조",
-    "ds7Description": "해시 테이블",
+		"part2Title": "파트 2: 컴퓨터스럽게 문제 해결하기",
+		"ds1Title": "방 정리는 안하니 데이터 정리라도 잘해보자",
+		"ds1Description": "배열과 연결 리스트",
+		"ds2Title": "늦게 온 사람이 먼저 들어가는 식당",
+		"ds2Description": "스택과 큐",
+		"ds3Title": "신분 상승이 쉽지않은 알고리즘 세계",
+		"ds3Description": "시간 복잡도",
+		"ds4Title": "정렬 알고리즘 계급도",
+		"ds4Description": "버블, 선택, 삽입, 머지, 퀵, 힙 정렬",
+		"ds5Title": "컴공생들은 나무가 어떻게 생겼는지도 몰라",
+		"ds5Description": "트리",
+		"ds6Title": "하나만 파는 애 vs 정신이 좀 산만한 애",
+		"ds6Description": "DFS, BFS",
+		"ds7Title": "될 때까지 해보는데 성과도 좋은 자료구조",
+		"ds7Description": "해시 테이블",
 
-    "part3Title": "파트 3: 더 쓰기 좋은 컴퓨터 만들기",
-    "os1Title": "CPU 쉬는걸 못참는 악랄한 개발자들이 만든 것",
-    "os1Description": "운영체제의 등장 배경",
-    "os2Title": "내가 내 컴퓨터의 모든 기능을 쓸 수 없는 이유",
-    "os2Description": "시스템 콜",
-    "os3Title": "C언어를 열심히 공부했지만 사실 컴퓨터는 알아듣지 못함",
-    "os3Description": "컴파일러",
-    "os4Title": "일잘러 컴퓨터의 할 일 관리법을 배워보자",
-    "os4Description": "프로세스와 스레드",
-    "os5Title": "'게임 설치 용량이 50기가인데 램도 50기가 사야하나요?'",
-    "os5Description": "가상 메모리",
-    "os6Title": "이 글이 여러분들에게 도착하기까지",
-    "os6Description": "네트워크",
+		"part3Title": "파트 3: 더 쓰기 좋은 컴퓨터 만들기",
+		"os1Title": "CPU 쉬는걸 못참는 악랄한 개발자들이 만든 것",
+		"os1Description": "운영체제의 등장 배경",
+		"os2Title": "내가 내 컴퓨터의 모든 기능을 쓸 수 없는 이유",
+		"os2Description": "시스템 콜",
+		"os3Title": "C언어를 열심히 공부했지만 사실 컴퓨터는 알아듣지 못함",
+		"os3Description": "컴파일러",
+		"os4Title": "일잘러 컴퓨터의 할 일 관리법을 배워보자",
+		"os4Description": "프로세스와 스레드",
+		"os5Title": "'게임 설치 용량이 50기가인데 램도 50기가 사야하나요?'",
+		"os5Description": "가상 메모리",
+		"os6Title": "이 글이 여러분들에게 도착하기까지",
+		"os6Description": "네트워크",
 
-    "appendixTitle": "부록",
-    "appendix1Title": "마인크래프트에서 컴퓨터 만들기",
+		"appendixTitle": "부록",
+		"appendix1Title": "마인크래프트에서 컴퓨터 만들기",
 
-    "comingSoon": "준비중",
-    "viewPost": "보러가기"
-  },
-  "NotFound": {
-    "backHome": "홈으로 돌아가기"
-  },
-  "EmailSubscribe": {
-    "title": "새로운 컨텐츠 알림 받기 💌",
-    "description": "컴퓨터가 어느정도 만들어질 때마다 이메일을 드릴게요.",
-    "subscriberCount": "현재 {count, number}명 구독중이에요.",
-    "subscriberCountHeader": "명이 함께하고 있어요!",
-    "emailPlaceholder": "이메일 주소",
-    "successMessage": "구독이 완료되었습니다!",
-    "subscribeButton": "구독하기",
-    "subscribingButton": "구독중...",
-    "confettiLabel": "폭죽 개수"
-  },
-  "Comment": {
-    "title": "여러분들 의견이 궁금해요",
-    "description": "이 시리즈를 읽으면서 떠오른 궁금한 점이나 나누고 싶은 의견이 있다면 언제든지 아래 댓글로 남겨주세요. 예를 들면...",
-    "example1": "컴퓨터 공학 분야에서 '이건 왜 이렇게 될까?' 등 평소에 궁금하셨던 것",
-    "example2": "컴퓨터 공학을 공부하면서 인상 깊었던 개념",
-    "example3": "다들 중요하다고는 하는데 솔직히 아직 이게 왜 필요한지, 어떻게 쓰이는지 잘 모르겠다 싶은 개념",
-    "encouragement": "여러분의 질문, 경험, 솔직한 어려움을 나눠주시면 다른 독자분들에게도 도움이 될 것이라 믿습니다. 함께 배우고 성장하는 공간이 될 수 있도록 저도 계속 고민할게요 :)",
-    "githubLoginNotice": "* 스팸 방지를 위해 깃허브 로그인 후 작성할 수 있어요",
-    "loginRequired": "댓글을 남기려면 <loginLink>로그인</loginLink>이 필요합니다.",
-    "login": "로그인",
-    "placeholder": "읽어주셔서 감사합니다 :)",
-    "submit": "댓글 작성",
-    "submitting": "작성 중...",
-    "noComments": "첫 댓글을 남겨보세요!",
-    "loading": "로그인 중...",
-    "deleteComment": "댓글 삭제",
-    "deleteConfirm": "정말 이 댓글을 삭제하시겠습니까?",
-    "deleting": "삭제 중...",
-    "delete": "삭제",
-    "cancel": "취소",
-    "deleteError": "댓글 삭제 중 오류가 발생했습니다.",
-    "submitError": "댓글 작성 중 오류가 발생했습니다.",
-    "dateFormat": "YYYY/MM/DD HH:mm:ss",
-    "required": "필수 입력 필드입니다."
-  },
-  "ZeroAndOne": {
-    "PixelateImage": {
-      "title": "이미지 픽셀화",
-      "analogLandscape": "아날로그 풍경",
-      "digitalizedImage": "디지털화된 이미지",
-      "loading": "이미지 로드 중...",
-      "pixelSize": "픽셀 크기"
-    },
-    "TruthTableDemo": {
-      "rainForecast": "비 예보",
-      "goingOut": "외출 계획",
-      "takeUmbrella": "우산 챙기기"
-    }
-  },
-  "PostNavigation": {
-    "backToList": "목록으로",
-    "prev": "이전글",
-    "next": "다음글"
-  },
-  "Sequential": {
-    "ClockSyncVisualizer": {
-      "reset": "초기화",
-      "clockSignal": "클럭 신호 주기"
-    },
-    "EdgeTriggerDemo": {
-      "risingEdge": "상승 엣지",
-      "fallingEdge": "하강 엣지",
-      "clock": "클럭"
-    },
-    "CombVsSeq": {
-      "cannotRemember": "기억을 못할 때",
-      "canRemember": "기억이 가능할 때"
-    }
-  },
-  "TuringMachine": {
-    "title": "튜링 머신",
-    "ControlUnit": {
-      "title": "제어 장치",
-      "currentState": "현재 상태",
-      "readSymbol": "읽은 기호",
-      "nextState": "다음 상태",
-      "writeSymbol": "쓸 기호",
-      "move": "이동"
-    },
-    "Tape": {
-      "title": "테이프",
-      "head": "▲ 헤드"
-    }
-  }
+		"comingSoon": "준비중",
+		"viewPost": "보러가기"
+	},
+	"NotFound": {
+		"backHome": "홈으로 돌아가기"
+	},
+	"EmailSubscribe": {
+		"title": "새로운 컨텐츠 알림 받기 💌",
+		"description": "컴퓨터가 어느정도 만들어질 때마다 이메일을 드릴게요.",
+		"subscriberCount": "현재 {count, number}명 구독중이에요.",
+		"subscriberCountHeader": "명이 함께하고 있어요!",
+		"emailPlaceholder": "이메일 주소",
+		"successMessage": "구독이 완료되었습니다!",
+		"subscribeButton": "구독하기",
+		"subscribingButton": "구독중...",
+		"confettiLabel": "폭죽 개수"
+	},
+	"Comment": {
+		"title": "여러분들 의견이 궁금해요",
+		"description": "이 시리즈를 읽으면서 떠오른 궁금한 점이나 나누고 싶은 의견이 있다면 언제든지 아래 댓글로 남겨주세요. 예를 들면...",
+		"example1": "컴퓨터 공학 분야에서 '이건 왜 이렇게 될까?' 등 평소에 궁금하셨던 것",
+		"example2": "컴퓨터 공학을 공부하면서 인상 깊었던 개념",
+		"example3": "다들 중요하다고는 하는데 솔직히 아직 이게 왜 필요한지, 어떻게 쓰이는지 잘 모르겠다 싶은 개념",
+		"encouragement": "여러분의 질문, 경험, 솔직한 어려움을 나눠주시면 다른 독자분들에게도 도움이 될 것이라 믿습니다. 함께 배우고 성장하는 공간이 될 수 있도록 저도 계속 고민할게요 :)",
+		"githubLoginNotice": "* 스팸 방지를 위해 깃허브 로그인 후 작성할 수 있어요",
+		"loginRequired": "댓글을 남기려면 <loginLink>로그인</loginLink>이 필요합니다.",
+		"login": "로그인",
+		"placeholder": "읽어주셔서 감사합니다 :)",
+		"submit": "댓글 작성",
+		"submitting": "작성 중...",
+		"noComments": "첫 댓글을 남겨보세요!",
+		"loading": "로그인 중...",
+		"deleteComment": "댓글 삭제",
+		"deleteConfirm": "정말 이 댓글을 삭제하시겠습니까?",
+		"deleting": "삭제 중...",
+		"delete": "삭제",
+		"cancel": "취소",
+		"deleteError": "댓글 삭제 중 오류가 발생했습니다.",
+		"submitError": "댓글 작성 중 오류가 발생했습니다.",
+		"dateFormat": "YYYY/MM/DD HH:mm:ss",
+		"required": "필수 입력 필드입니다."
+	},
+	"ZeroAndOne": {
+		"PixelateImage": {
+			"title": "이미지 픽셀화",
+			"analogLandscape": "아날로그 풍경",
+			"digitalizedImage": "디지털화된 이미지",
+			"loading": "이미지 로드 중...",
+			"pixelSize": "픽셀 크기"
+		},
+		"TruthTableDemo": {
+			"rainForecast": "비 예보",
+			"goingOut": "외출 계획",
+			"takeUmbrella": "우산 챙기기"
+		}
+	},
+	"PostNavigation": {
+		"backToList": "목록으로",
+		"prev": "이전글",
+		"next": "다음글"
+	},
+	"Sequential": {
+		"ClockSyncVisualizer": {
+			"reset": "초기화",
+			"clockSignal": "클럭 신호 주기"
+		},
+		"EdgeTriggerDemo": {
+			"risingEdge": "상승 엣지",
+			"fallingEdge": "하강 엣지",
+			"clock": "클럭"
+		},
+		"CombVsSeq": {
+			"cannotRemember": "기억을 못할 때",
+			"canRemember": "기억이 가능할 때"
+		}
+	},
+	"TuringMachine": {
+		"title": "튜링 머신",
+		"ControlUnit": {
+			"title": "제어 장치",
+			"currentState": "현재 상태",
+			"readSymbol": "읽은 기호",
+			"nextState": "다음 상태",
+			"writeSymbol": "쓸 기호",
+			"move": "이동"
+		},
+		"Tape": {
+			"title": "테이프",
+			"head": "▲ 헤드"
+		}
+	}
 }

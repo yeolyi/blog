@@ -7,110 +7,113 @@ import '@/app/[locale]/globals.css';
 // css가 script 태그로 들어가서 mdx 안에서 import해서 그런건가싶어서 여기로 이동
 import './style.css';
 
-import { AuthProvider } from '@/components/AuthProvider';
-import SWRProvider from '@/components/SWRProvider';
-
-import { ThemeProvider } from '@/components/ThemeProvider';
-import { SandPackCSS } from '@/components/layout/SandPackCSS';
-import { routing } from '@/i18n/routing';
 import { Provider as JotaiProvider } from 'jotai';
-import { type Locale, NextIntlClientProvider, hasLocale } from 'next-intl';
-import { setRequestLocale } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import { hasLocale, type Locale, NextIntlClientProvider } from 'next-intl';
+import { setRequestLocale } from 'next-intl/server';
+import { ThemeProvider } from 'next-themes';
 import type * as React from 'react';
 import { Slide, ToastContainer } from 'react-toastify';
+import { AuthProvider } from '@/components/AuthProvider';
+import { SandPackCSS } from '@/components/layout/SandPackCSS';
+import SWRProvider from '@/components/SWRProvider';
+import MetaHandler from '@/components/ThemeProvider';
+import { routing } from '@/i18n/routing';
 
 const ibmPlexSans = IBM_Plex_Sans_KR({
-  variable: '--font-ibm-plex-sans',
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
+	variable: '--font-ibm-plex-sans',
+	subsets: ['latin'],
+	weight: ['400', '500', '600', '700'],
 });
 
 export async function generateMetadata({
-  params,
+	params,
 }: {
-  params: Promise<{ locale: Locale }>;
+	params: Promise<{ locale: Locale }>;
 }) {
-  const { locale } = await params;
+	const { locale } = await params;
 
-  return {
-    title: locale === 'ko' ? '이성열' : 'seongyeol Yi',
-    description:
-      locale === 'ko'
-        ? '만든 것들과 배운 것들을 여기 공유해요'
-        : 'I share what I make and learn here.',
-  };
+	return {
+		title: locale === 'ko' ? '이성열' : 'seongyeol Yi',
+		description:
+			locale === 'ko'
+				? '만든 것들과 배운 것들을 여기 공유해요'
+				: 'I share what I make and learn here.',
+	};
 }
 
 export default async function RootLayout({
-  children,
-  params,
+	children,
+	params,
 }: Readonly<{
-  children: React.ReactNode;
-  params: Promise<{ locale: Locale }>;
+	children: React.ReactNode;
+	params: Promise<{ locale: Locale }>;
 }>) {
-  const { locale } = await params;
-  if (!hasLocale(routing.locales, locale)) {
-    notFound();
-  }
+	const { locale } = await params;
+	if (!hasLocale(routing.locales, locale)) {
+		notFound();
+	}
 
-  // Enable static rendering
-  setRequestLocale(locale);
+	// Enable static rendering
+	setRequestLocale(locale);
 
-  return (
-    <html
-      lang={locale}
-      className={`${ibmPlexSans.variable}`}
-      suppressHydrationWarning
-    >
-      <head>
-        <link
-          rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
-          integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+"
-          crossOrigin="anonymous"
-        />
-        <SandPackCSS />
-        {/* https://github.com/pacocoursey/next-themes/issues/78#issuecomment-2927060208 */}
-        <meta name="theme-color" content="var(--background)" />
-      </head>
-      <body className="min-h-dvh flex flex-col relative">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          enableColorScheme
-        >
-          <NextIntlClientProvider>
-            <JotaiProvider>
-              <SWRProvider>
-                <AuthProvider>
-                  <Header />
-                  {children}
-                  <Footer />
-                  <ToastContainer
-                    position="bottom-right"
-                    autoClose={5000}
-                    hideProgressBar={false}
-                    newestOnTop={false}
-                    closeOnClick={false}
-                    rtl={false}
-                    pauseOnFocusLoss
-                    pauseOnHover
-                    theme="dark"
-                    transition={Slide}
-                  />
-                </AuthProvider>
-              </SWRProvider>
-            </JotaiProvider>
-          </NextIntlClientProvider>
-        </ThemeProvider>
-        <Analytics />
-      </body>
-    </html>
-  );
+	return (
+		<html
+			lang={locale}
+			className={`${ibmPlexSans.variable}`}
+			suppressHydrationWarning
+		>
+			<head>
+				<link
+					rel='stylesheet'
+					href='https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css'
+					integrity='sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+'
+					crossOrigin='anonymous'
+				/>
+				<SandPackCSS />
+				{/* https://github.com/pacocoursey/next-themes/issues/78#issuecomment-2927060208 */}
+				{/* <meta name="theme-color" content="var(--background)" /> */}
+			</head>
+			<body className='min-h-dvh flex flex-col relative'>
+				<ThemeProvider
+					attribute='class'
+					defaultTheme='system'
+					enableSystem
+					enableColorScheme
+					// 이게 없으면 언어 전환간에 flashing이 일어난다...? 왜??
+					disableTransitionOnChange
+				>
+					<NextIntlClientProvider>
+						<JotaiProvider>
+							<SWRProvider>
+								<AuthProvider>
+									<Header />
+									{children}
+									<Footer />
+									<MetaHandler />
+									<ToastContainer
+										position='bottom-right'
+										autoClose={5000}
+										hideProgressBar={false}
+										newestOnTop={false}
+										closeOnClick={false}
+										rtl={false}
+										pauseOnFocusLoss
+										pauseOnHover
+										theme='dark'
+										transition={Slide}
+									/>
+								</AuthProvider>
+							</SWRProvider>
+						</JotaiProvider>
+					</NextIntlClientProvider>
+				</ThemeProvider>
+				<Analytics />
+			</body>
+		</html>
+	);
 }
 
 export async function generateStaticParams() {
-  return routing.locales.map((locale) => ({ locale }));
+	return routing.locales.map((locale) => ({ locale }));
 }

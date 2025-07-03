@@ -1,9 +1,9 @@
 {
-  "$schema": "https://unpkg.com/knip@5/schema.json",
-  "entry": [
-    "mdx/**/*.mdx",
-    "script/**",
-    "types/database.types.ts",
-    "i18n/navigation.ts"
-  ]
+	"$schema": "https://unpkg.com/knip@5/schema.json",
+	"entry": [
+		"mdx/**/*.mdx",
+		"script/**",
+		"types/database.types.ts",
+		"i18n/navigation.ts"
+	]
 }

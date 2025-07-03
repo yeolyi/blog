@@ -1,75 +1,74 @@
 'use client';
 
+import clsx from 'clsx';
 import { ChevronLeft, ChevronRight, List } from 'lucide-react';
-
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/navigation';
-import clsx from 'clsx';
-import { useTranslations } from 'next-intl';
 
 export default function PostNavigation({
-  id,
-  subDir,
-  className,
-  order,
+	id,
+	subDir,
+	className,
+	order,
 }: {
-  id: string;
-  subDir: string;
-  className?: string;
-  order: string[];
+	id: string;
+	subDir: string;
+	className?: string;
+	order: string[];
 }) {
-  const t = useTranslations('PostNavigation');
+	const t = useTranslations('PostNavigation');
 
-  const currentIndex = order.indexOf(id);
-  const prevPostIndex = currentIndex > 0 ? currentIndex - 1 : null;
-  const nextPostIndex =
-    currentIndex < order.length - 1 ? currentIndex + 1 : null;
+	const currentIndex = order.indexOf(id);
+	const prevPostIndex = currentIndex > 0 ? currentIndex - 1 : null;
+	const nextPostIndex =
+		currentIndex < order.length - 1 ? currentIndex + 1 : null;
 
-  const prevPostId = prevPostIndex !== null ? order[prevPostIndex] : null;
-  const nextPostId = nextPostIndex !== null ? order[nextPostIndex] : null;
+	const prevPostId = prevPostIndex !== null ? order[prevPostIndex] : null;
+	const nextPostId = nextPostIndex !== null ? order[nextPostIndex] : null;
 
-  return (
-    <div
-      className={clsx(
-        'flex gap-2 text-foreground text-base font-semibold justify-between',
-        className,
-      )}
-    >
-      {prevPostId ? (
-        <Button asChild variant="ghost">
-          <Link href={`/${subDir}/${prevPostId}`}>
-            <ChevronLeft size={16} />
-            <span>{t('prev')}</span>
-          </Link>
-        </Button>
-      ) : (
-        // TODO 나은 방법
-        <Button variant="ghost" className="text-transparent" disabled>
-          <ChevronLeft size={16} />
-          <span>{t('prev')}</span>
-        </Button>
-      )}
+	return (
+		<div
+			className={clsx(
+				'flex gap-2 text-foreground text-base font-semibold justify-between',
+				className,
+			)}
+		>
+			{prevPostId ? (
+				<Button asChild variant='ghost'>
+					<Link href={`/${subDir}/${prevPostId}`}>
+						<ChevronLeft size={16} />
+						<span>{t('prev')}</span>
+					</Link>
+				</Button>
+			) : (
+				// TODO 나은 방법
+				<Button variant='ghost' className='text-transparent' disabled>
+					<ChevronLeft size={16} />
+					<span>{t('prev')}</span>
+				</Button>
+			)}
 
-      <Button asChild variant="ghost">
-        <Link href={`/${subDir}`}>
-          <List size={16} />
-          {t('backToList')}
-        </Link>
-      </Button>
+			<Button asChild variant='ghost'>
+				<Link href={`/${subDir}`}>
+					<List size={16} />
+					{t('backToList')}
+				</Link>
+			</Button>
 
-      {nextPostId ? (
-        <Button asChild variant="default">
-          <Link href={`/${subDir}/${nextPostId}`}>
-            <span>{t('next')}</span>
-            <ChevronRight size={16} />
-          </Link>
-        </Button>
-      ) : (
-        <Button variant="ghost" className="text-transparent" disabled>
-          <span>{t('next')}</span>
-          <ChevronRight size={16} />
-        </Button>
-      )}
-    </div>
-  );
+			{nextPostId ? (
+				<Button asChild variant='default'>
+					<Link href={`/${subDir}/${nextPostId}`}>
+						<span>{t('next')}</span>
+						<ChevronRight size={16} />
+					</Link>
+				</Button>
+			) : (
+				<Button variant='ghost' className='text-transparent' disabled>
+					<span>{t('next')}</span>
+					<ChevronRight size={16} />
+				</Button>
+			)}
+		</div>
+	);
 }
