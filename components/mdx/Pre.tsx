@@ -2,7 +2,7 @@
 
 import clsx from 'clsx';
 import { debounce } from 'es-toolkit';
-import { CheckIcon, CopyIcon } from 'lucide-react';
+import { CheckIcon, Clipboard } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 
@@ -18,7 +18,11 @@ export default function Pre({
 	);
 
 	return (
-		<pre {...props} ref={ref} className={clsx(props.className, 'relative')}>
+		<pre
+			{...props}
+			ref={ref}
+			className={clsx(props.className, 'relative shadow-sm dark:shadow-none')}
+		>
 			<Button
 				variant='ghost'
 				size='icon'
@@ -29,7 +33,7 @@ export default function Pre({
 					reset();
 				}}
 			>
-				{isCopied ? <CheckIcon /> : <CopyIcon />}
+				{isCopied ? <CheckIcon /> : <Clipboard />}
 			</Button>
 			{children}
 		</pre>

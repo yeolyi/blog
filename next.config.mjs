@@ -1,5 +1,3 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import bundleAnalyzer from '@next/bundle-analyzer';
 import createMDX from '@next/mdx';
 import rehypeShiki from '@shikijs/rehype';
@@ -13,10 +11,6 @@ import rehypeKatex from 'rehype-katex';
 import rehypeSlug from 'rehype-slug';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
-
-const customGithubDark = JSON.parse(
-	readFileSync(join(process.cwd(), 'custom-github-dark.json'), 'utf8'),
-);
 
 const nextConfig = {
 	images: {
@@ -53,7 +47,11 @@ const withMDX = createMDX({
 				rehypeShiki,
 				{
 					inline: 'tailing-curly-colon',
-					theme: customGithubDark,
+					themes: {
+						light: 'one-light',
+						dark: 'one-dark-pro',
+					},
+					defaultColor: 'light-dark()',
 					transformers: [
 						transformerNotationHighlight(),
 						transformerNotationFocus(),

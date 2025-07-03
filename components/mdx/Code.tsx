@@ -2,12 +2,14 @@
 
 import {
 	defaultDark,
+	defaultLight,
 	SandpackConsole,
 	SandpackPreview,
 	type SandpackProps,
 	SandpackProvider,
 } from '@codesandbox/sandpack-react';
 import dynamic from 'next/dynamic';
+import { useTheme } from 'next-themes';
 
 // TODO
 // 안하니까 hydration error 뜸 흠......
@@ -22,19 +24,17 @@ const SandpackCodeEditor = dynamic(
 export default function Code(
 	props: SandpackProps & { showTabs?: boolean; activeFile?: string },
 ) {
+	const { theme } = useTheme();
+	const isDark = theme === 'dark';
+	const sandpackTheme = isDark ? defaultDark : defaultLight;
+
 	return (
 		<SandpackProvider
 			className='not-prose'
 			theme={{
-				...defaultDark,
-				colors: {
-					...defaultDark.colors,
-					// TODO: tailwind 변수 그대로 쓰기
-					surface1: 'oklch(0.268 0.007 34.298)',
-					surface2: 'oklch(0.444 0.011 73.639)',
-				},
+				...sandpackTheme,
 				font: {
-					...defaultDark.font,
+					...sandpackTheme.font,
 					body: 'var(--font-monoplex-kr)',
 					mono: 'var(--font-monoplex-kr)',
 					size: '14px',
@@ -63,7 +63,7 @@ root.render(<App />);
 			}}
 		>
 			<SandpackCodeEditor
-				className='h-fit'
+				className='h-fit border'
 				showTabs={props.showTabs ?? false}
 				showLineNumbers={false}
 				showInlineErrors={false}
@@ -76,10 +76,10 @@ root.render(<App />);
 const PreviewWithLog = () => {
 	return (
 		<>
-			<SandpackPreview showOpenInCodeSandbox={false} className='bg-white' />
+			<SandpackPreview showOpenInCodeSandbox={false} className='bg-white border' />
 			<SandpackConsole
 				resetOnPreviewRestart
-				className='h-fit font-(var(--font-monoplex-kr)) text-base'
+				className='h-fit font-(var(--font-monoplex-kr)) text-base border'
 				showResetConsoleButton={false}
 			/>
 		</>

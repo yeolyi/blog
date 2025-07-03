@@ -4,7 +4,7 @@ export const loginToDB = async () => {
 	const { error } = await supabase.auth.signInWithOAuth({
 		provider: 'github',
 		options: {
-			redirectTo: `${window.location.origin}${window.location.pathname}?scrollY=${window.scrollY.toString()}`,
+			redirectTo: `${window.location.origin}${window.location.pathname}`,
 		},
 	});
 	if (error) throw error;

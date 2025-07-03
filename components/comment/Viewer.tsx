@@ -1,9 +1,10 @@
 import dayjs from 'dayjs';
 import { Check, Trash, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+
+import { Fragment, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { Link } from '@/i18n/navigation';
 import { useProfile } from '@/swr/auth';
 import { deleteComment, useComments } from '@/swr/comment';
@@ -17,11 +18,14 @@ export default function CommentList({ postId }: CommentListProps) {
 	const { data: comments } = useComments(postId);
 
 	return (
-		<>
-			{comments?.map((comment) => (
-				<CommentItem key={comment.id} comment={comment} postId={postId} />
+		<div className='flex flex-col gap-4'>
+			{comments?.map((comment, index) => (
+				<Fragment key={comment.id}>
+					{index !== 0 && <Separator />}
+					<CommentItem comment={comment} postId={postId} />
+				</Fragment>
 			))}
-		</>
+		</div>
 	);
 }
 
@@ -41,22 +45,20 @@ const CommentItem = ({
 	const isAuthor = profile?.id === comment.author_id;
 
 	return (
-		<Card className='relative'>
-			<CardContent>
-				<div className='mb-2'>
-					<Link href={githubUrl} target='_blank' rel='noopener noreferrer'>
-						{headerT('developer', { number: comment.developernumber })}
-					</Link>
+		<div className='relative text-foreground'>
+			<div className='mb-2'>
+				<Link href={githubUrl} target='_blank' rel='noopener noreferrer'>
+					{headerT('developer', { number: comment.developernumber })}
+				</Link>
 
-					<code className='text-sm text-muted-foreground mb-2'>
-						{`  ${dayjs(comment.created_at).format(commentT('dateFormat'))}`}
-					</code>
-				</div>
+				<code className='text-sm text-muted-foreground mb-2'>
+					{`  ${dayjs(comment.created_at).format(commentT('dateFormat'))}`}
+				</code>
+			</div>
 
-				{comment.content}
-				{isAuthor && <DeleteButton postId={postId} commentId={comment.id} />}
-			</CardContent>
-		</Card>
+			{comment.content}
+			{isAuthor && <DeleteButton postId={postId} commentId={comment.id} />}
+		</div>
 	);
 };
 
