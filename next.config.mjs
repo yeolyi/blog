@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import bundleAnalyzer from '@next/bundle-analyzer';
 import createMDX from '@next/mdx';
 import rehypeShiki from '@shikijs/rehype';
@@ -11,7 +13,10 @@ import rehypeKatex from 'rehype-katex';
 import rehypeSlug from 'rehype-slug';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
-import customGithubDark from './custom-github-dark.json' with { type: 'json' };
+
+const customGithubDark = JSON.parse(
+	readFileSync(join(process.cwd(), 'custom-github-dark.json'), 'utf8'),
+);
 
 const nextConfig = {
 	images: {
@@ -43,7 +48,7 @@ const withMDX = createMDX({
 		remarkPlugins: [remarkGfm, remarkMath],
 		rehypePlugins: [
 			rehypeSlug,
-			rehypeKatex,
+			[rehypeKatex, { strict: false }],
 			[
 				rehypeShiki,
 				{
