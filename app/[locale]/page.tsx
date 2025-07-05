@@ -189,7 +189,7 @@ export default async function Home({
 
 				<p className='max-w-2xl'>{tMain('interactionIntro')}</p>
 
-				<Carousel opts={{ loop: true, align: 'start' }}>
+				<Carousel opts={{ loop: true, align: 'start', watchDrag: false }}>
 					<CarouselContent className='-pl-4'>
 						<CarouselItem className='max-w-sm w-[90%]pl-4'>
 							<PixelateImage />
