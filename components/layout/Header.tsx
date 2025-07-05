@@ -2,8 +2,10 @@
 
 import {
 	Github,
+	Globe,
 	Instagram,
 	Loader2,
+	LogIn,
 	LogOut,
 	Menu,
 	Moon,
@@ -14,10 +16,12 @@ import { useParams } from 'next/navigation';
 import type { Locale } from 'next-intl';
 import { useLocale, useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
+	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuRadioGroup,
 	DropdownMenuRadioItem,
@@ -27,23 +31,63 @@ import {
 import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { useSessionStore } from '@/store/session';
 
-function InstagramButton() {
+function GithubButton() {
 	return (
 		<div className='relative'>
-			<Button variant='secondary' asChild>
-				<Link href='https://instagram.com/yeol.dev' target='_blank'>
-					<Instagram className='size-4' />
-					23.0K
+			<Button variant='ghost' asChild>
+				<Link href='https://github.com/yeolyi' target='_blank'>
+					<Github className='size-4' />
 				</Link>
 			</Button>
 		</div>
 	);
 }
 
-function DesktopHeaderActions() {
-	const t = useTranslations('Header');
+function InstagramButton() {
+	return (
+		<div className='relative'>
+			<Button variant='ghost' asChild>
+				<Link href='https://instagram.com/yeol.dev' target='_blank'>
+					<Instagram className='size-4' />
+				</Link>
+			</Button>
+		</div>
+	);
+}
+
+function LoginButton({ className }: { className?: string }) {
 	const { session, isLoading, login, logout } = useSessionStore();
-	const { theme, setTheme } = useTheme();
+
+	if (session) {
+		return (
+			<Button
+				onClick={logout}
+				type='button'
+				variant='ghost'
+				size='icon'
+				disabled={isLoading}
+				className={className}
+			>
+				{isLoading ? <Loader2 className='animate-spin ' /> : <LogOut />}
+			</Button>
+		);
+	}
+
+	return (
+		<Button
+			onClick={login}
+			type='button'
+			variant='ghost'
+			size='icon'
+			disabled={isLoading}
+			className={className}
+		>
+			{isLoading ? <Loader2 className='animate-spin' /> : <LogIn />}
+		</Button>
+	);
+}
+
+function LanguageSettings() {
 	const locale = useLocale();
 	const router = useRouter();
 	const pathname = usePathname();
@@ -62,162 +106,159 @@ function DesktopHeaderActions() {
 	}
 
 	return (
-		<div className='hidden sm:flex items-center gap-3'>
+		<>
+			<DropdownMenuLabel>언어</DropdownMenuLabel>
+			<DropdownMenuRadioGroup value={locale} onValueChange={onLocaleChange}>
+				<DropdownMenuRadioItem value='ko'>한국어</DropdownMenuRadioItem>
+				<DropdownMenuRadioItem value='en'>English</DropdownMenuRadioItem>
+			</DropdownMenuRadioGroup>
+		</>
+	);
+}
+
+function ThemeSettings() {
+	const { theme, setTheme } = useTheme();
+
+	return (
+		<>
+			<DropdownMenuLabel>테마</DropdownMenuLabel>
+			<DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
+				<DropdownMenuRadioItem value='light'>
+					<Sun className='size-4 mr-2' />
+					라이트
+				</DropdownMenuRadioItem>
+				<DropdownMenuRadioItem value='dark'>
+					<Moon className='size-4 mr-2' />
+					다크
+				</DropdownMenuRadioItem>
+				<DropdownMenuRadioItem value='system'>
+					<SunMoon className='size-4 mr-2' />
+					시스템
+				</DropdownMenuRadioItem>
+			</DropdownMenuRadioGroup>
+		</>
+	);
+}
+
+function ThemeToggleButton() {
+	const { theme, setTheme } = useTheme();
+	const [isMounted, setIsMounted] = useState(false);
+
+	// TODO: 이게 최선?
+	useEffect(() => {
+		setIsMounted(true);
+	}, []);
+
+	function toggleTheme() {
+		if (theme === 'light') {
+			setTheme('dark');
+		} else if (theme === 'dark') {
+			setTheme('system');
+		} else {
+			setTheme('light');
+		}
+	}
+
+	function getIcon() {
+		if (!isMounted) return <Loader2 className='animate-spin' />;
+		if (theme === 'system') return <SunMoon />;
+		if (theme === 'light') return <Sun />;
+		if (theme === 'dark') return <Moon />;
+		return <Loader2 className='animate-spin' />;
+	}
+
+	return (
+		<Button
+			variant='ghost'
+			size='icon'
+			onClick={toggleTheme}
+			suppressHydrationWarning
+		>
+			{getIcon()}
+		</Button>
+	);
+}
+
+function LanguageToggleButton() {
+	const locale = useLocale();
+	const router = useRouter();
+	const pathname = usePathname();
+	const params = useParams();
+
+	function toggleLanguage() {
+		const nextLocale = locale === 'ko' ? 'en' : 'ko';
+		router.replace(
+			// @ts-expect-error -- TypeScript will validate that only known `params`
+			// are used in combination with a given `pathname`. Since the two will
+			// always match for the current route, we can skip runtime checks.
+			{ pathname, params },
+			{ locale: nextLocale as Locale },
+		);
+	}
+
+	return (
+		<Button variant='ghost' size='icon' onClick={toggleLanguage}>
+			<Globe className='size-4' />
+		</Button>
+	);
+}
+
+function DesktopHeaderActions() {
+	return (
+		<div className='sm:flex hidden items-center gap-3'>
+			{/* 깃허브 버튼 */}
+			<GithubButton />
+
 			{/* 인스타그램 버튼 */}
 			<InstagramButton />
 
 			{/* 로그인/로그아웃 버튼 */}
-			{session ? (
-				<Button
-					onClick={logout}
-					type='button'
-					variant='secondary'
-					disabled={isLoading}
-				>
-					{isLoading ? <Loader2 className='animate-spin' /> : <LogOut />}
-					{t('logout')}
-				</Button>
-			) : (
-				<Button
-					onClick={login}
-					type='button'
-					variant='secondary'
-					disabled={isLoading}
-				>
-					{isLoading ? <Loader2 className='animate-spin' /> : <Github />}
-					{t('login')}
-				</Button>
-			)}
+			<LoginButton />
 
-			{/* 설정 메뉴 */}
-			<DropdownMenu modal={false}>
-				<DropdownMenuTrigger asChild>
-					<Button variant='secondary' size='icon'>
-						<Menu className='size-4' />
-					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent className='w-40' align='end'>
-					<DropdownMenuLabel>언어</DropdownMenuLabel>
-					<DropdownMenuRadioGroup value={locale} onValueChange={onLocaleChange}>
-						<DropdownMenuRadioItem value='ko'>한국어</DropdownMenuRadioItem>
-						<DropdownMenuRadioItem value='en'>English</DropdownMenuRadioItem>
-					</DropdownMenuRadioGroup>
+			{/* 테마 토글 버튼 */}
+			<ThemeToggleButton />
 
-					<DropdownMenuSeparator />
-
-					<DropdownMenuLabel>테마</DropdownMenuLabel>
-					<DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
-						<DropdownMenuRadioItem value='light'>
-							<Sun className='size-4 mr-2' />
-							라이트
-						</DropdownMenuRadioItem>
-						<DropdownMenuRadioItem value='dark'>
-							<Moon className='size-4 mr-2' />
-							다크
-						</DropdownMenuRadioItem>
-						<DropdownMenuRadioItem value='system'>
-							<SunMoon className='size-4 mr-2' />
-							시스템
-						</DropdownMenuRadioItem>
-					</DropdownMenuRadioGroup>
-				</DropdownMenuContent>
-			</DropdownMenu>
+			{/* 언어 토글 버튼 */}
+			<LanguageToggleButton />
 		</div>
 	);
 }
 
 function MobileHeaderActions() {
-	const t = useTranslations('Header');
-	const { session, isLoading, login, logout } = useSessionStore();
-	const { theme, setTheme } = useTheme();
-	const locale = useLocale();
-	const router = useRouter();
-	const pathname = usePathname();
-	const params = useParams();
-
-	function onLocaleChange(nextLocale: string) {
-		if (!nextLocale) return;
-
-		router.replace(
-			// @ts-expect-error -- TypeScript will validate that only known `params`
-			// are used in combination with a given `pathname`. Since the two will
-			// always match for the current route, we can skip runtime checks.
-			{ pathname, params },
-			{ locale: nextLocale as Locale },
-		);
-	}
-
 	return (
 		<div className='sm:hidden flex items-center gap-3'>
 			{/* 인스타그램 버튼 */}
 			<InstagramButton />
 
+			{/* 로그인/로그아웃 버튼 */}
+			<LoginButton />
+
 			{/* 설정 메뉴 */}
 			<DropdownMenu modal={false}>
 				<DropdownMenuTrigger asChild>
-					<Button variant='secondary' size='icon'>
+					<Button variant='ghost' size='icon'>
 						<Menu className='size-4' />
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent className='w-40' align='end'>
-					{/* 로그인/로그아웃 */}
-					{session ? (
-						<Button
-							onClick={logout}
-							type='button'
-							variant='ghost'
-							disabled={isLoading}
-							className='w-full justify-start mb-2'
+					<DropdownMenuItem asChild>
+						<Link
+							href='https://github.com/yeolyi'
+							target='_blank'
+							className='flex items-center'
 						>
-							{isLoading ? (
-								<Loader2 className='animate-spin size-4 mr-2' />
-							) : (
-								<LogOut className='size-4 mr-2' />
-							)}
-							{t('logout')}
-						</Button>
-					) : (
-						<Button
-							onClick={login}
-							type='button'
-							variant='ghost'
-							disabled={isLoading}
-							className='w-full justify-start mb-2'
-						>
-							{isLoading ? (
-								<Loader2 className='animate-spin size-4 mr-2' />
-							) : (
-								<Github className='size-4 mr-2' />
-							)}
-							{t('login')}
-						</Button>
-					)}
+							<Github className='size-4 mr-2' />
+							깃허브
+						</Link>
+					</DropdownMenuItem>
 
 					<DropdownMenuSeparator />
 
-					<DropdownMenuLabel>언어</DropdownMenuLabel>
-					<DropdownMenuRadioGroup value={locale} onValueChange={onLocaleChange}>
-						<DropdownMenuRadioItem value='ko'>한국어</DropdownMenuRadioItem>
-						<DropdownMenuRadioItem value='en'>English</DropdownMenuRadioItem>
-					</DropdownMenuRadioGroup>
+					<LanguageSettings />
 
 					<DropdownMenuSeparator />
 
-					<DropdownMenuLabel>테마</DropdownMenuLabel>
-					<DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
-						<DropdownMenuRadioItem value='light'>
-							<Sun className='size-4 mr-2' />
-							라이트
-						</DropdownMenuRadioItem>
-						<DropdownMenuRadioItem value='dark'>
-							<Moon className='size-4 mr-2' />
-							다크
-						</DropdownMenuRadioItem>
-						<DropdownMenuRadioItem value='system'>
-							<SunMoon className='size-4 mr-2' />
-							시스템
-						</DropdownMenuRadioItem>
-					</DropdownMenuRadioGroup>
+					<ThemeSettings />
 				</DropdownMenuContent>
 			</DropdownMenu>
 		</div>
@@ -228,13 +269,12 @@ export default function Header() {
 	const t = useTranslations('Header');
 
 	return (
-		<header className='sticky top-0 left-0 right-0 flex items-center p-4 bg-background z-50'>
-			<Link
-				href='/'
-				className='text-foreground text-2xl font-bold no-underline mr-auto'
-			>
-				{t('title')}
-			</Link>
+		<header className='sticky top-0 left-0 right-0 flex items-center justify-between py-3.5 px-4 z-50 bg-background/50 backdrop-blur-3xl'>
+			<Button variant='ghost' asChild>
+				<Link href='/' className='font-extrabold text-2xl'>
+					{t('title')}
+				</Link>
+			</Button>
 
 			<div className='flex items-center gap-3'>
 				<DesktopHeaderActions />

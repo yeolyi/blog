@@ -2,7 +2,6 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
-@plugin "@tailwindcss/typography";
 @config "../../tailwind.config.js";
 
 :root {
@@ -52,7 +51,27 @@
 	}
 
 	body {
-		font-family: var(--font-ibm-plex-sans);
+		letter-spacing: -0.01em;
+		font-weight: 400;
+		font-size: 1rem;
+		color: var(--foreground);
+		font-family:
+			"Pretendard Variable",
+			Pretendard,
+			-apple-system,
+			BlinkMacSystemFont,
+			system-ui,
+			Roboto,
+			"Helvetica Neue",
+			"Segoe UI",
+			"Apple SD Gothic Neo",
+			"Noto Sans KR",
+			"Malgun Gothic",
+			"Apple Color Emoji",
+			"Segoe UI Emoji",
+			"Segoe UI Symbol",
+			sans-serif;
+		word-break: keep-all;
 	}
 
 	/* 1. Use a more-intuitive box-sizing model */
@@ -76,7 +95,7 @@
 
 	body {
 		/* 4. Add accessible line-height */
-		line-height: 1.5;
+		line-height: 1.75;
 		/* 5. Improve text rendering */
 		-webkit-font-smoothing: antialiased;
 	}
@@ -210,8 +229,8 @@
 	--sidebar-border: oklch(1 0 0 / 10%);
 	--sidebar-ring: oklch(0.553 0.013 58.071);
 
-	--success: var(--color-green-400);
-	--fail: var(--color-red-400);
+	--success: var(--color-green-500);
+	--fail: var(--color-red-500);
 	--success-foreground: var(--color-white);
 	--fail-foreground: var(--color-white);
 }
@@ -231,4 +250,108 @@
 	[role="button"]:not([disabled]) {
 		cursor: pointer;
 	}
+}
+
+/* TODO: details 처이 이게 최선? */
+.mdx {
+	@apply space-y-7 max-w-2xl mx-auto;
+
+	& > details {
+		@apply space-y-7 ml-4;
+	}
+
+	/* TODO: 애니메이션 넣기 */
+	& > h1,
+	& > details > h1 {
+		@apply font-extrabold;
+	}
+
+	& > h2,
+	& > details > h2 {
+		@apply font-extrabold mt-21;
+		&::before {
+			content: "「";
+			@apply text-primary;
+		}
+		&::after {
+			content: "」";
+			@apply text-primary;
+		}
+	}
+
+	& > h3,
+	& > details > h3 {
+		@apply font-extrabold;
+	}
+
+	& > img,
+	& > details > img {
+		@apply max-w-xl w-full;
+	}
+
+	& > p > strong,
+	& > p > b,
+	& > details > p > strong,
+	& > details > p > b {
+		@apply font-extrabold;
+	}
+
+	& > details > summary {
+		@apply cursor-pointer;
+	}
+
+	& > blockquote,
+	& > details > blockquote {
+		@apply border-l border-primary pl-4;
+	}
+
+	& pre,
+	& pre * {
+		@apply text-sm;
+		font-family: var(--font-monoplex-kr);
+	}
+
+	& ul {
+		@apply list-disc list-inside;
+	}
+
+	& ol {
+		@apply list-decimal list-inside;
+	}
+}
+
+.container {
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.scrolling {
+	animation: marquee 2s linear infinite;
+	display: inline-block;
+	padding-right: 10px;
+}
+
+@keyframes marquee {
+	from {
+		transform: translateX(0);
+	}
+	to {
+		transform: translateX(-100%);
+	}
+}
+
+/* 전역 스타일시트때문에 엣지가 안보이는 문제가 있어 삽입 */
+.react-flow svg {
+	display: unset;
+	max-width: unset;
+}
+
+.react-flow__viewport {
+	--xy-edge-stroke-default: black;
+	--xy-handle-border-color-default: black;
+}
+
+.dark .react-flow__viewport {
+	--xy-edge-stroke-default: white;
+	--xy-handle-border-color-default: white;
 }

@@ -58,10 +58,10 @@ These two elements are exactly the core idea of how computers perform addition. 
 
 In daily life, we use the **decimal system, which uses 10 numbers as basic units**. In decimal, we create the entire number by multiplying each digit by values that **increase by 10 times**: 1, 10, 100, 1000, etc. For example, if we break down the number 123 in detail:
 
-$$
-\textcolor{red}{1} \times 100 + \textcolor{blue}{2} \times 10 + \textcolor{green}{3} \times 1 \\
-= \textcolor{red}{1} \times 10^2 + \textcolor{blue}{2} \times 10^1 + \textcolor{green}{3} \times 10^0
-$$
+<div className="text-center my-4">
+  <span style={{color: 'red'}}>1</span> × 100 + <span style={{color: 'blue'}}>2</span> × 10 + <span style={{color: 'green'}}>3</span> × 1<br/>
+  = <span style={{color: 'red'}}>1</span> × 10<sup>2</sup> + <span style={{color: 'blue'}}>2</span> × 10<sup>1</sup> + <span style={{color: 'green'}}>3</span> × 10<sup>0</sup>
+</div>
 
 So the leftmost digit represents the hundreds place, the middle is the tens place, and the last is the ones place. It's a positional notation system.
 
@@ -69,11 +69,11 @@ Computers actually use the same principle. They just use only two numbers, 0 and
 
 For example, converting the binary number 101₂ to decimal works like this:
 
-$$
-\textcolor{red}{1} \times 2^2 + \textcolor{blue}{0} \times 2^1 + \textcolor{green}{1} \times 2^0 \\
-= \textcolor{red}{1} \times 4 + \textcolor{blue}{0} \times 2 + \textcolor{green}{1} \times 1 \\
-= 4 + 0 + 1 = 5_{10}
-$$
+<div className="text-center my-4">
+  <span style={{color: 'red'}}>1</span> × 2<sup>2</sup> + <span style={{color: 'blue'}}>0</span> × 2<sup>1</sup> + <span style={{color: 'green'}}>1</span> × 2<sup>0</sup><br/>
+  = <span style={{color: 'red'}}>1</span> × 4 + <span style={{color: 'blue'}}>0</span> × 2 + <span style={{color: 'green'}}>1</span> × 1<br/>
+  = 4 + 0 + 1 = 5<sub>10</sub>
+</div>
 
 Try converting decimal numbers to binary below.
 

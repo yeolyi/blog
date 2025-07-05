@@ -13,14 +13,14 @@ export const BooleanNode = (props: NodeProps<'number'>) => {
 		<div className='relative'>
 			<button
 				className={clsx(
-					'relative w-10 h-10 outline outline-white cursor-pointer',
+					'relative w-10 h-10 outline outline-black dark:outline-white cursor-pointer',
 					out ? 'bg-green-500' : 'bg-red-500',
 					props.selected ? 'outline-2' : 'outline-1',
 				)}
 				onClick={() => setOut(!out)}
 				type='button'
 			>
-				<p className='text-white text-2xl font-semibold'>{out ? 1 : 0}</p>
+				<p className='text-foreground text-2xl font-semibold'>{out ? 1 : 0}</p>
 				<Handle
 					type='source'
 					position={Position.Right}

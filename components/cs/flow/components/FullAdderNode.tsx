@@ -33,14 +33,14 @@ export const FullAdderNode = (props: NodeProps<'fullAdder'>) => {
 	);
 
 	const valueToColor = (value: OutputValue | null) => {
-		if (value === null) return 'text-white';
+		if (value === null) return 'text-foreground';
 		return value ? 'text-green-500' : 'text-red-500';
 	};
 
 	return (
 		<div
 			className={clsx(
-				'relative w-36 h-32 box-content flex items-center justify-center outline outline-white',
+				'relative w-36 h-32 box-content flex items-center justify-center outline outline-black dark:outline-white',
 				props.selected ? 'outline-2' : 'outline-1',
 			)}
 		>
@@ -79,13 +79,13 @@ export const FullAdderNode = (props: NodeProps<'fullAdder'>) => {
 				style={{ ...RIGHT_HANDLE_STYLE, top: '75%' }}
 			/>
 
-			<p className='absolute top-[25%] -translate-y-1/2 left-1 text-white text-sm font-mono'>
+			<p className='absolute top-[25%] -translate-y-1/2 left-1 text-foreground text-sm font-mono'>
 				CIN
 			</p>
-			<p className='absolute top-[50%] -translate-y-1/2 left-1 text-white text-sm font-mono'>
+			<p className='absolute top-[50%] -translate-y-1/2 left-1 text-foreground text-sm font-mono'>
 				IN1
 			</p>
-			<p className='absolute top-[75%] -translate-y-1/2 left-1 text-white text-sm font-mono'>
+			<p className='absolute top-[75%] -translate-y-1/2 left-1 text-foreground text-sm font-mono'>
 				IN2
 			</p>
 
@@ -105,7 +105,7 @@ export const FullAdderNode = (props: NodeProps<'fullAdder'>) => {
 			>
 				CARRY
 			</p>
-			<p className='absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-white text-base text-center'>
+			<p className='absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-foreground text-base text-center'>
 				FULL ADDER
 			</p>
 		</div>

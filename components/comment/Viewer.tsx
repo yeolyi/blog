@@ -45,18 +45,20 @@ const CommentItem = ({
 	const isAuthor = profile?.id === comment.author_id;
 
 	return (
-		<div className='relative text-foreground'>
-			<div className='mb-2'>
-				<Link href={githubUrl} target='_blank' rel='noopener noreferrer'>
-					{headerT('developer', { number: comment.developernumber })}
-				</Link>
+		<div className='relative'>
+			<p>
+				<Button variant='link' asChild className='pl-0'>
+					<Link href={githubUrl} target='_blank' rel='noopener noreferrer'>
+						{headerT('developer', { number: comment.developernumber })}
+					</Link>
+				</Button>
+				<span className='text-muted-foreground'>
+					{dayjs(comment.created_at).format(commentT('dateFormat'))}
+				</span>
+			</p>
 
-				<code className='text-sm text-muted-foreground mb-2'>
-					{`  ${dayjs(comment.created_at).format(commentT('dateFormat'))}`}
-				</code>
-			</div>
+			<p className='text-neutral-500 dark:text-neutral-300'>{comment.content}</p>
 
-			{comment.content}
 			{isAuthor && <DeleteButton postId={postId} commentId={comment.id} />}
 		</div>
 	);

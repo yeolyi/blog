@@ -58,10 +58,10 @@ import ripple from './assets/ripple.json';
 
 일상에서 우리는 **총 10개의 숫자를 기본 단위로 삼는 십진법**을 사용합니다. 십진법에서는 각 자리 숫자에 1, 10, 100, 1000처럼 점점 **10배씩 커지는 값을 곱해서** 전체 숫자를 만듭니다. 예를 들어, 숫자 123을 자세히 뜯어보면 이렇게 해석할 수 있어요:
 
-$$
-\textcolor{red}{1} \times 100 + \textcolor{blue}{2} \times 10 + \textcolor{green}{3} \times 1 \\
-= \textcolor{red}{1} \times 10^2 + \textcolor{blue}{2} \times 10^1 + \textcolor{green}{3} \times 10^0
-$$
+<div className="text-center my-4">
+  <span style={{color: 'red'}}>1</span> × 100 + <span style={{color: 'blue'}}>2</span> × 10 + <span style={{color: 'green'}}>3</span> × 1<br/>
+  = <span style={{color: 'red'}}>1</span> × 10<sup>2</sup> + <span style={{color: 'blue'}}>2</span> × 10<sup>1</sup> + <span style={{color: 'green'}}>3</span> × 10<sup>0</sup>
+</div>
 
 즉, 가장 왼쪽 자리는 100의 자리, 가운데는 10의 자리, 마지막은 1의 자리를 뜻하는 거죠. 자리값을 이용한 표현 방식입니다.
 
@@ -69,11 +69,11 @@ $$
 
 예를 들어, 이진법으로 나타낸 이진수 101<sub>2</sub>을 십진수로 바꾸면 이렇게 됩니다:
 
-$$
-\textcolor{red}{1} \times 2^2 + \textcolor{blue}{0} \times 2^1 + \textcolor{green}{1} \times 2^0 \\
-= \textcolor{red}{1} \times 4 + \textcolor{blue}{0} \times 2 + \textcolor{green}{1} \times 1 \\
-= 4 + 0 + 1 = 5_{10}
-$$
+<div className="text-center my-4">
+  <span style={{color: 'red'}}>1</span> × 2<sup>2</sup> + <span style={{color: 'blue'}}>0</span> × 2<sup>1</sup> + <span style={{color: 'green'}}>1</span> × 2<sup>0</sup><br/>
+  = <span style={{color: 'red'}}>1</span> × 4 + <span style={{color: 'blue'}}>0</span> × 2 + <span style={{color: 'green'}}>1</span> × 1<br/>
+  = 4 + 0 + 1 = 5<sub>10</sub>
+</div>
 
 아래에서 십진수를 이진수로 직접 변환해보세요.
 

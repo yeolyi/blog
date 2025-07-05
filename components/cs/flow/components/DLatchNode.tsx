@@ -27,14 +27,14 @@ export const DLatchNode = (props: NodeProps<'dLatch'>) => {
 	);
 
 	const valueToColor = (value: OutputValue | null) => {
-		if (value === null) return 'text-white';
+		if (value === null) return 'text-foreground';
 		return value ? 'text-green-500' : 'text-red-500';
 	};
 
 	return (
 		<div
 			className={clsx(
-				'relative w-32 h-32 box-content flex items-center justify-center outline outline-white',
+				'relative w-32 h-32 box-content flex items-center justify-center outline outline-black dark:outline-white',
 				props.selected ? 'outline-2' : 'outline-1',
 			)}
 		>
@@ -65,8 +65,10 @@ export const DLatchNode = (props: NodeProps<'dLatch'>) => {
 				style={{ ...RIGHT_HANDLE_STYLE, top: '75%' }}
 			/>
 
-			<p className='absolute top-1 left-1 text-sm font-mono'>D</p>
-			<p className='absolute bottom-1 left-1 text-sm font-mono'>E</p>
+			<p className='absolute top-1 left-1 text-sm font-mono text-foreground'>D</p>
+			<p className='absolute bottom-1 left-1 text-sm font-mono text-foreground'>
+				E
+			</p>
 
 			<p
 				className={clsx(
@@ -84,7 +86,7 @@ export const DLatchNode = (props: NodeProps<'dLatch'>) => {
 			>
 				Q_BAR
 			</p>
-			<p className='absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-white text-base text-center'>
+			<p className='absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-foreground text-base text-center'>
 				D LATCH
 			</p>
 		</div>

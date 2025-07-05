@@ -2,7 +2,7 @@
 
 import { Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useActionState, useRef } from 'react';
+import { useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { subscribeEmail } from '@/actions/resend';
 import { Button } from '@/components/ui/button';
@@ -12,11 +12,9 @@ import { confetti } from '@/utils/confetti';
 export default function EmailSubscribe() {
 	const t = useTranslations('EmailSubscribe');
 	const ref = useRef<HTMLButtonElement>(null);
+	const [email, setEmail] = useState('');
 
-	const onSubmit = async (prevState: string | null, formData: FormData) => {
-		const email = formData.get('email');
-		if (typeof email !== 'string') return prevState;
-
+	const onSubmit = async () => {
 		const result = await subscribeEmail(email);
 		if (!result.success) {
 			toast.error(result.value);
@@ -33,26 +31,32 @@ export default function EmailSubscribe() {
 				colors: ['#FFD60A', '#FF375F', '#32D74B', '#0A84FF', '#FF9F0A'],
 			});
 		}
-		return t('successMessage');
+
+		setEmail('');
 	};
 
-	const [state, formAction, isPending] = useActionState(onSubmit, null);
-
 	return (
-		<form action={formAction} className='flex gap-3'>
+		<div className='flex gap-3'>
 			<Input
 				title={'email'}
 				type='email'
 				name='email'
-				placeholder={state ?? t('emailPlaceholder')}
+				placeholder={t('emailPlaceholder')}
 				required
 				className='max-w-xs'
+				value={email}
+				onChange={(e) => setEmail(e.target.value)}
+				onKeyDown={(e) => {
+					if (e.key === 'Enter') {
+						onSubmit();
+					}
+				}}
 			/>
 
-			<Button type='submit' ref={ref}>
+			<Button type='button' ref={ref} onClick={onSubmit}>
 				<Send />
-				{isPending ? t('subscribingButton') : t('subscribeButton')}
+				{t('subscribeButton')}
 			</Button>
-		</form>
+		</div>
 	);
 }

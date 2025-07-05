@@ -36,7 +36,7 @@ export const OrNode = ({ id, data, selected }: NodeProps<'or'>) => {
 	})();
 
 	return (
-		<div className='relative'>
+		<div className='relative text-foreground'>
 			<svg
 				width='96'
 				height='64'
@@ -49,7 +49,7 @@ export const OrNode = ({ id, data, selected }: NodeProps<'or'>) => {
 				<title id='orGateTitle'>OR Gate</title>
 				<path
 					d='M0,0 Q85,0 96,32 Q85,64 0,64 Q8,32 0,0 Z'
-					stroke='white'
+					stroke='currentColor'
 					strokeWidth={selected ? 2 : 1}
 				/>
 			</svg>

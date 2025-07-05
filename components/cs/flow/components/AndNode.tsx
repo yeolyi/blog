@@ -40,7 +40,7 @@ export const AndNode = (props: NodeProps<'and'>) => {
 	return (
 		<div
 			className={clsx(
-				'relative w-24 h-16 rounded-r-full box-content flex items-center justify-center outline outline-white',
+				'relative w-24 h-16 rounded-r-full box-content flex items-center justify-center outline outline-black dark:outline-white',
 				backgroundColor,
 				props.selected ? 'outline-2' : 'outline-1',
 			)}
@@ -75,7 +75,7 @@ export const AndNode = (props: NodeProps<'and'>) => {
 				}}
 			/>
 			{/* 생긴게 치우치게 생겨서 중심 미세조정 */}
-			<p className='text-white text-2xl font-semibold mr-[5px]'>
+			<p className='text-foreground text-2xl font-semibold mr-[5px]'>
 				{out === true ? 1 : out === false ? 0 : ''}
 			</p>
 		</div>

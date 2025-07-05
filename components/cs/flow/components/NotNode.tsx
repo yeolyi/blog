@@ -33,20 +33,27 @@ export const NotNode = ({ id, data, selected }: NodeProps<'not'>) => {
 	})();
 
 	return (
-		<div className='relative'>
+		<div className='relative text-foreground'>
 			<svg width='48' height='40' viewBox='0 0 48 40'>
 				<title id='orGateTitle'>NOT Gate</title>
 				<path
 					d='M0 0 L40 20 L0 40 Z'
 					className={backgroundColor}
-					stroke='white'
+					stroke='currentColor'
 					strokeWidth={selected ? 2 : 1}
 				/>
-				<circle cx='40' cy='20' r='8' stroke='white' className={backgroundColor} />
+				<circle
+					cx='40'
+					cy='20'
+					r='8'
+					stroke='currentColor'
+					className={backgroundColor}
+				/>
 			</svg>
 			<Handle
 				type='target'
 				position={Position.Left}
+				className='outline-black dark:outline-white'
 				id='in1'
 				style={{
 					...LEFT_HANDLE_STYLE,

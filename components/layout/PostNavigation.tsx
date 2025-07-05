@@ -11,11 +11,13 @@ export default function PostNavigation({
 	subDir,
 	className,
 	order,
+	listHref,
 }: {
 	id: string;
 	subDir: string;
 	className?: string;
 	order: string[];
+	listHref?: string;
 }) {
 	const t = useTranslations('PostNavigation');
 
@@ -28,12 +30,7 @@ export default function PostNavigation({
 	const nextPostId = nextPostIndex !== null ? order[nextPostIndex] : null;
 
 	return (
-		<div
-			className={clsx(
-				'flex gap-2 text-foreground text-base font-semibold justify-between',
-				className,
-			)}
-		>
+		<div className={clsx('flex gap-2 justify-between pt-21', className)}>
 			{prevPostId ? (
 				<Button asChild variant='ghost'>
 					<Link href={`/${subDir}/${prevPostId}`}>
@@ -50,7 +47,7 @@ export default function PostNavigation({
 			)}
 
 			<Button asChild variant='ghost'>
-				<Link href={`/${subDir}`}>
+				<Link href={listHref || `/${subDir}`}>
 					<List size={16} />
 					{t('backToList')}
 				</Link>

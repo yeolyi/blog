@@ -34,7 +34,7 @@ export const LabelNode = (props: NodeProps<'label'>) => {
 	return (
 		<div
 			className={clsx(
-				'relative w-10 h-10 box-content rounded-full flex items-center justify-center outline outline-white',
+				'relative w-10 h-10 box-content rounded-full flex items-center justify-center outline outline-black dark:outline-white',
 				backgroundColor,
 				props.selected ? 'outline-2' : 'outline-1',
 			)}
@@ -50,7 +50,7 @@ export const LabelNode = (props: NodeProps<'label'>) => {
 				isConnectable={inConnection.length === 0}
 			/>
 			{/* 생긴게 치우치게 생겨서 중심 미세조정 */}
-			<p className='text-white text-2xl font-semibold'>
+			<p className='text-foreground text-2xl font-semibold'>
 				{out === true ? 1 : out === false ? 0 : ''}
 			</p>
 			<NameTag atom={atoms.outputAtoms.label} />

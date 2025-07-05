@@ -40,14 +40,14 @@ export const NandNode = (props: NodeProps<'nand'>) => {
 	return (
 		<div
 			className={clsx(
-				'relative w-24 h-16 rounded-r-full box-content flex items-center justify-center outline outline-white',
+				'relative w-24 h-16 rounded-r-full box-content flex items-center justify-center outline outline-black dark:outline-white',
 				backgroundColor,
 				props.selected ? 'outline-2' : 'outline-1',
 			)}
 		>
 			<div
 				className={clsx(
-					'absolute right-0 translate-x-[12px] rounded-full top-1/2 -translate-y-1/2 w-[16px] h-[16px] outline outline-white',
+					'absolute right-0 translate-x-[12px] rounded-full top-1/2 -translate-y-1/2 w-[16px] h-[16px] outline outline-black dark:outline-white',
 					backgroundColor,
 				)}
 			/>
@@ -82,7 +82,7 @@ export const NandNode = (props: NodeProps<'nand'>) => {
 				}}
 			/>
 			{/* 생긴게 치우치게 생겨서 중심 미세조정 */}
-			<p className='text-white text-2xl font-semibold mr-[5px]'>
+			<p className='text-foreground text-2xl font-semibold mr-[5px]'>
 				{out === true ? 1 : out === false ? 0 : ''}
 			</p>
 		</div>

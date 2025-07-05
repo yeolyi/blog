@@ -1,16 +1,22 @@
 'use client';
+import clsx from 'clsx';
 import NeedLogin from '@/components/comment/NeedLogin';
 import { useSessionStore } from '@/store/session';
 import Emoji from './Emoji';
 import CommentForm from './Form';
 import CommentList from './Viewer';
 
-export default function Comment({ postId }: { postId: string }) {
+export default function Comment({
+	postId,
+	className,
+}: {
+	postId: string;
+	className?: string;
+}) {
 	const session = useSessionStore((state) => state.session);
 
 	return (
-		// max-w- 좀 예쁘게...
-		<div className='w-full space-y-4 max-w-prose'>
+		<div className={clsx('space-y-7', className)}>
 			<Emoji postId={postId} />
 			{session ? <CommentForm postId={postId} /> : <NeedLogin />}
 			<CommentList postId={postId} />

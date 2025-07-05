@@ -2,7 +2,6 @@ export const title = 'Computers are Built on Simple Logical Decisions: AND, OR, 
 export const description = 'Let\'s confirm that all boolean functions in the world can be expressed with AND, OR, and NOT gates.'
 export const ogImage = '/cs/and-or-not/og.png';
 
-import TransistorDemo from '@/components/cs/TransistorDemo'
 import TruthTable from '@/components/cs/TruthTable'
 
 import circuit from './assets/circuit.jpg';
@@ -32,9 +31,7 @@ This part is actually connected to the field of semiconductor physics. We will b
 
 The core idea is to create **switches that control the flow of electrical signals**. As we mentioned, the 0s and 1s used by computers are represented by low and high electrical signals. The physical implementation of logic gates involves making these signals flow only when specific conditions are met.
 
-The most basic physical component acting as this switch is the **transistor**. A transistor functions like a switch that **opens** (turns on) the path for an electrical signal when a specific condition is met (e.g., a weak signal comes from elsewhere), and **blocks** (turns off) the path when the condition is not met. It acts like a faucet controlling the flow of electricity. Click the checkboxes to apply voltage to the Gate.
-
-<TransistorDemo />
+The most basic physical component acting as this switch is the **transistor**. A transistor functions like a switch that **opens** (turns on) the path for an electrical signal when a specific condition is met (e.g., a weak signal comes from elsewhere), and **blocks** (turns off) the path when the condition is not met. It acts like a faucet controlling the flow of electricity.
 
 The most basic logical operations we briefly looked at last time, namely the **AND, OR, and NOT gates**, are created by connecting these physical switches, called transistors, in specific ways. **This process of abstract logic being implemented in the physical world** is one of the truly mysterious parts of computer science.
 
@@ -120,25 +117,21 @@ This might sound a bit complicated just by reading, so let's take a closer look 
   ]}
 />
 
-Now, we just need to follow three simple steps.
+Now we just need to follow three simple steps.
 
-1.  **Find all rows where the output value is 1.**
-    *   In the truth table above, the rows where the output is 1 are the first row (A=0, B=0) and the fourth row (A=1, B=1).
+First, **find all the rows in the truth table where the output is 1.** In the table above, the output is 1 for the first row (A = 0, B = 0) and the fourth row (A = 1, B = 1).
 
-2.  **Create an AND condition that represents each row.**
-    *   First row (A=0, B=0)
-        *   `Output is 1 when Input A is 0 AND Input B is 0`
-        *   `(Input A is 0) AND (Input B is 0)`
-        *   **(NOT A) AND (NOT B)**
-    *   Fourth row (A=1, B=1)
-        *   `Output is 1 when Input A is 1 AND Input B is 1`
-        *   **(A AND B)**
+Next, **create an AND condition for each of those rows.**
+The first row (A = 0, B = 0) means “the output is 1 when input A is 0 and input B is 0.”
+This can be written as: (A is 0) AND (B is 0), which is logically expressed as (NOT A) AND (NOT B).
+The fourth row (A = 1, B = 1) means “the output is 1 when input A is 1 and input B is 1,” which is simply A AND B.
 
-3.  **Connect each of these created AND conditions using an OR gate.**
+Finally, **connect these AND conditions using an OR gate.**
+The output is 1 when “the condition from the first row is satisfied” or “the condition from the fourth row is satisfied.”
+So, we combine the two expressions using OR.
 
-The cases where the output is 1 are when 'the condition of the first row is met' **OR** 'the condition of the fourth row is met'. Therefore, we connect the two expressions created above with an OR.
-
-The final logical expression is **`((NOT A) AND (NOT B)) OR (A AND B)`**.
+The final logical expression is:
+**((NOT A) AND (NOT B)) OR (A AND B)**
 
 <TruthTable
   labels={[

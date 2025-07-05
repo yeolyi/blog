@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
-import { generateStaticParams as generateStaticCsParams } from '@/app/[locale]/(mdx)/cs/[id]/page';
-import { generateStaticParams as generateStaticPostParams } from '@/app/[locale]/(mdx)/post/[id]/page';
+import { generateStaticParams as generateStaticCsParams } from '@/app/[locale]/cs/[id]/page';
+import { generateStaticParams as generateStaticPostParams } from '@/app/[locale]/post/[id]/page';
 import { routing } from '@/i18n/routing';
 
 const BASE_URL = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;

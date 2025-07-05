@@ -17,7 +17,7 @@ import { Slider } from '@/components/ui/slider';
 import changdeokgung from './assets/changdeokgung.jpg';
 
 // TODO: 고해상도로 도전해보기
-export default function PixelateImage() {
+export default function PixelateImage({ className }: { className?: string }) {
 	const t = useTranslations('ZeroAndOne.PixelateImage');
 	const [pixelCntPow, setPixelCntPow] = useState(5);
 
@@ -90,7 +90,7 @@ export default function PixelateImage() {
 	}, [originalLoaded, pixelCnt, canvasRef, imageRef, processImageWithWorker]);
 
 	return (
-		<Card>
+		<Card className={className}>
 			<CardHeader>
 				<CardTitle>{t('digitalizedImage')}</CardTitle>
 				<CardDescription>

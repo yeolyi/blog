@@ -2,6 +2,14 @@ import type { MDXComponents } from 'mdx/types';
 import Code from '@/components/mdx/Code';
 import Image from '@/components/mdx/Image';
 import Pre from '@/components/mdx/Pre';
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/table';
 import { Link } from '@/i18n/navigation';
 
 export function useMDXComponents(components: MDXComponents): MDXComponents {
@@ -19,10 +27,11 @@ export function useMDXComponents(components: MDXComponents): MDXComponents {
 		Image,
 		Code,
 		Link,
-		table: (props) => (
-			<div className='overflow-x-auto w-full'>
-				<table {...props} />
-			</div>
-		),
+		table: (props) => <Table {...props} />,
+		thead: (props) => <TableHeader {...props} />,
+		tbody: (props) => <TableBody {...props} />,
+		tr: (props) => <TableRow {...props} />,
+		th: (props) => <TableHead {...props} />,
+		td: (props) => <TableCell {...props} />,
 	};
 }

@@ -181,5 +181,18 @@
 			"title": "테이프",
 			"head": "▲ 헤드"
 		}
+	},
+	"MainPage": {
+		"title": "개발자이자 크리에이터인 이성열입니다.",
+		"developerBio": "「개발자」 이성열은 링크로 흔적을 남깁니다. 25년 봄 <snuLink>서울대학교</snuLink>에서 컴퓨터공학, 환경재료과학을 공부했습니다. 24년 여름 <kakaoLink>카카오</kakaoLink>에 프론트엔드 개발자로 입사했습니다. 24년 봄 새로운 컴퓨터공학부 홈페이지인 <cseLink>cse.snu.ac.kr</cseLink>의 프론트엔드를 개발해 배포했습니다. 23년 여름 <baekjoonLink>백준</baekjoonLink> 다이아 직전까지 갔으나 이제는 엄두가 안납니다. 21년 봄 스타트업 <skyonLink>스카이온</skyonLink> 에서 2년간 자유롭게 iOS/FE 경험을 쌓았으나 회사가 사라졌습니다. 20년 가을 <githubLink>github</githubLink> 계정을 만들었습니다.",
+		"creatorBio": "「크리에이터」 이성열은 가치를 어떻게 만들고 전달할지 끊임없이 고민합니다. 오늘도 <instagramLink>@yeol.dev</instagramLink>에서 개발자를 위한 컨텐츠를 23,055명에게 전달합니다. 학교에서 배운 컴퓨터공학의 경이로움을 <csLink>nand is more than just nand</csLink>에서 전달합니다.",
+		"csIntro": "개발자가 되는데 컴퓨터공학을 전공할 필요까지는 없다는 주장에 오랜 시간 고민했습니다. 하지만 시험삼아 들어본 컴퓨터 구조 수업에서 마음을 뺏겨 복수 전공을 시작했습니다. 시간이 지나 희미해지기 전에, 학교에서 컴퓨터 공학을 배우며 느낀 경이로움을 기록하고 전달합니다. 아주 간단한 것들이 모여 복잡한 일을 해내는 모습을 살펴보세요.",
+		"subscriberCount": "명과 함께하고 있습니다.",
+		"interactionIntro": "책이나 영상과 다르게 웹은 사용자와 인터렉션할 수 있습니다. 강의를 보며 직접 클릭하고 드래그하며 컴퓨터 공학의 핵심 원리들을 살펴보세요.",
+		"andGate": "AND 게이트",
+		"nandUniversality": "NAND의 보편성",
+		"nandToNot": "NAND로 NOT 만들기",
+		"reactSetupTitle": "리액트 소스코드 직접 수정해서 써보기",
+		"csZeroOneTitle": "컴퓨터의 손가락이 두 개인 이유"
 	}
 }

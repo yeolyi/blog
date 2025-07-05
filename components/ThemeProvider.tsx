@@ -8,7 +8,6 @@ function useMetaTheme() {
 		const updateThemeColor = () => {
 			const bgColor = window.getComputedStyle(document.body).backgroundColor;
 			const metaThemeColor = document.querySelector('meta[name=theme-color]');
-			console.log(metaThemeColor);
 			metaThemeColor?.setAttribute('content', bgColor);
 		};
 

@@ -36,7 +36,7 @@ export const NorNode = ({ id, data, selected }: NodeProps<'nor'>) => {
 	})();
 
 	return (
-		<div className='relative'>
+		<div className='relative text-foreground'>
 			<svg
 				width='104'
 				height='64'
@@ -49,14 +49,14 @@ export const NorNode = ({ id, data, selected }: NodeProps<'nor'>) => {
 				<title id='orGateTitle'>NOR Gate</title>
 				<path
 					d='M0,0 Q85,0 96,32 Q85,64 0,64 Q8,32 0,0 Z'
-					stroke='white'
+					stroke='currentColor'
 					strokeWidth={selected ? 2 : 1}
 				/>
 				<circle
 					cx='96'
 					cy='32'
 					r='8'
-					stroke='white'
+					stroke='currentColor'
 					strokeWidth={selected ? 2 : 1}
 				/>
 			</svg>

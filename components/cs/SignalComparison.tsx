@@ -94,15 +94,15 @@ export default function SignalComparison(): React.ReactElement {
 			<CardContent>
 				<div className='flex flex-col md:flex-row items-start gap-6'>
 					<div className='w-full md:w-1/2'>
-						<p className='font-bold text-md mb-2'>
-							디지털 신호 <span className='text-sm'>목표값 1</span>
+						<p className='mb-2'>
+							디지털 신호 <span className='text-muted-foreground'>목표값 1</span>
 						</p>
 						<SignalVisualizer value={noisyBinarySignal} range={[0.5, 1]} />
 					</div>
 
 					<div className='w-full md:w-1/2'>
-						<p className='font-bold text-md'>
-							아날로그 신호 <span className='text-sm mb-2'>목표값 5</span>
+						<p>
+							아날로그 신호 <span className='text-muted-foreground'>목표값 5</span>
 						</p>
 						<SignalVisualizer value={noisyDecimalSignal} range={[0.45, 0.55]} />
 					</div>

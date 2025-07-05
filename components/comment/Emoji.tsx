@@ -83,7 +83,7 @@ export default function Emoji({ postId }: { postId: string }) {
 		};
 
 	return (
-		<div className='flex flex-wrap gap-2 not-prose'>
+		<div className='flex flex-wrap gap-4 not-prose'>
 			{reactionArr.map(({ emoji, count, user_reacted }) => (
 				<Toggle
 					key={emoji}

@@ -18,6 +18,7 @@ import {
 	ReactFlowProvider,
 } from '@xyflow/react';
 import { createStore, Provider } from 'jotai';
+import { useTheme } from 'next-themes';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
 	type RegistryKey,
@@ -63,6 +64,7 @@ function Flow({
 	const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
 
 	const [touchOnlyState, setTouchOnlyState] = useTouchDeviceState();
+	const { theme } = useTheme();
 
 	useEffect(() => {
 		if (initialJSON) {
@@ -159,10 +161,11 @@ function Flow({
 			<ReactFlowProvider>
 				<div className='flex flex-col gap-2'>
 					<div
-						className='not-prose font-sans overflow-hidden'
+						className='font-sans overflow-hidden'
 						style={{ height: `${height}px` }}
 					>
 						<ReactFlow
+							className='border dark:border-0 border-border'
 							onInit={setRfInstance}
 							id={id}
 							nodes={nodes}
@@ -170,7 +173,7 @@ function Flow({
 							onNodesChange={onNodesChange}
 							onEdgesChange={onEdgesChange}
 							onConnect={onConnect}
-							colorMode='dark'
+							colorMode={theme === 'light' ? 'light' : 'dark'}
 							nodeTypes={nodeTypes}
 							defaultEdgeOptions={{
 								type: ConnectionLineType.Bezier,
@@ -178,7 +181,6 @@ function Flow({
 								selectable: true,
 							}}
 							connectionLineType={ConnectionLineType.Bezier}
-							connectionLineStyle={{ stroke: 'lightgray' }}
 							fitView
 							fitViewOptions={minZoomOptions}
 							proOptions={{ hideAttribution: true }}

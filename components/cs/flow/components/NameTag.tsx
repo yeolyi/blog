@@ -25,7 +25,7 @@ export default function NameTag({ atom }: { atom: OutputAtom }) {
 							handleLabelChange(e.currentTarget.value);
 						}
 					}}
-					className='h-4 text-xs bg-white text-black px-1 border-none outline-none w-full'
+					className='h-4 text-xs bg-background text-foreground px-1 border-none outline-none w-full'
 					// biome-ignore lint/a11y/noAutofocus: TODO 대체제 찾기
 					autoFocus
 				/>
@@ -38,11 +38,11 @@ export default function NameTag({ atom }: { atom: OutputAtom }) {
 					className='cursor-pointer shrink-0'
 				>
 					{label ? (
-						<span className='text-xs font-mono min-w-fit text-white'>
+						<span className='text-xs font-mono min-w-fit text-foreground'>
 							{label.toString()}
 						</span>
 					) : (
-						<Tag size={12} color='white' />
+						<Tag size={12} className='text-foreground' />
 					)}
 				</button>
 			)}

@@ -79,7 +79,7 @@ export default function TruthTable({
 	};
 
 	return (
-		<Card className='w-fit max-w-full'>
+		<Card>
 			<CardHeader>
 				<CardTitle>진리표</CardTitle>
 				{description && <CardDescription>{description}</CardDescription>}
@@ -112,20 +112,12 @@ export default function TruthTable({
 					</TableHeader>
 					<TableBody>
 						{data.map((row, rowIdx) => (
-							<TableRow key={`row-${rowIdx}`}>
+							<TableRow
+								key={`row-${rowIdx}`}
+								className={clsx(rowIdx === matchingRowIndex && 'bg-accent')}
+							>
 								{row.map((cell, colIdx) => (
-									<TableCell
-										key={`cell-${rowIdx}-${colIdx}`}
-										className={clsx(
-											'text-center',
-											rowIdx === matchingRowIndex &&
-												(labels[colIdx].type === 'output'
-													? cell
-														? 'bg-success text-success-foreground'
-														: 'bg-fail text-fail-foreground'
-													: ''),
-										)}
-									>
+									<TableCell key={`cell-${rowIdx}-${colIdx}`} className='text-center'>
 										{cell ? '1' : '0'}
 									</TableCell>
 								))}

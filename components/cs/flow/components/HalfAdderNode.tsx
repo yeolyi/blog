@@ -29,14 +29,14 @@ export const HalfAdderNode = (props: NodeProps<'halfAdder'>) => {
 	);
 
 	const valueToColor = (value: OutputValue | null) => {
-		if (value === null) return 'text-white';
+		if (value === null) return 'text-foreground';
 		return value ? 'text-green-500' : 'text-red-500';
 	};
 
 	return (
 		<div
 			className={clsx(
-				'relative w-32 h-32 box-content flex items-center justify-center outline outline-white',
+				'relative w-32 h-32 box-content flex items-center justify-center outline outline-black dark:outline-white',
 				props.selected ? 'outline-2' : 'outline-1',
 			)}
 		>
@@ -83,7 +83,7 @@ export const HalfAdderNode = (props: NodeProps<'halfAdder'>) => {
 			>
 				CARRY
 			</p>
-			<p className='absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-white text-base text-center'>
+			<p className='absolute top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-foreground text-base text-center'>
 				HALF ADDER
 			</p>
 		</div>

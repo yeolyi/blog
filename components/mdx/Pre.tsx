@@ -18,11 +18,14 @@ export default function Pre({
 	);
 
 	return (
-		<pre
-			{...props}
-			ref={ref}
-			className={clsx(props.className, 'relative shadow-sm dark:shadow-none')}
-		>
+		<div className='relative'>
+			<pre
+				{...props}
+				ref={ref}
+				className={clsx(props.className, 'p-4 overflow-x-auto')}
+			>
+				{children}
+			</pre>
 			<Button
 				variant='ghost'
 				size='icon'
@@ -35,7 +38,6 @@ export default function Pre({
 			>
 				{isCopied ? <CheckIcon /> : <Clipboard />}
 			</Button>
-			{children}
-		</pre>
+		</div>
 	);
 }

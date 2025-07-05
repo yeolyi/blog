@@ -38,7 +38,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
 	const [state, formAction, isPending] = useActionState(onSubmit, undefined);
 
 	return (
-		<form action={formAction} className='space-y-3 relative not-prose'>
+		<form action={formAction} className='relative'>
 			{state && (
 				<p className='absolute right-0 -top-1 -translate-y-full text-orange-600'>
 					{state}
@@ -55,7 +55,7 @@ export default function CommentForm({ postId }: CommentFormProps) {
 				type='submit'
 				variant='secondary'
 				disabled={isPending}
-				className='absolute bottom-3 right-3'
+				className='absolute bottom-4 right-4'
 			>
 				<Pencil />
 				{isPending ? t('submitting') : t('submit')}
