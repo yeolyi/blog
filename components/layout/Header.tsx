@@ -1,6 +1,7 @@
 'use client';
 
 import {
+	Copy,
 	Github,
 	Globe,
 	Instagram,
@@ -9,6 +10,7 @@ import {
 	LogOut,
 	Menu,
 	Moon,
+	Share2,
 	Sun,
 	SunMoon,
 } from 'lucide-react';
@@ -30,6 +32,48 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { useSessionStore } from '@/store/session';
+
+function useShare() {
+	const t = useTranslations();
+
+	async function handleShare() {
+		const url = window.location.href;
+		const title = document.title;
+
+		if (!navigator.share) return;
+
+		try {
+			await navigator.share({
+				title,
+				url,
+			});
+		} catch (err) {
+			if (err instanceof DOMException && err.name === 'AbortError') {
+				return;
+			}
+			console.error(err);
+		}
+	}
+
+	return handleShare;
+}
+
+function ShareButton({ className }: { className?: string }) {
+	const handleShare = useShare();
+	const t = useTranslations();
+
+	return (
+		<Button
+			variant='ghost'
+			size='icon'
+			onClick={handleShare}
+			className={className}
+			title={t('common.share')}
+		>
+			<Share2 className='size-4' />
+		</Button>
+	);
+}
 
 function GithubButton() {
 	return (
@@ -206,6 +250,8 @@ function LanguageToggleButton() {
 function DesktopHeaderActions() {
 	return (
 		<div className='sm:flex hidden items-center gap-3'>
+			{/* 공유 버튼 */}
+			<ShareButton />
 			{/* 깃허브 버튼 */}
 			<GithubButton />
 
@@ -225,6 +271,9 @@ function DesktopHeaderActions() {
 }
 
 function MobileHeaderActions() {
+	const handleShare = useShare();
+	const t = useTranslations();
+
 	return (
 		<div className='sm:hidden flex items-center gap-3'>
 			{/* 인스타그램 버튼 */}
@@ -241,6 +290,10 @@ function MobileHeaderActions() {
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent className='w-40' align='end'>
+					<DropdownMenuItem onClick={handleShare} className='flex items-center'>
+						<Share2 className='size-4 mr-2' />
+						{t('common.share')}
+					</DropdownMenuItem>
 					<DropdownMenuItem asChild>
 						<Link
 							href='https://github.com/yeolyi'
@@ -269,9 +322,9 @@ export default function Header() {
 	const t = useTranslations('Header');
 
 	return (
-		<header className='sticky top-0 left-0 right-0 flex items-center justify-between py-3.5 px-4 z-50 bg-background/50 backdrop-blur-3xl'>
+		<header className='sticky top-0 left-0 right-0 flex items-center justify-between py-7 px-4 z-50'>
 			<Button variant='ghost' asChild>
-				<Link href='/' className='font-extrabold text-2xl'>
+				<Link href='/' className='font-extrabold pl-0'>
 					{t('title')}
 				</Link>
 			</Button>

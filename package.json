@@ -36,6 +36,7 @@
 		"clsx": "^2.1.1",
 		"dayjs": "^1.11.13",
 		"embla-carousel-react": "^8.6.0",
+		"es-hangul": "^2.3.5",
 		"es-toolkit": "^1.35.0",
 		"jotai": "^2.12.3",
 		"jotai-effect": "^2.0.2",

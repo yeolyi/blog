@@ -193,5 +193,8 @@
 		"nandToNot": "Making NOT with NAND",
 		"reactSetupTitle": "Directly Modifying and Using React Source Code",
 		"csZeroOneTitle": "Why Computers Only Have Two Fingers"
+	},
+	"common": {
+		"share": "Share"
 	}
 }

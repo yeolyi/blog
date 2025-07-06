@@ -8,6 +8,8 @@ import EmailSubscribe from '@/components/cs/EmailSubscribe';
 import Flow from '@/components/cs/flow';
 import PixelateImage from '@/components/cs/PixelateImage';
 import TruthTable from '@/components/cs/TruthTable';
+import InstagramDescription from '@/components/InstagramDescription';
+import Marquee from '@/components/Marquee';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
@@ -28,6 +30,12 @@ import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
 import AddingTuringMachine from '@/mdx/cs/turing-machine/components/AddingTuringMachine';
 import { getPostIds } from '@/utils/path';
 import me from './assets/me.jpg';
+import meme1 from './assets/meme1.jpeg';
+import meme2 from './assets/meme2.jpeg';
+import meme3 from './assets/meme3.jpeg';
+import meme4 from './assets/meme4.png';
+import meme5 from './assets/meme5.jpeg';
+import meme6 from './assets/meme6.jpeg';
 
 export type PostType = {
 	titleKey: string;
@@ -137,9 +145,7 @@ export default async function Home({
 					</p>
 				</div>
 			</div>
-
 			<Separator />
-
 			<div className='flex flex-wrap'>
 				{sortedArr.map(({ href, title, date }) => (
 					<Button
@@ -157,24 +163,10 @@ export default async function Home({
 					</Button>
 				))}
 			</div>
-
 			<Separator />
-
-			<div
-				className='relative flex overflow-hidden text-6xl font-extrabold'
-				id='cs'
-			>
-				<div className='animate-marquee whitespace-pre'>
-					<span>nand is more than just </span>
-					<span>nand is more than just </span>
-				</div>
-
-				<div className='absolute top-0 animate-marquee2 whitespace-pre'>
-					<span>nand is more than just </span>
-					<span>nand is more than just </span>
-				</div>
+			<div className='flex flex-col gap-4 text-center'>
+				<Marquee>nand is more than just </Marquee>
 			</div>
-
 			<div className='flex flex-col gap-7'>
 				<p className='w-full max-w-2xl'>{tMain('csIntro')}</p>
 
@@ -266,6 +258,39 @@ export default async function Home({
 					<GhostButton>{tCS('os6Title')}</GhostButton>
 				</p>
 			</div>
+			<Separator />
+			<InstagramDescription />
+			<p className='w-full max-w-2xl'>
+				'공부 기록을 누군가 보면 더 열심히 하지 않을까?'라는 생각에 시작했지만
+				이제는 무척 커져버린 개발{' '}
+				<LinkButton href='https://instagram.com/yeol.dev'>인스타그램</LinkButton>{' '}
+				계정입니다. 시작이 시작인지라 본명을 계정명으로 썼는데 종종 회사 분들께
+				들키기도 합니다. 계정을 시작한지 몇 년이 됐지만 어떤 분위기의 계정이며 어떤
+				컨텐츠를 올려야할지 스스로도 잘 모르겠습니다. 설명은 못해도 마음에 든
+				컨텐츠를 소개할 수는 있기에 몇 개를 아래에 공유합니다.
+			</p>
+			<Carousel opts={{ loop: true, align: 'start', watchDrag: false }}>
+				<CarouselContent className='-pl-4'>
+					<CarouselItem className='pl-4 max-w-sm'>
+						<Image src={meme1} alt='' className='w-full h-full object-cover' />
+					</CarouselItem>
+					<CarouselItem className='pl-4 max-w-sm'>
+						<Image src={meme2} alt='' className='w-full h-full object-cover' />
+					</CarouselItem>
+					<CarouselItem className='pl-4 max-w-sm'>
+						<Image
+							src={meme3}
+							alt=''
+							className='w-full h-full object-contain bg-white'
+						/>
+					</CarouselItem>
+					<CarouselItem className='pl-4 max-w-sm'>
+						<Image src={meme4} alt='' className='w-full h-full object-cover' />
+					</CarouselItem>
+				</CarouselContent>
+				<CarouselNext />
+				<CarouselPrevious />
+			</Carousel>
 		</div>
 	);
 }
