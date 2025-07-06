@@ -20,7 +20,7 @@ export default function InstagramDescription() {
 	}, [descriptions.length]);
 
 	return (
-		<div className='relative h-[50dvh] w-full px-16'>
+		<div className='relative h-[50svh] w-full px-16'>
 			{descriptions.map((description, idx) => (
 				<p
 					key={idx}
