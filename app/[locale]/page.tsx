@@ -107,6 +107,7 @@ export default async function Home({
 				<Image
 					src={me}
 					alt=''
+					placeholder='blur'
 					className='object-cover w-full h-full aspect-square not-prose md:w-1/2'
 				/>
 				<div className='flex flex-col gap-7 md:w-1/2'>
@@ -268,16 +269,36 @@ export default async function Home({
 			<Carousel opts={{ loop: true, align: 'start', watchDrag: false }}>
 				<CarouselContent className='-pl-4'>
 					<CarouselItem className='pl-4 max-w-sm'>
-						<Image src={meme1} alt='' className='w-full h-full object-cover' />
+						<Image
+							src={meme1}
+							alt=''
+							placeholder='blur'
+							className='w-full h-full object-cover'
+						/>
 					</CarouselItem>
 					<CarouselItem className='pl-4 max-w-sm'>
-						<Image src={meme2} alt='' className='w-full h-full object-cover' />
+						<Image
+							src={meme2}
+							alt=''
+							placeholder='blur'
+							className='w-full h-full object-cover'
+						/>
 					</CarouselItem>
 					<CarouselItem className='pl-4 max-w-sm'>
-						<Image src={meme3} alt='' className='w-full h-full object-cover' />
+						<Image
+							src={meme3}
+							alt=''
+							placeholder='blur'
+							className='w-full h-full object-cover'
+						/>
 					</CarouselItem>
 					<CarouselItem className='pl-4 max-w-sm'>
-						<Image src={meme4} alt='' className='w-full h-full object-cover' />
+						<Image
+							src={meme4}
+							alt=''
+							placeholder='blur'
+							className='w-full h-full object-cover'
+						/>
 					</CarouselItem>
 				</CarouselContent>
 				<CarouselNext />
