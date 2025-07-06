@@ -206,7 +206,7 @@
 		"7": " goes beyond nationality through code.",
 		"8": " doesn't call something 'fun' just because it's fun.",
 		"9": " finds development occasionally difficult.",
-		"10": " omits non-important code.",
+		"22": " omits non-important code.",
 		"11": " sometimes does things manually even when AI excels.",
 		"12": " does not use drop shadows.",
 		"13": " believes what's bad matters more than what's good.",
@@ -218,7 +218,7 @@
 		"19": " does not want to become a translator.",
 		"20": " doesn't want to post 10 times a day.",
 		"21": " solves coding tests personally even if AI beats me.",
-		"22": " finds development occasionally enjoyable.",
+		"10": " finds development occasionally enjoyable.",
 		"23": " doesn't say 'I hate it' even when hating something."
 	},
 	"common": {

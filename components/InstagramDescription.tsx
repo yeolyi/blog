@@ -14,7 +14,7 @@ export default function InstagramDescription() {
 	useEffect(() => {
 		const intervalId = setInterval(() => {
 			setIndex((prevIndex) => (prevIndex + 1) % descriptions.length);
-		}, 1500);
+		}, 1200);
 
 		return () => clearInterval(intervalId);
 	}, [descriptions.length]);
