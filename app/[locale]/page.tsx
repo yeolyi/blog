@@ -266,7 +266,7 @@ export default async function Home({
 					),
 				})}
 			</p>
-			<Carousel opts={{ loop: true, align: 'start', watchDrag: false }}>
+			<Carousel opts={{ loop: true, align: 'start' }}>
 				<CarouselContent className='-pl-4'>
 					<CarouselItem className='pl-4 max-w-sm'>
 						<Image
@@ -289,7 +289,7 @@ export default async function Home({
 							src={meme3}
 							alt=''
 							placeholder='blur'
-							className='w-full h-full object-cover'
+							className='w-full h-full object-contain bg-[#1E2228]'
 						/>
 					</CarouselItem>
 					<CarouselItem className='pl-4 max-w-sm'>

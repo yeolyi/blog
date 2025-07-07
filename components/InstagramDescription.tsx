@@ -14,13 +14,13 @@ export default function InstagramDescription() {
 	useEffect(() => {
 		const intervalId = setInterval(() => {
 			setIndex((prevIndex) => (prevIndex + 1) % descriptions.length);
-		}, 1200);
+		}, 1500);
 
 		return () => clearInterval(intervalId);
 	}, [descriptions.length]);
 
 	return (
-		<div className='relative h-[50svh] w-full px-16'>
+		<div className='relative h-[50vh] w-full px-16'>
 			{descriptions.map((description, idx) => (
 				<p
 					key={idx}
