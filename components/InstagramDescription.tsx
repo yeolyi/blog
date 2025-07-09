@@ -1,13 +1,14 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import { useLocale } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { Link } from '@/i18n/navigation';
+import { descriptionsMap } from './descriptions';
 
 export default function InstagramDescription() {
-	const t = useTranslations('InstagramDescription');
-	// @ts-expect-error 맞음
-	const descriptions = Array.from({ length: 24 }, (_, idx) => t(String(idx)));
+	const locale = useLocale();
+	// fallback to 'ko' if locale not found
+	const descriptions = descriptionsMap[locale] ?? descriptionsMap.ko;
 
 	const [index, setIndex] = useState(0);
 
@@ -21,7 +22,7 @@ export default function InstagramDescription() {
 
 	return (
 		<div className='relative h-[50vh] w-full px-16'>
-			{descriptions.map((description, idx) => (
+			{descriptions.map((description: string, idx: number) => (
 				<p
 					key={idx}
 					suppressHydrationWarning

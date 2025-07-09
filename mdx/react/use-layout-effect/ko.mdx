@@ -1,0 +1,567 @@
+## mount
+
+```js
+// useEffect
+return mountEffectImpl(
+  PassiveEffect | PassiveStaticEffect,
+  HookPassive,
+  create,
+  deps
+);
+
+// useLayoutEffect
+return mountEffectImpl(fiberFlags, HookLayout, create, deps);
+```
+
+```js
+// ReactHookEffectTags.js
+export type HookFlags = number;
+
+export const NoFlags = /*   */ 0b0000;
+
+// Represents whether effect should fire.
+export const HasEffect = /* */ 0b0001;
+
+// [!code highlight:4]
+// Represents the phase in which the effect (not the clean-up) fires.
+export const Insertion = /*  */ 0b0010;
+export const Layout = /*    */ 0b0100;
+export const Passive = /*   */ 0b1000;
+```
+
+Effect means side effects, which are supposed to run, I guess that’s why they are placed in updateQueue, since I don’t see why there could not be a different place.
+
+```js
+function pushEffect(tag, create, destroy, deps) {
+  const eff = {
+    tag,
+    create,
+    destroy,
+    deps,
+    next: null, // 원형 연결 리스트의 다음 포인터
+  };
+
+  let queue = currentlyRenderingFiber.updateQueue;
+
+  if (queue === null) {
+    // 큐가 없으면 새로 만들고 현재 effect 하나만 넣음
+    queue = createFunctionComponentUpdateQueue();
+    currentlyRenderingFiber.updateQueue = queue;
+
+    eff.next = eff; // 자기 자신을 가리키는 원형 리스트
+    queue.lastEffect = eff;
+  } else {
+    const last = queue.lastEffect;
+
+    if (last === null) {
+      // 큐는 있지만 효과가 비어 있음
+      eff.next = eff;
+      queue.lastEffect = eff;
+    } else {
+      // 원형 리스트에 새 effect 삽입
+      const first = last.next;
+      last.next = eff;
+      eff.next = first;
+      queue.lastEffect = eff;
+    }
+  }
+
+  return eff;
+}
+```
+
+## update
+
+We can see there is change detection by areHookInputsEqual(nextDeps, prevDeps), either the props changes or not, memoizedState is set with the effect, but the flags are different, if there is no change, then HookHasEffect is not added.
+
+## when do layout effects actually get run?
+
+After getting the diffing result from comparing two fiber tree(reconciliation), we’ll reflect the changes to host DOM in committing phase. We can easily find the code that initiated the flushing of passive effects.
+
+useEffect와 useLayoutEffect는 scheduleCallback으로 감싸였냐 아니냐 차이가 있다.
+
+```js
+function commitRootImpl(
+  root: FiberRoot,
+  recoverableErrors: null | Array<CapturedValue<mixed>>,
+  transitions: Array<Transition> | null,
+  renderPriorityLevel: EventPriority,
+) {
+  do {
+    // `flushPassiveEffects` will call `flushSyncUpdateQueue` at the end, which
+    // means `flushPassiveEffects` will sometimes result in additional
+    // passive effects. So we need to keep flushing in a loop until there are
+    // no more pending effects.
+    // TODO: Might be better if `flushPassiveEffects` did not automatically
+    // flush synchronous work at the end, to avoid factoring hazards like this.
+    flushPassiveEffects();
+  } while (rootWithPendingPassiveEffects !== null);
+  flushRenderPhaseStrictModeWarningsInDEV();
+
+  if ((executionContext & (RenderContext | CommitContext)) !== NoContext) {
+    throw new Error('Should not already be working.');
+  }
+
+  const finishedWork = root.finishedWork;
+  const lanes = root.finishedLanes;
+
+  root.finishedWork = null;
+  root.finishedLanes = NoLanes;
+
+  if (finishedWork === root.current) {
+    throw new Error(
+      'Cannot commit the same tree as before. This error is likely caused by ' +
+        'a bug in React. Please file an issue.',
+    );
+  }
+
+  // commitRoot never returns a continuation; it always finishes synchronously.
+  // So we can clear these now to allow a new callback to be scheduled.
+  root.callbackNode = null;
+  root.callbackPriority = NoLane;
+
+  // Check which lanes no longer have any work scheduled on them, and mark
+  // those as finished.
+  let remainingLanes = mergeLanes(finishedWork.lanes, finishedWork.childLanes);
+
+  // Make sure to account for lanes that were updated by a concurrent event
+  // during the render phase; don't mark them as finished.
+  const concurrentlyUpdatedLanes = getConcurrentlyUpdatedLanes();
+  remainingLanes = mergeLanes(remainingLanes, concurrentlyUpdatedLanes);
+
+  markRootFinished(root, remainingLanes);
+
+  if (root === workInProgressRoot) {
+    // We can reset these now that they are finished.
+    workInProgressRoot = null;
+    workInProgress = null;
+    workInProgressRootRenderLanes = NoLanes;
+  } else {
+    // This indicates that the last root we worked on is not the same one that
+    // we're committing now. This most commonly happens when a suspended root
+    // times out.
+  }
+
+  // If there are pending passive effects, schedule a callback to process them.
+  // Do this as early as possible, so it is queued before anything else that
+  // might get scheduled in the commit phase. (See #16714.)
+  // TODO: Delete all other places that schedule the passive effect callback
+  // They're redundant.
+  if (
+    (finishedWork.subtreeFlags & PassiveMask) !== NoFlags ||
+    (finishedWork.flags & PassiveMask) !== NoFlags
+  ) {
+    if (!rootDoesHavePassiveEffects) {
+      rootDoesHavePassiveEffects = true;
+      pendingPassiveEffectsRemainingLanes = remainingLanes;
+      // workInProgressTransitions might be overwritten, so we want
+      // to store it in pendingPassiveTransitions until they get processed
+      // We need to pass this through as an argument to commitRoot
+      // because workInProgressTransitions might have changed between
+      // the previous render and commit if we throttle the commit
+      // with setTimeout
+      pendingPassiveTransitions = transitions;
+      scheduleCallback(NormalSchedulerPriority, () => {
+        // [!code highlight:1]
+        flushPassiveEffects();
+        // This render triggered passive effects: release the root cache pool
+        // *after* passive effects fire to avoid freeing a cache pool that may
+        // be referenced by a node in the tree (HostRoot, Cache boundary etc)
+        return null;
+      });
+    }
+  }
+
+  // Check if there are any effects in the whole tree.
+  // TODO: This is left over from the effect list implementation, where we had
+  // to check for the existence of `firstEffect` to satisfy Flow. I think the
+  // only other reason this optimization exists is because it affects profiling.
+  // Reconsider whether this is necessary.
+  const subtreeHasEffects =
+    (finishedWork.subtreeFlags &
+      (BeforeMutationMask | MutationMask | LayoutMask | PassiveMask)) !==
+    NoFlags;
+  const rootHasEffect =
+    (finishedWork.flags &
+      (BeforeMutationMask | MutationMask | LayoutMask | PassiveMask)) !==
+    NoFlags;
+
+  if (subtreeHasEffects || rootHasEffect) {
+    const prevTransition = ReactCurrentBatchConfig.transition;
+    ReactCurrentBatchConfig.transition = null;
+    const previousPriority = getCurrentUpdatePriority();
+    setCurrentUpdatePriority(DiscreteEventPriority);
+
+    const prevExecutionContext = executionContext;
+    executionContext |= CommitContext;
+
+    // Reset this to null before calling lifecycles
+    ReactCurrentOwner.current = null;
+
+    // The commit phase is broken into several sub-phases. We do a separate pass
+    // of the effect list for each phase: all mutation effects come before all
+    // layout effects, and so on.
+
+    // The first phase a "before mutation" phase. We use this phase to read the
+    // state of the host tree right before we mutate it. This is where
+    // getSnapshotBeforeUpdate is called.
+    const shouldFireAfterActiveInstanceBlur = commitBeforeMutationEffects(
+      root,
+      finishedWork,
+    );
+
+    // [!code highlight:2]
+    // The next phase is the mutation phase, where we mutate the host tree.
+    commitMutationEffects(root, finishedWork, lanes);
+
+    if (enableCreateEventHandleAPI) {
+      if (shouldFireAfterActiveInstanceBlur) {
+        afterActiveInstanceBlur();
+      }
+    }
+    resetAfterCommit(root.containerInfo);
+
+    // The work-in-progress tree is now the current tree. This must come after
+    // the mutation phase, so that the previous tree is still current during
+    // componentWillUnmount, but before the layout phase, so that the finished
+    // work is current during componentDidMount/Update.
+    root.current = finishedWork;
+
+    // [!code highlight:1]
+    commitLayoutEffects(finishedWork, root, lanes);
+
+    // Tell Scheduler to yield at the end of the frame, so the browser has an
+    // opportunity to paint.
+    requestPaint();
+
+    executionContext = prevExecutionContext;
+
+    // Reset the priority to the previous non-sync value.
+    setCurrentUpdatePriority(previousPriority);
+    ReactCurrentBatchConfig.transition = prevTransition;
+  } else {
+    // No effects.
+    root.current = finishedWork;
+  }
+
+  const rootDidHavePassiveEffects = rootDoesHavePassiveEffects;
+
+  if (rootDoesHavePassiveEffects) {
+    // This commit has passive effects. Stash a reference to them. But don't
+    // schedule a callback until after flushing layout work.
+    rootDoesHavePassiveEffects = false;
+    rootWithPendingPassiveEffects = root;
+    pendingPassiveEffectsLanes = lanes;
+  } else {
+    // There were no passive effects, so we can immediately release the cache
+    // pool for this render.
+    releaseRootPooledCache(root, remainingLanes);
+  }
+
+  // Read this again, since an effect might have updated it
+  remainingLanes = root.pendingLanes;
+
+  // Always call this before exiting `commitRoot`, to ensure that any
+  // additional work on this root is scheduled.
+  ensureRootIsScheduled(root, now());
+
+  if (recoverableErrors !== null) {
+    // There were errors during this render, but recovered from them without
+    // needing to surface it to the UI. We log them here.
+    const onRecoverableError = root.onRecoverableError;
+    for (let i = 0; i < recoverableErrors.length; i++) {
+      const recoverableError = recoverableErrors[i];
+      const componentStack = recoverableError.stack;
+      const digest = recoverableError.digest;
+      onRecoverableError(recoverableError.value, {componentStack, digest});
+    }
+  }
+
+  if (hasUncaughtError) {
+    hasUncaughtError = false;
+    const error = firstUncaughtError;
+    firstUncaughtError = null;
+    throw error;
+  }
+
+  // If the passive effects are the result of a discrete render, flush them
+  // synchronously at the end of the current task so that the result is
+  // immediately observable. Otherwise, we assume that they are not
+  // order-dependent and do not need to be observed by external systems, so we
+  // can wait until after paint.
+  // TODO: We can optimize this by not scheduling the callback earlier. Since we
+  // currently schedule the callback in multiple places, will wait until those
+  // are consolidated.
+  if (
+    includesSomeLane(pendingPassiveEffectsLanes, SyncLane) &&
+    root.tag !== LegacyRoot
+  ) {
+    flushPassiveEffects();
+  }
+
+  // Read this again, since a passive effect might have updated it
+  remainingLanes = root.pendingLanes;
+  if (includesSomeLane(remainingLanes, (SyncLane: Lane))) {
+    if (enableProfilerTimer && enableProfilerNestedUpdatePhase) {
+      markNestedUpdateScheduled();
+    }
+
+    // Count the number of times the root synchronously re-renders without
+    // finishing. If there are too many, it indicates an infinite update loop.
+    if (root === rootWithNestedUpdates) {
+      nestedUpdateCount++;
+    } else {
+      nestedUpdateCount = 0;
+      rootWithNestedUpdates = root;
+    }
+  } else {
+    nestedUpdateCount = 0;
+  }
+
+  // If layout work was scheduled, flush it now.
+  flushSyncCallbacks();
+
+  return null;
+}
+```
+
+scheduleCallback이란?
+
+```js
+function scheduleCallback(priorityLevel, callback) {
+  // In production, always call Scheduler. This function will be stripped out.
+  return Scheduler_scheduleCallback(priorityLevel, callback);
+}
+```
+
+```js
+export const scheduleCallback = Scheduler.unstable_scheduleCallback;
+```
+
+```js
+// Times out immediately
+var IMMEDIATE_PRIORITY_TIMEOUT = -1;
+// Eventually times out
+var USER_BLOCKING_PRIORITY_TIMEOUT = 250;
+var NORMAL_PRIORITY_TIMEOUT = 5000;
+var LOW_PRIORITY_TIMEOUT = 10000;
+// Never times out
+var IDLE_PRIORITY_TIMEOUT = maxSigned31BitInt;
+
+function unstable_scheduleCallback(priorityLevel, callback, options) {
+  var currentTime = getCurrentTime();
+
+  var startTime;
+  if (typeof options === "object" && options !== null) {
+    var delay = options.delay;
+    if (typeof delay === "number" && delay > 0) {
+      startTime = currentTime + delay;
+    } else {
+      startTime = currentTime;
+    }
+  } else {
+    startTime = currentTime;
+  }
+
+  var timeout;
+  switch (priorityLevel) {
+    case ImmediatePriority:
+      timeout = IMMEDIATE_PRIORITY_TIMEOUT;
+      break;
+    case UserBlockingPriority:
+      timeout = USER_BLOCKING_PRIORITY_TIMEOUT;
+      break;
+    case IdlePriority:
+      timeout = IDLE_PRIORITY_TIMEOUT;
+      break;
+    case LowPriority:
+      timeout = LOW_PRIORITY_TIMEOUT;
+      break;
+    case NormalPriority:
+    default:
+      timeout = NORMAL_PRIORITY_TIMEOUT;
+      break;
+  }
+
+  var expirationTime = startTime + timeout;
+
+  var newTask = {
+    id: taskIdCounter++,
+    callback,
+    priorityLevel,
+    startTime,
+    expirationTime,
+    sortIndex: -1,
+  };
+
+  if (startTime > currentTime) {
+    // This is a delayed task.
+    newTask.sortIndex = startTime;
+    push(timerQueue, newTask);
+    if (peek(taskQueue) === null && newTask === peek(timerQueue)) {
+      // All tasks are delayed, and this is the task with the earliest delay.
+      if (isHostTimeoutScheduled) {
+        // Cancel an existing timeout.
+        cancelHostTimeout();
+      } else {
+        isHostTimeoutScheduled = true;
+      }
+      // Schedule a timeout.
+      requestHostTimeout(handleTimeout, startTime - currentTime);
+    }
+  } else {
+    // taskQueue는 힙, newTask는 노드
+    // sortIndex가 우선순위
+    // [!code highlight:8]
+    newTask.sortIndex = expirationTime;
+    push(taskQueue, newTask);
+    // Schedule a host callback, if needed. If we're already performing work,
+    // wait until the next time we yield.
+    if (!isHostCallbackScheduled && !isPerformingWork) {
+      isHostCallbackScheduled = true;
+      requestHostCallback(flushWork);
+    }
+  }
+
+  return newTask;
+}
+```
+
+우선순위 큐로 노드들을 관리. 노드에 콜백이 포함됨.
+
+```js
+export function push(heap: Heap, node: Node): void {
+  const index = heap.length;
+  heap.push(node);
+  siftUp(heap, node, index);
+}
+
+// sortIndex가 우선순위
+function compare(a, b) {
+  // Compare sort index first, then task id.
+  const diff = a.sortIndex - b.sortIndex;
+  return diff !== 0 ? diff : a.id - b.id;
+}
+```
+
+그럼 push말고 pop하는 코드는 어디에? Scheduler의 workLoop 함수에서 pop을 호출한다. 대신 pop의 반환값을 쓰지는 않고 peek과 pop을 따로 한다. 일단 내용물 확인하고 맞다면 pop을 하는 느낌?
+
+```js
+function workLoop(hasTimeRemaining, initialTime) {
+  let currentTime = initialTime;
+  advanceTimers(currentTime);
+  // [!code highlight:1]
+  currentTask = peek(taskQueue);
+  while (
+    currentTask !== null &&
+    !(enableSchedulerDebugging && isSchedulerPaused)
+  ) {
+    if (
+      currentTask.expirationTime > currentTime &&
+      (!hasTimeRemaining || shouldYieldToHost())
+    ) {
+      // This currentTask hasn't expired, and we've reached the deadline.
+      break;
+    }
+    const callback = currentTask.callback;
+    if (typeof callback === "function") {
+      currentTask.callback = null;
+      currentPriorityLevel = currentTask.priorityLevel;
+      const didUserCallbackTimeout = currentTask.expirationTime <= currentTime;
+      if (enableProfiling) {
+        markTaskRun(currentTask, currentTime);
+      }
+      // [!code highlight:1]
+      const continuationCallback = callback(didUserCallbackTimeout);
+      currentTime = getCurrentTime();
+      if (typeof continuationCallback === "function") {
+        currentTask.callback = continuationCallback;
+        if (enableProfiling) {
+          markTaskYield(currentTask, currentTime);
+        }
+      } else {
+        if (enableProfiling) {
+          markTaskCompleted(currentTask, currentTime);
+          currentTask.isQueued = false;
+        }
+        if (currentTask === peek(taskQueue)) {
+          pop(taskQueue);
+        }
+      }
+      advanceTimers(currentTime);
+    } else {
+      pop(taskQueue);
+    }
+    currentTask = peek(taskQueue);
+  }
+  // Return whether there's additional work
+  if (currentTask !== null) {
+    return true;
+  } else {
+    const firstTimer = peek(timerQueue);
+    if (firstTimer !== null) {
+      requestHostTimeout(handleTimeout, firstTimer.startTime - currentTime);
+    }
+    return false;
+  }
+}
+```
+
+workLoop는 flushWork에서 호출하고 flushWork는 `requestHostCallback(flushWork);{:js}` 형태로 호출된다.
+
+```js
+function requestHostCallback(callback) {
+  scheduledHostCallback = callback;
+  if (!isMessageLoopRunning) {
+    isMessageLoopRunning = true;
+    schedulePerformWorkUntilDeadline();
+  }
+}
+```
+
+```js
+function requestHostCallback(callback) {
+  scheduledHostCallback = callback;
+  if (!isMessageLoopRunning) {
+    isMessageLoopRunning = true;
+    schedulePerformWorkUntilDeadline();
+  }
+}
+```
+
+```js
+let schedulePerformWorkUntilDeadline;
+if (typeof localSetImmediate === "function") {
+  // Node.js and old IE.
+  // There's a few reasons for why we prefer setImmediate.
+  //
+  // Unlike MessageChannel, it doesn't prevent a Node.js process from exiting.
+  // (Even though this is a DOM fork of the Scheduler, you could get here
+  // with a mix of Node.js 15+, which has a MessageChannel, and jsdom.)
+  // https://github.com/facebook/react/issues/20756
+  //
+  // But also, it runs earlier which is the semantic we want.
+  // If other browsers ever implement it, it's better to use it.
+  // Although both of these would be inferior to native scheduling.
+  schedulePerformWorkUntilDeadline = () => {
+    localSetImmediate(performWorkUntilDeadline);
+  };
+  // [!code highlight:9]
+} else if (typeof MessageChannel !== "undefined") {
+  // DOM and Worker environments.
+  // We prefer MessageChannel because of the 4ms setTimeout clamping.
+  const channel = new MessageChannel();
+  const port = channel.port2;
+  channel.port1.onmessage = performWorkUntilDeadline;
+  schedulePerformWorkUntilDeadline = () => {
+    port.postMessage(null);
+  };
+} else {
+  // We should only fallback here in non-browser environments.
+  schedulePerformWorkUntilDeadline = () => {
+    localSetTimeout(performWorkUntilDeadline, 0);
+  };
+}
+```
+
+https://www.youtube.com/watch?v=8aGhZQkoFbQ
