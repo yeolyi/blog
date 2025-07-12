@@ -119,7 +119,7 @@ export default async function Home({
 					placeholder='blur'
 					className='object-cover w-full h-full aspect-square md:w-1/2'
 					loading='eager'
-					quality={75}
+					quality={100}
 					width={1024}
 					height={1024}
 				/>
@@ -294,6 +294,7 @@ export default async function Home({
 							autoPlay
 							muted
 							loop
+							playsInline
 							className='w-full h-full object-cover'
 						/>
 					</CarouselItem>
