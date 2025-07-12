@@ -254,7 +254,7 @@
 
 /* TODO: details 처이 이게 최선? */
 .mdx {
-	@apply space-y-7 max-w-2xl mx-auto;
+	@apply flex flex-col gap-7 max-w-2xl mx-auto;
 
 	& > details {
 		@apply space-y-7 ml-4;
@@ -268,7 +268,7 @@
 
 	& > h2,
 	& > details > h2 {
-		@apply font-extrabold mt-21;
+		@apply font-extrabold;
 		&::before {
 			content: "「";
 			@apply text-primary;
@@ -277,6 +277,14 @@
 			content: "」";
 			@apply text-primary;
 		}
+	}
+
+	& > h2 {
+		@apply mt-21;
+	}
+
+	& > h1 + h2 {
+		@apply mt-0;
 	}
 
 	& > h3,
@@ -317,6 +325,10 @@
 
 	& ol {
 		@apply list-decimal list-inside;
+	}
+
+	& > p > a {
+		@apply underline;
 	}
 }
 

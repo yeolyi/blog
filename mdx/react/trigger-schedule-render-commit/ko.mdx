@@ -1,8 +1,8 @@
-export const title = 'Trigger, Schedule, Render, Commit'
+export const title = "Trigger, Schedule, Render, Commit";
 
-import renderStack from './assets/render-stack.png'
-import domStack from './assets/dom-stack.png'
-import effectStack from './assets/effect-stack.png'
+import renderStack from "./assets/render-stack.png";
+import domStack from "./assets/dom-stack.png";
+import effectStack from "./assets/effect-stack.png";
 
 리액트 코드 곳곳에 breakpoint를 걸어서 함수 콜스택을 살펴보자. 리액트 내부 코드와 익숙해져보는 시간이니 함수명들에 압도되지 말고 가볍게~ 살펴보자.
 
@@ -23,15 +23,16 @@ export default function App() {
     }, []);
 
     return <button>{count}</button>;
+
 }
 `
 }}/>
 
-이전 게시물처럼 리액트를 직접 설치해서 쓴다면 https://stackoverflow.com/questions/77657008/ 을 참고하자. 
+이전 게시물처럼 리액트를 직접 설치해서 쓴다면 https://stackoverflow.com/questions/77657008/ 을 참고하자.
 
 ## 리액트가 내가 만든 컴포넌트를 실행
 
-<Image src={renderStack} alt="" className="object-contain max-w-[256px]"/>
+<Image src={renderStack} alt="" className="object-contain max-w-[256px]" />
 
 breakpoint1에서 멈춘다. 리액트가 내가 만든 App 함수를 실행하는 순간이다. 위쪽이 callee 함수, 아래쪽이 caller 함수이다.
 
@@ -41,11 +42,11 @@ breakpoint1에서 멈춘다. 리액트가 내가 만든 App 함수를 실행하�
 
 ## 리액트가 DOM을 수정
 
-크롬 inspector에서 DOM 요소 우클릭을 하면 DOM이 바뀔 때 breakpoint를 설정할 수 있다. 이전 breakpoint가 걸린채로`<div id="root"></div>` 에 breakpoint를 걸고 스크립트 실행을 재개해보자. 
+크롬 inspector에서 DOM 요소 우클릭을 하면 DOM이 바뀔 때 breakpoint를 설정할 수 있다. 이전 breakpoint가 걸린채로`<div id="root"></div>` 에 breakpoint를 걸고 스크립트 실행을 재개해보자.
 
-<Image src={domStack} alt=""  className="object-contain max-w-[256px]" />
+<Image src={domStack} alt="" className="object-contain max-w-[256px]" />
 
-리액트가 DOM을 수정하는 순간이다. commit이란 단어가 많이 보인다. 
+리액트가 DOM을 수정하는 순간이다. commit이란 단어가 많이 보인다.
 
 ## 리액트가 이펙트를 실행
 
@@ -53,7 +54,7 @@ breakpoint1에서 멈춘다. 리액트가 내가 만든 App 함수를 실행하�
 
 <Image src={effectStack} alt="" className="object-contain max-w-[256px]" />
 
-여기도 commit이라는 이름의 함수가 좀 보인다. 
+여기도 commit이라는 이름의 함수가 좀 보인다.
 
 지금까지 사진을 보면 모두 `performWorkUntilDeadline`에서 시작한다는 공통점이 있다. 할 일을 중계하는 역할의 함수인걸까?
 
@@ -62,12 +63,9 @@ breakpoint1에서 멈춘다. 리액트가 내가 만든 App 함수를 실행하�
 상황별로 호출되는 함수가 다름을 확인했다. 리액트가 우리가 만든 컴포넌트를 렌더하고 리렌더하는 과정은 아래와 같이 나눌 수 있다. [출처](https://jser.dev/2023-07-11-overall-of-react-internals)
 
 1. **트리거(Trigger)**: 초기 마운트든 state hook으로 인한 재렌더링이든 상관없이, 앱의 어느 부분을 렌더링해야 하는지와 어떻게 수행해야 하는지를 React 런타임에 알려줌.
-
-2. **스케줄(Schedule)**: 기본적으로 우선순위에 따라 작업을 처리하는 우선순위 큐. 런타임 코드에서 렌더링이나 이펙트 실행과 같은 작업을 스케줄링하기 위해 호출된다. 
-
+2. **스케줄(Schedule)**: 기본적으로 우선순위에 따라 작업을 처리하는 우선순위 큐. 런타임 코드에서 렌더링이나 이펙트 실행과 같은 작업을 스케줄링하기 위해 호출된다.
 3. **렌더(Render)**: 새로운 파이버 트리를 계산하고 호스트 DOM에 적용해야 할 업데이트가 무엇인지 파악한다. **파이버 트리**는 앱의 현재 상태를 나타내는 내부 트리 구조이다. **이전에는 가상 DOM이라고 불렸지만, 이제는 DOM만을 위한 것이 아니며 리액트 팀에서도 더 이상 가상 DOM이라고 부르지 않는다**.
-Concurrent 모드 때문에 렌더 단계가 중단되고 재개될 수 있어서 상당히 복잡해졌다.
-
+   Concurrent 모드 때문에 렌더 단계가 중단되고 재개될 수 있어서 상당히 복잡해졌다.
 4. **커밋(Commit)**: 호스트 DOM에 변경사항을 적용한다. 모든 종류의 이펙트들도 여기서 처리된다.
 
 이제 이 과정이 어떻게 구현되어있는지 간단한 리액트 컴포넌트가 렌더되는 과정을 따라가며 배워보자.

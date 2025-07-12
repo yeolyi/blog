@@ -193,35 +193,6 @@
 		"nandToNot": "Making NOT with NAND",
 		"reactSetupTitle": "Directly Modifying and Using React Source Code",
 		"csZeroOneTitle": "Why Computers Only Have Two Fingers",
-		"instagramIntro": "It started with the thought, 'Wouldn't I study harder if someone could see my study notes?'—and now it's grown into a sizeable developer Instagram account. Even after years of running it, I still find it hard to explain what kind of account it is or what content I upload. Inspired by the introduction of <externalLink>Minguhong Manufacturing</externalLink>, I've listed above what I want to be and what I don't. I've also listed below the content I was particularly fond of."
-	},
-	"InstagramDescription": {
-		"0": " transcends language through code.",
-		"1": " does not round corners.",
-		"2": " does not take sides based on programming language.",
-		"3": " doesn't shame you for not knowing the latest tech.",
-		"4": " is reluctant to slap 'AI' onto every feature name.",
-		"5": " uses only one font.",
-		"6": " refrains from being a meme account.",
-		"7": " goes beyond nationality through code.",
-		"8": " doesn't call something 'fun' just because it's fun.",
-		"9": " finds development occasionally difficult.",
-		"22": " omits non-important code.",
-		"11": " sometimes does things manually even when AI excels.",
-		"12": " does not use drop shadows.",
-		"13": " believes what's bad matters more than what's good.",
-		"14": " expresses the world through code.",
-		"15": " gets a headache finding the right font size.",
-		"16": " thinks it's nice when translation isn't needed.",
-		"17": " enjoys learning.",
-		"18": " loves hidden meanings.",
-		"19": " does not want to become a translator.",
-		"20": " doesn't want to post 10 times a day.",
-		"21": " solves coding tests personally even if AI beats me.",
-		"10": " finds development occasionally enjoyable.",
-		"23": " doesn't say 'I hate it' even when hating something."
-	},
-	"common": {
-		"share": "Share"
+		"instagramIntro": "It started with the thought, 'Wouldn't I study harder if someone could see my study notes?'—and now it's grown into a sizeable developer Instagram account. Even after years of running it, I still find it hard to explain what kind of account it is or what content I upload. Inspired by the introduction of <externalLink>Minguhong Manufacturing</externalLink>, I've listed what I want to be and what I don't. I've also listed the content I was particularly fond of."
 	}
 }

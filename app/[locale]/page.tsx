@@ -4,6 +4,7 @@ import Image from 'next/image';
 import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { getSubscriberCount } from '@/actions/resend';
+import DecimalToBinary from '@/components/cs/DecimalToBinary';
 import EmailSubscribe from '@/components/cs/EmailSubscribe';
 import Flow from '@/components/cs/flow';
 import PixelateImage from '@/components/cs/PixelateImage';
@@ -28,6 +29,7 @@ import { Separator } from '@/components/ui/separator';
 import { Link } from '@/i18n/navigation';
 import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
 import AddingTuringMachine from '@/mdx/cs/turing-machine/components/AddingTuringMachine';
+import { order } from '@/mdx/react';
 import { getPostIds } from '@/utils/path';
 import me from './assets/me.jpg';
 import meme1 from './assets/meme1.jpeg';
@@ -101,6 +103,13 @@ export default async function Home({
 	const subscriberCount = await getSubscriberCount();
 	const count = subscriberCount.success ? subscriberCount.value : undefined;
 
+	const metadataList = await Promise.all(
+		order.map(async (id) => {
+			const { default: _, ...metadata } = await import(`@/mdx/react/${id}/ko.mdx`);
+			return { id, ...metadata };
+		}),
+	);
+
 	return (
 		<div className='px-4 flex flex-col gap-7 max-w-6xl mx-auto'>
 			<div className='flex flex-col gap-7 md:flex-row'>
@@ -144,7 +153,9 @@ export default async function Home({
 					</p>
 				</div>
 			</div>
+
 			<Separator />
+
 			<div className='flex flex-wrap'>
 				{sortedArr.map(({ href, title, date }) => (
 					<Button
@@ -163,9 +174,50 @@ export default async function Home({
 				))}
 			</div>
 			<Separator />
-			<div className='flex flex-col gap-4 text-center'>
-				<Marquee>nand is more than just </Marquee>
+			<div className='aspect-video text-[min(6vw,70px)] leading-none font-black text-stone-200 dark:text-stone-700 select-none overflow-hidden break-all text-justify'>
+				{'NAND IS MORE THAN JUST '.repeat(4)}
+				<span className='text-black dark:text-white'>
+					NAND IS MORE THAN JUST NAND{' '}
+				</span>
+				IS MORE THAN JUST {'NAND IS MORE THAN JUST '.repeat(5)} NAND
 			</div>
+			<Carousel opts={{ loop: true, align: 'start' }}>
+				<CarouselContent className='-pl-4'>
+					<CarouselItem className='max-w-sm pl-4'>
+						<TruthTable
+							description={tMain('andGate')}
+							labels={[
+								{ label: 'A', type: 'input' },
+								{ label: 'B', type: 'input' },
+								{ label: 'A AND B', type: 'output' },
+							]}
+							data={[
+								[false, false, false],
+								[false, true, false],
+								[true, false, false],
+								[true, true, true],
+							]}
+						/>
+					</CarouselItem>
+					<CarouselItem className='max-w-sm pl-4'>
+						<Card>
+							<CardHeader>
+								<CardTitle>{tMain('nandUniversality')}</CardTitle>
+								<CardDescription>{tMain('nandToNot')}</CardDescription>
+							</CardHeader>
+							<Flow id='/cs' initialJSON={not} height={250} hideNodeButtons />
+						</Card>
+					</CarouselItem>
+					<CarouselItem className='pl-4 max-w-md'>
+						<AddingTuringMachine />
+					</CarouselItem>
+					<CarouselItem className='max-w-sm pl-4'>
+						<DecimalToBinary />
+					</CarouselItem>
+				</CarouselContent>
+				<CarouselNext />
+				<CarouselPrevious />
+			</Carousel>
 			<div className='flex flex-col gap-7'>
 				<p className='w-full max-w-2xl'>{tMain('csIntro')}</p>
 
@@ -177,46 +229,6 @@ export default async function Home({
 				)}
 
 				<EmailSubscribe />
-
-				<p className='max-w-2xl'>{tMain('interactionIntro')}</p>
-
-				<Carousel opts={{ loop: true, align: 'start', watchDrag: false }}>
-					<CarouselContent className='-pl-4'>
-						<CarouselItem className='max-w-sm w-[90%]pl-4'>
-							<PixelateImage />
-						</CarouselItem>
-						<CarouselItem className='max-w-sm w-[90%] pl-4'>
-							<TruthTable
-								description={tMain('andGate')}
-								labels={[
-									{ label: 'A', type: 'input' },
-									{ label: 'B', type: 'input' },
-									{ label: 'A AND B', type: 'output' },
-								]}
-								data={[
-									[false, false, false],
-									[false, true, false],
-									[true, false, false],
-									[true, true, true],
-								]}
-							/>
-						</CarouselItem>
-						<CarouselItem className='max-w-sm w-[90%] pl-4'>
-							<Card>
-								<CardHeader>
-									<CardTitle>{tMain('nandUniversality')}</CardTitle>
-									<CardDescription>{tMain('nandToNot')}</CardDescription>
-								</CardHeader>
-								<Flow id='/cs' initialJSON={not} height={250} hideNodeButtons />
-							</Card>
-						</CarouselItem>
-						<CarouselItem className='max-w-sm w-[90%] pl-4'>
-							<AddingTuringMachine />
-						</CarouselItem>
-					</CarouselContent>
-					<CarouselNext />
-					<CarouselPrevious />
-				</Carousel>
 
 				<p className='font-extrabold'>「{tCS('part1Title')}」</p>
 
@@ -257,18 +269,14 @@ export default async function Home({
 					<GhostButton>{tCS('os6Title')}</GhostButton>
 				</p>
 			</div>
+
 			<Separator />
+
 			<InstagramDescription />
-			<p className='w-full max-w-2xl'>
-				{tMain.rich('instagramIntro', {
-					externalLink: (chunks) => (
-						<LinkButton href='https://minguhongmfg.com/about'>{chunks}</LinkButton>
-					),
-				})}
-			</p>
+
 			<Carousel opts={{ loop: true, align: 'start' }}>
 				<CarouselContent className='-pl-4'>
-					<CarouselItem className='pl-4 max-w-sm'>
+					<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
 						<Image
 							src={meme1}
 							alt=''
@@ -276,7 +284,16 @@ export default async function Home({
 							className='w-full h-full object-cover'
 						/>
 					</CarouselItem>
-					<CarouselItem className='pl-4 max-w-sm'>
+					<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
+						<video
+							src='/main/merge-sort.webm'
+							autoPlay
+							muted
+							loop
+							className='w-full h-full object-cover'
+						/>
+					</CarouselItem>
+					<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
 						<Image
 							src={meme2}
 							alt=''
@@ -284,15 +301,15 @@ export default async function Home({
 							className='w-full h-full object-cover'
 						/>
 					</CarouselItem>
-					<CarouselItem className='pl-4 max-w-sm'>
+					<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
 						<Image
 							src={meme3}
 							alt=''
 							placeholder='blur'
-							className='w-full h-full object-contain bg-[#1E2228]'
+							className='w-full h-full object-cover'
 						/>
 					</CarouselItem>
-					<CarouselItem className='pl-4 max-w-sm'>
+					<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
 						<Image
 							src={meme4}
 							alt=''
@@ -304,6 +321,82 @@ export default async function Home({
 				<CarouselNext />
 				<CarouselPrevious />
 			</Carousel>
+
+			<p className='w-full max-w-2xl'>
+				{tMain.rich('instagramIntro', {
+					externalLink: (chunks) => (
+						<LinkButton href='https://minguhongmfg.com/about'>{chunks}</LinkButton>
+					),
+				})}
+			</p>
+
+			<Separator />
+
+			<div className='aspect-video flex items-center justify-center select-none'>
+				<p className='text-[min(6vw,70px)] leading-none font-extrabold text-center'>
+					<span className='opacity-10'>performWorkUntilDeadline</span>
+					<br />
+					<span className='opacity-30'>renderRootSync</span>
+					<br />
+					<span className='opacity-50'>workLoopSync</span>
+					<br />
+					<span className='opacity-70'>updateFunctionComponent</span>
+					<br />
+					<span className='opacity-90'>renderWithHooks</span>
+					<br />
+					...&lt;App /&gt;
+				</p>
+			</div>
+
+			<div className='max-w-2xl space-y-7'>
+				<p>
+					가장 많이 쓰는 라이브러리가 리액트인데 그만큼 깊게 이해하고 있는 것 같지는
+					않아 리액트 소스코드를 공부하기로 했습니다. 어떤 개발자분 소개에 '리액트
+					컨트리뷰터'가 있는게 멋져보이기도 했고요.
+				</p>
+				<p>
+					<LinkButton href='https://jser.dev/series/react-source-code-walkthrough'>
+						React source code deep dive 시리즈
+					</LinkButton>
+					의 도움을 많이 받았습니다. 자료의 커리큘럼을 따라 리액트 코드를 살펴보면서
+					스스로 이해한 과정과 따로 찾아본 내용들을 기록했습니다.
+				</p>
+			</div>
+
+			<div className='flex flex-col gap-7'>
+				<p className='font-extrabold'>「시작하기 앞서」</p>
+				<p>
+					{metadataList.slice(0, 2).map(({ id, title }) => (
+						<GhostButton href={`/react/${id}`} key={id}>
+							{title}
+						</GhostButton>
+					))}
+				</p>
+				<p className='font-extrabold'>「처음 UI를 그리는 과정」</p>
+				<p>
+					{metadataList.slice(2, 10).map(({ id, title }) => (
+						<GhostButton href={`/react/${id}`} key={id}>
+							{title}
+						</GhostButton>
+					))}
+				</p>
+				<p className='font-extrabold'>「UI를 다시 그리는 과정」</p>
+				<p>
+					{metadataList.slice(10, 15).map(({ id, title }) => (
+						<GhostButton href={`/react/${id}`} key={id}>
+							{title}
+						</GhostButton>
+					))}
+				</p>
+				<p className='font-extrabold'>「리액트 훅 뜯어보기」</p>
+				<p>
+					{metadataList.slice(15).map(({ id, title }) => (
+						<GhostButton href={`/react/${id}`} key={id}>
+							{title}
+						</GhostButton>
+					))}
+				</p>
+			</div>
 		</div>
 	);
 }
@@ -343,7 +436,7 @@ const GhostButton = ({
 	return (
 		<Button
 			variant='ghost'
-			className='max-w-full overflow-hidden pl-0 pr-6'
+			className='max-w-full pl-0 pr-6 overflow-hidden'
 			asChild={!!href}
 			disabled={!href}
 		>
@@ -357,3 +450,37 @@ const GhostButton = ({
 		</Button>
 	);
 };
+
+/*
+	<Code
+				template='react'
+				files={{
+					'App.js': `import { useState } from 'react';
+
+function Link() {
+  return <a href="https://yeolyi.com">yeolyi.com</a>;
+}
+
+function Component() {
+  const [count, setCount] = useState(0);
+  return (
+    <div>
+    <button onClick={() => setCount((count) => count + 1)}>
+      click me - {count} 
+    </button> ({count % 2 === 0 ? <span>even</span> : <b>odd</b>})
+    </div>
+  );
+}
+
+export default function App() {
+  return (
+    <div>
+      <Link />
+      <br />
+      <Component />
+    </div>
+  );
+}`,
+				}}
+			/>
+*/

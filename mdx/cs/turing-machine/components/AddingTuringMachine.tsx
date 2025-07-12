@@ -68,7 +68,7 @@ const AddingTuringMachineContent = () => {
 
 export default function AddingTuringMachine() {
 	return (
-		<Card className='w-fit max-w-full'>
+		<Card>
 			<CardHeader>
 				<CardTitle>튜링 머신 실습</CardTitle>
 				<CardDescription>이진수 덧셈 11(2) + 11(2) = 110(2)</CardDescription>
