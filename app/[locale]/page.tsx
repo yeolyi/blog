@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { ChevronsUpDown } from 'lucide-react';
 import type { StaticImageData } from 'next/image';
 import Image from 'next/image';
 import type { Locale } from 'next-intl';
@@ -7,10 +8,8 @@ import { getSubscriberCount } from '@/actions/resend';
 import DecimalToBinary from '@/components/cs/DecimalToBinary';
 import EmailSubscribe from '@/components/cs/EmailSubscribe';
 import Flow from '@/components/cs/flow';
-import PixelateImage from '@/components/cs/PixelateImage';
 import TruthTable from '@/components/cs/TruthTable';
 import InstagramDescription from '@/components/InstagramDescription';
-import Marquee from '@/components/Marquee';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
@@ -25,6 +24,11 @@ import {
 	CarouselNext,
 	CarouselPrevious,
 } from '@/components/ui/carousel';
+import {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
 import { Link } from '@/i18n/navigation';
 import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
@@ -72,31 +76,17 @@ export default async function Home({
 	const tCS = await getTranslations('Curriculum');
 	const tMain = await getTranslations('MainPage');
 
-	const ids = await getMdxIds(locale);
-
-	const arr: { href: string; title: string; date: string }[] = await Promise.all(
-		ids.map(async (id) => {
-			const { default: _, ...metadata } = await import(
-				`@/mdx/${id}/${locale}.mdx`
-			);
-			return { href: `/post/${id}`, ...metadata };
-		}),
-	);
-
-	if (locale === 'ko') {
-		arr.push({
-			href: '/react/setup',
-			title: tMain('reactSetupTitle'),
-			date: '2025-05-23',
-		});
-		arr.push({
-			href: '/cs/zero-and-one',
-			title: tMain('csZeroOneTitle'),
-			date: '2025-05-04',
-		});
-	}
-
-	const sortedArr = arr.sort((a, b) => {
+	const postIds = await getMdxIds(locale);
+	const postArr: { href: string; title: string; date: string }[] = (
+		await Promise.all(
+			postIds.map(async (id) => {
+				const { default: _, ...metadata } = await import(
+					`@/mdx/${id}/${locale}.mdx`
+				);
+				return { href: `/post/${id}`, ...metadata };
+			}),
+		)
+	).toSorted((a, b) => {
 		return new Date(b.date).getTime() - new Date(a.date).getTime();
 	});
 
@@ -123,45 +113,25 @@ export default async function Home({
 					width={1024}
 					height={1024}
 				/>
-				<div className='flex flex-col gap-7 md:w-1/2'>
+				<div className='flex-col gap-7 hidden md:flex md:w-1/2'>
 					<p>{tMain('title')}</p>
-					<p>
-						{tMain.rich('developerBio', {
-							snuLink: (chunks) => (
-								<LinkButton href='https://snu.ac.kr'>{chunks}</LinkButton>
-							),
-							kakaoLink: (chunks) => (
-								<LinkButton href='https://kakaocorp.com'>{chunks}</LinkButton>
-							),
-							cseLink: (chunks) => (
-								<LinkButton href='https://cse.snu.ac.kr'>{chunks}</LinkButton>
-							),
-							baekjoonLink: (chunks) => (
-								<LinkButton href='https://solved.ac/profile/yeolyii'>
-									{chunks}
-								</LinkButton>
-							),
-							skyonLink: (chunks) => <LinkButton>{chunks}</LinkButton>,
-							githubLink: (chunks) => (
-								<LinkButton href='https://instagram.com/yeol.dev'>{chunks}</LinkButton>
-							),
-						})}
-					</p>
-					<p>
-						{tMain.rich('creatorBio', {
-							instagramLink: (chunks) => (
-								<LinkButton href='https://instagram.com/yeol.dev'>{chunks}</LinkButton>
-							),
-							csLink: (chunks) => <LinkButton href='#cs'>{chunks}</LinkButton>,
-						})}
-					</p>
+					<About />
 				</div>
+				<Collapsible className='md:hidden'>
+					<CollapsibleTrigger className='flex items-center justify-between'>
+						<p>{tMain('title')}</p>
+						<ChevronsUpDown className='w-4 h-4' />
+					</CollapsibleTrigger>
+					<CollapsibleContent className='flex flex-col gap-7 mt-7'>
+						<About />
+					</CollapsibleContent>
+				</Collapsible>
 			</div>
 
 			<Separator />
 
 			<div className='flex flex-wrap'>
-				{sortedArr.map(({ href, title, date }) => (
+				{postArr.map(({ href, title, date }) => (
 					<Button
 						asChild
 						variant='ghost'
@@ -178,16 +148,17 @@ export default async function Home({
 				))}
 			</div>
 			<Separator />
-			<div className='aspect-video text-[min(6vw,70px)] leading-none font-black text-stone-200 dark:text-stone-700 select-none overflow-hidden break-all text-justify'>
-				{'NAND IS MORE THAN JUST '.repeat(4)}
-				<span className='text-black dark:text-white'>
-					NAND IS MORE THAN JUST NAND{' '}
-				</span>
-				IS MORE THAN JUST {'NAND IS MORE THAN JUST '.repeat(5)} NAND
-			</div>
+
 			<Carousel opts={{ loop: true, align: 'start' }}>
-				<CarouselContent className='-pl-4'>
-					<CarouselItem className='max-w-sm pl-4'>
+				<CarouselContent className='-pl-4 min-h-[384px]'>
+					<CarouselItem className='aspect-video pl-4 basis-11/12 text-[min(6.9vw,71px)] leading-none font-black text-stone-200 dark:text-stone-800 select-none overflow-hidden break-all text-justify'>
+						{'NAND IS MORE THAN JUST '.repeat(4)}
+						<span className='text-black dark:text-white'>
+							NAND IS MORE THAN JUST NAND{' '}
+						</span>
+						IS MORE THAN JUST {'NAND IS MORE THAN JUST '.repeat(20)} NAND
+					</CarouselItem>
+					<CarouselItem className='pl-4 max-w-sm'>
 						<TruthTable
 							description={tMain('andGate')}
 							labels={[
@@ -276,16 +247,17 @@ export default async function Home({
 
 			<Separator />
 
-			<InstagramDescription />
-
 			<Carousel opts={{ loop: true, align: 'start' }}>
 				<CarouselContent className='-pl-4'>
+					<CarouselItem className='pl-4 basis-11/12'>
+						<InstagramDescription />
+					</CarouselItem>
 					<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
 						<Image
 							src={meme1}
 							alt=''
 							placeholder='blur'
-							className='w-full h-full object-cover'
+							className='w-full h-full object-contain'
 						/>
 					</CarouselItem>
 					<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
@@ -295,7 +267,7 @@ export default async function Home({
 							muted
 							loop
 							playsInline
-							className='w-full h-full object-cover'
+							className='w-full h-full object-contain'
 						/>
 					</CarouselItem>
 					<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
@@ -303,7 +275,7 @@ export default async function Home({
 							src={meme2}
 							alt=''
 							placeholder='blur'
-							className='w-full h-full object-cover'
+							className='w-full h-full object-contain'
 						/>
 					</CarouselItem>
 					<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
@@ -311,7 +283,7 @@ export default async function Home({
 							src={meme3}
 							alt=''
 							placeholder='blur'
-							className='w-full h-full object-cover'
+							className='w-full h-full object-contain'
 						/>
 					</CarouselItem>
 					<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
@@ -319,7 +291,7 @@ export default async function Home({
 							src={meme4}
 							alt=''
 							placeholder='blur'
-							className='w-full h-full object-cover'
+							className='w-full h-full object-contain'
 						/>
 					</CarouselItem>
 				</CarouselContent>
@@ -337,7 +309,7 @@ export default async function Home({
 
 			<Separator />
 
-			<div className='aspect-video flex items-center justify-center select-none'>
+			<div className='aspect-video flex items-center justify-center select-none min-h-[384px]'>
 				<p className='text-[min(6vw,70px)] leading-none font-extrabold text-center'>
 					<span className='opacity-10'>performWorkUntilDeadline</span>
 					<br />
@@ -405,6 +377,43 @@ export default async function Home({
 		</div>
 	);
 }
+
+const About = async () => {
+	const tMain = await getTranslations('MainPage');
+
+	return (
+		<>
+			<p>
+				{tMain.rich('developerBio', {
+					snuLink: (chunks) => (
+						<LinkButton href='https://snu.ac.kr'>{chunks}</LinkButton>
+					),
+					kakaoLink: (chunks) => (
+						<LinkButton href='https://kakaocorp.com'>{chunks}</LinkButton>
+					),
+					cseLink: (chunks) => (
+						<LinkButton href='https://cse.snu.ac.kr'>{chunks}</LinkButton>
+					),
+					baekjoonLink: (chunks) => (
+						<LinkButton href='https://solved.ac/profile/yeolyii'>{chunks}</LinkButton>
+					),
+					skyonLink: (chunks) => <LinkButton>{chunks}</LinkButton>,
+					githubLink: (chunks) => (
+						<LinkButton href='https://instagram.com/yeol.dev'>{chunks}</LinkButton>
+					),
+				})}
+			</p>
+			<p>
+				{tMain.rich('creatorBio', {
+					instagramLink: (chunks) => (
+						<LinkButton href='https://instagram.com/yeol.dev'>{chunks}</LinkButton>
+					),
+					csLink: (chunks) => <LinkButton href='#cs'>{chunks}</LinkButton>,
+				})}
+			</p>
+		</>
+	);
+};
 
 const LinkButton = ({
 	href,

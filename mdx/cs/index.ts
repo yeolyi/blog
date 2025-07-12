@@ -1,4 +1,4 @@
-export const order = [
+export const csOrder = [
 	'zero-and-one',
 	'and-or-not',
 	'nand-is-all-you-need',

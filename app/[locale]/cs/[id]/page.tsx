@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import Comments from '@/components/comment';
 import PostNavigation from '@/components/layout/PostNavigation';
 import { routing } from '@/i18n/routing';
-import { order } from '@/mdx/cs';
+import { csOrder } from '@/mdx/cs';
 import { getMdxIds } from '@/utils/path';
 
 export async function generateMetadata(
@@ -45,7 +45,7 @@ export default async function PostPage({
 			<div className='px-4 mdx'>
 				<h1>{title}</h1>
 				<Component />
-				<PostNavigation id={id} subDir='cs' order={order} listHref='/' />
+				<PostNavigation id={id} subDir='cs' order={csOrder} listHref='/' />
 				<Comments postId={id} />
 			</div>
 		);

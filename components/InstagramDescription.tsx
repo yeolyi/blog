@@ -22,7 +22,7 @@ export default function InstagramDescription() {
 	}, [descriptions.length]);
 
 	return (
-		<div className='aspect-video flex items-center justify-center px-16 relative select-none'>
+		<div className='min-h-[384px] h-full flex items-center justify-center px-16 relative select-none'>
 			<Text>{descriptions[index]}</Text>
 		</div>
 	);
