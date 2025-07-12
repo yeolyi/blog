@@ -5,7 +5,6 @@ import Image from 'next/image';
 import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { getSubscriberCount } from '@/actions/resend';
-import DecimalToBinary from '@/components/cs/DecimalToBinary';
 import EmailSubscribe from '@/components/cs/EmailSubscribe';
 import Flow from '@/components/cs/flow';
 import TruthTable from '@/components/cs/TruthTable';
@@ -31,6 +30,7 @@ import {
 } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
 import { Link } from '@/i18n/navigation';
+import DecimalToBinary from '@/mdx/cs/adder/components/DecimalToBinary';
 import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
 import AddingTuringMachine from '@/mdx/cs/turing-machine/components/AddingTuringMachine';
 import { order } from '@/mdx/react';

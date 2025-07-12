@@ -1,25 +1,30 @@
-export const title = 'Why Computers Only Have Two Fingers';
-export const description = 'Explore how just two numbers, 0 and 1, become the building blocks for sounds, texts, images, and virtually everything we can imagine.';
-export const ogImage = 'cs/og1.png';
+export const title = "Why Computers Only Have Two Fingers";
+export const description =
+  "Explore how just two numbers, 0 and 1, become the building blocks for sounds, texts, images, and virtually everything we can imagine.";
+export const ogImage = "cs/og1.png";
 
-import PixelateImage from '@/components/cs/PixelateImage';
-import SignalComparison from '@/components/cs/SignalComparison';
-import TruthTable from '@/components/cs/TruthTable';
+import PixelateImage from "./components/PixelateImage";
+import SignalComparison from "./components/SignalComparison";
+import TruthTable from "@/components/cs/TruthTable";
 
-import zeroone from './assets/zeroone.png';
-import painting from './assets/painting.png';
-import lp from './assets/lp.png';
-import shannon from './assets/shannon.png';
+import zeroone from "./assets/zeroone.png";
+import painting from "./assets/painting.png";
+import lp from "./assets/lp.png";
+import shannon from "./assets/shannon.png";
 
-<Image src={painting} alt="painting" className="object-cover w-full h-[180px]"/>
+<Image
+  src={painting}
+  alt="painting"
+  className="object-cover w-full h-[180px]"
+/>
 
 Throughout history, humans have always sought ways to capture meaningful experiences or knowledge. From vivid hunting scenes etched on cave walls to wisdom carefully inscribed on papyrus, these efforts were born from a deep human need to understand the world and communicate with others.
 
-<Image src={lp} alt="LP" className="object-cover w-full h-[180px]"/>
+<Image src={lp} alt="LP" className="object-cover w-full h-[180px]" />
 
 People have long tried to faithfully capture **continuously changing natural phenomena**, such as sound and light. A vinyl record, for instance, captures the subtle vibrations of voices and instruments as continuous grooves etched into its surface. Similarly, traditional film cameras record the varying intensities of incoming light as continuous chemical changes on film. We call this method of capturing the world in its continuous form **analog**.
 
-<Image src={zeroone} alt="zeroone" className="object-cover w-full h-[180px]"/>
+<Image src={zeroone} alt="zeroone" className="object-cover w-full h-[180px]" />
 
 Yet computers, the heart of modern civilization, took a different path entirely—**digital**. This involves representing the vibrant, continuously changing real world using only clearly distinct values.
 
@@ -77,20 +82,20 @@ A Boolean function takes Boolean inputs and provides a Boolean output based on l
 
 Consider deciding whether to bring an umbrella:
 
-* **Input A:** Is rain forecasted today? (0: No, 1: Yes)
-* **Input B:** Do I plan to go out today? (0: No, 1: Yes)
+- **Input A:** Is rain forecasted today? (0: No, 1: Yes)
+- **Input B:** Do I plan to go out today? (0: No, 1: Yes)
 
 The output would be:
 
-* **Output:** Bring an umbrella? (0: No, 1: Yes)
+- **Output:** Bring an umbrella? (0: No, 1: Yes)
 
 We usually take an umbrella only if both rain is forecasted and we plan to go out. Represented as a truth table:
 
 <TruthTable
   labels={[
-    { label: 'Rain Forecast', type: 'input' },
-    { label: 'Go Out Plan', type: 'input' },
-    { label: 'Bring an Umbrella', type: 'output' },
+    { label: "Rain Forecast", type: "input" },
+    { label: "Go Out Plan", type: "input" },
+    { label: "Bring an Umbrella", type: "output" },
   ]}
   data={[
     [false, false, false],

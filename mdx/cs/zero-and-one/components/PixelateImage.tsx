@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 // https://pixabay.com/photos/changdeokgung-palace-garden-786592/
-import changdeokgung from './assets/changdeokgung.jpg';
+import changdeokgung from '../assets/changdeokgung.jpg';
 
 // TODO: 고해상도로 도전해보기
 export default function PixelateImage({ className }: { className?: string }) {

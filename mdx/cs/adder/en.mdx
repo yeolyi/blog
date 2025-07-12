@@ -1,21 +1,26 @@
-export const title = 'Now You Can Build Calculators (For Real)'
-export const description = 'Let\'s create circuits that can perform addition using NAND gates'
+export const title = "Now You Can Build Calculators (For Real)";
+export const description =
+  "Let's create circuits that can perform addition using NAND gates";
 
-import TruthTable from '@/components/cs/TruthTable';
-import Flow from '@/components/cs/flow';
-import DecimalToBinary from '@/components/cs/DecimalToBinary';
+import TruthTable from "@/components/cs/TruthTable";
+import Flow from "@/components/cs/flow";
+import DecimalToBinary from "./components/DecimalToBinary";
 
-import calculator from './assets/calculator.png';
-import halfNand from './assets/halfNand.json';
-import half from './assets/half.json';
-import full from './assets/full.json';
-import ripple from './assets/ripple.json';
+import calculator from "./assets/calculator.png";
+import halfNand from "./assets/halfNand.json";
+import half from "./assets/half.json";
+import full from "./assets/full.json";
+import ripple from "./assets/ripple.json";
 
 So far, we've learned that all information in the world can be represented using just the simple signals 0 and 1. We've also understood that by combining logic gates, we can create new information from information represented as 0s and 1s.
 
 Now it's time to move beyond theory and meet concrete examples. Today, we'll combine logic gates to create circuits that actually perform **addition**.
 
-<Image src={calculator} alt="calculator" className="object-cover object-top w-full h-[180px] outline-stone-700 outline"/>
+<Image
+  src={calculator}
+  alt="calculator"
+  className="object-cover object-top w-full h-[180px] outline-stone-700 outline"
+/>
 
 Smartphone calculator apps perform addition much faster than humans. They can instantly calculate operations like 999,999 + 888,888. But the core of that calculator is ultimately just **combinations of the logic gates** we've been learning about.
 
@@ -49,6 +54,7 @@ Let's look at a more complex example with carrying: calculating `179 + 287`:
 3. `1 + 1 + 2 = 4`.
 
 Looking at this process carefully, there are two key elements:
+
 - The result of adding two numbers in each digit position (**Sum**)
 - The carry that moves to the next digit position (**Carry**)
 
@@ -59,8 +65,12 @@ These two elements are exactly the core idea of how computers perform addition. 
 In daily life, we use the **decimal system, which uses 10 numbers as basic units**. In decimal, we create the entire number by multiplying each digit by values that **increase by 10 times**: 1, 10, 100, 1000, etc. For example, if we break down the number 123 in detail:
 
 <div className="text-center my-4">
-  <span style={{color: 'red'}}>1</span> × 100 + <span style={{color: 'blue'}}>2</span> × 10 + <span style={{color: 'green'}}>3</span> × 1<br/>
-  = <span style={{color: 'red'}}>1</span> × 10<sup>2</sup> + <span style={{color: 'blue'}}>2</span> × 10<sup>1</sup> + <span style={{color: 'green'}}>3</span> × 10<sup>0</sup>
+  <span style={{ color: "red" }}>1</span> × 100 +{" "}
+  <span style={{ color: "blue" }}>2</span> × 10 +{" "}
+  <span style={{ color: "green" }}>3</span> × 1<br />={" "}
+  <span style={{ color: "red" }}>1</span> × 10<sup>2</sup> +{" "}
+  <span style={{ color: "blue" }}>2</span> × 10<sup>1</sup> +{" "}
+  <span style={{ color: "green" }}>3</span> × 10<sup>0</sup>
 </div>
 
 So the leftmost digit represents the hundreds place, the middle is the tens place, and the last is the ones place. It's a positional notation system.
@@ -70,9 +80,13 @@ Computers actually use the same principle. They just use only two numbers, 0 and
 For example, converting the binary number 101₂ to decimal works like this:
 
 <div className="text-center my-4">
-  <span style={{color: 'red'}}>1</span> × 2<sup>2</sup> + <span style={{color: 'blue'}}>0</span> × 2<sup>1</sup> + <span style={{color: 'green'}}>1</span> × 2<sup>0</sup><br/>
-  = <span style={{color: 'red'}}>1</span> × 4 + <span style={{color: 'blue'}}>0</span> × 2 + <span style={{color: 'green'}}>1</span> × 1<br/>
-  = 4 + 0 + 1 = 5<sub>10</sub>
+  <span style={{ color: "red" }}>1</span> × 2<sup>2</sup> +{" "}
+  <span style={{ color: "blue" }}>0</span> × 2<sup>1</sup> +{" "}
+  <span style={{ color: "green" }}>1</span> × 2<sup>0</sup>
+  <br />= <span style={{ color: "red" }}>1</span> × 4 +{" "}
+  <span style={{ color: "blue" }}>0</span> × 2 +{" "}
+  <span style={{ color: "green" }}>1</span> × 1<br />= 4 + 0 + 1 = 5
+  <sub>10</sub>
 </div>
 
 Try converting decimal numbers to binary below.
@@ -89,10 +103,10 @@ Converting decimal 3₁₀ + 1₁₀ = 4₁₀ to binary calculation gives us 11
 
 ```txt
   11   <-- (carry)
-   11   
-+  01   
+   11
++  01
 -----
-  100   
+  100
 ```
 
 1. 1 + 1 equals 2₁₀ in decimal, but in binary it's 10₂. So the current digit becomes 0 and we carry 1 to the next digit.
@@ -101,6 +115,7 @@ Converting decimal 3₁₀ + 1₁₀ = 4₁₀ to binary calculation gives us 11
 The result is 100₂, which equals decimal 4.
 
 The key in this process is the same two results that occur in each digit position as in decimal:
+
 - The result of the current digit position (**Sum**)
 - The carry that moves to the next digit position (**Carry**)
 
@@ -111,9 +126,9 @@ Now let's seriously build an addition circuit. Let's think about the simplest ca
 Listing all possible cases:
 
 ```txt
-0 + 0 = 0  
-0 + 1 = 1  
-1 + 0 = 1  
+0 + 0 = 0
+0 + 1 = 1
+1 + 0 = 1
 1 + 1 = ?
 ```
 
@@ -121,19 +136,19 @@ The last case is interesting. 1 + 1 becomes 10₂. That is, the current digit re
 
 Looking at the truth table, Sum becomes 1 only when A and B are different, and Carry becomes 1 only when both A and B are 1.
 
-<TruthTable 
+<TruthTable
   labels={[
-    { label: 'A', type: 'input' },
-    { label: 'B', type: 'input' },
-    { label: 'Sum', type: 'output' },
-    { label: 'Carry', type: 'output' },
-   ]}
+    { label: "A", type: "input" },
+    { label: "B", type: "input" },
+    { label: "Sum", type: "output" },
+    { label: "Carry", type: "output" },
+  ]}
   data={[
     [false, false, false, false],
     [false, true, true, false],
     [true, false, true, false],
     [true, true, false, true],
-  ]} 
+  ]}
 />
 
 Implementing the above truth table with logic gates creates a calculator that can perform single-digit binary addition!
@@ -147,7 +162,7 @@ We've already created a single-digit addition calculator! This is called a **hal
 
 Referring to the content from [NAND is All You Need](/cs/nand-is-all-you-need), implementing the above circuit with NAND gates looks like this. The top output is Carry, the bottom output is Sum.
 
-<Flow id="half-nand" initialJSON={halfNand}/>
+<Flow id="half-nand" initialJSON={halfNand} />
 
 </details>
 
@@ -171,14 +186,14 @@ We need a circuit that can handle all three input values (A, B, and the Carry fr
 
 The truth table for a full adder is as follows. For distinction, we'll call the carry from the previous digit Cin, and the carry to the next digit Cout.
 
-<TruthTable 
+<TruthTable
   labels={[
-    { label: 'A', type: 'input' },
-    { label: 'B', type: 'input' },
-    { label: 'Cin', type: 'input' },
-    { label: 'Cout', type: 'output' },
-    { label: 'Sum', type: 'output' },
-   ]}
+    { label: "A", type: "input" },
+    { label: "B", type: "input" },
+    { label: "Cin", type: "input" },
+    { label: "Cout", type: "output" },
+    { label: "Sum", type: "output" },
+  ]}
   data={[
     [false, false, false, false, false],
     [false, false, true, false, true],
@@ -188,12 +203,12 @@ The truth table for a full adder is as follows. For distinction, we'll call the 
     [true, false, true, true, false],
     [true, true, false, true, false],
     [true, true, true, true, true],
-  ]} 
+  ]}
 />
 
 It looks complex, but think of each row as binary addition. For example, the last row is 1 + 1 + 1 = 11₂, so Sum is 1 and Cout is 1.
 
-A full adder can be built using half adders and an OR gate. 
+A full adder can be built using half adders and an OR gate.
 
 <Flow id="half-to-full" initialJSON={full} />
 
@@ -205,11 +220,7 @@ Since the addition method doesn't change when the number of digits changes, we s
 
 With 10 full adders, we can add numbers over 1000, and with 30, we can add numbers over a billion! In the example below, we calculate 111<sub>2</sub> + 1<sub>2</sub> = 1000<sub>2</sub>.
 
-<Flow 
-  id="ripple-carry-adder" 
-  initialJSON={ripple} 
-  height={500}
-/>
+<Flow id="ripple-carry-adder" initialJSON={ripple} height={500} />
 
 This method is called a ripple carry adder. It's named this way because the carry propagates (ripples) to the next digit in sequence.
 
@@ -218,6 +229,7 @@ This method is called a ripple carry adder. It's named this way because the carr
 Finally, we've created circuits that actually perform number addition by combining logic gates!
 
 By the way, not only addition but also subtraction and multiplication can all be built with combinations of logic gates.
+
 - Subtraction can be handled like addition using [two's complement](https://en.wikipedia.org/wiki/Two%27s_complement)
 - Multiplication can be implemented by repeating multi-digit addition
 

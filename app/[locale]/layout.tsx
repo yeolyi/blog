@@ -15,10 +15,10 @@ import { ThemeProvider } from 'next-themes';
 import type * as React from 'react';
 import { Slide, ToastContainer } from 'react-toastify';
 import { SandPackCSS } from '@/components/layout/SandPackCSS';
-import { AuthProvider } from '@/components/providers/AuthProvider';
-import SWRProvider from '@/components/providers/SWRProvider';
-import MetaHandler from '@/components/providers/ThemeProvider';
 import { routing } from '@/i18n/routing';
+import { AuthProvider } from '@/providers/AuthProvider';
+import SWRProvider from '@/providers/SWRProvider';
+import MetaHandler from '@/providers/ThemeProvider';
 
 // css가 script 태그로 들어가는게 mdx 안에서 import해서 그런건가싶어서 여기로 이동
 import 'medium-zoom/dist/style.css';
