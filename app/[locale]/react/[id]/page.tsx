@@ -1,10 +1,32 @@
+import type { Metadata, ResolvingMetadata } from 'next';
 import { notFound } from 'next/navigation';
 import Comments from '@/components/comment';
 import PostNavigation from '@/components/layout/PostNavigation';
 import { order } from '@/mdx/react';
 import { getMdxIds } from '@/utils/path';
 
-export const dynamic = 'force-dynamic';
+export async function generateMetadata(
+	{
+		params,
+	}: {
+		params: Promise<{ id: string; locale: string }>;
+	},
+	parent: ResolvingMetadata,
+): Promise<Metadata> {
+	const { id, locale } = await params;
+	const { title, description } = await import(`@/mdx/react/${id}/${locale}.mdx`);
+
+	const parentMetadata = await parent;
+	const parentTitle = parentMetadata.title;
+	const parentDescription = parentMetadata.description;
+	const images = parentMetadata.openGraph?.images || [];
+
+	return {
+		title: title ?? parentTitle,
+		description: description ?? parentDescription,
+		openGraph: { title, description, images },
+	};
+}
 
 export default async function PostPage({
 	params,

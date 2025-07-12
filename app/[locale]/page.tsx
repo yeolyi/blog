@@ -30,7 +30,7 @@ import { Link } from '@/i18n/navigation';
 import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
 import AddingTuringMachine from '@/mdx/cs/turing-machine/components/AddingTuringMachine';
 import { order } from '@/mdx/react';
-import { getPostIds } from '@/utils/path';
+import { getMdxIds } from '@/utils/path';
 import me from './assets/me.jpg';
 import meme1 from './assets/meme1.jpeg';
 import meme2 from './assets/meme2.png';
@@ -72,7 +72,7 @@ export default async function Home({
 	const tCS = await getTranslations('Curriculum');
 	const tMain = await getTranslations('MainPage');
 
-	const ids = await getPostIds(locale);
+	const ids = await getMdxIds(locale);
 
 	const arr: { href: string; title: string; date: string }[] = await Promise.all(
 		ids.map(async (id) => {

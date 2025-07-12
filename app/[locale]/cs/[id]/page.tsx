@@ -1,13 +1,33 @@
+import type { Metadata, ResolvingMetadata } from 'next';
 import { notFound } from 'next/navigation';
-import { generateCSMetadata } from '@/app/[locale]/cs/utils/generateCSMetadata';
 import Comments from '@/components/comment';
 import PostNavigation from '@/components/layout/PostNavigation';
 import { routing } from '@/i18n/routing';
 import { order } from '@/mdx/cs';
-import { getPostIds } from '@/utils/path';
+import { getMdxIds } from '@/utils/path';
 
-export const dynamic = 'force-dynamic';
-export const generateMetadata = generateCSMetadata;
+export async function generateMetadata(
+	{
+		params,
+	}: {
+		params: Promise<{ id: string; locale: string }>;
+	},
+	parent: ResolvingMetadata,
+): Promise<Metadata> {
+	const { id, locale } = await params;
+	const { title, description } = await import(`@/mdx/cs/${id}/${locale}.mdx`);
+
+	const parentMetadata = await parent;
+	const parentTitle = parentMetadata.title;
+	const parentDescription = parentMetadata.description;
+	const images = parentMetadata.openGraph?.images || [];
+
+	return {
+		title: title ?? parentTitle,
+		description: description ?? parentDescription,
+		openGraph: { title, description, images },
+	};
+}
 
 export default async function PostPage({
 	params,
@@ -39,7 +59,7 @@ export const generateStaticParams = async () => {
 	const result = [];
 
 	for (const locale of locales) {
-		const postIds = await getPostIds(locale, 'cs');
+		const postIds = await getMdxIds(locale, 'cs');
 		for (const postId of postIds) {
 			result.push({ id: postId, locale });
 		}

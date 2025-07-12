@@ -15,8 +15,3 @@ export const getMdxIds = async (locale: Locale, subDir?: string) => {
 		})
 		.map((dirent) => dirent.name);
 };
-
-// TODO: 없애기
-export const getPostIds = async (locale: Locale, subDir?: string) => {
-	return await getMdxIds(locale, subDir);
-};

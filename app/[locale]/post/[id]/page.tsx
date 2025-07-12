@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Comments from '@/components/comment';
 import { routing } from '@/i18n/routing';
-import { getPostIds } from '@/utils/path';
+import { getMdxIds } from '@/utils/path';
 
 export const dynamic = 'force-dynamic';
 
@@ -45,7 +45,7 @@ export const generateStaticParams = async () => {
 	const result = [];
 
 	for (const locale of locales) {
-		const postIds = await getPostIds(locale);
+		const postIds = await getMdxIds(locale);
 		for (const postId of postIds) {
 			result.push({ id: postId, locale });
 		}
