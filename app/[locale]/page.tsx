@@ -117,7 +117,11 @@ export default async function Home({
 					src={me}
 					alt=''
 					placeholder='blur'
-					className='object-cover w-full h-full aspect-square not-prose md:w-1/2'
+					className='object-cover w-full h-full aspect-square md:w-1/2'
+					loading='eager'
+					quality={75}
+					width={1024}
+					height={1024}
 				/>
 				<div className='flex flex-col gap-7 md:w-1/2'>
 					<p>{tMain('title')}</p>
