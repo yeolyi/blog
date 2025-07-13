@@ -1,10 +1,11 @@
 import dayjs from 'dayjs';
-import { ChevronsUpDown } from 'lucide-react';
+import { ArrowRight, ChevronsUpDown } from 'lucide-react';
 import type { StaticImageData } from 'next/image';
 import Image from 'next/image';
 import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { getSubscriberCount } from '@/actions/resend';
+import CollapsibleSection from '@/components/CollapsibleSection';
 import EmailSubscribe from '@/components/cs/EmailSubscribe';
 import Flow from '@/components/cs/flow';
 import TruthTable from '@/components/cs/TruthTable';
@@ -247,31 +248,33 @@ export default async function Home({
 					<GhostButton>{tCS('hw9Title')}</GhostButton>
 				</p>
 
-				<p className='font-extrabold'>「{tCS('part2Title')}」</p>
+				<CollapsibleSection trigger={`「${tCS('part2Title')}」`}>
+					<p>
+						<GhostButton>{tCS('ds1Title')}</GhostButton>
+						<GhostButton>{tCS('ds2Title')}</GhostButton>
+						<GhostButton>{tCS('ds3Title')}</GhostButton>
+						<GhostButton>{tCS('ds4Title')}</GhostButton>
+						<GhostButton>{tCS('ds5Title')}</GhostButton>
+						<GhostButton>{tCS('ds6Title')}</GhostButton>
+						<GhostButton>{tCS('ds7Title')}</GhostButton>
+					</p>
+				</CollapsibleSection>
 
-				<p>
-					<GhostButton>{tCS('ds1Title')}</GhostButton>
-					<GhostButton>{tCS('ds2Title')}</GhostButton>
-					<GhostButton>{tCS('ds3Title')}</GhostButton>
-					<GhostButton>{tCS('ds4Title')}</GhostButton>
-					<GhostButton>{tCS('ds5Title')}</GhostButton>
-					<GhostButton>{tCS('ds6Title')}</GhostButton>
-					<GhostButton>{tCS('ds7Title')}</GhostButton>
-				</p>
-
-				<p className='font-extrabold'>「{tCS('part3Title')}」</p>
-
-				<p>
-					<GhostButton>{tCS('os1Title')}</GhostButton>
-					<GhostButton>{tCS('os2Title')}</GhostButton>
-					<GhostButton>{tCS('os3Title')}</GhostButton>
-					<GhostButton>{tCS('os4Title')}</GhostButton>
-					<GhostButton>{tCS('os5Title')}</GhostButton>
-					<GhostButton>{tCS('os6Title')}</GhostButton>
-				</p>
+				<CollapsibleSection trigger={`「${tCS('part3Title')}」`}>
+					<p>
+						<GhostButton>{tCS('os1Title')}</GhostButton>
+						<GhostButton>{tCS('os2Title')}</GhostButton>
+						<GhostButton>{tCS('os3Title')}</GhostButton>
+						<GhostButton>{tCS('os4Title')}</GhostButton>
+						<GhostButton>{tCS('os5Title')}</GhostButton>
+						<GhostButton>{tCS('os6Title')}</GhostButton>
+					</p>
+				</CollapsibleSection>
 			</div>
 
 			<Separator />
+			{/* <p>Craft</p>
+			<Separator /> */}
 
 			<Carousel opts={{ loop: true, align: 'start' }}>
 				<CarouselContent className='-pl-4'>
@@ -375,30 +378,33 @@ export default async function Home({
 						</GhostButton>
 					))}
 				</p>
-				<p className='font-extrabold'>「처음 UI를 그리는 과정」</p>
-				<p>
-					{reactInitialRenderList.map(({ id, title }) => (
-						<GhostButton href={`/react/${id}`} key={id}>
-							{title}
-						</GhostButton>
-					))}
-				</p>
-				<p className='font-extrabold'>「UI를 다시 그리는 과정」</p>
-				<p>
-					{reactRerenderList.map(({ id, title }) => (
-						<GhostButton href={`/react/${id}`} key={id}>
-							{title}
-						</GhostButton>
-					))}
-				</p>
-				<p className='font-extrabold'>「리액트 훅 뜯어보기」</p>
-				<p>
-					{reactHookList.map(({ id, title }) => (
-						<GhostButton href={`/react/${id}`} key={id}>
-							{title}
-						</GhostButton>
-					))}
-				</p>
+				<CollapsibleSection trigger={`「처음 UI를 그리는 과정」`}>
+					<p>
+						{reactInitialRenderList.map(({ id, title }) => (
+							<GhostButton href={`/react/${id}`} key={id}>
+								{title}
+							</GhostButton>
+						))}
+					</p>
+				</CollapsibleSection>
+				<CollapsibleSection trigger={`「UI를 다시 그리는 과정」`}>
+					<p>
+						{reactRerenderList.map(({ id, title }) => (
+							<GhostButton href={`/react/${id}`} key={id}>
+								{title}
+							</GhostButton>
+						))}
+					</p>
+				</CollapsibleSection>
+				<CollapsibleSection trigger={`「리액트 훅 뜯어보기」`}>
+					<p>
+						{reactHookList.map(({ id, title }) => (
+							<GhostButton href={`/react/${id}`} key={id}>
+								{title}
+							</GhostButton>
+						))}
+					</p>
+				</CollapsibleSection>
 			</div>
 		</div>
 	);
@@ -476,12 +482,12 @@ const GhostButton = ({
 	return (
 		<Button
 			variant='ghost'
-			className='max-w-full pl-0 pr-6 overflow-hidden'
+			className='pl-0 pr-6'
 			asChild={!!href}
 			disabled={!href}
 		>
 			{href ? (
-				<Link href={href} className='truncate'>
+				<Link href={href} className='truncate max-w-full'>
 					{children}
 				</Link>
 			) : (
