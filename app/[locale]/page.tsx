@@ -33,7 +33,12 @@ import { Link } from '@/i18n/navigation';
 import DecimalToBinary from '@/mdx/cs/adder/components/DecimalToBinary';
 import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
 import AddingTuringMachine from '@/mdx/cs/turing-machine/components/AddingTuringMachine';
-import { order } from '@/mdx/react';
+import {
+	hookOrder,
+	initialRenderOreder,
+	prepareOrder,
+	rerenderOrder,
+} from '@/mdx/react';
 import { getMdxIds } from '@/utils/path';
 import me from './assets/me.jpg';
 import meme1 from './assets/meme1.jpeg';
@@ -93,8 +98,29 @@ export default async function Home({
 	const subscriberCount = await getSubscriberCount();
 	const count = subscriberCount.success ? subscriberCount.value : undefined;
 
-	const metadataList = await Promise.all(
-		order.map(async (id) => {
+	const reactPrepareList = await Promise.all(
+		prepareOrder.map(async (id) => {
+			const { default: _, ...metadata } = await import(`@/mdx/react/${id}/ko.mdx`);
+			return { id, ...metadata };
+		}),
+	);
+
+	const reactInitialRenderList = await Promise.all(
+		initialRenderOreder.map(async (id) => {
+			const { default: _, ...metadata } = await import(`@/mdx/react/${id}/ko.mdx`);
+			return { id, ...metadata };
+		}),
+	);
+
+	const reactRerenderList = await Promise.all(
+		rerenderOrder.map(async (id) => {
+			const { default: _, ...metadata } = await import(`@/mdx/react/${id}/ko.mdx`);
+			return { id, ...metadata };
+		}),
+	);
+
+	const reactHookList = await Promise.all(
+		hookOrder.map(async (id) => {
 			const { default: _, ...metadata } = await import(`@/mdx/react/${id}/ko.mdx`);
 			return { id, ...metadata };
 		}),
@@ -343,7 +369,7 @@ export default async function Home({
 			<div className='flex flex-col gap-7'>
 				<p className='font-extrabold'>「시작하기 앞서」</p>
 				<p>
-					{metadataList.slice(0, 2).map(({ id, title }) => (
+					{reactPrepareList.map(({ id, title }) => (
 						<GhostButton href={`/react/${id}`} key={id}>
 							{title}
 						</GhostButton>
@@ -351,7 +377,7 @@ export default async function Home({
 				</p>
 				<p className='font-extrabold'>「처음 UI를 그리는 과정」</p>
 				<p>
-					{metadataList.slice(2, 10).map(({ id, title }) => (
+					{reactInitialRenderList.map(({ id, title }) => (
 						<GhostButton href={`/react/${id}`} key={id}>
 							{title}
 						</GhostButton>
@@ -359,7 +385,7 @@ export default async function Home({
 				</p>
 				<p className='font-extrabold'>「UI를 다시 그리는 과정」</p>
 				<p>
-					{metadataList.slice(10, 15).map(({ id, title }) => (
+					{reactRerenderList.map(({ id, title }) => (
 						<GhostButton href={`/react/${id}`} key={id}>
 							{title}
 						</GhostButton>
@@ -367,7 +393,7 @@ export default async function Home({
 				</p>
 				<p className='font-extrabold'>「리액트 훅 뜯어보기」</p>
 				<p>
-					{metadataList.slice(15).map(({ id, title }) => (
+					{reactHookList.map(({ id, title }) => (
 						<GhostButton href={`/react/${id}`} key={id}>
 							{title}
 						</GhostButton>
@@ -464,37 +490,3 @@ const GhostButton = ({
 		</Button>
 	);
 };
-
-/*
-	<Code
-				template='react'
-				files={{
-					'App.js': `import { useState } from 'react';
-
-function Link() {
-  return <a href="https://yeolyi.com">yeolyi.com</a>;
-}
-
-function Component() {
-  const [count, setCount] = useState(0);
-  return (
-    <div>
-    <button onClick={() => setCount((count) => count + 1)}>
-      click me - {count} 
-    </button> ({count % 2 === 0 ? <span>even</span> : <b>odd</b>})
-    </div>
-  );
-}
-
-export default function App() {
-  return (
-    <div>
-      <Link />
-      <br />
-      <Component />
-    </div>
-  );
-}`,
-				}}
-			/>
-*/

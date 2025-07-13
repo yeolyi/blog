@@ -1,6 +1,6 @@
-export const order = [
-	'setup',
-	'trigger-schedule-render-commit',
+export const prepareOrder = ['setup', 'trigger-schedule-render-commit'];
+export const initialRenderOreder = [
+	'initial-render',
 	'react-dom-is-simple',
 	'initial-trigger',
 	'fiber-traverse',
@@ -9,10 +9,21 @@ export const order = [
 	'begin-work-app',
 	'complete-work',
 	'initial-commit',
+];
+export const rerenderOrder = [
+	'rerender',
 	'rerender-trigger',
 	'rerender-reuse',
 	'compare-props',
 	'child-always-rerenders',
 	'rerender-fiber',
-	'hook-dispatcher',
+];
+
+export const hookOrder = ['hook-dispatcher'];
+
+export const order = [
+	...prepareOrder,
+	...initialRenderOreder,
+	...rerenderOrder,
+	...hookOrder,
 ];

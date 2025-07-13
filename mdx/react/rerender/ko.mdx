@@ -1,0 +1,31 @@
+export const title = "목표";
+
+아래 코드가 어떻게 초기 렌더되는지 살펴보자.
+
+			<Code
+				template='react'
+				files={{
+					'App.js': `import { useState } from 'react';
+
+function Link() {
+  return <a href="https://yeolyi.com">yeolyi.com</a>;
+}
+
+export default function App() {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>
+        <Link />
+        <br />
+        <button onClick={() => setCount((count) => count + 1)}>
+          click me - {count}
+        </button>
+      </p>
+    </div>
+  );
+}
+          `,
+				}}
+			/>
