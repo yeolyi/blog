@@ -1,11 +1,12 @@
 import dayjs from 'dayjs';
-import { ArrowRight, ChevronsUpDown } from 'lucide-react';
+import { ArrowRight, ChevronRight, ChevronsUpDown, Dot } from 'lucide-react';
 import type { StaticImageData } from 'next/image';
 import Image from 'next/image';
 import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { getSubscriberCount } from '@/actions/resend';
 import CollapsibleSection from '@/components/CollapsibleSection';
+import CraftSlot from '@/components/CraftSlot';
 import EmailSubscribe from '@/components/cs/EmailSubscribe';
 import Flow from '@/components/cs/flow';
 import TruthTable from '@/components/cs/TruthTable';
@@ -13,7 +14,9 @@ import InstagramDescription from '@/components/InstagramDescription';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
+	CardContent,
 	CardDescription,
+	CardFooter,
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
@@ -41,6 +44,8 @@ import {
 	rerenderOrder,
 } from '@/mdx/react';
 import { getMdxIds } from '@/utils/path';
+import cs from './assets/cs.gif';
+import csereal from './assets/csereal.png';
 import me from './assets/me.jpg';
 import meme1 from './assets/meme1.jpeg';
 import meme2 from './assets/meme2.png';
@@ -273,8 +278,24 @@ export default async function Home({
 			</div>
 
 			<Separator />
-			{/* <p>Craft</p>
-			<Separator /> */}
+
+			<Carousel>
+				<CarouselContent className='-pl-4'>
+					<CarouselItem className='min-h-[384px] aspect-video basis-11/12'>
+						<CraftSlot />
+					</CarouselItem>
+					<CarouselItem className='pl-4 max-w-sm my-auto'>
+						<Image src={cs} alt='' className='object-contain' />
+						<GhostButton href='/craft/flow'>
+							Jotai를 활용한 논리회로 시뮬레이터
+						</GhostButton>
+					</CarouselItem>
+				</CarouselContent>
+				<CarouselNext />
+				<CarouselPrevious />
+			</Carousel>
+
+			<Separator />
 
 			<Carousel opts={{ loop: true, align: 'start' }}>
 				<CarouselContent className='-pl-4'>
@@ -357,15 +378,11 @@ export default async function Home({
 			<div className='max-w-2xl space-y-7'>
 				<p>
 					가장 많이 쓰는 라이브러리가 리액트인데 그만큼 깊게 이해하고 있는 것 같지는
-					않아 리액트 소스코드를 공부하기로 했습니다. 어떤 개발자분 소개에 '리액트
-					컨트리뷰터'가 있는게 멋져보이기도 했고요.
-				</p>
-				<p>
+					않아 리액트 소스코드를 공부하기로 했습니다.{' '}
 					<LinkButton href='https://jser.dev/series/react-source-code-walkthrough'>
 						React source code deep dive 시리즈
 					</LinkButton>
-					의 도움을 많이 받았습니다. 자료의 커리큘럼을 따라 리액트 코드를 살펴보면서
-					스스로 이해한 과정과 따로 찾아본 내용들을 기록했습니다.
+					의 도움을 많이 받았습니다.
 				</p>
 			</div>
 
@@ -480,15 +497,11 @@ const GhostButton = ({
 	children: React.ReactNode;
 }) => {
 	return (
-		<Button
-			variant='ghost'
-			className='pl-0 pr-6'
-			asChild={!!href}
-			disabled={!href}
-		>
+		<Button variant='ghost' asChild={!!href} disabled={!href} className='gap-1'>
 			{href ? (
 				<Link href={href} className='truncate max-w-full'>
 					{children}
+					<ChevronRight />
 				</Link>
 			) : (
 				<span className='truncate'>{children}</span>
