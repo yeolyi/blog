@@ -42,10 +42,6 @@ export async function generateMetadata({
 
 	return {
 		title: locale === 'ko' ? '이성열' : 'seongyeol Yi',
-		description:
-			locale === 'ko'
-				? '개발자이자 크리에이터인 이성열입니다.'
-				: 'I’m Seongyeol Yi, a developer and content creator.',
 	};
 }
 
