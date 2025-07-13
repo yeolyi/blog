@@ -279,24 +279,6 @@ export default async function Home({
 
 			<Separator />
 
-			<Carousel>
-				<CarouselContent className='-pl-4'>
-					<CarouselItem className='min-h-[384px] aspect-video basis-11/12'>
-						<CraftSlot />
-					</CarouselItem>
-					<CarouselItem className='pl-4 max-w-sm my-auto'>
-						<Image src={cs} alt='' className='object-contain' />
-						<GhostButton href='/craft/flow'>
-							Jotai를 활용한 논리회로 시뮬레이터
-						</GhostButton>
-					</CarouselItem>
-				</CarouselContent>
-				<CarouselNext />
-				<CarouselPrevious />
-			</Carousel>
-
-			<Separator />
-
 			<Carousel opts={{ loop: true, align: 'start' }}>
 				<CarouselContent className='-pl-4'>
 					<CarouselItem className='pl-4 basis-11/12'>
@@ -423,6 +405,24 @@ export default async function Home({
 					</p>
 				</CollapsibleSection>
 			</div>
+
+			<Separator />
+
+			<Carousel>
+				<CarouselContent className='-pl-4'>
+					<CarouselItem className='min-h-[384px] aspect-video basis-11/12'>
+						<CraftSlot />
+					</CarouselItem>
+					<CarouselItem className='pl-4 max-w-sm my-auto space-y-1'>
+						<Image src={cs} alt='' className='object-contain' />
+						<GhostButton href='/craft/flow'>
+							Jotai를 활용한 논리회로 시뮬레이터
+						</GhostButton>
+					</CarouselItem>
+				</CarouselContent>
+				<CarouselNext />
+				<CarouselPrevious />
+			</Carousel>
 		</div>
 	);
 }

@@ -80,7 +80,7 @@ export default function CraftSlot() {
 
 	return (
 		<div className='flex items-center justify-center select-none w-full h-full'>
-			<p className='text-[min(6vw,70px)] leading-[1.375] font-black'>
+			<p className='text-[min(8vw,93px)] leading-[1.375] font-black'>
 				{letters.join('')}
 			</p>
 		</div>
