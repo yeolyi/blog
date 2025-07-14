@@ -1,4 +1,3 @@
-import bundleAnalyzer from '@next/bundle-analyzer';
 import createMDX from '@next/mdx';
 import rehypeShiki from '@shikijs/rehype';
 import {
@@ -66,8 +65,5 @@ const withMDX = createMDX({
 });
 
 const withNextIntl = createNextIntlPlugin();
-const withBundleAnalyzer = bundleAnalyzer({
-	enabled: process.env.ANALYZE === 'true',
-});
 
-export default withMDX(withNextIntl(withBundleAnalyzer(nextConfig)));
+export default withMDX(withNextIntl(nextConfig));

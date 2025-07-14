@@ -51,6 +51,10 @@
 	}
 
 	body {
+		/* TODO: vaul에서 margin-right: 15px가 더해짐 */
+		/* 일단 게으르게 처리 */
+		margin-right: 0 !important;
+
 		letter-spacing: -0.01em;
 		font-weight: 400;
 		font-size: 1rem;

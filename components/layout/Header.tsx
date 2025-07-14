@@ -262,7 +262,7 @@ export default function Header() {
 	return (
 		<header className='sticky top-0 left-0 right-0 flex items-center justify-between py-7 px-4 z-50'>
 			<Button variant='ghost' asChild>
-				<Link href='/' className='font-extrabold pl-0'>
+				<Link href='/' className='font-extrabold'>
 					{t('title')}
 				</Link>
 			</Button>
