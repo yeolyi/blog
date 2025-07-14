@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { Save, Trash2 } from 'lucide-react';
+import { Loader2, Save, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { mutate } from 'swr/_internal';
 import TagOption from '@/app/[locale]/memes/components/TagOption';
@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
@@ -39,6 +40,7 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 	const [hidden, setHidden] = useState<boolean>(meme.hidden);
 	const [newTag, setNewTag] = useState('');
+	const [isSaving, setIsSaving] = useState(false);
 	// 추가 태그 입력용 상태 (저장 시 한번에 적용)
 
 	const handleOpenChange = (nextOpen: boolean) => {
@@ -69,6 +71,8 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
 	// ... 삭제: handleAddTag 및 extraTags 관련 로직
 
 	const handleSave = async () => {
+		if (isSaving) return;
+		setIsSaving(true);
 		// 입력창의 태그들을 파싱하여 선택된 태그 집합에 추가
 		const typedTags = newTag
 			.split(',')
@@ -86,6 +90,7 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
 
 		setNewTag('');
 		setOpen(false);
+		setIsSaving(false);
 	};
 
 	const [deleteOpen, setDeleteOpen] = useState(false);
@@ -161,15 +166,16 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
 										삭제
 									</Button>
 								</DialogTrigger>
-								<DialogContent showCloseButton>
+								<DialogContent showCloseButton className='sm:max-w-sm'>
 									<DialogHeader>
 										<DialogTitle>정말 삭제하시겠습니까?</DialogTitle>
+										<DialogDescription>삭제된 밈은 복구할 수 없습니다.</DialogDescription>
 									</DialogHeader>
 									<DialogFooter>
 										<div className='flex gap-2 justify-end'>
 											<Button
 												type='button'
-												variant='secondary'
+												variant='outline'
 												onClick={() => setDeleteOpen(false)}
 											>
 												취소
@@ -193,8 +199,13 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
 									</DialogFooter>
 								</DialogContent>
 							</Dialog>
-							<Button type='button' variant='default' onClick={handleSave}>
-								<Save />
+							<Button
+								type='button'
+								variant='default'
+								onClick={handleSave}
+								disabled={isSaving}
+							>
+								{isSaving ? <Loader2 className='animate-spin' /> : <Save />}
 								저장
 							</Button>
 						</div>
