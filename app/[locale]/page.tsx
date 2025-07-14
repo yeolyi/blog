@@ -4,7 +4,8 @@ import type { StaticImageData } from 'next/image';
 import Image from 'next/image';
 import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import CollapsibleSection from '@/app/[locale]/components/CollapsibleSection';
+import { getInstagramFollowers } from '@/actions/instagram';
+import { getSubscriberCount } from '@/actions/resend';
 import CraftSlot from '@/app/[locale]/components/CraftSlot';
 import InstagramDescription from '@/app/[locale]/components/InstagramDescription';
 import Flow from '@/components/cs/flow';
@@ -33,12 +34,6 @@ import { Link } from '@/i18n/navigation';
 import DecimalToBinary from '@/mdx/cs/adder/components/DecimalToBinary';
 import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
 import AddingTuringMachine from '@/mdx/cs/turing-machine/components/AddingTuringMachine';
-import {
-	hookOrder,
-	initialRenderOreder,
-	prepareOrder,
-	rerenderOrder,
-} from '@/mdx/react';
 import { getMdxIds } from '@/utils/path';
 import cs from './assets/cs.gif';
 import me from './assets/me.jpg';
@@ -80,6 +75,14 @@ export default async function Home({
 	setRequestLocale(locale);
 
 	const tMain = await getTranslations('MainPage');
+
+	const subscriberCount = await getSubscriberCount();
+	const count = subscriberCount.success ? subscriberCount.value : undefined;
+
+	const instagramFollowers = await getInstagramFollowers('yeol.dev');
+	const followersCount = instagramFollowers.success
+		? instagramFollowers.value
+		: undefined;
 
 	const postIds = await getMdxIds(locale);
 	const postArr: { href: string; title: string; date: string }[] = (
@@ -189,7 +192,15 @@ export default async function Home({
 				<CarouselPrevious />
 			</Carousel>
 			<div className='flex flex-col gap-7'>
-				<p className='w-full max-w-2xl'>{tMain('csIntro')}</p>
+				<p className='w-full max-w-2xl'>
+					{tMain('csIntro')}{' '}
+					{count !== undefined && (
+						<>
+							<span className='font-extrabold'>{count.toLocaleString()}</span>
+							{tMain('subscriberCount')}
+						</>
+					)}
+				</p>
 			</div>
 
 			<Button asChild className='w-fit'>
@@ -258,7 +269,13 @@ export default async function Home({
 					externalLink: (chunks) => (
 						<LinkButton href='https://minguhongmfg.com/about'>{chunks}</LinkButton>
 					),
-				})}
+				})}{' '}
+				{followersCount !== undefined && (
+					<>
+						<span className='font-extrabold'>{followersCount.toLocaleString()}</span>
+						{tMain('subscriberCount')}
+					</>
+				)}
 			</p>
 
 			<Button asChild className='w-fit'>
