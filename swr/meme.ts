@@ -24,10 +24,16 @@ export const useMemeTagIds = (memeId: string) => {
 	return useSWR(memeTagKey(memeId), () => getMemeTagIdsAtDB(memeId));
 };
 
-export const updateMeme = async (props: UpdateMemeAtDBProps) => {
+export const updateMeme = async (
+	props: UpdateMemeAtDBProps,
+	prevKeys: string[],
+) => {
 	await updateMemeAtDB(props);
 	mutate(tagsKey);
-	for (const tagId of props.tags ?? []) {
+
+	const tagIds = [...(props.tags ?? []), ...(prevKeys ?? [])];
+
+	for (const tagId of tagIds) {
 		await mutate(memesByTagKey(tagId));
 		await mutate(memeTagKey(tagId));
 		await mutate(memesByTagKey(NO_TAG_ID));

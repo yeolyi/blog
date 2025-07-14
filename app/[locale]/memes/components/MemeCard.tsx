@@ -64,11 +64,14 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
 		const tagSet = new Set(selected);
 		for (const t of typedTags) tagSet.add(t);
 
-		await updateMeme({
-			id: meme.id,
-			tags: Array.from(tagSet),
-			hidden: false,
-		});
+		await updateMeme(
+			{
+				id: meme.id,
+				tags: Array.from(tagSet),
+				hidden: false,
+			},
+			memeTags?.map((mt) => mt.tag_id ?? '') ?? [],
+		);
 
 		setNewTag('');
 		setOpen(false);
