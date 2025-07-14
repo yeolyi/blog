@@ -4,7 +4,7 @@ import { Instagram, Plus, Shuffle } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useReducer, useState } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { mutate } from 'swr';
 import { crawlInstagramAction } from '@/actions/crawl';
 import { fileToAVIFAction } from '@/actions/image';

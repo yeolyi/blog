@@ -2,7 +2,7 @@
 import { Pencil } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useActionState } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useProfile } from '@/swr/auth';

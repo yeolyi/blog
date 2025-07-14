@@ -1,4 +1,4 @@
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import supabase from '@/db';
 import { getMemeFromDB } from '@/db/meme/read';
 import { tryDeleteTagAtDB } from '@/db/memeTag/delete';

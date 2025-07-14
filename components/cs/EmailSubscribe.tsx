@@ -3,7 +3,7 @@
 import { Send } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { subscribeEmail } from '@/actions/resend';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';

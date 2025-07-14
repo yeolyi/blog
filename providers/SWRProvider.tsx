@@ -1,5 +1,5 @@
 'use client';
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { SWRConfig } from 'swr';
 
 export default function SWRProvider({

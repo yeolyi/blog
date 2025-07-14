@@ -1,4 +1,4 @@
-import { toast } from 'react-toastify';
+import { toast } from 'sonner';
 import { v4 } from 'uuid';
 import supabase from '@/db';
 import { uploadFileToDB } from '@/db/storage';

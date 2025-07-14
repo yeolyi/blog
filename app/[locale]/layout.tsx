@@ -13,7 +13,6 @@ import { hasLocale, type Locale, NextIntlClientProvider } from 'next-intl';
 import { setRequestLocale } from 'next-intl/server';
 import { ThemeProvider } from 'next-themes';
 import type * as React from 'react';
-import { Slide, ToastContainer } from 'react-toastify';
 import { SandPackCSS } from '@/components/layout/SandPackCSS';
 import { routing } from '@/i18n/routing';
 import { AuthProvider } from '@/providers/AuthProvider';
@@ -22,6 +21,7 @@ import MetaHandler from '@/providers/ThemeProvider';
 
 // css가 script 태그로 들어가는게 mdx 안에서 import해서 그런건가싶어서 여기로 이동
 import 'medium-zoom/dist/style.css';
+import { Toaster } from 'sonner';
 
 const monoplexKR = localFont({
 	src: './assets/MonoplexKR-Text.ttf',
@@ -87,18 +87,7 @@ export default async function RootLayout({
 									<Header />
 									{children}
 									<MetaHandler />
-									<ToastContainer
-										position='bottom-right'
-										autoClose={5000}
-										hideProgressBar={false}
-										newestOnTop={false}
-										closeOnClick={false}
-										rtl={false}
-										pauseOnFocusLoss
-										pauseOnHover
-										theme='dark'
-										transition={Slide}
-									/>
+									<Toaster />
 								</AuthProvider>
 							</SWRProvider>
 						</JotaiProvider>
