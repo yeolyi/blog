@@ -1,19 +1,8 @@
-import clsx from 'clsx';
-import { Loader2, Save, Trash2 } from 'lucide-react';
+import { Loader2, Save } from 'lucide-react';
 import { useState } from 'react';
-import { mutate } from 'swr/_internal';
-import TagOption from '@/app/[locale]/memes/components/TagOption';
-import {
-	AlertDialog,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+import { DeleteMemeDialog } from '@/app/[locale]/memes/components/DeleteMemeDialog';
+import { TagOption } from '@/app/[locale]/memes/components/TagOption';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
 	Drawer,
 	DrawerContent,
@@ -23,10 +12,7 @@ import {
 	DrawerTrigger,
 } from '@/components/ui/drawer';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { deleteMemeFromDB } from '@/db/meme/delete';
-import { memesByTagKey } from '@/swr/key';
-import { NO_TAG_ID, updateMeme, useMemeTags, useTags } from '@/swr/meme';
+import { updateMeme, useMemeTags, useTags } from '@/swr/meme';
 import type { Meme } from '@/types/helper.types';
 
 export type MemeCardProps = Meme;
@@ -38,7 +24,6 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
 
 	// 선택된 태그 이름 집합
 	const [selected, setSelected] = useState<Set<string>>(new Set());
-	const [hidden, setHidden] = useState<boolean>(meme.hidden);
 	const [newTag, setNewTag] = useState('');
 	const [isSaving, setIsSaving] = useState(false);
 	// 추가 태그 입력용 상태 (저장 시 한번에 적용)
@@ -53,7 +38,6 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
 					if (tag) initial.add(tag.name);
 				}
 				setSelected(initial);
-				setHidden(meme.hidden);
 			}
 		}
 		setOpen(nextOpen);
@@ -67,8 +51,6 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
 			return next;
 		});
 	};
-
-	// ... 삭제: handleAddTag 및 extraTags 관련 로직
 
 	const handleSave = async () => {
 		if (isSaving) return;
@@ -85,15 +67,13 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
 		await updateMeme({
 			id: meme.id,
 			tags: Array.from(tagSet),
-			hidden,
+			hidden: false,
 		});
 
 		setNewTag('');
 		setOpen(false);
 		setIsSaving(false);
 	};
-
-	const [deleteOpen, setDeleteOpen] = useState(false);
 
 	return (
 		<Drawer open={open} onOpenChange={handleOpenChange}>
@@ -130,7 +110,7 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
 										name='tagArr'
 										value={tag.name}
 										checked={checked}
-										onCheckedChange={(c) => toggleTag(tag.name, c === true)}
+										onCheckedChange={(c: boolean) => toggleTag(tag.name, c === true)}
 									/>
 								);
 							})}
@@ -142,65 +122,15 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
 							onChange={(e) => setNewTag(e.target.value)}
 							placeholder='새 태그(콤마 구분)'
 						/>
-
-						{/* hidden 여부 */}
-						<div className='flex items-center gap-2'>
-							<Checkbox
-								id={`hidden-${meme.id}`}
-								name='hidden'
-								checked={hidden}
-								onCheckedChange={(c) => setHidden(c === true)}
-							/>
-							<Label htmlFor={`hidden-${meme.id}`} className='text-white'>
-								숨김
-							</Label>
-						</div>
 					</div>
 
 					<DrawerFooter>
 						<div className='flex gap-2 justify-end'>
-							<AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-								<AlertDialogTrigger asChild>
-									<Button type='button' variant='destructive'>
-										<Trash2 />
-										삭제
-									</Button>
-								</AlertDialogTrigger>
-								<AlertDialogContent>
-									<AlertDialogHeader>
-										<AlertDialogTitle>정말 삭제하시겠습니까?</AlertDialogTitle>
-										<AlertDialogDescription>
-											삭제된 밈은 복구할 수 없습니다.
-										</AlertDialogDescription>
-									</AlertDialogHeader>
-									<AlertDialogFooter>
-										<div className='flex gap-2 justify-end'>
-											<Button
-												type='button'
-												variant='outline'
-												onClick={() => setDeleteOpen(false)}
-											>
-												취소
-											</Button>
-											<Button
-												type='button'
-												variant='destructive'
-												onClick={async () => {
-													await deleteMemeFromDB(meme.id);
-													mutate(memesByTagKey(NO_TAG_ID));
-													for (const tag of memeTags ?? []) {
-														if (tag.tag_id) mutate(memesByTagKey(tag.tag_id));
-													}
-													setDeleteOpen(false);
-													setOpen(false);
-												}}
-											>
-												삭제
-											</Button>
-										</div>
-									</AlertDialogFooter>
-								</AlertDialogContent>
-							</AlertDialog>
+							<DeleteMemeDialog
+								memeId={meme.id}
+								memeTags={memeTags}
+								onDelete={() => setOpen(false)}
+							/>
 							<Button
 								type='button'
 								variant='default'
