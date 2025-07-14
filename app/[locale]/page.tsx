@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { ArrowRight, ChevronRight, ChevronsUpDown, Dot } from 'lucide-react';
+import { ChevronDown, ChevronsUpDown } from 'lucide-react';
 import type { StaticImageData } from 'next/image';
 import Image from 'next/image';
 import type { Locale } from 'next-intl';
@@ -14,9 +14,7 @@ import InstagramDescription from '@/components/InstagramDescription';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
-	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
@@ -150,9 +148,9 @@ export default async function Home({
 					<About />
 				</div>
 				<Collapsible className='md:hidden'>
-					<CollapsibleTrigger className='flex items-center justify-between'>
+					<CollapsibleTrigger className='flex items-center justify-between group'>
 						<p>{tMain('title')}</p>
-						<ChevronsUpDown className='w-4 h-4' />
+						<ChevronDown className='w-4 h-4 ml-1 group-data-[state=open]:rotate-180' />
 					</CollapsibleTrigger>
 					<CollapsibleContent className='flex flex-col gap-7 mt-7'>
 						<About />
@@ -168,7 +166,7 @@ export default async function Home({
 						asChild
 						variant='ghost'
 						key={href}
-						className='pl-0 max-w-full overflow-hidden'
+						className='max-w-full overflow-hidden'
 					>
 						<Link href={href} key={href} className='block'>
 							<h3 className='truncate'>{title}</h3>
@@ -474,7 +472,7 @@ const LinkButton = ({
 	return (
 		<Button
 			variant='secondary'
-			className='h-6 pl-1 pr-6 max-w-full overflow-hidden'
+			className='h-6 max-w-full overflow-hidden'
 			asChild={!!href}
 			disabled={!href}
 		>
@@ -501,7 +499,6 @@ const GhostButton = ({
 			{href ? (
 				<Link href={href} className='truncate max-w-full'>
 					{children}
-					<ChevronRight />
 				</Link>
 			) : (
 				<span className='truncate'>{children}</span>

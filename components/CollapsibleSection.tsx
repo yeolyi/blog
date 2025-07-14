@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import { ChevronsUpDown } from 'lucide-react';
+import { ChevronDown, ChevronsUpDown } from 'lucide-react';
 import {
 	Collapsible,
 	CollapsibleContent,
@@ -35,10 +35,12 @@ export default function CollapsibleSection({
 }: CollapsibleSectionProps) {
 	return (
 		<Collapsible className={className}>
-			<CollapsibleTrigger className={clsx('flex items-center', triggerClassName)}>
+			<CollapsibleTrigger
+				className={clsx('flex items-center group', triggerClassName)}
+			>
 				<p className='font-extrabold flex items-center'>
 					{trigger}
-					<ChevronsUpDown className='w-4 h-4 inline ml-2' />
+					<ChevronDown className='w-4 h-4 ml-1 group-data-[state=open]:rotate-180' />
 				</p>
 			</CollapsibleTrigger>
 			<CollapsibleContent className={clsx('mt-7', contentClassName)}>
