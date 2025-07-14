@@ -1,17 +1,146 @@
-import Marquee from '@/app/[locale]/components/Marquee';
+import { getTranslations } from 'next-intl/server';
+import { getSubscriberCount } from '@/actions/resend';
+import EmailSubscribe from '@/app/[locale]/cs/components/EmailSubscribe';
+import Flow from '@/components/cs/flow';
+import TruthTable from '@/components/cs/TruthTable';
 import { Button } from '@/components/ui/button';
+import {
+	Card,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/card';
+import {
+	Carousel,
+	CarouselContent,
+	CarouselItem,
+	CarouselNext,
+	CarouselPrevious,
+} from '@/components/ui/carousel';
 import { Link } from '@/i18n/navigation';
+import DecimalToBinary from '@/mdx/cs/adder/components/DecimalToBinary';
+import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
+import AddingTuringMachine from '@/mdx/cs/turing-machine/components/AddingTuringMachine';
 
-export default function CS() {
+export default async function CS() {
+	const tMain = await getTranslations('MainPage');
+	const tCS = await getTranslations('Curriculum');
+	const subscriberCount = await getSubscriberCount();
+	const count = subscriberCount.success ? subscriberCount.value : undefined;
+
 	return (
-		<div className='px-4 max-w-2xl mx-auto flex flex-col gap-7'>
-			<Marquee>nand is more than just </Marquee>
+		<div className='px-4 mx-auto flex flex-col gap-7 max-w-6xl'>
+			<div className='aspect-video max-h-[384px] text-[min(6vw,70px)] leading-none font-black text-stone-200 dark:text-stone-800 select-none overflow-hidden break-all text-justify'>
+				{'NAND IS MORE THAN JUST '.repeat(4)}
+				<span className='text-black dark:text-white'>
+					NAND IS MORE THAN JUST NAND{' '}
+				</span>
+				IS MORE THAN JUST {'NAND IS MORE THAN JUST '.repeat(20)} NAND
+			</div>
+
+			{count !== undefined && (
+				<p>
+					<span className='font-extrabold'>{count.toLocaleString()}</span>
+					{tMain('subscriberCount')}
+				</p>
+			)}
+
+			<EmailSubscribe />
+
+			<p className='font-extrabold'>「{tCS('part1Title')}」</p>
+
 			<p>
-				<Button asChild variant='link'>
-					<Link href='/'>/</Link>
-				</Button>
-				으로 위치를 옮겼습니다.
+				<GhostButton href='/cs/zero-and-one'>{tCS('hw1Title')}</GhostButton>
+				<GhostButton href='/cs/and-or-not'>{tCS('hw2Title')}</GhostButton>
+				<GhostButton href='/cs/nand-is-all-you-need'>{tCS('hw3Title')}</GhostButton>
+				<GhostButton href='/cs/adder'>{tCS('hw4Title')}</GhostButton>
+				<GhostButton href='/cs/sequential'>{tCS('hw5Title')}</GhostButton>
+				<GhostButton href='/cs/turing-machine'>{tCS('hw6Title')}</GhostButton>
+				<GhostButton>{tCS('hw7Title')}</GhostButton>
+				<GhostButton>{tCS('hw8Title')}</GhostButton>
+				<GhostButton>{tCS('hw9Title')}</GhostButton>
+			</p>
+
+			<Carousel opts={{ loop: true, align: 'start' }}>
+				<CarouselContent className='-pl-4'>
+					<CarouselItem className='pl-4 max-w-sm'>
+						<TruthTable
+							description={tMain('andGate')}
+							labels={[
+								{ label: 'A', type: 'input' },
+								{ label: 'B', type: 'input' },
+								{ label: 'A AND B', type: 'output' },
+							]}
+							data={[
+								[false, false, false],
+								[false, true, false],
+								[true, false, false],
+								[true, true, true],
+							]}
+						/>
+					</CarouselItem>
+					<CarouselItem className='max-w-sm pl-4'>
+						<Card>
+							<CardHeader>
+								<CardTitle>{tMain('nandUniversality')}</CardTitle>
+								<CardDescription>{tMain('nandToNot')}</CardDescription>
+							</CardHeader>
+							<Flow id='/cs' initialJSON={not} height={250} hideNodeButtons />
+						</Card>
+					</CarouselItem>
+					<CarouselItem className='pl-4 max-w-md'>
+						<AddingTuringMachine />
+					</CarouselItem>
+					<CarouselItem className='max-w-sm pl-4'>
+						<DecimalToBinary />
+					</CarouselItem>
+				</CarouselContent>
+				<CarouselNext />
+				<CarouselPrevious />
+			</Carousel>
+
+			<p className='font-extrabold'>「{tCS('part2Title')}」</p>
+
+			<p>
+				<GhostButton>{tCS('ds1Title')}</GhostButton>
+				<GhostButton>{tCS('ds2Title')}</GhostButton>
+				<GhostButton>{tCS('ds3Title')}</GhostButton>
+				<GhostButton>{tCS('ds4Title')}</GhostButton>
+				<GhostButton>{tCS('ds5Title')}</GhostButton>
+				<GhostButton>{tCS('ds6Title')}</GhostButton>
+				<GhostButton>{tCS('ds7Title')}</GhostButton>
+			</p>
+
+			<p className='font-extrabold'>「{tCS('part3Title')}」</p>
+
+			<p>
+				<GhostButton>{tCS('os1Title')}</GhostButton>
+				<GhostButton>{tCS('os2Title')}</GhostButton>
+				<GhostButton>{tCS('os3Title')}</GhostButton>
+				<GhostButton>{tCS('os4Title')}</GhostButton>
+				<GhostButton>{tCS('os5Title')}</GhostButton>
+				<GhostButton>{tCS('os6Title')}</GhostButton>
 			</p>
 		</div>
 	);
 }
+
+const GhostButton = ({
+	href,
+	children,
+}: {
+	href?: string;
+	children: React.ReactNode;
+}) => {
+	return (
+		<Button variant='ghost' asChild={!!href} disabled={!href} className='gap-1'>
+			{href ? (
+				<Link href={href} className='truncate max-w-full'>
+					{children}
+				</Link>
+			) : (
+				<span className='truncate'>{children}</span>
+			)}
+		</Button>
+	);
+};

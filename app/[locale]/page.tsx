@@ -1,14 +1,12 @@
 import dayjs from 'dayjs';
-import { ChevronDown, ChevronsUpDown } from 'lucide-react';
+import { ChevronDown, ChevronRight, ExternalLink } from 'lucide-react';
 import type { StaticImageData } from 'next/image';
 import Image from 'next/image';
 import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { getSubscriberCount } from '@/actions/resend';
 import CollapsibleSection from '@/app/[locale]/components/CollapsibleSection';
 import CraftSlot from '@/app/[locale]/components/CraftSlot';
 import InstagramDescription from '@/app/[locale]/components/InstagramDescription';
-import EmailSubscribe from '@/components/cs/EmailSubscribe';
 import Flow from '@/components/cs/flow';
 import TruthTable from '@/components/cs/TruthTable';
 import { Button } from '@/components/ui/button';
@@ -43,7 +41,6 @@ import {
 } from '@/mdx/react';
 import { getMdxIds } from '@/utils/path';
 import cs from './assets/cs.gif';
-import csereal from './assets/csereal.png';
 import me from './assets/me.jpg';
 import meme1 from './assets/meme1.jpeg';
 import meme2 from './assets/meme2.png';
@@ -82,7 +79,6 @@ export default async function Home({
 	// Enable static rendering
 	setRequestLocale(locale);
 
-	const tCS = await getTranslations('Curriculum');
 	const tMain = await getTranslations('MainPage');
 
 	const postIds = await getMdxIds(locale);
@@ -98,37 +94,6 @@ export default async function Home({
 	).toSorted((a, b) => {
 		return new Date(b.date).getTime() - new Date(a.date).getTime();
 	});
-
-	const subscriberCount = await getSubscriberCount();
-	const count = subscriberCount.success ? subscriberCount.value : undefined;
-
-	const reactPrepareList = await Promise.all(
-		prepareOrder.map(async (id) => {
-			const { default: _, ...metadata } = await import(`@/mdx/react/${id}/ko.mdx`);
-			return { id, ...metadata };
-		}),
-	);
-
-	const reactInitialRenderList = await Promise.all(
-		initialRenderOreder.map(async (id) => {
-			const { default: _, ...metadata } = await import(`@/mdx/react/${id}/ko.mdx`);
-			return { id, ...metadata };
-		}),
-	);
-
-	const reactRerenderList = await Promise.all(
-		rerenderOrder.map(async (id) => {
-			const { default: _, ...metadata } = await import(`@/mdx/react/${id}/ko.mdx`);
-			return { id, ...metadata };
-		}),
-	);
-
-	const reactHookList = await Promise.all(
-		hookOrder.map(async (id) => {
-			const { default: _, ...metadata } = await import(`@/mdx/react/${id}/ko.mdx`);
-			return { id, ...metadata };
-		}),
-	);
 
 	return (
 		<div className='px-4 flex flex-col gap-7 max-w-6xl mx-auto'>
@@ -180,7 +145,7 @@ export default async function Home({
 			<Separator />
 
 			<Carousel opts={{ loop: true, align: 'start' }}>
-				<CarouselContent className='-pl-4 min-h-[384px]'>
+				<CarouselContent className='-pl-4 max-h-[384px]'>
 					<CarouselItem className='aspect-video pl-4 basis-11/12 text-[min(6.9vw,65px)] leading-none font-black text-stone-200 dark:text-stone-800 select-none overflow-hidden break-all text-justify'>
 						{'NAND IS MORE THAN JUST '.repeat(4)}
 						<span className='text-black dark:text-white'>
@@ -225,55 +190,14 @@ export default async function Home({
 			</Carousel>
 			<div className='flex flex-col gap-7'>
 				<p className='w-full max-w-2xl'>{tMain('csIntro')}</p>
-
-				{count !== undefined && (
-					<p>
-						<span className='font-extrabold'>{count.toLocaleString()}</span>
-						{tMain('subscriberCount')}
-					</p>
-				)}
-
-				<EmailSubscribe />
-
-				<p className='font-extrabold'>「{tCS('part1Title')}」</p>
-
-				<p>
-					<GhostButton href='/cs/zero-and-one'>{tCS('hw1Title')}</GhostButton>
-					<GhostButton href='/cs/and-or-not'>{tCS('hw2Title')}</GhostButton>
-					<GhostButton href='/cs/nand-is-all-you-need'>
-						{tCS('hw3Title')}
-					</GhostButton>
-					<GhostButton href='/cs/adder'>{tCS('hw4Title')}</GhostButton>
-					<GhostButton href='/cs/sequential'>{tCS('hw5Title')}</GhostButton>
-					<GhostButton href='/cs/turing-machine'>{tCS('hw6Title')}</GhostButton>
-					<GhostButton>{tCS('hw7Title')}</GhostButton>
-					<GhostButton>{tCS('hw8Title')}</GhostButton>
-					<GhostButton>{tCS('hw9Title')}</GhostButton>
-				</p>
-
-				<CollapsibleSection trigger={`「${tCS('part2Title')}」`}>
-					<p>
-						<GhostButton>{tCS('ds1Title')}</GhostButton>
-						<GhostButton>{tCS('ds2Title')}</GhostButton>
-						<GhostButton>{tCS('ds3Title')}</GhostButton>
-						<GhostButton>{tCS('ds4Title')}</GhostButton>
-						<GhostButton>{tCS('ds5Title')}</GhostButton>
-						<GhostButton>{tCS('ds6Title')}</GhostButton>
-						<GhostButton>{tCS('ds7Title')}</GhostButton>
-					</p>
-				</CollapsibleSection>
-
-				<CollapsibleSection trigger={`「${tCS('part3Title')}」`}>
-					<p>
-						<GhostButton>{tCS('os1Title')}</GhostButton>
-						<GhostButton>{tCS('os2Title')}</GhostButton>
-						<GhostButton>{tCS('os3Title')}</GhostButton>
-						<GhostButton>{tCS('os4Title')}</GhostButton>
-						<GhostButton>{tCS('os5Title')}</GhostButton>
-						<GhostButton>{tCS('os6Title')}</GhostButton>
-					</p>
-				</CollapsibleSection>
 			</div>
+
+			<Button asChild className='w-fit'>
+				<Link href='/cs'>
+					보러가기
+					<ChevronRight />
+				</Link>
+			</Button>
 
 			<Separator />
 
@@ -337,6 +261,17 @@ export default async function Home({
 				})}
 			</p>
 
+			<Button asChild className='w-fit'>
+				<Link
+					href='https://instagram.com/yeol.dev'
+					target='_blank'
+					rel='noreferrer noopener'
+				>
+					보러가기
+					<ExternalLink />
+				</Link>
+			</Button>
+
 			<Separator />
 
 			<div className='aspect-video flex items-center justify-center select-none min-h-[384px] w-full'>
@@ -357,52 +292,20 @@ export default async function Home({
 
 			<div className='max-w-2xl space-y-7'>
 				<p>
-					가장 많이 쓰는 라이브러리가 리액트인데 그만큼 깊게 이해하고 있는 것 같지는
-					않아 리액트 소스코드를 공부하기로 했습니다.{' '}
+					리액트 소스코드를 직접 뜯어봅니다.{' '}
 					<LinkButton href='https://jser.dev/series/react-source-code-walkthrough'>
-						React source code deep dive 시리즈
+						jser.dev
 					</LinkButton>
 					의 도움을 많이 받았습니다.
 				</p>
 			</div>
 
-			<div className='flex flex-col gap-7'>
-				<p className='font-extrabold'>「시작하기 앞서」</p>
-				<p>
-					{reactPrepareList.map(({ id, title }) => (
-						<GhostButton href={`/react/${id}`} key={id}>
-							{title}
-						</GhostButton>
-					))}
-				</p>
-				<CollapsibleSection trigger={`「처음 UI를 그리는 과정」`}>
-					<p>
-						{reactInitialRenderList.map(({ id, title }) => (
-							<GhostButton href={`/react/${id}`} key={id}>
-								{title}
-							</GhostButton>
-						))}
-					</p>
-				</CollapsibleSection>
-				<CollapsibleSection trigger={`「UI를 다시 그리는 과정」`}>
-					<p>
-						{reactRerenderList.map(({ id, title }) => (
-							<GhostButton href={`/react/${id}`} key={id}>
-								{title}
-							</GhostButton>
-						))}
-					</p>
-				</CollapsibleSection>
-				<CollapsibleSection trigger={`「리액트 훅 뜯어보기」`}>
-					<p>
-						{reactHookList.map(({ id, title }) => (
-							<GhostButton href={`/react/${id}`} key={id}>
-								{title}
-							</GhostButton>
-						))}
-					</p>
-				</CollapsibleSection>
-			</div>
+			<Button asChild className='w-fit'>
+				<Link href='/react'>
+					보러가기
+					<ChevronRight />
+				</Link>
+			</Button>
 
 			<Separator />
 
@@ -429,36 +332,26 @@ const About = async () => {
 	const tMain = await getTranslations('MainPage');
 
 	return (
-		<>
-			<p>
-				{tMain.rich('developerBio', {
-					snuLink: (chunks) => (
-						<LinkButton href='https://snu.ac.kr'>{chunks}</LinkButton>
-					),
-					kakaoLink: (chunks) => (
-						<LinkButton href='https://kakaocorp.com'>{chunks}</LinkButton>
-					),
-					cseLink: (chunks) => (
-						<LinkButton href='https://cse.snu.ac.kr'>{chunks}</LinkButton>
-					),
-					baekjoonLink: (chunks) => (
-						<LinkButton href='https://solved.ac/profile/yeolyii'>{chunks}</LinkButton>
-					),
-					skyonLink: (chunks) => <LinkButton>{chunks}</LinkButton>,
-					githubLink: (chunks) => (
-						<LinkButton href='https://instagram.com/yeol.dev'>{chunks}</LinkButton>
-					),
-				})}
-			</p>
-			<p>
-				{tMain.rich('creatorBio', {
-					instagramLink: (chunks) => (
-						<LinkButton href='https://instagram.com/yeol.dev'>{chunks}</LinkButton>
-					),
-					csLink: (chunks) => <LinkButton href='#cs'>{chunks}</LinkButton>,
-				})}
-			</p>
-		</>
+		<p>
+			{tMain.rich('developerBio', {
+				snuLink: (chunks) => (
+					<LinkButton href='https://snu.ac.kr'>{chunks}</LinkButton>
+				),
+				kakaoLink: (chunks) => (
+					<LinkButton href='https://kakaocorp.com'>{chunks}</LinkButton>
+				),
+				cseLink: (chunks) => (
+					<LinkButton href='https://cse.snu.ac.kr'>{chunks}</LinkButton>
+				),
+				baekjoonLink: (chunks) => (
+					<LinkButton href='https://solved.ac/profile/yeolyii'>{chunks}</LinkButton>
+				),
+				skyonLink: (chunks) => <LinkButton>{chunks}</LinkButton>,
+				githubLink: (chunks) => (
+					<LinkButton href='https://instagram.com/yeol.dev'>{chunks}</LinkButton>
+				),
+			})}
+		</p>
 	);
 };
 

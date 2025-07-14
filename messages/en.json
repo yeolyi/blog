@@ -183,9 +183,8 @@
 	},
 	"MainPage": {
 		"title": "Hi! I'm Seongyeol, a developer and creator.",
-		"developerBio": "「Developer」 Seongyeol leaves traces through links. In Spring 2025, I studied Computer Science and Environmental Materials Science at <snuLink>Seoul National University</snuLink>. In Summer 2024, I joined <kakaoLink>Kakao</kakaoLink> as a frontend developer. In Spring 2024, I developed and deployed the frontend for the new Computer Science and Engineering department website <cseLink>cse.snu.ac.kr</cseLink>. In Summer 2023, I reached just before Diamond tier on <baekjoonLink>Baekjoon</baekjoonLink> but now it seems daunting. In Spring 2021, I spent 2 years freely gaining iOS/FE experience at startup <skyonLink>Skyon</skyonLink>, but the company disappeared. In Fall 2020, I created my <githubLink>GitHub</githubLink> account.",
-		"creatorBio": "「Creator」 Seongyeol constantly thinks about how to create and deliver value. Today, I deliver developer content to 23,055 people through <instagramLink>@yeol.dev</instagramLink>. I share the wonder of computer science I learned in school through <csLink>nand is more than just nand</csLink>.",
-		"csIntro": "I record and share the wonder I felt learning computer science in school. See how very simple things come together to accomplish complex tasks.",
+		"developerBio": "In Spring 2025, I studied Computer Science and Environmental Materials Science at <snuLink>Seoul National University</snuLink>. In Summer 2024, I joined <kakaoLink>Kakao</kakaoLink> as a frontend developer. In Spring 2024, I developed and deployed the frontend for the new Computer Science and Engineering department website <cseLink>cse.snu.ac.kr</cseLink>. In Summer 2023, I reached just before Diamond tier on <baekjoonLink>Baekjoon</baekjoonLink> but now it seems daunting. In Spring 2021, I spent 2 years freely gaining iOS/FE experience at startup <skyonLink>Skyon</skyonLink>, but the company disappeared. In Fall 2020, I created my <githubLink>GitHub</githubLink> account.",
+		"csIntro": "I share the wonder I felt learning computer science in school.",
 		"subscriberCount": " people are joining us!",
 		"interactionIntro": "Unlike books or videos, the web allows user interaction. Click and drag while watching lectures to explore the core principles of computer science.",
 		"andGate": "AND Gate",
