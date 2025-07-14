@@ -149,8 +149,8 @@ export default async function Home({
 
 			<Carousel opts={{ loop: true, align: 'start' }}>
 				<CarouselContent className='-pl-4 max-h-[384px]'>
-					<CarouselItem className='aspect-video pl-4 basis-11/12 text-[min(6.9vw,65px)] leading-none font-black text-stone-200 dark:text-stone-800 select-none overflow-hidden break-all text-justify'>
-						{'NAND IS MORE THAN JUST '.repeat(4)}
+					<CarouselItem className='aspect-video pl-4 basis-11/12 text-[max(40px,min(6.9vw,65px))] leading-none font-black text-stone-200 dark:text-stone-800 select-none overflow-hidden break-all text-justify'>
+						{'NAND IS MORE THAN JUST '.repeat(3)}
 						<span className='text-black dark:text-white'>
 							NAND IS MORE THAN JUST NAND{' '}
 						</span>
