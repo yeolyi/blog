@@ -203,7 +203,7 @@ export default async function Home({
 				</p>
 			</div>
 
-			<Button asChild className='w-fit'>
+			<Button asChild className='w-fit self-end'>
 				<Link href='/cs'>
 					보러가기
 					<ChevronRight />
@@ -278,7 +278,7 @@ export default async function Home({
 				)}
 			</p>
 
-			<Button asChild className='w-fit'>
+			<Button asChild className='w-fit self-end'>
 				<Link
 					href='https://instagram.com/yeol.dev'
 					target='_blank'
@@ -317,7 +317,7 @@ export default async function Home({
 				</p>
 			</div>
 
-			<Button asChild className='w-fit'>
+			<Button asChild className='w-fit self-end'>
 				<Link href='/react'>
 					보러가기
 					<ChevronRight />
