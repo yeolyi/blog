@@ -1,5 +1,5 @@
 'use client';
-import { Clipboard, ImageIcon, Plus, Shuffle } from 'lucide-react';
+import { Clipboard, ImageIcon, Loader2, Plus, Shuffle } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { mutate } from 'swr';
@@ -213,7 +213,7 @@ const AddMemeDrawer = () => {
 							className='w-fit ml-auto'
 							disabled={isLoading}
 						>
-							<Plus />
+							{isLoading ? <Loader2 className='animate-spin' /> : <Plus />}
 							추가
 						</Button>
 					</DrawerFooter>

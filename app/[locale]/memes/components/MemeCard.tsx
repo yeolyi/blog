@@ -3,17 +3,17 @@ import { Loader2, Save, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { mutate } from 'swr/_internal';
 import TagOption from '@/app/[locale]/memes/components/TagOption';
+import {
+	AlertDialog,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-	DialogTrigger,
-} from '@/components/ui/dialog';
 import {
 	Drawer,
 	DrawerContent,
@@ -159,19 +159,21 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
 
 					<DrawerFooter>
 						<div className='flex gap-2 justify-end'>
-							<Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-								<DialogTrigger asChild>
+							<AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+								<AlertDialogTrigger asChild>
 									<Button type='button' variant='destructive'>
 										<Trash2 />
 										삭제
 									</Button>
-								</DialogTrigger>
-								<DialogContent showCloseButton className='sm:max-w-sm'>
-									<DialogHeader>
-										<DialogTitle>정말 삭제하시겠습니까?</DialogTitle>
-										<DialogDescription>삭제된 밈은 복구할 수 없습니다.</DialogDescription>
-									</DialogHeader>
-									<DialogFooter>
+								</AlertDialogTrigger>
+								<AlertDialogContent>
+									<AlertDialogHeader>
+										<AlertDialogTitle>정말 삭제하시겠습니까?</AlertDialogTitle>
+										<AlertDialogDescription>
+											삭제된 밈은 복구할 수 없습니다.
+										</AlertDialogDescription>
+									</AlertDialogHeader>
+									<AlertDialogFooter>
 										<div className='flex gap-2 justify-end'>
 											<Button
 												type='button'
@@ -196,9 +198,9 @@ const MemeCard = ({ data: meme }: { data: MemeCardProps }) => {
 												삭제
 											</Button>
 										</div>
-									</DialogFooter>
-								</DialogContent>
-							</Dialog>
+									</AlertDialogFooter>
+								</AlertDialogContent>
+							</AlertDialog>
 							<Button
 								type='button'
 								variant='default'
