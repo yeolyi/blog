@@ -1,4 +1,4 @@
-import Marquee from '@/components/Marquee';
+import Marquee from '@/app/[locale]/components/Marquee';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/navigation';
 

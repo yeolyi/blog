@@ -5,12 +5,12 @@ import Image from 'next/image';
 import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { getSubscriberCount } from '@/actions/resend';
-import CollapsibleSection from '@/components/CollapsibleSection';
-import CraftSlot from '@/components/CraftSlot';
+import CollapsibleSection from '@/app/[locale]/components/CollapsibleSection';
+import CraftSlot from '@/app/[locale]/components/CraftSlot';
+import InstagramDescription from '@/app/[locale]/components/InstagramDescription';
 import EmailSubscribe from '@/components/cs/EmailSubscribe';
 import Flow from '@/components/cs/flow';
 import TruthTable from '@/components/cs/TruthTable';
-import InstagramDescription from '@/components/InstagramDescription';
 import { Button } from '@/components/ui/button';
 import {
 	Card,

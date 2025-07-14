@@ -18,6 +18,12 @@ const Toaster = ({ ...props }: ToasterProps) => {
 				} as React.CSSProperties
 			}
 			{...props}
+			toastOptions={{
+				style: {
+					borderRadius: 0,
+				},
+			}}
+			position='top-right'
 		/>
 	);
 };
