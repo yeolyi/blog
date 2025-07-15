@@ -3,7 +3,6 @@ import { Clipboard, ImageIcon, Loader2, Plus } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { mutate } from 'swr';
-import { fileToAVIFAction } from '@/actions/image';
 import { Button } from '@/components/ui/button';
 import {
 	Drawer,
@@ -18,6 +17,7 @@ import { Label } from '@/components/ui/label';
 import { uploadMemeToDB } from '@/db/meme/create';
 import { memesByTagKey } from '@/swr/key';
 import { NO_TAG_ID } from '@/swr/meme';
+import { fileToAvifBlob } from '@/utils/image';
 import { getErrMessage } from '@/utils/string';
 
 export const AddMemeDrawer = () => {
@@ -75,7 +75,7 @@ export const AddMemeDrawer = () => {
 			return;
 		}
 
-		const avif = await fileToAVIFAction(image);
+		const avif = await fileToAvifBlob(image);
 
 		if (typeof avif === 'string') {
 			toast.error(`이미지 변환 실패: ${avif}`);

@@ -11,6 +11,9 @@ importers:
       '@codesandbox/sandpack-react':
         specifier: ^2.20.0
         version: 2.20.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@jsquash/avif':
+        specifier: ^2.1.1
+        version: 2.1.1
       '@mdx-js/loader':
         specifier: ^3.1.0
         version: 3.1.0(acorn@8.15.0)
@@ -469,6 +472,9 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.29':
     resolution: {integrity: sha512-uw6guiW/gcAGPDhLmd77/6lW8QLeiV5RUTsAX46Db6oLhGaVj4lhnPwb184s1bkc8kdVg/+h988dro8GRDpmYQ==}
+
+  '@jsquash/avif@2.1.1':
+    resolution: {integrity: sha512-LMRxd0fMgfCLtobDh0/sFYJMMiRJTNYSEEWvRDKXlAeZ08t3gI5V+1thIT0XjXJ+SVG7Zug9B0XPyx0Ti5VRNA==}
 
   '@lezer/common@1.2.3':
     resolution: {integrity: sha512-w7ojc8ejBqr2REPsWxJjrMFsA/ysDCFICn8zEOR9mrqzOu2amhITYuLD8ag6XZf0CFXDrhKqw7+tW8cX66NaDA==}
@@ -2635,6 +2641,9 @@ packages:
     resolution: {integrity: sha512-3hu+tD8YzSLGuFYtPRb48vdhKMi0KQV5sn+uWr8+7dMEq/2G/dtLrdDinkLjqq5TIbIBjYJ4Ax/n3YiaW7QM8A==}
     engines: {node: 20 || >=22}
 
+  wasm-feature-detect@1.8.0:
+    resolution: {integrity: sha512-zksaLKM2fVlnB5jQQDqKXXwYHLQUVH9es+5TOOHwGOVJOCeRBCiPjwSg+3tN2AdTCzjgli4jijCH290kXb/zWQ==}
+
   webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
 
@@ -3029,6 +3038,10 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.4
+
+  '@jsquash/avif@2.1.1':
+    dependencies:
+      wasm-feature-detect: 1.8.0
 
   '@lezer/common@1.2.3': {}
 
@@ -5560,6 +5573,8 @@ snapshots:
   w3c-keyname@2.2.8: {}
 
   walk-up-path@4.0.0: {}
+
+  wasm-feature-detect@1.8.0: {}
 
   webidl-conversions@3.0.1: {}
 
