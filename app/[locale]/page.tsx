@@ -79,9 +79,9 @@ export default async function Home({
 	const subscriberCount = await getSubscriberCount();
 	const count = subscriberCount.success ? subscriberCount.value : undefined;
 
-	const instagramFollowers = await getInstagramFollowers('yeol.dev');
+	const instagramFollowers = await getInstagramFollowers();
 	const followersCount = instagramFollowers.success
-		? instagramFollowers.value
+		? instagramFollowers.value.followers_count
 		: undefined;
 
 	const postIds = await getMdxIds(locale);
@@ -332,7 +332,7 @@ export default async function Home({
 						<CraftSlot />
 					</CarouselItem>
 					<CarouselItem className='pl-4 max-w-sm my-auto space-y-1'>
-						<Image src={cs} alt='' className='object-contain' />
+						<Image src={cs} alt='' className='object-contain' unoptimized />
 						<GhostButton href='/craft/flow'>
 							Jotai를 활용한 논리회로 시뮬레이터
 						</GhostButton>
