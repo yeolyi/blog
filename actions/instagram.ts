@@ -5,8 +5,7 @@ import { wrapServerAction } from '@/utils/error';
 let cachedFollowersCount: number | null = null;
 let cacheTimestamp: number | null = null;
 
-// 캐시 유효 시간 (24시간)
-const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24시간을 밀리초로 변환
+const CACHE_DURATION = 60 * 1000;
 
 export const getInstagramFollowers = wrapServerAction(
 	async (username: string) => {
@@ -50,6 +49,7 @@ export const getInstagramFollowers = wrapServerAction(
 
 			throw new Error('팔로워 수를 파싱할 수 없습니다.');
 		} catch (error) {
+			console.error(error);
 			// 에러 발생 시 캐시된 데이터가 있다면 반환
 			if (cachedFollowersCount !== null) {
 				return cachedFollowersCount;
