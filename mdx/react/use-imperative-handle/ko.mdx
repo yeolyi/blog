@@ -1,0 +1,64 @@
+export const title = "useImperativeHandle";
+import { FancyInputTest, RefDuringRender, UnmountExample } from './example';
+
+## API 복습
+
+    		<Code
+    			template='react'
+    			files={{
+    				'App.js': `import { useImperativeHandle, useRef, forwardRef, useCallback } from 'react';
+
+function FancyInput(props, ref) {
+    const inputRef = useRef();
+    useImperativeHandle(ref, () => ({
+      focus: () => {
+        inputRef.current.focus();
+      },
+    }));
+    return <input ref={inputRef} />;
+}
+FancyInput = forwardRef(FancyInput);
+
+export default function App() {
+    const ref = useRef();
+    const focus = useCallback(() => {
+        ref.current?.focus();
+    }, []);
+    
+    return (
+        <div>
+            <FancyInput ref={ref} />
+            <button onClick={focus}>Focus</button>
+        </div>
+    );
+}`,
+}}
+/>
+
+## ref는 unmount시에 null 설정된다.
+
+(GPT) 이 클린업은 메모리 누수 방지, 올바른 상태 유지, 불필요한 참조 제거를 위해 매우 중요합니다.
+
+mount/unmount하며 토스트 알림을 확인해보자.
+
+<UnmountExample />
+
+## 렌더링 중에는 ref.current 접근하지 않기
+
+React의 모든 갱신은 두 단계로 나눌 수 있습니다.
+
+1. 렌더링 단계에서 React는 화면에 무엇을 그려야 하는지 알아내도록 컴포넌트를 호출합니다.
+2. 커밋 단계에서 React는 변경사항을 DOM에 적용합니다.
+
+일반적으로 렌더링하는 중 ref에 접근하는 것을 원하지 않습니다. DOM 노드를 보유하는 ref도 마찬가지입니다. 첫 렌더링에서 DOM 노드는 아직 생성되지 않아서 ref.current는 null인 상태입니다. 그리고 갱신에 의한 렌더링에서 DOM 노드는 아직 업데이트되지 않은 상태입니다. 두 상황 모두 ref를 읽기에 너무 이른 상황입니다.
+ 
+https://ko.react.dev/learn/manipulating-the-dom-with-refs#when-react-attaches-the-refs
+
+-> 실제로 렌더링 중에 ref.current를 쓰면 직관과 대비되는 결과가 나온다.
+
+<RefDuringRender />
+
+## 구현
+
+<FancyInputTest />
+
