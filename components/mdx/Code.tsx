@@ -2,28 +2,22 @@
 
 import {
 	defaultDark,
-	defaultLight,
 	SandpackCodeEditor,
 	SandpackConsole,
 	SandpackPreview,
 	type SandpackProps,
 	SandpackProvider,
 } from '@codesandbox/sandpack-react';
-import { useTheme } from 'next-themes';
 
 export default function _Code(
 	props: SandpackProps & { showTabs?: boolean; activeFile?: string },
 ) {
-	const { resolvedTheme } = useTheme();
-	const isDark = resolvedTheme === 'dark' || resolvedTheme === undefined;
-	const sandpackTheme = isDark ? defaultDark : defaultLight;
-
 	return (
 		<SandpackProvider
 			theme={{
-				...sandpackTheme,
+				...defaultDark,
 				font: {
-					...sandpackTheme.font,
+					...defaultDark.font,
 					body: 'var(--font-monoplex-kr)',
 					mono: 'var(--font-monoplex-kr)',
 					size: '14px',
