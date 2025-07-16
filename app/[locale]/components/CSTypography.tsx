@@ -22,12 +22,15 @@ export default function CSTypography({ className }: { className?: string }) {
 		// 		</textPath>
 		// 	</text>
 		// </svg>
-		<div className='aspect-video max-h-[384px] text-[min(7.5vw,63px)]  leading-none font-black text-stone-200 dark:text-stone-800 select-none overflow-hidden break-all text-justify'>
+		<div className='aspect-video max-h-[384px] text-[min(7.5vw,63px)] leading-none font-black text-stone-200 dark:text-stone-800 select-none overflow-hidden break-all text-justify'>
 			{'NAND IS MORE THAN JUST '.repeat(2)}
-			<span className='text-black dark:text-white'>
+			<span className='text-black dark:text-white lg:text-inherit lg:dark:text-inherit'>
 				NAND IS MORE THAN JUST NAND{' '}
 			</span>
-			IS MORE THAN JUST {'NAND IS MORE THAN JUST '.repeat(20)} NAND
+			<span className='lg:text-black lg:dark:text-white'>
+				<span className='hidden lg:inline'>NAND</span> IS MORE THAN JUST NAND
+			</span>{' '}
+			IS MORE THAN JUST NAND {'NAND IS MORE THAN JUST '.repeat(20)} NAND
 		</div>
 	);
 }
