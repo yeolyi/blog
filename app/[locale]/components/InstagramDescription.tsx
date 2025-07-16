@@ -21,7 +21,7 @@ export default function InstagramDescription() {
 	}, [descriptions.length]);
 
 	return (
-		<div className='min-h-[384px] h-full flex items-center justify-center px-16 relative select-none'>
+		<div className='min-h-[384px] w-full h-full flex items-center justify-center px-16 relative select-none aspect-video'>
 			<Text>{descriptions[index]}</Text>
 		</div>
 	);
@@ -38,7 +38,7 @@ const Text = ({
 		<p
 			suppressHydrationWarning
 			className={cn(
-				'text-[min(6vw,70px)] leading-[1.375] font-black text-center block text-pretty',
+				'text-[min(6vw,70px)] leading-[1.375] font-black text-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-balance w-full',
 				className,
 			)}
 		>

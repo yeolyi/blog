@@ -1,7 +1,3 @@
-'use client';
-
-import { useRef, useState } from 'react';
-
 const WORD = 'CRAFT';
 const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
@@ -11,46 +7,7 @@ const getInitialIndices = () => {
 };
 
 export default function CraftTypography() {
-	const [charIndices, setCharIndices] = useState<number[]>(getInitialIndices());
-	const [isDragging, setIsDragging] = useState<number | null>(null);
-	const startY = useRef<number>(0);
-	const lastY = useRef<number>(0);
-
-	const handlePointerDown = (e: React.PointerEvent, charIdx: number) => {
-		e.preventDefault();
-		setIsDragging(charIdx);
-		startY.current = e.clientY;
-		lastY.current = e.clientY;
-		(e.target as HTMLElement).setPointerCapture(e.pointerId);
-	};
-
-	const handlePointerMove = (e: React.PointerEvent, charIdx: number) => {
-		if (isDragging !== charIdx) return;
-
-		const deltaY = lastY.current - e.clientY;
-		const threshold = 50; // 드래그 민감도
-
-		if (Math.abs(deltaY) > threshold) {
-			setCharIndices((prev) => {
-				const newIndices = [...prev];
-				if (deltaY > 0) {
-					// 위로 드래그 - 다음 문자
-					newIndices[charIdx] = (newIndices[charIdx] + 1) % ALPHABET.length;
-				} else {
-					// 아래로 드래그 - 이전 문자
-					newIndices[charIdx] =
-						(newIndices[charIdx] - 1 + ALPHABET.length) % ALPHABET.length;
-				}
-				return newIndices;
-			});
-			lastY.current = e.clientY;
-		}
-	};
-
-	const handlePointerUp = (e: React.PointerEvent) => {
-		setIsDragging(null);
-		(e.target as HTMLElement).releasePointerCapture(e.pointerId);
-	};
+	const charIndices = getInitialIndices();
 
 	return (
 		<div className='flex items-center justify-center select-none w-full h-full aspect-video min-h-[384px]'>
@@ -70,10 +27,7 @@ export default function CraftTypography() {
 					return (
 						<div
 							key={charIdx}
-							className='flex items-center flex-col text-[min(12vw,130px)] cursor-grab active:cursor-grabbing touch-none w-[min(12vw,130px)]'
-							onPointerDown={(e) => handlePointerDown(e, charIdx)}
-							onPointerMove={(e) => handlePointerMove(e, charIdx)}
-							onPointerUp={handlePointerUp}
+							className='flex items-center flex-col text-[min(12vw,130px)] touch-none w-[min(12vw,130px)]'
 							style={{ perspective: '200px' }}
 						>
 							<span

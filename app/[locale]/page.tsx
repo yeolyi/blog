@@ -36,6 +36,11 @@ import {
 	CollapsibleContent,
 	CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import {
+	HybridTooltip,
+	HybridTooltipContent,
+	HybridTooltipTrigger,
+} from '@/components/ui/hybrid-tooltip';
 import { Separator } from '@/components/ui/separator';
 import {
 	Tooltip,
@@ -234,25 +239,23 @@ export default async function Home({
 				<CarouselPrevious />
 			</Carousel>
 
-			<div className='w-full max-w-2xl flex items-center gap-1'>
-				<p>
-					{tMain.rich('instagramIntro', {
-						externalLink: (chunks) => (
-							<LinkButton href='https://minguhongmfg.com/about'>{chunks}</LinkButton>
-						),
-					})}{' '}
-					{followersCount !== undefined && (
-						<>
-							<span className='font-extrabold'>{followersCount.toLocaleString()}</span>
-							{tMain('subscriberCount')}
-						</>
-					)}
-				</p>
-				<Tooltip>
-					<TooltipTrigger>
+			<p>
+				{tMain.rich('instagramIntro', {
+					externalLink: (chunks) => (
+						<LinkButton href='https://minguhongmfg.com/about'>{chunks}</LinkButton>
+					),
+				})}{' '}
+				{followersCount !== undefined && (
+					<>
+						<span className='font-extrabold'>{followersCount.toLocaleString()}</span>
+						{tMain('subscriberCount')}
+					</>
+				)}{' '}
+				<HybridTooltip>
+					<HybridTooltipTrigger className='align-middle -translate-y-0.5'>
 						<Info className='w-4 h-4' />
-					</TooltipTrigger>
-					<TooltipContent>
+					</HybridTooltipTrigger>
+					<HybridTooltipContent>
 						<p>
 							<a
 								href='https://minguhongmfg.com/about'
@@ -265,9 +268,9 @@ export default async function Home({
 							에서 아이디어를 얻어 <br />
 							계정이 하는 일들과 마음에 들었던 컨텐츠들을 공유합니다.
 						</p>
-					</TooltipContent>
-				</Tooltip>
-			</div>
+					</HybridTooltipContent>
+				</HybridTooltip>
+			</p>
 
 			<Button asChild className='w-fit self-end'>
 				<Link
