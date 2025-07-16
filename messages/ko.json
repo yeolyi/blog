@@ -5,7 +5,10 @@
 		"developer": "#{number}번째 개발자님",
 		"logout": "로그아웃",
 		"login": "로그인",
-		"changeLocale": "언어 변경"
+		"changeLocale": "언어 변경",
+		"github": "깃허브",
+		"language": "언어",
+		"theme": "테마"
 	},
 	"LocaleSwitcher": {
 		"label": "언어",

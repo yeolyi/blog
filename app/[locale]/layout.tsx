@@ -22,7 +22,6 @@ import { routing } from '@/i18n/routing';
 // css가 script 태그로 들어가는게 mdx 안에서 import해서 그런건가싶어서 여기로 이동
 import 'medium-zoom/dist/style.css';
 import { SandPackCSS } from '@/app/[locale]/components/SandpackCss';
-import { TouchProvider } from '@/components/ui/hybrid-tooltip';
 import { Toaster } from '@/components/ui/sonner';
 
 const monoplexKR = localFont({
@@ -86,12 +85,10 @@ export default async function RootLayout({
 						<JotaiProvider>
 							<SWRProvider>
 								<AuthProvider>
-									<TouchProvider>
-										<Header />
-										{children}
-										<MetaHandler />
-										<Toaster />
-									</TouchProvider>
+									<Header />
+									{children}
+									<MetaHandler />
+									<Toaster />
 								</AuthProvider>
 							</SWRProvider>
 						</JotaiProvider>

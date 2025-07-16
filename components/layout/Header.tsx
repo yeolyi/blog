@@ -2,12 +2,12 @@
 
 import {
 	Github,
-	Globe,
 	Instagram,
 	Loader2,
 	LogIn,
 	LogOut,
 	Menu,
+	Monitor,
 	Moon,
 	Sun,
 	SunMoon,
@@ -16,47 +16,39 @@ import { useParams } from 'next/navigation';
 import type { Locale } from 'next-intl';
 import { useLocale, useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
-import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuRadioGroup,
-	DropdownMenuRadioItem,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/popover';
+import { Separator } from '@/components/ui/separator';
 import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { useSessionStore } from '@/store/session';
 
 function GithubButton() {
 	return (
-		<div className='relative'>
-			<Button variant='ghost' asChild>
-				<Link href='https://github.com/yeolyi' target='_blank'>
-					<Github className='size-4' />
-				</Link>
-			</Button>
-		</div>
+		<Button variant='ghost' asChild>
+			<Link href='https://github.com/yeolyi' target='_blank'>
+				<Github className='size-4' />
+			</Link>
+		</Button>
 	);
 }
 
 function InstagramButton() {
 	return (
-		<div className='relative'>
-			<Button variant='ghost' asChild>
-				<Link href='https://instagram.com/yeol.dev' target='_blank'>
-					<Instagram className='size-4' />
-				</Link>
-			</Button>
-		</div>
+		<Button variant='ghost' asChild>
+			<Link href='https://instagram.com/yeol.dev' target='_blank'>
+				<Instagram className='size-4' />
+			</Link>
+		</Button>
 	);
 }
 
 function LoginButton({ className }: { className?: string }) {
 	const { session, isLoading, login, logout } = useSessionStore();
+	const t = useTranslations('Header');
 
 	if (session) {
 		return (
@@ -64,11 +56,15 @@ function LoginButton({ className }: { className?: string }) {
 				onClick={logout}
 				type='button'
 				variant='ghost'
-				size='icon'
 				disabled={isLoading}
-				className={className}
+				className={`w-full justify-start ${className || ''}`}
 			>
-				{isLoading ? <Loader2 className='animate-spin ' /> : <LogOut />}
+				{isLoading ? (
+					<Loader2 className='animate-spin mr-2' />
+				) : (
+					<LogOut className='size-4 mr-2' />
+				)}
+				{t('logout')}
 			</Button>
 		);
 	}
@@ -78,11 +74,15 @@ function LoginButton({ className }: { className?: string }) {
 			onClick={login}
 			type='button'
 			variant='ghost'
-			size='icon'
 			disabled={isLoading}
-			className={className}
+			className={`w-full justify-start ${className || ''}`}
 		>
-			{isLoading ? <Loader2 className='animate-spin' /> : <LogIn />}
+			{isLoading ? (
+				<Loader2 className='animate-spin mr-2' />
+			) : (
+				<LogIn className='size-4 mr-2' />
+			)}
+			{t('login')}
 		</Button>
 	);
 }
@@ -92,6 +92,7 @@ function LanguageSettings() {
 	const router = useRouter();
 	const pathname = usePathname();
 	const params = useParams();
+	const t = useTranslations('Header');
 
 	function onLocaleChange(nextLocale: string) {
 		if (!nextLocale) return;
@@ -106,152 +107,88 @@ function LanguageSettings() {
 	}
 
 	return (
-		<>
-			<DropdownMenuLabel>언어</DropdownMenuLabel>
-			<DropdownMenuRadioGroup value={locale} onValueChange={onLocaleChange}>
-				<DropdownMenuRadioItem value='ko'>한국어</DropdownMenuRadioItem>
-				<DropdownMenuRadioItem value='en'>English</DropdownMenuRadioItem>
-			</DropdownMenuRadioGroup>
-		</>
+		<div className='space-y-2'>
+			<div className='text-sm font-medium'>{t('language')}</div>
+			<div className='flex gap-2'>
+				<Button
+					variant={locale === 'ko' ? 'default' : 'outline'}
+					size='icon'
+					onClick={() => onLocaleChange('ko')}
+					className='flex-1'
+				>
+					가
+				</Button>
+				<Button
+					variant={locale === 'en' ? 'default' : 'outline'}
+					size='icon'
+					onClick={() => onLocaleChange('en')}
+					className='flex-1'
+				>
+					A
+				</Button>
+			</div>
+		</div>
 	);
 }
 
 function ThemeSettings() {
 	const { theme, setTheme } = useTheme();
+	const t = useTranslations('Header');
 
 	return (
-		<>
-			<DropdownMenuLabel>테마</DropdownMenuLabel>
-			<DropdownMenuRadioGroup value={theme} onValueChange={setTheme}>
-				<DropdownMenuRadioItem value='light'>
-					<Sun className='size-4 mr-2' />
-					라이트
-				</DropdownMenuRadioItem>
-				<DropdownMenuRadioItem value='dark'>
-					<Moon className='size-4 mr-2' />
-					다크
-				</DropdownMenuRadioItem>
-				<DropdownMenuRadioItem value='system'>
-					<SunMoon className='size-4 mr-2' />
-					시스템
-				</DropdownMenuRadioItem>
-			</DropdownMenuRadioGroup>
-		</>
-	);
-}
-
-function ThemeToggleButton() {
-	const { theme, setTheme } = useTheme();
-	const [isMounted, setIsMounted] = useState(false);
-
-	// TODO: 이게 최선?
-	useEffect(() => {
-		setIsMounted(true);
-	}, []);
-
-	function toggleTheme() {
-		if (theme === 'light') {
-			setTheme('dark');
-		} else if (theme === 'dark') {
-			setTheme('system');
-		} else {
-			setTheme('light');
-		}
-	}
-
-	function getIcon() {
-		if (!isMounted) return <Loader2 className='animate-spin' />;
-		if (theme === 'system') return <SunMoon />;
-		if (theme === 'light') return <Sun />;
-		if (theme === 'dark') return <Moon />;
-		return <Loader2 className='animate-spin' />;
-	}
-
-	return (
-		<Button
-			variant='ghost'
-			size='icon'
-			onClick={toggleTheme}
-			suppressHydrationWarning
-		>
-			{getIcon()}
-		</Button>
-	);
-}
-
-function LanguageToggleButton() {
-	const locale = useLocale();
-	const router = useRouter();
-	const pathname = usePathname();
-	const params = useParams();
-
-	function toggleLanguage() {
-		const nextLocale = locale === 'ko' ? 'en' : 'ko';
-		router.replace(
-			// @ts-expect-error -- TypeScript will validate that only known `params`
-			// are used in combination with a given `pathname`. Since the two will
-			// always match for the current route, we can skip runtime checks.
-			{ pathname, params },
-			{ locale: nextLocale as Locale },
-		);
-	}
-
-	return (
-		<Button variant='ghost' size='icon' onClick={toggleLanguage}>
-			<Globe className='size-4' />
-		</Button>
-	);
-}
-
-function DesktopHeaderActions() {
-	return (
-		<div className='sm:flex hidden items-center gap-3'>
-			<GithubButton />
-			<InstagramButton />
-			<LoginButton />
-			<ThemeToggleButton />
-			<LanguageToggleButton />
+		<div className='space-y-2'>
+			<div className='text-sm font-medium'>{t('theme')}</div>
+			<div className='flex gap-2'>
+				<Button
+					variant={theme === 'light' ? 'default' : 'outline'}
+					size='icon'
+					onClick={() => setTheme('light')}
+					className='flex-1'
+				>
+					<Sun className='size-4' />
+				</Button>
+				<Button
+					variant={theme === 'dark' ? 'default' : 'outline'}
+					size='icon'
+					onClick={() => setTheme('dark')}
+					className='flex-1'
+				>
+					<Moon className='size-4' />
+				</Button>
+				<Button
+					variant={theme === 'system' ? 'default' : 'outline'}
+					size='icon'
+					onClick={() => setTheme('system')}
+					className='flex-1'
+				>
+					<Monitor className='size-4' />
+				</Button>
+			</div>
 		</div>
 	);
 }
 
-function MobileHeaderActions() {
+function HeaderActions() {
 	return (
-		<div className='sm:hidden flex items-center gap-3'>
-			{/* 인스타그램 버튼 */}
+		<div className='flex items-center gap-3'>
+			<GithubButton />
 			<InstagramButton />
 
-			{/* 로그인/로그아웃 버튼 */}
-			<LoginButton />
-
-			{/* 설정 메뉴 */}
-			<DropdownMenu modal={false}>
-				<DropdownMenuTrigger asChild>
+			<Popover>
+				<PopoverTrigger asChild>
 					<Button variant='ghost' size='icon'>
 						<Menu className='size-4' />
 					</Button>
-				</DropdownMenuTrigger>
-				<DropdownMenuContent className='w-40' align='end'>
-					<DropdownMenuItem asChild>
-						<Link
-							href='https://github.com/yeolyi'
-							target='_blank'
-							className='flex items-center'
-						>
-							<Github className='size-4 mr-2' />
-							깃허브
-						</Link>
-					</DropdownMenuItem>
-
-					<DropdownMenuSeparator />
-
-					<LanguageSettings />
-
-					<DropdownMenuSeparator />
-
-					<ThemeSettings />
-				</DropdownMenuContent>
-			</DropdownMenu>
+				</PopoverTrigger>
+				<PopoverContent align='end' className='w-fit px-4'>
+					<div className='space-y-2'>
+						<LoginButton />
+						<Separator />
+						<LanguageSettings />
+						<ThemeSettings />
+					</div>
+				</PopoverContent>
+			</Popover>
 		</div>
 	);
 }
@@ -260,17 +197,14 @@ export default function Header() {
 	const t = useTranslations('Header');
 
 	return (
-		<header className='sticky top-0 left-0 right-0 flex items-center justify-between py-7 px-4 z-50'>
+		<header className='sticky top-0 left-0 right-0 flex items-center justify-between p-4 z-50'>
 			<Button variant='ghost' asChild>
 				<Link href='/' className='font-extrabold'>
 					{t('title')}
 				</Link>
 			</Button>
 
-			<div className='flex items-center gap-3'>
-				<DesktopHeaderActions />
-				<MobileHeaderActions />
-			</div>
+			<HeaderActions />
 		</header>
 	);
 }

@@ -5,7 +5,10 @@
 		"developer": "Developer #{number}",
 		"logout": "Logout",
 		"login": "Login",
-		"changeLocale": "Change locale"
+		"changeLocale": "Change locale",
+		"github": "GitHub",
+		"language": "Language",
+		"theme": "Theme"
 	},
 	"LocaleSwitcher": {
 		"label": "Language",

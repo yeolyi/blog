@@ -13,7 +13,7 @@ export default function CraftTypography() {
 		<div className='flex items-center justify-center select-none w-full h-full aspect-video min-h-[384px]'>
 			<div className='flex items-center gap-2 relative'>
 				{/* 선택된 항목을 강조하는 배경 */}
-				<div className='absolute inset-0 flex items-center justify-center pointer-events-none'>
+				<div className='absolute inset-0 flex items-center justify-center'>
 					<div className='w-full h-[min(12vw,130px)] bg-card border border-border'></div>
 				</div>
 				{charIndices.map((currentIdx, charIdx) => {
@@ -27,7 +27,7 @@ export default function CraftTypography() {
 					return (
 						<div
 							key={charIdx}
-							className='flex items-center flex-col text-[min(12vw,130px)] touch-none w-[min(12vw,130px)]'
+							className='flex items-center flex-col text-[min(12vw,130px)] w-[min(12vw,130px)]'
 							style={{ perspective: '200px' }}
 						>
 							<span

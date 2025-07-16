@@ -15,15 +15,7 @@ import { getSubscriberCount } from '@/actions/resend';
 import CraftTypography from '@/app/[locale]/components/CraftSlot';
 import CSTypography from '@/app/[locale]/components/CSTypography';
 import InstagramDescription from '@/app/[locale]/components/InstagramDescription';
-import Flow from '@/components/cs/flow';
-import TruthTable from '@/components/cs/TruthTable';
 import { Button } from '@/components/ui/button';
-import {
-	Card,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card';
 import {
 	Carousel,
 	CarouselContent,
@@ -37,22 +29,13 @@ import {
 	CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import {
-	HybridTooltip,
-	HybridTooltipContent,
-	HybridTooltipTrigger,
-} from '@/components/ui/hybrid-tooltip';
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
-import {
-	Tooltip,
-	TooltipContent,
-	TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { Link } from '@/i18n/navigation';
-import DecimalToBinary from '@/mdx/cs/adder/components/DecimalToBinary';
-import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
-import AddingTuringMachine from '@/mdx/cs/turing-machine/components/AddingTuringMachine';
 import { getMdxIds } from '@/utils/path';
-import cs from './assets/cs.gif';
 import me from './assets/me.jpg';
 import meme1 from './assets/meme1.jpeg';
 import meme2 from './assets/meme2.png';
@@ -251,11 +234,11 @@ export default async function Home({
 						{tMain('subscriberCount')}
 					</>
 				)}{' '}
-				<HybridTooltip>
-					<HybridTooltipTrigger className='align-middle -translate-y-0.5'>
+				<Popover>
+					<PopoverTrigger className='align-middle -translate-y-0.5'>
 						<Info className='w-4 h-4' />
-					</HybridTooltipTrigger>
-					<HybridTooltipContent>
+					</PopoverTrigger>
+					<PopoverContent>
 						<p>
 							<a
 								href='https://minguhongmfg.com/about'
@@ -268,8 +251,8 @@ export default async function Home({
 							에서 아이디어를 얻어 <br />
 							계정이 하는 일들과 마음에 들었던 컨텐츠들을 공유합니다.
 						</p>
-					</HybridTooltipContent>
-				</HybridTooltip>
+					</PopoverContent>
+				</Popover>
 			</p>
 
 			<Button asChild className='w-fit self-end'>
