@@ -46,44 +46,32 @@ function InstagramButton() {
 	);
 }
 
-function LoginButton({ className }: { className?: string }) {
+function LoginButton() {
 	const { session, isLoading, login, logout } = useSessionStore();
 	const t = useTranslations('Header');
 
-	if (session) {
-		return (
-			<Button
-				onClick={logout}
-				type='button'
-				variant='ghost'
-				disabled={isLoading}
-				className={`w-full justify-start ${className || ''}`}
-			>
-				{isLoading ? (
-					<Loader2 className='animate-spin mr-2' />
-				) : (
-					<LogOut className='size-4 mr-2' />
-				)}
-				{t('logout')}
-			</Button>
-		);
-	}
-
 	return (
-		<Button
-			onClick={login}
-			type='button'
-			variant='ghost'
-			disabled={isLoading}
-			className={`w-full justify-start ${className || ''}`}
-		>
-			{isLoading ? (
-				<Loader2 className='animate-spin mr-2' />
-			) : (
-				<LogIn className='size-4 mr-2' />
-			)}
-			{t('login')}
-		</Button>
+		<div className='space-y-2'>
+			<div className='text-sm font-medium'>{t('auth')}</div>
+			<div className='flex gap-2'>
+				<Button
+					onClick={session ? logout : login}
+					type='button'
+					variant='outline'
+					size='icon'
+					disabled={isLoading}
+					className='flex-1'
+				>
+					{isLoading ? (
+						<Loader2 className='animate-spin size-4' />
+					) : session ? (
+						<LogOut className='size-4' />
+					) : (
+						<Github className='size-4' />
+					)}
+				</Button>
+			</div>
+		</div>
 	);
 }
 
@@ -181,11 +169,10 @@ function HeaderActions() {
 					</Button>
 				</PopoverTrigger>
 				<PopoverContent align='end' className='w-fit px-4'>
-					<div className='space-y-2'>
-						<LoginButton />
-						<Separator />
+					<div className='space-y-4'>
 						<LanguageSettings />
 						<ThemeSettings />
+						<LoginButton />
 					</div>
 				</PopoverContent>
 			</Popover>

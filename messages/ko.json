@@ -8,7 +8,8 @@
 		"changeLocale": "언어 변경",
 		"github": "깃허브",
 		"language": "언어",
-		"theme": "테마"
+		"theme": "테마",
+		"auth": "계정"
 	},
 	"LocaleSwitcher": {
 		"label": "언어",
