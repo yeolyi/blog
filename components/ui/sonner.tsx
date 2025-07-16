@@ -3,7 +3,7 @@
 import { useTheme } from 'next-themes';
 import { Toaster as Sonner, type ToasterProps } from 'sonner';
 
-const Toaster = ({ ...props }: ToasterProps) => {
+const Toaster = () => {
 	const { theme = 'system' } = useTheme();
 
 	return (
@@ -17,13 +17,14 @@ const Toaster = ({ ...props }: ToasterProps) => {
 					'--normal-border': 'var(--border)',
 				} as React.CSSProperties
 			}
-			{...props}
 			toastOptions={{
 				style: {
 					borderRadius: 0,
 				},
 			}}
 			position='top-right'
+			visibleToasts={9}
+			closeButton
 		/>
 	);
 };
