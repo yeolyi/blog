@@ -181,8 +181,8 @@
 		}
 	},
 	"MainPage": {
-		"title": "안녕하세요! 개발자이자 크리에이터인 이성열입니다.",
-		"developerBio": "25년 봄 <snuLink>서울대학교</snuLink>에서 컴퓨터공학, 환경재료과학을 졸업했습니다. 24년 여름 <kakaoLink>카카오</kakaoLink>에 프론트엔드 개발자로 입사했습니다. 24년 봄 새로운 컴퓨터공학부 홈페이지인 <cseLink>cse.snu.ac.kr</cseLink>의 프론트엔드를 개발해 배포했습니다. 23년 여름 <baekjoonLink>백준</baekjoonLink> 다이아 직전까지 갔으나 이제는 엄두가 안납니다. 21년 봄 스타트업 <skyonLink>스카이온</skyonLink> 에서 2년간 자유롭게 iOS/FE 경험을 쌓았으나 회사가 사라졌습니다. 20년 가을 <githubLink>github</githubLink> 계정을 만들었습니다.",
+		"title": "개발자이자 크리에이터인 이성열입니다.",
+		"developerBio": "25년 봄 <snuLink>서울대학교</snuLink>에서 컴퓨터공학, 환경재료과학을 졸업했습니다. 24년 여름 <kakaoLink>카카오</kakaoLink>에 프론트엔드 개발자로 입사했습니다. 24년 봄 새로운 컴퓨터공학부 홈페이지인 <cseLink>cse.snu.ac.kr</cseLink>의 프론트엔드를 개발해 배포했습니다. 23년 여름 <baekjoonLink>백준</baekjoonLink> 다이아 직전까지 갔으나 이제는 거의 까먹었습니다. 21년 봄 스타트업 <skyonLink>스카이온</skyonLink> 에서 2년간 자유롭게 iOS/FE 경험을 쌓았으나 회사가 사라졌습니다. 20년 가을 <githubLink>github</githubLink> 계정을 만들었습니다.",
 		"csIntro": "컴퓨터 공학을 공부하며 느낀 경이로움을 전달합니다.",
 		"subscriberCount": "명과 함께합니다.",
 		"andGate": "AND 게이트",

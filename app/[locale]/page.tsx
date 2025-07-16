@@ -1,12 +1,19 @@
 import dayjs from 'dayjs';
-import { ChevronDown, ChevronRight, ExternalLink } from 'lucide-react';
+import {
+	ChevronDown,
+	ChevronRight,
+	Construction,
+	ExternalLink,
+	Info,
+} from 'lucide-react';
 import type { StaticImageData } from 'next/image';
 import Image from 'next/image';
 import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { getInstagramFollowers } from '@/actions/instagram';
 import { getSubscriberCount } from '@/actions/resend';
-import CraftSlot from '@/app/[locale]/components/CraftSlot';
+import CraftTypography from '@/app/[locale]/components/CraftSlot';
+import CSTypography from '@/app/[locale]/components/CSTypography';
 import InstagramDescription from '@/app/[locale]/components/InstagramDescription';
 import Flow from '@/components/cs/flow';
 import TruthTable from '@/components/cs/TruthTable';
@@ -30,6 +37,11 @@ import {
 	CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { Separator } from '@/components/ui/separator';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { Link } from '@/i18n/navigation';
 import DecimalToBinary from '@/mdx/cs/adder/components/DecimalToBinary';
 import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
@@ -147,50 +159,8 @@ export default async function Home({
 			</div>
 			<Separator />
 
-			<Carousel opts={{ loop: true, align: 'start' }}>
-				<CarouselContent className='-pl-4 max-h-[384px]'>
-					<CarouselItem className='aspect-video pl-4 basis-11/12 text-[max(40px,min(6.9vw,65px))] leading-none font-black text-stone-200 dark:text-stone-800 select-none overflow-hidden break-all text-justify'>
-						{'NAND IS MORE THAN JUST '.repeat(3)}
-						<span className='text-black dark:text-white'>
-							NAND IS MORE THAN JUST NAND{' '}
-						</span>
-						IS MORE THAN JUST {'NAND IS MORE THAN JUST '.repeat(20)} NAND
-					</CarouselItem>
-					<CarouselItem className='pl-4 max-w-sm'>
-						<TruthTable
-							description={tMain('andGate')}
-							labels={[
-								{ label: 'A', type: 'input' },
-								{ label: 'B', type: 'input' },
-								{ label: 'A AND B', type: 'output' },
-							]}
-							data={[
-								[false, false, false],
-								[false, true, false],
-								[true, false, false],
-								[true, true, true],
-							]}
-						/>
-					</CarouselItem>
-					<CarouselItem className='max-w-sm pl-4'>
-						<Card>
-							<CardHeader>
-								<CardTitle>{tMain('nandUniversality')}</CardTitle>
-								<CardDescription>{tMain('nandToNot')}</CardDescription>
-							</CardHeader>
-							<Flow id='/cs' initialJSON={not} height={250} hideNodeButtons />
-						</Card>
-					</CarouselItem>
-					<CarouselItem className='pl-4 max-w-md'>
-						<AddingTuringMachine />
-					</CarouselItem>
-					<CarouselItem className='max-w-sm pl-4'>
-						<DecimalToBinary />
-					</CarouselItem>
-				</CarouselContent>
-				<CarouselNext />
-				<CarouselPrevious />
-			</Carousel>
+			<CSTypography />
+
 			<div className='flex flex-col gap-7'>
 				<p className='w-full max-w-2xl'>
 					{tMain('csIntro')}{' '}
@@ -264,19 +234,40 @@ export default async function Home({
 				<CarouselPrevious />
 			</Carousel>
 
-			<p className='w-full max-w-2xl'>
-				{tMain.rich('instagramIntro', {
-					externalLink: (chunks) => (
-						<LinkButton href='https://minguhongmfg.com/about'>{chunks}</LinkButton>
-					),
-				})}{' '}
-				{followersCount !== undefined && (
-					<>
-						<span className='font-extrabold'>{followersCount.toLocaleString()}</span>
-						{tMain('subscriberCount')}
-					</>
-				)}
-			</p>
+			<div className='w-full max-w-2xl flex items-center gap-1'>
+				<p>
+					{tMain.rich('instagramIntro', {
+						externalLink: (chunks) => (
+							<LinkButton href='https://minguhongmfg.com/about'>{chunks}</LinkButton>
+						),
+					})}{' '}
+					{followersCount !== undefined && (
+						<>
+							<span className='font-extrabold'>{followersCount.toLocaleString()}</span>
+							{tMain('subscriberCount')}
+						</>
+					)}
+				</p>
+				<Tooltip>
+					<TooltipTrigger>
+						<Info className='w-4 h-4' />
+					</TooltipTrigger>
+					<TooltipContent>
+						<p>
+							<a
+								href='https://minguhongmfg.com/about'
+								className='underline'
+								target='_blank'
+								rel='noreferrer noopener'
+							>
+								민구홍 매뉴팩처링
+							</a>
+							에서 아이디어를 얻어 <br />
+							계정이 하는 일들과 마음에 들었던 컨텐츠들을 공유합니다.
+						</p>
+					</TooltipContent>
+				</Tooltip>
+			</div>
 
 			<Button asChild className='w-fit self-end'>
 				<Link
@@ -307,9 +298,9 @@ export default async function Home({
 				</p>
 			</div>
 
-			<div className='max-w-2xl space-y-7'>
+			<div className='max-w-2xl '>
 				<p>
-					리액트 소스코드를 직접 뜯어봅니다.{' '}
+					사내 스터디에서 리액트 소스코드를 직접 뜯어봅니다.{' '}
 					<LinkButton href='https://jser.dev/series/react-source-code-walkthrough'>
 						jser.dev
 					</LinkButton>
@@ -326,21 +317,14 @@ export default async function Home({
 
 			<Separator />
 
-			<Carousel>
-				<CarouselContent className='-pl-4'>
-					<CarouselItem className='min-h-[384px] aspect-video basis-11/12'>
-						<CraftSlot />
-					</CarouselItem>
-					<CarouselItem className='pl-4 max-w-sm my-auto space-y-1'>
-						<Image src={cs} alt='' className='object-contain' unoptimized />
-						<GhostButton href='/craft/flow'>
-							Jotai를 활용한 논리회로 시뮬레이터
-						</GhostButton>
-					</CarouselItem>
-				</CarouselContent>
-				<CarouselNext />
-				<CarouselPrevious />
-			</Carousel>
+			<CraftTypography />
+			<div className='max-w-2xl'>
+				<p>만든 것들을 소개합니다.</p>
+			</div>
+			<Button className='w-fit self-end' disabled>
+				준비중
+				<Construction />
+			</Button>
 		</div>
 	);
 }
@@ -388,26 +372,6 @@ const LinkButton = ({
 		>
 			{href ? (
 				<Link href={href} className='truncate'>
-					{children}
-				</Link>
-			) : (
-				<span className='truncate'>{children}</span>
-			)}
-		</Button>
-	);
-};
-
-const GhostButton = ({
-	href,
-	children,
-}: {
-	href?: string;
-	children: React.ReactNode;
-}) => {
-	return (
-		<Button variant='ghost' asChild={!!href} disabled={!href} className='gap-1'>
-			{href ? (
-				<Link href={href} className='truncate max-w-full'>
 					{children}
 				</Link>
 			) : (

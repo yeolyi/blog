@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { getSubscriberCount } from '@/actions/resend';
+import CSTypography from '@/app/[locale]/components/CSTypography';
 import EmailSubscribe from '@/app/[locale]/cs/components/EmailSubscribe';
 import Flow from '@/components/cs/flow';
 import TruthTable from '@/components/cs/TruthTable';
@@ -30,13 +31,7 @@ export default async function CS() {
 
 	return (
 		<div className='px-4 mx-auto flex flex-col gap-7 max-w-6xl'>
-			<div className='aspect-video max-h-[384px] text-[max(40px,min(6vw,70px))] leading-none font-black text-stone-200 dark:text-stone-800 select-none overflow-hidden break-all text-justify'>
-				{'NAND IS MORE THAN JUST '.repeat(2)}
-				<span className='text-black dark:text-white'>
-					NAND IS MORE THAN JUST NAND{' '}
-				</span>
-				IS MORE THAN JUST {'NAND IS MORE THAN JUST '.repeat(20)} NAND
-			</div>
+			<CSTypography />
 
 			{count !== undefined && (
 				<p>

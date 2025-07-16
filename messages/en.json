@@ -182,7 +182,7 @@
 		}
 	},
 	"MainPage": {
-		"title": "Hi! I'm Seongyeol, a developer and creator.",
+		"title": "I'm Seongyeol, a developer and creator.",
 		"developerBio": "In Spring 2025, I studied Computer Science and Environmental Materials Science at <snuLink>Seoul National University</snuLink>. In Summer 2024, I joined <kakaoLink>Kakao</kakaoLink> as a frontend developer. In Spring 2024, I developed and deployed the frontend for the new Computer Science and Engineering department website <cseLink>cse.snu.ac.kr</cseLink>. In Summer 2023, I reached just before Diamond tier on <baekjoonLink>Baekjoon</baekjoonLink> but now it seems daunting. In Spring 2021, I spent 2 years freely gaining iOS/FE experience at startup <skyonLink>Skyon</skyonLink>, but the company disappeared. In Fall 2020, I created my <githubLink>GitHub</githubLink> account.",
 		"csIntro": "I share the wonder I felt learning computer science in school.",
 		"subscriberCount": " people are joining us!",
