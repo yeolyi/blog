@@ -1,3 +1,4 @@
+// components/sandpack-styles.tsx
 'use client';
 
 import { getSandpackCssText } from '@codesandbox/sandpack-react';
@@ -10,7 +11,7 @@ export const SandPackCSS = () => {
 	useServerInsertedHTML(() => {
 		return (
 			<style
-				// biome-ignore lint/security/noDangerouslySetInnerHtml: 써야만 한다
+				// biome-ignore lint/security/noDangerouslySetInnerHtml: sandpack에서 하래
 				dangerouslySetInnerHTML={{ __html: getSandpackCssText() }}
 				id='sandpack'
 			/>

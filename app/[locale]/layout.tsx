@@ -16,11 +16,12 @@ import type * as React from 'react';
 import { AuthProvider } from '@/app/[locale]/components/AuthProvider';
 import SWRProvider from '@/app/[locale]/components/SWRProvider';
 import MetaHandler from '@/app/[locale]/components/ThemeProvider';
-import { SandPackCSS } from '@/components/layout/SandPackCSS';
+
 import { routing } from '@/i18n/routing';
 
 // css가 script 태그로 들어가는게 mdx 안에서 import해서 그런건가싶어서 여기로 이동
 import 'medium-zoom/dist/style.css';
+import { SandPackCSS } from '@/app/[locale]/components/SandpackCss';
 import { Toaster } from '@/components/ui/sonner';
 
 const monoplexKR = localFont({
