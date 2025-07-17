@@ -9,7 +9,9 @@
 		"github": "깃허브",
 		"language": "언어",
 		"theme": "테마",
-		"auth": "계정"
+		"auth": "계정",
+		"settings": "설정",
+		"close": "닫기"
 	},
 	"LocaleSwitcher": {
 		"label": "언어",

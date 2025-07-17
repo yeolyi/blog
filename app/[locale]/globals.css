@@ -47,14 +47,12 @@
 
 @layer base {
 	html {
-		scrollbar-gutter: stable;
+		/* 모달 등을 띄울 때 gutter에는 오버레이가 안붙어서 붕 떠있다. */
+		/* 보니까 shadcn인지 radix인지 알아서 margin-right를 더해주니 이걸로 처리하자 */
+		/* scrollbar-gutter: stable; */
 	}
 
 	body {
-		/* TODO: vaul에서 margin-right: 15px가 더해짐 */
-		/* 일단 게으르게 처리 */
-		margin-right: 0 !important;
-
 		letter-spacing: -0.01em;
 		font-weight: 400;
 		font-size: 1rem;
@@ -258,7 +256,7 @@
 
 /* TODO: details 처이 이게 최선? */
 .mdx {
-	@apply flex flex-col gap-7 max-w-2xl mx-auto;
+	@apply flex flex-col gap-7 max-w-2xl mx-auto mt-7;
 
 	& > details {
 		@apply space-y-7 ml-4;

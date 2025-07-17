@@ -9,7 +9,9 @@
 		"github": "GitHub",
 		"language": "Language",
 		"theme": "Theme",
-		"auth": "Account"
+		"auth": "Account",
+		"settings": "Settings",
+		"close": "Close"
 	},
 	"LocaleSwitcher": {
 		"label": "Language",

@@ -6,9 +6,9 @@ import {
 	Loader2,
 	LogIn,
 	LogOut,
-	Menu,
 	Monitor,
 	Moon,
+	Settings,
 	Sun,
 	SunMoon,
 } from 'lucide-react';
@@ -16,14 +16,29 @@ import { useParams } from 'next/navigation';
 import type { Locale } from 'next-intl';
 import { useLocale, useTranslations } from 'next-intl';
 import { useTheme } from 'next-themes';
+import type * as React from 'react';
+import { useState } from 'react';
+import { useMediaQuery } from '@/components/hooks/useMediaQuery';
 import { Button } from '@/components/ui/button';
 import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from '@/components/ui/popover';
+	Dialog,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+	Drawer,
+	DrawerClose,
+	DrawerContent,
+	DrawerFooter,
+	DrawerHeader,
+	DrawerTitle,
+	DrawerTrigger,
+} from '@/components/ui/drawer';
 import { Separator } from '@/components/ui/separator';
 import { Link, usePathname, useRouter } from '@/i18n/navigation';
+import { cn } from '@/lib/utils';
 import { useSessionStore } from '@/store/session';
 
 function GithubButton() {
@@ -156,26 +171,60 @@ function ThemeSettings() {
 	);
 }
 
+function SettingsContent({ className }: React.ComponentProps<'div'>) {
+	return (
+		<div className={cn('space-y-4 max-w-sm w-full mx-auto', className)}>
+			<LanguageSettings />
+			<ThemeSettings />
+			<LoginButton />
+		</div>
+	);
+}
+
 function HeaderActions() {
+	const isDesktop = useMediaQuery('(min-width: 768px)');
+	const [open, setOpen] = useState(false);
+	const t = useTranslations('Header');
+
+	const trigger = (
+		<Button variant='ghost' size='icon'>
+			<Settings className='size-4' />
+		</Button>
+	);
+
+	if (isDesktop) {
+		return (
+			<div className='flex items-center gap-3'>
+				<GithubButton />
+				<InstagramButton />
+
+				<Dialog open={open} onOpenChange={setOpen}>
+					<DialogTrigger asChild>{trigger}</DialogTrigger>
+					<DialogContent className='sm:max-w-[425px]'>
+						<DialogHeader>
+							<DialogTitle>{t('settings')}</DialogTitle>
+						</DialogHeader>
+						<SettingsContent />
+					</DialogContent>
+				</Dialog>
+			</div>
+		);
+	}
+
 	return (
 		<div className='flex items-center gap-3'>
 			<GithubButton />
 			<InstagramButton />
 
-			<Popover>
-				<PopoverTrigger asChild>
-					<Button variant='ghost' size='icon'>
-						<Menu className='size-4' />
-					</Button>
-				</PopoverTrigger>
-				<PopoverContent align='end' className='w-fit px-4'>
-					<div className='space-y-4'>
-						<LanguageSettings />
-						<ThemeSettings />
-						<LoginButton />
-					</div>
-				</PopoverContent>
-			</Popover>
+			<Drawer open={open} onOpenChange={setOpen}>
+				<DrawerTrigger asChild>{trigger}</DrawerTrigger>
+				<DrawerContent>
+					<DrawerHeader className='text-left'>
+						<DrawerTitle>{t('settings')}</DrawerTitle>
+					</DrawerHeader>
+					<SettingsContent className='px-4' />
+				</DrawerContent>
+			</Drawer>
 		</div>
 	);
 }
