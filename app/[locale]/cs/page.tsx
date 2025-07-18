@@ -33,28 +33,18 @@ export default async function CS() {
 		<div className='px-4 mx-auto flex flex-col gap-7 max-w-6xl'>
 			<CSTypography />
 
-			{count !== undefined && (
-				<p>
-					<span className='font-extrabold'>{count.toLocaleString()}</span>
-					{tMain('subscriberCount')}
-				</p>
-			)}
+			<p>
+				0과 1에서 시작해 함께 컴퓨터를 만들어봅시다. 컴퓨터 공학을 공부하며 느낀
+				경이로움을 전달합니다.
+			</p>
+			<p>
+				<span className='font-extrabold'>{count?.toLocaleString() ?? '-'}</span>
+				{tMain('subscriberCount')}
+			</p>
 
 			<EmailSubscribe />
 
-			<p className='font-extrabold'>「{tCS('part1Title')}」</p>
-
-			<p>
-				<GhostButton href='/cs/zero-and-one'>{tCS('hw1Title')}</GhostButton>
-				<GhostButton href='/cs/and-or-not'>{tCS('hw2Title')}</GhostButton>
-				<GhostButton href='/cs/nand-is-all-you-need'>{tCS('hw3Title')}</GhostButton>
-				<GhostButton href='/cs/adder'>{tCS('hw4Title')}</GhostButton>
-				<GhostButton href='/cs/sequential'>{tCS('hw5Title')}</GhostButton>
-				<GhostButton href='/cs/turing-machine'>{tCS('hw6Title')}</GhostButton>
-				<GhostButton>{tCS('hw7Title')}</GhostButton>
-				<GhostButton>{tCS('hw8Title')}</GhostButton>
-				<GhostButton>{tCS('hw9Title')}</GhostButton>
-			</p>
+			<p>인터렉티브한 데모들과 함께 컴퓨터 과학의 주요 개념들을 돌아보세요.</p>
 
 			<Carousel opts={{ loop: true, align: 'start' }}>
 				<CarouselContent className='-pl-4'>
@@ -93,6 +83,20 @@ export default async function CS() {
 				<CarouselNext />
 				<CarouselPrevious />
 			</Carousel>
+
+			<p className='font-extrabold'>「{tCS('part1Title')}」</p>
+
+			<p>
+				<GhostButton href='/cs/zero-and-one'>{tCS('hw1Title')}</GhostButton>
+				<GhostButton href='/cs/and-or-not'>{tCS('hw2Title')}</GhostButton>
+				<GhostButton href='/cs/nand-is-all-you-need'>{tCS('hw3Title')}</GhostButton>
+				<GhostButton href='/cs/adder'>{tCS('hw4Title')}</GhostButton>
+				<GhostButton href='/cs/sequential'>{tCS('hw5Title')}</GhostButton>
+				<GhostButton href='/cs/turing-machine'>{tCS('hw6Title')}</GhostButton>
+				<GhostButton>{tCS('hw7Title')}</GhostButton>
+				<GhostButton>{tCS('hw8Title')}</GhostButton>
+				<GhostButton>{tCS('hw9Title')}</GhostButton>
+			</p>
 
 			<p className='font-extrabold'>「{tCS('part2Title')}」</p>
 

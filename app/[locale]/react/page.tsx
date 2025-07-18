@@ -63,7 +63,7 @@ export default async function React() {
 						</GhostButton>
 					))}
 				</p>
-				<p className='font-extrabold'>「처음 UI를 그리는 과정」</p>
+				<p className='font-extrabold'>「첫 렌더링」</p>
 				<p>
 					{reactInitialRenderList.map(({ id, title }) => (
 						<GhostButton href={`/react/${id}`} key={id}>
@@ -71,7 +71,7 @@ export default async function React() {
 						</GhostButton>
 					))}
 				</p>
-				<p className='font-extrabold'>「UI를 다시 그리는 과정」</p>
+				<p className='font-extrabold'>「리렌더링」</p>
 				<p>
 					{reactRerenderList.map(({ id, title }) => (
 						<GhostButton href={`/react/${id}`} key={id}>
@@ -79,7 +79,7 @@ export default async function React() {
 						</GhostButton>
 					))}
 				</p>
-				<p className='font-extrabold'>「리액트 훅 뜯어보기」</p>
+				<p className='font-extrabold'>「리액트 훅」</p>
 				<p>
 					{reactHookList.map(({ id, title }) => (
 						<GhostButton href={`/react/${id}`} key={id}>
