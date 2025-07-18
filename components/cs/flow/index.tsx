@@ -6,6 +6,7 @@ import {
 	applyNodeChanges,
 	Background,
 	BackgroundVariant,
+	type ColorMode,
 	type Connection,
 	ConnectionLineType,
 	type Edge,
@@ -64,7 +65,7 @@ function Flow({
 	const [rfInstance, setRfInstance] = useState<ReactFlowInstance | null>(null);
 
 	const [touchOnlyState, setTouchOnlyState] = useTouchDeviceState();
-	const { theme } = useTheme();
+	const { resolvedTheme: theme } = useTheme();
 
 	useEffect(() => {
 		if (initialJSON) {
@@ -173,7 +174,7 @@ function Flow({
 							onNodesChange={onNodesChange}
 							onEdgesChange={onEdgesChange}
 							onConnect={onConnect}
-							colorMode={theme === 'light' ? 'light' : 'dark'}
+							colorMode={theme as ColorMode}
 							nodeTypes={nodeTypes}
 							defaultEdgeOptions={{
 								type: ConnectionLineType.Bezier,

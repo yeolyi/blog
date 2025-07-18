@@ -22,8 +22,13 @@ export default function AppearAnimation({
 		if (el.current) {
 			gsap.fromTo(
 				el.current,
-				{ opacity: 0, y: 5 },
-				{ opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
+				{ opacity: 0.01 },
+				{ opacity: 1, duration: 0.75, ease: 'power2.out' },
+			);
+			gsap.fromTo(
+				el.current,
+				{ transform: 'translateY(5px)' },
+				{ transform: 'translateY(0px)', duration: 0.75 },
 			);
 		}
 	}, []);
@@ -33,13 +38,25 @@ export default function AppearAnimation({
 			// @ts-expect-error 어쩌지
 			ref: el,
 			className: cn((children as any).props.className, className),
-			style: { opacity: 0, transform: 'translateY(5px)' },
+			style: {
+				opacity: 0.01,
+				transform: 'translateY(5px)',
+				willChange: 'opacity, transform',
+			},
 			...rest,
 		});
 	}
 
 	return (
-		<div ref={el} style={{ opacity: 0, transform: 'translateY(5px)' }} {...rest}>
+		<div
+			ref={el}
+			style={{
+				opacity: 0.01,
+				transform: 'translateY(5px)',
+				willChange: 'opacity, transform',
+			}}
+			{...rest}
+		>
 			{children}
 		</div>
 	);
