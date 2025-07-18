@@ -83,7 +83,9 @@
 		"binaryAddition": "이진수 덧셈 11(2) + 11(2) = 110(2)",
 		"decimalToBinary": "십진수-이진수 변환기",
 		"decimalToBinaryDesc": "십진수를 입력하면 이진수와 그 계산 과정을 보여줍니다.",
-		"enterDecimal": "십진수를 입력하세요"
+		"enterDecimal": "십진수를 입력하세요",
+		"intro": "0과 1에서 시작해 함께 컴퓨터를 만들어봅시다. 컴퓨터 공학을 공부하며 느낀 경이로움을 전달합니다.",
+		"demoDescription": "인터렉티브한 데모들과 함께 컴퓨터 과학의 주요 개념들을 돌아보세요."
 	},
 	"NotFound": {
 		"backHome": "홈으로 돌아가기"

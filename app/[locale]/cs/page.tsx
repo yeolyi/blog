@@ -33,10 +33,7 @@ export default async function CS() {
 		<div className='px-4 mx-auto flex flex-col gap-7 max-w-6xl'>
 			<CSTypography />
 
-			<p>
-				0과 1에서 시작해 함께 컴퓨터를 만들어봅시다. 컴퓨터 공학을 공부하며 느낀
-				경이로움을 전달합니다.
-			</p>
+			<p>{tCS('intro')}</p>
 			<p>
 				<span className='font-extrabold'>{count?.toLocaleString() ?? '-'}</span>
 				{tMain('subscriberCount')}
@@ -44,7 +41,7 @@ export default async function CS() {
 
 			<EmailSubscribe />
 
-			<p>인터렉티브한 데모들과 함께 컴퓨터 과학의 주요 개념들을 돌아보세요.</p>
+			<p>{tCS('demoDescription')}</p>
 
 			<Carousel opts={{ loop: true, align: 'start' }}>
 				<CarouselContent className='-pl-4'>

@@ -85,7 +85,9 @@
 		"binaryAddition": "Binary Addition 11(2) + 11(2) = 110(2)",
 		"decimalToBinary": "Decimal to Binary Converter",
 		"decimalToBinaryDesc": "Enter a decimal number to see its binary representation and calculation process.",
-		"enterDecimal": "Enter a decimal number"
+		"enterDecimal": "Enter a decimal number",
+		"intro": "Let's build a computer together, starting from 0s and 1s. I share the wonder I felt learning computer science.",
+		"demoDescription": "Explore key concepts in computer science with interactive demos."
 	},
 	"NotFound": {
 		"backHome": "Back to Home"
