@@ -95,6 +95,9 @@ importers:
       es-toolkit:
         specifier: ^1.35.0
         version: 1.39.6
+      gsap:
+        specifier: ^3.13.0
+        version: 3.13.0
       jotai:
         specifier: ^2.12.3
         version: 2.12.5(@types/react@19.1.8)(react@19.1.0)
@@ -1758,6 +1761,9 @@ packages:
 
   graceful-fs@4.2.11:
     resolution: {integrity: sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==}
+
+  gsap@3.13.0:
+    resolution: {integrity: sha512-QL7MJ2WMjm1PHWsoFrAQH/J8wUeqZvMtHO58qdekHpCfhvhSL4gSiz6vJf5EeMP0LOn3ZCprL2ki/gjED8ghVw==}
 
   hast-util-heading-rank@3.0.0:
     resolution: {integrity: sha512-EJKb8oMUXVHcWZTDepnr+WNbfnXKFNf9duMesmr4S8SXTJBJ9M4Yok08pu9vxdJwdlGRhVumk9mEhkEvKGifwA==}
@@ -4356,6 +4362,8 @@ snapshots:
       is-glob: 4.0.3
 
   graceful-fs@4.2.11: {}
+
+  gsap@3.13.0: {}
 
   hast-util-heading-rank@3.0.0:
     dependencies:

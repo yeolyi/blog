@@ -1,3 +1,4 @@
+import AppearAnimation from '@/components/AppearAnimation';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/navigation';
 import {
@@ -35,60 +36,61 @@ export default async function React() {
 			return { id, ...metadata };
 		}),
 	);
-
 	return (
-		<div className='px-4 mx-auto flex flex-col gap-7 max-w-6xl'>
-			<div className='aspect-video flex items-center justify-center select-none min-h-[384px] w-full'>
-				<p className='text-[min(6vw,70px)] leading-none font-extrabold text-center'>
-					<span className='opacity-10'>performWorkUntilDeadline</span>
-					<br />
-					<span className='opacity-30'>renderRootSync</span>
-					<br />
-					<span className='opacity-50'>workLoopSync</span>
-					<br />
-					<span className='opacity-70'>updateFunctionComponent</span>
-					<br />
-					<span className='opacity-90'>renderWithHooks</span>
-					<br />
-					...&lt;App /&gt;
-				</p>
-			</div>
+		<AppearAnimation asChild>
+			<div className='px-4 mx-auto flex flex-col gap-7 max-w-6xl'>
+				<div className='aspect-video flex items-center justify-center select-none min-h-[384px] w-full'>
+					<p className='text-[min(6vw,70px)] leading-none font-extrabold text-center'>
+						<span className='opacity-10'>performWorkUntilDeadline</span>
+						<br />
+						<span className='opacity-30'>renderRootSync</span>
+						<br />
+						<span className='opacity-50'>workLoopSync</span>
+						<br />
+						<span className='opacity-70'>updateFunctionComponent</span>
+						<br />
+						<span className='opacity-90'>renderWithHooks</span>
+						<br />
+						...&lt;App /&gt;
+					</p>
+				</div>
 
-			<div className='flex flex-col gap-7'>
-				<p className='font-extrabold'>「시작하기 앞서」</p>
-				<p>
-					{reactPrepareList.map(({ id, title }) => (
-						<GhostButton href={`/react/${id}`} key={id}>
-							{title}
-						</GhostButton>
-					))}
-				</p>
-				<p className='font-extrabold'>「첫 렌더링」</p>
-				<p>
-					{reactInitialRenderList.map(({ id, title }) => (
-						<GhostButton href={`/react/${id}`} key={id}>
-							{title}
-						</GhostButton>
-					))}
-				</p>
-				<p className='font-extrabold'>「리렌더링」</p>
-				<p>
-					{reactRerenderList.map(({ id, title }) => (
-						<GhostButton href={`/react/${id}`} key={id}>
-							{title}
-						</GhostButton>
-					))}
-				</p>
-				<p className='font-extrabold'>「리액트 훅」</p>
-				<p>
-					{reactHookList.map(({ id, title }) => (
-						<GhostButton href={`/react/${id}`} key={id}>
-							{title}
-						</GhostButton>
-					))}
-				</p>
+				<div className='flex flex-col gap-7'>
+					<p className='font-extrabold'>「시작하기 앞서」</p>
+					<p>
+						{reactPrepareList.map(({ id, title }) => (
+							<GhostButton href={`/react/${id}`} key={id}>
+								{title}
+							</GhostButton>
+						))}
+					</p>
+					<p className='font-extrabold'>「첫 렌더링」</p>
+					<p>
+						{reactInitialRenderList.map(({ id, title }) => (
+							<GhostButton href={`/react/${id}`} key={id}>
+								{title}
+							</GhostButton>
+						))}
+					</p>
+					<p className='font-extrabold'>「리렌더링」</p>
+					<p>
+						{reactRerenderList.map(({ id, title }) => (
+							<GhostButton href={`/react/${id}`} key={id}>
+								{title}
+							</GhostButton>
+						))}
+					</p>
+					<p className='font-extrabold'>「리액트 훅」</p>
+					<p>
+						{reactHookList.map(({ id, title }) => (
+							<GhostButton href={`/react/${id}`} key={id}>
+								{title}
+							</GhostButton>
+						))}
+					</p>
+				</div>
 			</div>
-		</div>
+		</AppearAnimation>
 	);
 }
 

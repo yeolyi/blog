@@ -1,5 +1,6 @@
 import type { Metadata, ResolvingMetadata } from 'next';
 import { notFound } from 'next/navigation';
+import AppearAnimation from '@/components/AppearAnimation';
 import Comments from '@/components/comment';
 import PostNavigation from '@/components/layout/PostNavigation';
 import { order } from '@/mdx/react';
@@ -41,22 +42,24 @@ export default async function PostPage({
 		);
 
 		return (
-			<div className='px-4 mdx'>
-				<h1>{title}</h1>
-				<Component />
-				<PostNavigation
-					id={id}
-					subDir='react'
-					className='mb-12'
-					order={order}
-					listHref='/'
-				/>
-				<Comments
-					// 기존에 post에 올린거 호환 목적
-					// TODO: DB에서 옮기고 없애기
-					postId={id === 'setup' ? 'react-local-build' : `react/${id}`}
-				/>
-			</div>
+			<AppearAnimation asChild>
+				<div className='px-4 mdx'>
+					<h1>{title}</h1>
+					<Component />
+					<PostNavigation
+						id={id}
+						subDir='react'
+						className='mb-12'
+						order={order}
+						listHref='/'
+					/>
+					<Comments
+						// 기존에 post에 올린거 호환 목적
+						// TODO: DB에서 옮기고 없애기
+						postId={id === 'setup' ? 'react-local-build' : `react/${id}`}
+					/>
+				</div>
+			</AppearAnimation>
 		);
 	} catch {
 		notFound();

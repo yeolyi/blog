@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import AppearAnimation from '@/components/AppearAnimation';
 import Comments from '@/components/comment';
 import { routing } from '@/i18n/routing';
 import { getMdxIds } from '@/utils/path';
@@ -29,11 +30,13 @@ export default async function PostPage({
 		);
 
 		return (
-			<div className='mdx px-4'>
-				<h1>{title}</h1>
-				<Component />
-				<Comments postId={id} className='mt-21' />
-			</div>
+			<AppearAnimation asChild>
+				<div className='mdx px-4'>
+					<h1>{title}</h1>
+					<Component />
+					<Comments postId={id} className='mt-21' />
+				</div>
+			</AppearAnimation>
 		);
 	} catch {
 		notFound();

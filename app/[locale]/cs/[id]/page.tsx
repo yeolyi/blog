@@ -1,5 +1,6 @@
 import type { Metadata, ResolvingMetadata } from 'next';
 import { notFound } from 'next/navigation';
+import AppearAnimation from '@/components/AppearAnimation';
 import Comments from '@/components/comment';
 import PostNavigation from '@/components/layout/PostNavigation';
 import StayInTouch from '@/components/layout/StayInTouch';
@@ -43,12 +44,14 @@ export default async function PostPage({
 		);
 
 		return (
-			<div className='px-4 mdx'>
-				<h1>{title}</h1>
-				<Component />
-				<PostNavigation id={id} subDir='cs' order={csOrder} listHref='/' />
-				<Comments postId={id} />
-			</div>
+			<AppearAnimation asChild>
+				<div className='px-4 mdx'>
+					<h1>{title}</h1>
+					<Component />
+					<PostNavigation id={id} subDir='cs' order={csOrder} listHref='/' />
+					<Comments postId={id} />
+				</div>
+			</AppearAnimation>
 		);
 	} catch {
 		notFound();

@@ -16,6 +16,7 @@ import CraftTypography from '@/app/[locale]/components/CraftSlot';
 import CSTypography from '@/app/[locale]/components/CSTypography';
 import InstagramDescription from '@/app/[locale]/components/InstagramDescription';
 import InstagramFollowerCount from '@/app/[locale]/components/InstagramFollowerCount';
+import AppearAnimation from '@/components/AppearAnimation';
 import { Button } from '@/components/ui/button';
 import {
 	Carousel,
@@ -95,221 +96,223 @@ export default async function Home({
 	});
 
 	return (
-		<div className='px-4 flex flex-col gap-7 max-w-6xl mx-auto'>
-			<div className='flex flex-col gap-7 md:flex-row'>
-				<Image
-					src={me}
-					alt=''
-					placeholder='blur'
-					className='object-cover w-full h-full aspect-square md:w-1/2'
-					loading='eager'
-					quality={100}
-					width={1024}
-					height={1024}
-				/>
-				<div className='flex-col gap-7 hidden md:flex md:w-1/2'>
-					<p>{tMain('title')}</p>
-					<About />
-				</div>
-				<Collapsible className='md:hidden'>
-					<CollapsibleTrigger className='flex items-center justify-between group'>
+		<AppearAnimation asChild>
+			<div className='px-4 flex flex-col gap-7 max-w-6xl mx-auto'>
+				<div className='flex flex-col gap-7 md:flex-row'>
+					<Image
+						src={me}
+						alt=''
+						placeholder='blur'
+						className='object-cover w-full h-full aspect-square md:w-1/2'
+						loading='eager'
+						quality={100}
+						width={1024}
+						height={1024}
+					/>
+					<div className='flex-col gap-7 hidden md:flex md:w-1/2'>
 						<p>{tMain('title')}</p>
-						<ChevronDown className='w-4 h-4 ml-1 group-data-[state=open]:rotate-180' />
-					</CollapsibleTrigger>
-					<CollapsibleContent className='flex flex-col gap-7 mt-7'>
 						<About />
-					</CollapsibleContent>
-				</Collapsible>
-			</div>
+					</div>
+					<Collapsible className='md:hidden'>
+						<CollapsibleTrigger className='flex items-center justify-between group'>
+							<p>{tMain('title')}</p>
+							<ChevronDown className='w-4 h-4 ml-1 group-data-[state=open]:rotate-180' />
+						</CollapsibleTrigger>
+						<CollapsibleContent className='flex flex-col gap-7 mt-7'>
+							<About />
+						</CollapsibleContent>
+					</Collapsible>
+				</div>
 
-			<Separator />
+				<Separator />
 
-			<div className='flex flex-wrap'>
-				{postArr.map(({ href, title, date }) => (
-					<Button
-						asChild
-						variant='ghost'
-						key={href}
-						className='max-w-full overflow-hidden'
-					>
-						<Link href={href} key={href} className='block'>
-							<h3 className='truncate'>{title}</h3>
-							<span className='text-muted-foreground'>
-								{dayjs(date).format('YYYY MM')}
-							</span>
-						</Link>
-					</Button>
-				))}
-			</div>
-			<Separator />
+				<div className='flex flex-wrap'>
+					{postArr.map(({ href, title, date }) => (
+						<Button
+							asChild
+							variant='ghost'
+							key={href}
+							className='max-w-full overflow-hidden'
+						>
+							<Link href={href} key={href} className='block'>
+								<h3 className='truncate'>{title}</h3>
+								<span className='text-muted-foreground'>
+									{dayjs(date).format('YYYY MM')}
+								</span>
+							</Link>
+						</Button>
+					))}
+				</div>
+				<Separator />
 
-			<CSTypography />
+				<CSTypography />
 
-			<div className='flex flex-col gap-7'>
-				<p className='w-full max-w-2xl'>
-					{tMain('csIntro')}{' '}
-					{count !== undefined && (
-						<>
-							<span className='font-extrabold'>{count.toLocaleString()}</span>
-							{tMain('subscriberCount')}
-						</>
-					)}
-				</p>
-			</div>
+				<div className='flex flex-col gap-7'>
+					<p className='w-full max-w-2xl'>
+						{tMain('csIntro')}{' '}
+						{count !== undefined && (
+							<>
+								<span className='font-extrabold'>{count.toLocaleString()}</span>
+								{tMain('subscriberCount')}
+							</>
+						)}
+					</p>
+				</div>
 
-			<Button asChild className='w-fit self-end'>
-				<Link href='/cs'>
-					{tMain('viewMore')}
-					<ChevronRight />
-				</Link>
-			</Button>
+				<Button asChild className='w-fit self-end'>
+					<Link href='/cs'>
+						{tMain('viewMore')}
+						<ChevronRight />
+					</Link>
+				</Button>
 
-			<Separator />
+				<Separator />
 
-			<Carousel opts={{ loop: true, align: 'start' }}>
-				<CarouselContent className='-pl-4'>
-					<CarouselItem className='pl-4 basis-11/12'>
-						<InstagramDescription />
-					</CarouselItem>
-					<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
-						<Image
-							src={meme1}
-							alt=''
-							placeholder='blur'
-							className='w-full h-full object-contain'
-						/>
-					</CarouselItem>
-					<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
-						<video
-							src='/main/merge-sort.webm'
-							autoPlay
-							muted
-							loop
-							playsInline
-							className='w-full h-full object-contain'
-						/>
-					</CarouselItem>
-					<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
-						<Image
-							src={meme2}
-							alt=''
-							placeholder='blur'
-							className='w-full h-full object-contain'
-						/>
-					</CarouselItem>
-					<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
-						<Image
-							src={meme3}
-							alt=''
-							placeholder='blur'
-							className='w-full h-full object-contain'
-						/>
-					</CarouselItem>
-					<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
-						<Image
-							src={meme4}
-							alt=''
-							placeholder='blur'
-							className='w-full h-full object-contain'
-						/>
-					</CarouselItem>
-				</CarouselContent>
-				<CarouselNext />
-				<CarouselPrevious />
-			</Carousel>
+				<Carousel opts={{ loop: true, align: 'start' }}>
+					<CarouselContent className='-pl-4'>
+						<CarouselItem className='pl-4 basis-11/12'>
+							<InstagramDescription />
+						</CarouselItem>
+						<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
+							<Image
+								src={meme1}
+								alt=''
+								placeholder='blur'
+								className='w-full h-full object-contain'
+							/>
+						</CarouselItem>
+						<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
+							<video
+								src='/main/merge-sort.webm'
+								autoPlay
+								muted
+								loop
+								playsInline
+								className='w-full h-full object-contain'
+							/>
+						</CarouselItem>
+						<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
+							<Image
+								src={meme2}
+								alt=''
+								placeholder='blur'
+								className='w-full h-full object-contain'
+							/>
+						</CarouselItem>
+						<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
+							<Image
+								src={meme3}
+								alt=''
+								placeholder='blur'
+								className='w-full h-full object-contain'
+							/>
+						</CarouselItem>
+						<CarouselItem className='pl-4 aspect-[4/5] max-w-sm'>
+							<Image
+								src={meme4}
+								alt=''
+								placeholder='blur'
+								className='w-full h-full object-contain'
+							/>
+						</CarouselItem>
+					</CarouselContent>
+					<CarouselNext />
+					<CarouselPrevious />
+				</Carousel>
 
-			<p>
-				{tMain.rich('instagramIntro', {
-					externalLink: (chunks) => (
-						<LinkButton href='https://minguhongmfg.com/about'>{chunks}</LinkButton>
-					),
-				})}{' '}
-				<>
-					<span className='font-extrabold'>
-						<InstagramFollowerCount />
-					</span>
-					{tMain('subscriberCount')}
-				</>{' '}
-				<Popover>
-					<PopoverTrigger className='align-middle -translate-y-0.5'>
-						<Info className='w-4 h-4' />
-					</PopoverTrigger>
-					<PopoverContent>
-						<p>
-							{tMain.rich('instagramDescription', {
-								externalLink: (chunks) => (
-									<a
-										href='https://minguhongmfg.com/about'
-										className='underline'
-										target='_blank'
-										rel='noreferrer noopener'
-									>
-										{chunks}
-									</a>
-								),
-							})}
-						</p>
-					</PopoverContent>
-				</Popover>
-			</p>
-
-			<Button asChild className='w-fit self-end'>
-				<Link
-					href='https://instagram.com/yeol.dev'
-					target='_blank'
-					rel='noreferrer noopener'
-				>
-					{tMain('viewMore')}
-					<ExternalLink />
-				</Link>
-			</Button>
-
-			<Separator />
-
-			<div className='aspect-video flex items-center justify-center min-h-[384px] w-full'>
-				<p className='text-[min(6vw,70px)] leading-none font-extrabold text-center'>
-					<span className='opacity-10'>performWorkUntilDeadline</span>
-					<br />
-					<span className='opacity-30'>renderRootSync</span>
-					<br />
-					<span className='opacity-50'>workLoopSync</span>
-					<br />
-					<span className='opacity-70'>updateFunctionComponent</span>
-					<br />
-					<span className='opacity-90'>renderWithHooks</span>
-					<br />
-					...&lt;App /&gt;
-				</p>
-			</div>
-
-			<div className='max-w-2xl '>
 				<p>
-					{tMain('reactIntro')}{' '}
-					<LinkButton href='https://jser.dev/series/react-source-code-walkthrough'>
-						jser.dev
-					</LinkButton>
-					{tMain('reactHelper')}
+					{tMain.rich('instagramIntro', {
+						externalLink: (chunks) => (
+							<LinkButton href='https://minguhongmfg.com/about'>{chunks}</LinkButton>
+						),
+					})}{' '}
+					<>
+						<span className='font-extrabold'>
+							<InstagramFollowerCount />
+						</span>
+						{tMain('subscriberCount')}
+					</>{' '}
+					<Popover>
+						<PopoverTrigger className='align-middle -translate-y-0.5'>
+							<Info className='w-4 h-4' />
+						</PopoverTrigger>
+						<PopoverContent>
+							<p>
+								{tMain.rich('instagramDescription', {
+									externalLink: (chunks) => (
+										<a
+											href='https://minguhongmfg.com/about'
+											className='underline'
+											target='_blank'
+											rel='noreferrer noopener'
+										>
+											{chunks}
+										</a>
+									),
+								})}
+							</p>
+						</PopoverContent>
+					</Popover>
 				</p>
+
+				<Button asChild className='w-fit self-end'>
+					<Link
+						href='https://instagram.com/yeol.dev'
+						target='_blank'
+						rel='noreferrer noopener'
+					>
+						{tMain('viewMore')}
+						<ExternalLink />
+					</Link>
+				</Button>
+
+				<Separator />
+
+				<div className='aspect-video flex items-center justify-center min-h-[384px] w-full'>
+					<p className='text-[min(6vw,70px)] leading-none font-extrabold text-center'>
+						<span className='opacity-10'>performWorkUntilDeadline</span>
+						<br />
+						<span className='opacity-30'>renderRootSync</span>
+						<br />
+						<span className='opacity-50'>workLoopSync</span>
+						<br />
+						<span className='opacity-70'>updateFunctionComponent</span>
+						<br />
+						<span className='opacity-90'>renderWithHooks</span>
+						<br />
+						...&lt;App /&gt;
+					</p>
+				</div>
+
+				<div className='max-w-2xl '>
+					<p>
+						{tMain('reactIntro')}{' '}
+						<LinkButton href='https://jser.dev/series/react-source-code-walkthrough'>
+							jser.dev
+						</LinkButton>
+						{tMain('reactHelper')}
+					</p>
+				</div>
+
+				<Button asChild className='w-fit self-end'>
+					<Link href='/react'>
+						{tMain('viewMore')}
+						<ChevronRight />
+					</Link>
+				</Button>
+
+				<Separator />
+
+				<CraftTypography />
+				<div className='max-w-2xl'>
+					<p>{tMain('craftIntro')}</p>
+				</div>
+				<Button className='w-fit self-end' disabled>
+					{tMain('comingSoon')}
+					<Construction />
+				</Button>
 			</div>
-
-			<Button asChild className='w-fit self-end'>
-				<Link href='/react'>
-					{tMain('viewMore')}
-					<ChevronRight />
-				</Link>
-			</Button>
-
-			<Separator />
-
-			<CraftTypography />
-			<div className='max-w-2xl'>
-				<p>{tMain('craftIntro')}</p>
-			</div>
-			<Button className='w-fit self-end' disabled>
-				{tMain('comingSoon')}
-				<Construction />
-			</Button>
-		</div>
+		</AppearAnimation>
 	);
 }
 

@@ -41,6 +41,7 @@
 		"dayjs": "^1.11.13",
 		"embla-carousel-react": "^8.6.0",
 		"es-toolkit": "^1.35.0",
+		"gsap": "^3.13.0",
 		"jotai": "^2.12.3",
 		"jotai-effect": "^2.0.2",
 		"lucide-react": "^0.525.0",

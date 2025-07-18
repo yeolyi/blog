@@ -254,9 +254,9 @@
 	}
 }
 
-/* TODO: details 처이 이게 최선? */
+/* TODO: details 처리 이게 최선? */
 .mdx {
-	@apply flex flex-col gap-7 max-w-2xl mx-auto mt-7;
+	@apply flex flex-col gap-7 max-w-2xl mx-auto mt-7 will-change-transform;
 
 	& > details {
 		@apply space-y-7 ml-4;
