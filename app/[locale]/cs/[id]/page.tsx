@@ -2,6 +2,7 @@ import type { Metadata, ResolvingMetadata } from 'next';
 import { notFound } from 'next/navigation';
 import Comments from '@/components/comment';
 import PostNavigation from '@/components/layout/PostNavigation';
+import StayInTouch from '@/components/layout/StayInTouch';
 import { routing } from '@/i18n/routing';
 import { csOrder } from '@/mdx/cs';
 import { getMdxIds } from '@/utils/path';
