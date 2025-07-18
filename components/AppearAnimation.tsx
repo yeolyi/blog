@@ -33,12 +33,13 @@ export default function AppearAnimation({
 			// @ts-expect-error 어쩌지
 			ref: el,
 			className: cn((children as any).props.className, className),
+			style: { opacity: 0, transform: 'translateY(5px)' },
 			...rest,
 		});
 	}
 
 	return (
-		<div ref={el} {...rest}>
+		<div ref={el} style={{ opacity: 0, transform: 'translateY(5px)' }} {...rest}>
 			{children}
 		</div>
 	);
