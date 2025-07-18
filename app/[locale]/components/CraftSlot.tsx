@@ -10,7 +10,7 @@ export default function CraftTypography() {
 	const charIndices = getInitialIndices();
 
 	return (
-		<div className='flex items-center justify-center select-none w-full h-full aspect-video min-h-[384px]'>
+		<div className='flex items-center justify-center w-full h-full aspect-video min-h-[384px]'>
 			<div className='flex items-center gap-2 relative'>
 				{/* 선택된 항목을 강조하는 배경 */}
 				<div className='absolute inset-0 flex items-center justify-center'>

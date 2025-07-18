@@ -53,7 +53,7 @@ export const getInstagramFollowers = wrapServerAction(async () => {
 		// API 응답에서 팔로워 수와 ID 추출
 		if (typeof data.followers_count === 'number' && data.id) {
 			const result = {
-				followers_count: data.followers_count,
+				followers_count: data.followers_count as number,
 				id: data.id,
 			};
 

@@ -15,6 +15,7 @@ import { getSubscriberCount } from '@/actions/resend';
 import CraftTypography from '@/app/[locale]/components/CraftSlot';
 import CSTypography from '@/app/[locale]/components/CSTypography';
 import InstagramDescription from '@/app/[locale]/components/InstagramDescription';
+import InstagramFollowerCount from '@/app/[locale]/components/InstagramFollowerCount';
 import { Button } from '@/components/ui/button';
 import {
 	Carousel,
@@ -78,11 +79,6 @@ export default async function Home({
 
 	const subscriberCount = await getSubscriberCount();
 	const count = subscriberCount.success ? subscriberCount.value : undefined;
-
-	const instagramFollowers = await getInstagramFollowers();
-	const followersCount = instagramFollowers.success
-		? instagramFollowers.value.followers_count
-		: undefined;
 
 	const postIds = await getMdxIds(locale);
 	const postArr: { href: string; title: string; date: string }[] = (
@@ -163,7 +159,7 @@ export default async function Home({
 
 			<Button asChild className='w-fit self-end'>
 				<Link href='/cs'>
-					보러가기
+					{tMain('viewMore')}
 					<ChevronRight />
 				</Link>
 			</Button>
@@ -228,28 +224,30 @@ export default async function Home({
 						<LinkButton href='https://minguhongmfg.com/about'>{chunks}</LinkButton>
 					),
 				})}{' '}
-				{followersCount !== undefined && (
-					<>
-						<span className='font-extrabold'>{followersCount.toLocaleString()}</span>
-						{tMain('subscriberCount')}
-					</>
-				)}{' '}
+				<>
+					<span className='font-extrabold'>
+						<InstagramFollowerCount />
+					</span>
+					{tMain('subscriberCount')}
+				</>{' '}
 				<Popover>
 					<PopoverTrigger className='align-middle -translate-y-0.5'>
 						<Info className='w-4 h-4' />
 					</PopoverTrigger>
 					<PopoverContent>
 						<p>
-							<a
-								href='https://minguhongmfg.com/about'
-								className='underline'
-								target='_blank'
-								rel='noreferrer noopener'
-							>
-								민구홍 매뉴팩처링
-							</a>
-							에서 아이디어를 얻어 <br />
-							계정이 하는 일들과 마음에 들었던 컨텐츠들을 공유합니다.
+							{tMain.rich('instagramDescription', {
+								externalLink: (chunks) => (
+									<a
+										href='https://minguhongmfg.com/about'
+										className='underline'
+										target='_blank'
+										rel='noreferrer noopener'
+									>
+										{chunks}
+									</a>
+								),
+							})}
 						</p>
 					</PopoverContent>
 				</Popover>
@@ -261,14 +259,14 @@ export default async function Home({
 					target='_blank'
 					rel='noreferrer noopener'
 				>
-					보러가기
+					{tMain('viewMore')}
 					<ExternalLink />
 				</Link>
 			</Button>
 
 			<Separator />
 
-			<div className='aspect-video flex items-center justify-center select-none min-h-[384px] w-full'>
+			<div className='aspect-video flex items-center justify-center min-h-[384px] w-full'>
 				<p className='text-[min(6vw,70px)] leading-none font-extrabold text-center'>
 					<span className='opacity-10'>performWorkUntilDeadline</span>
 					<br />
@@ -286,17 +284,17 @@ export default async function Home({
 
 			<div className='max-w-2xl '>
 				<p>
-					사내 스터디에서 리액트 소스코드를 직접 뜯어봅니다.{' '}
+					{tMain('reactIntro')}{' '}
 					<LinkButton href='https://jser.dev/series/react-source-code-walkthrough'>
 						jser.dev
 					</LinkButton>
-					의 도움을 많이 받았습니다.
+					{tMain('reactHelper')}
 				</p>
 			</div>
 
 			<Button asChild className='w-fit self-end'>
 				<Link href='/react'>
-					보러가기
+					{tMain('viewMore')}
 					<ChevronRight />
 				</Link>
 			</Button>
@@ -305,10 +303,10 @@ export default async function Home({
 
 			<CraftTypography />
 			<div className='max-w-2xl'>
-				<p>만든 것들을 소개합니다.</p>
+				<p>{tMain('craftIntro')}</p>
 			</div>
 			<Button className='w-fit self-end' disabled>
-				준비중
+				{tMain('comingSoon')}
 				<Construction />
 			</Button>
 		</div>

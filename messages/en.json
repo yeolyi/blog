@@ -1,46 +1,30 @@
 {
 	"Header": {
 		"title": "seongyeol",
-		"loading": "Loading...",
-		"developer": "Developer #{number}",
-		"logout": "Logout",
-		"login": "Login",
-		"changeLocale": "Change locale",
-		"github": "GitHub",
 		"language": "Language",
 		"theme": "Theme",
 		"auth": "Account",
-		"settings": "Settings",
-		"close": "Close"
+		"settings": "Settings"
 	},
-	"LocaleSwitcher": {
-		"label": "Language",
-		"locale": "{locale}"
+	"MainPage": {
+		"title": "I'm Seongyeol, a developer and creator.",
+		"developerBio": "In Spring 2025, I studied Computer Science and Environmental Materials Science at <snuLink>Seoul National University</snuLink>. In Summer 2024, I joined <kakaoLink>Kakao</kakaoLink> as a frontend developer. In Spring 2024, I developed and deployed the frontend for the new Computer Science and Engineering department website <cseLink>cse.snu.ac.kr</cseLink>. In Summer 2023, I reached just before Diamond tier on <baekjoonLink>Baekjoon</baekjoonLink> but now it seems daunting. In Spring 2021, I spent 2 years freely gaining iOS/FE experience at startup <skyonLink>Skyon</skyonLink>, but the company disappeared. In Fall 2020, I created my <githubLink>GitHub</githubLink> account.",
+		"csIntro": "I share the wonder I felt learning computer science in school.",
+		"subscriberCount": " people are joining us!",
+		"instagramIntro": "Developer Instagram account.",
+		"viewMore": "View More",
+		"instagramDescription": "Inspired by <externalLink>Minguhong Manufacturing</externalLink>, I share what this account is about and some of my favorite posts.",
+		"reactIntro": "We explore React source code in internal study sessions.",
+		"reactHelper": " has been incredibly helpful.",
+		"craftIntro": "Showcasing things I've built.",
+		"comingSoon": "Coming Soon"
 	},
-	"TableOfContents": {
-		"title": "Table of Contents"
+	"PostNavigation": {
+		"backToList": "Back to List",
+		"prev": "Previous",
+		"next": "Next"
 	},
-	"Footer": {
-		"title": "seongyeol",
-		"copyright": "© {year} All rights reserved.",
-		"navigation": "Navigation",
-		"home": "Home",
-		"works": "Works",
-		"blog": "Blog",
-		"connect": "Connect",
-		"email": "Email"
-	},
-	"HomePage": {
-		"bio": "Hi there👋 I'm Seongyeol, a developer based in South Korea. I worked as a frontend developer on the renewal project for the <snuLink>website of Seoul National University's Computer Science and Engineering department</snuLink>. I'm now working at <kakaoLink>Kakao</kakaoLink>, a Korean tech company known for services like KakaoTalk, Korea's most widely used messaging app. I also share developer content on <instagramLink>Instagram</instagramLink>.",
-		"posts": "Posts",
-		"series": "Series",
-		"curriculum": "Learn CS By Building a Computer",
-		"curriculumDescription": "This is a series created to share the wonder I felt while learning computer science. Let's follow the process of how small things come together to create a computer!",
-		"react": "Become a React Contributor in 2025 (No English translation)",
-		"reactDescription": "A series where we become developers who can contribute by reading and analyzing React source code directly. Let's deeply understand the core operating principles of React.js!",
-		"viewSeries": "View Series"
-	},
-	"Curriculum": {
+	"CS": {
 		"dateFormat": "{date, date, long}",
 		"plannedDateFormat": "{date, date, long}",
 		"part1Title": "Part 1: Building a Computer with Just 0s and 1s",
@@ -93,50 +77,32 @@
 		"os6Title": "How This Text Reached You",
 		"os6Description": "Network",
 
-		"appendixTitle": "Appendix",
-		"appendix1Title": "Building A Computer In Minecraft",
-
-		"comingSoon": "Coming Soon",
-		"viewPost": "View Post"
+		"andGate": "AND Gate",
+		"nandUniversality": "NAND Universality",
+		"nandToNot": "Creating NOT Gate from NAND Gate",
+		"truthTable": "Truth Table",
+		"turingMachineDemo": "Turing Machine Demo",
+		"binaryAddition": "Binary Addition 11(2) + 11(2) = 110(2)",
+		"decimalToBinary": "Decimal to Binary Converter",
+		"decimalToBinaryDesc": "Enter a decimal number to see its binary representation and calculation process.",
+		"enterDecimal": "Enter a decimal number"
 	},
 	"NotFound": {
 		"backHome": "Back to Home"
 	},
 	"EmailSubscribe": {
-		"title": "Get Notified About New Content 💌",
-		"description": "I'll keep you posted as the computer takes shape.",
-		"subscriberCount": "Currently {count, number} people subscribed.",
-		"subscriberCountHeader": " people joined us!",
 		"emailPlaceholder": "Email address",
-		"successMessage": "Successfully subscribed!",
-		"subscribeButton": "Subscribe",
-		"subscribingButton": "Subscribing...",
-		"confettiLabel": "Confetti count"
+		"subscribeButton": "Subscribe"
 	},
 	"Comment": {
-		"title": "I'd Love to Hear Your Thoughts",
-		"description": "Feel free to share any questions or thoughts that come to mind while reading this series. For example...",
-		"example1": "Things you've always wondered about in computer science, like 'Why does this work this way?'",
-		"example2": "Concepts that left a lasting impression while studying computer science",
-		"example3": "Concepts that everyone says are important, but you're not quite sure why or how they're used",
-		"encouragement": "I believe sharing your questions, experiences, and honest challenges will help other readers. I'll keep working to make this a space where we can learn and grow together :)",
-		"githubLoginNotice": "* GitHub login is required to prevent spam",
 		"loginRequired": "You need to <loginLink>login</loginLink> to leave a comment.",
-		"login": "login",
 		"placeholder": "Thank you for reading! 👍",
 		"submit": "Submit",
 		"submitting": "Submitting...",
 		"noComments": "Be the first to comment!",
-		"loading": "Logging in...",
-		"deleteComment": "Delete Comment",
-		"deleteConfirm": "Are you sure you want to delete this comment?",
-		"deleting": "Deleting...",
-		"delete": "Delete",
-		"cancel": "Cancel",
-		"deleteError": "An error occurred while deleting the comment.",
-		"submitError": "An error occurred while submitting the comment.",
+		"developer": "Developer #{number}",
 		"dateFormat": "MMM DD, YYYY HH:mm:ss",
-		"required": "Required field."
+		"loading": "Logging in..."
 	},
 	"ZeroAndOne": {
 		"PixelateImage": {
@@ -151,11 +117,6 @@
 			"goingOut": "Going Out",
 			"takeUmbrella": "Take Umbrella"
 		}
-	},
-	"PostNavigation": {
-		"backToList": "Back to List",
-		"prev": "Previous",
-		"next": "Next"
 	},
 	"Sequential": {
 		"ClockSyncVisualizer": {
@@ -186,18 +147,5 @@
 			"title": "Tape",
 			"head": "▲ Head"
 		}
-	},
-	"MainPage": {
-		"title": "I'm Seongyeol, a developer and creator.",
-		"developerBio": "In Spring 2025, I studied Computer Science and Environmental Materials Science at <snuLink>Seoul National University</snuLink>. In Summer 2024, I joined <kakaoLink>Kakao</kakaoLink> as a frontend developer. In Spring 2024, I developed and deployed the frontend for the new Computer Science and Engineering department website <cseLink>cse.snu.ac.kr</cseLink>. In Summer 2023, I reached just before Diamond tier on <baekjoonLink>Baekjoon</baekjoonLink> but now it seems daunting. In Spring 2021, I spent 2 years freely gaining iOS/FE experience at startup <skyonLink>Skyon</skyonLink>, but the company disappeared. In Fall 2020, I created my <githubLink>GitHub</githubLink> account.",
-		"csIntro": "I share the wonder I felt learning computer science in school.",
-		"subscriberCount": " people are joining us!",
-		"interactionIntro": "Unlike books or videos, the web allows user interaction. Click and drag while watching lectures to explore the core principles of computer science.",
-		"andGate": "AND Gate",
-		"nandUniversality": "NAND Universality",
-		"nandToNot": "Making NOT with NAND",
-		"reactSetupTitle": "Directly Modifying and Using React Source Code",
-		"csZeroOneTitle": "Why Computers Only Have Two Fingers",
-		"instagramIntro": "Developer Instagram account."
 	}
 }

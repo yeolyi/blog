@@ -36,7 +36,6 @@ const CommentItem = ({
 	comment: Comment;
 	postId: string;
 }) => {
-	const headerT = useTranslations('Header');
 	const commentT = useTranslations('Comment');
 	const { data: profile } = useProfile();
 
@@ -49,7 +48,7 @@ const CommentItem = ({
 			<p>
 				<Button variant='link' asChild className='pl-0'>
 					<Link href={githubUrl} target='_blank' rel='noopener noreferrer'>
-						{headerT('developer', { number: comment.developernumber })}
+						{commentT('developer', { number: comment.developernumber })}
 					</Link>
 				</Button>
 				<span className='text-muted-foreground'>

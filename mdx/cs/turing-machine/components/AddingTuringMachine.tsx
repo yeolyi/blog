@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
 import {
 	Card,
@@ -67,11 +68,13 @@ const AddingTuringMachineContent = () => {
 };
 
 export default function AddingTuringMachine() {
+	const t = useTranslations('CS');
+
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>튜링 머신 실습</CardTitle>
-				<CardDescription>이진수 덧셈 11(2) + 11(2) = 110(2)</CardDescription>
+				<CardTitle>{t('turingMachineDemo')}</CardTitle>
+				<CardDescription>{t('binaryAddition')}</CardDescription>
 			</CardHeader>
 			<CardContent>
 				<TuringMachineProvider>

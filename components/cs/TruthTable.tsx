@@ -1,6 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
+import { useTranslations } from 'next-intl';
 import { useId, useState } from 'react';
 import {
 	Card,
@@ -60,6 +61,7 @@ export default function TruthTable({
 	description,
 }: TruthTableGateProps) {
 	const id = useId();
+	const t = useTranslations('CS');
 
 	const inputLabels = labels.filter((l) => l.type === 'input');
 
@@ -81,7 +83,7 @@ export default function TruthTable({
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>진리표</CardTitle>
+				<CardTitle>{t('truthTable')}</CardTitle>
 				{description && <CardDescription>{description}</CardDescription>}
 			</CardHeader>
 			<CardContent>

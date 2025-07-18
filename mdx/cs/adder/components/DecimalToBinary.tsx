@@ -1,4 +1,5 @@
 'use client';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import {
 	Card,
@@ -11,6 +12,7 @@ import { Input } from '@/components/ui/input';
 
 export default function DecimalToBinary() {
 	const [val, setVal] = useState('5');
+	const t = useTranslations('CS');
 
 	const num = Number.parseInt(val);
 	const binary = num.toString(2);
@@ -25,10 +27,8 @@ export default function DecimalToBinary() {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>십진수-이진수 변환기</CardTitle>
-				<CardDescription>
-					십진수를 입력하면 이진수와 그 계산 과정을 보여줍니다.
-				</CardDescription>
+				<CardTitle>{t('decimalToBinary')}</CardTitle>
+				<CardDescription>{t('decimalToBinaryDesc')}</CardDescription>
 			</CardHeader>
 			<CardContent className='space-y-4'>
 				<Input
@@ -42,7 +42,7 @@ export default function DecimalToBinary() {
 							setVal(numberOnly);
 						}
 					}}
-					placeholder='십진수를 입력하세요'
+					placeholder={t('enterDecimal')}
 					className='max-w-xs'
 				/>
 				<div>

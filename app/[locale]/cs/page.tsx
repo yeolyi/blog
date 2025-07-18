@@ -25,7 +25,7 @@ import AddingTuringMachine from '@/mdx/cs/turing-machine/components/AddingTuring
 
 export default async function CS() {
 	const tMain = await getTranslations('MainPage');
-	const tCS = await getTranslations('Curriculum');
+	const tCS = await getTranslations('CS');
 	const subscriberCount = await getSubscriberCount();
 	const count = subscriberCount.success ? subscriberCount.value : undefined;
 
@@ -60,7 +60,7 @@ export default async function CS() {
 				<CarouselContent className='-pl-4'>
 					<CarouselItem className='pl-4 max-w-sm'>
 						<TruthTable
-							description={tMain('andGate')}
+							description={tCS('andGate')}
 							labels={[
 								{ label: 'A', type: 'input' },
 								{ label: 'B', type: 'input' },
@@ -77,8 +77,8 @@ export default async function CS() {
 					<CarouselItem className='max-w-sm pl-4'>
 						<Card>
 							<CardHeader>
-								<CardTitle>{tMain('nandUniversality')}</CardTitle>
-								<CardDescription>{tMain('nandToNot')}</CardDescription>
+								<CardTitle>{tCS('nandUniversality')}</CardTitle>
+								<CardDescription>{tCS('nandToNot')}</CardDescription>
 							</CardHeader>
 							<Flow id='/cs' initialJSON={not} height={250} hideNodeButtons />
 						</Card>

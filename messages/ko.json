@@ -1,47 +1,30 @@
 {
 	"Header": {
 		"title": "seongyeol",
-		"loading": "로딩 중...",
-		"developer": "#{number}번째 개발자님",
-		"logout": "로그아웃",
-		"login": "로그인",
-		"changeLocale": "언어 변경",
-		"github": "깃허브",
 		"language": "언어",
 		"theme": "테마",
 		"auth": "계정",
-		"settings": "설정",
-		"close": "닫기"
+		"settings": "설정"
 	},
-	"LocaleSwitcher": {
-		"label": "언어",
-		"locale": "{locale}"
+	"MainPage": {
+		"title": "개발자이자 크리에이터인 이성열입니다.",
+		"developerBio": "25년 봄 <snuLink>서울대학교</snuLink>에서 컴퓨터공학, 환경재료과학을 졸업했습니다. 24년 여름 <kakaoLink>카카오</kakaoLink>에 프론트엔드 개발자로 입사했습니다. 24년 봄 새로운 컴퓨터공학부 홈페이지인 <cseLink>cse.snu.ac.kr</cseLink>의 프론트엔드를 개발해 배포했습니다. 23년 여름 <baekjoonLink>백준</baekjoonLink> 다이아 직전까지 갔으나 이제는 거의 까먹었습니다. 21년 봄 스타트업 <skyonLink>스카이온</skyonLink> 에서 2년간 자유롭게 iOS/FE 경험을 쌓았으나 회사가 사라졌습니다. 20년 가을 <githubLink>github</githubLink> 계정을 만들었습니다.",
+		"csIntro": "컴퓨터 공학을 공부하며 느낀 경이로움을 전달합니다.",
+		"subscriberCount": "명과 함께합니다.",
+		"instagramIntro": "개발 인스타그램 계정입니다.",
+		"viewMore": "보러가기",
+		"instagramDescription": "<externalLink>민구홍 매뉴팩처링</externalLink>에서 아이디어를 얻어 계정이 하는 일들과 마음에 들었던 컨텐츠들을 공유합니다.",
+		"reactIntro": "사내 스터디에서 리액트 소스코드를 직접 뜯어봅니다.",
+		"reactHelper": "의 도움을 많이 받았습니다.",
+		"craftIntro": "만든 것들을 소개합니다.",
+		"comingSoon": "준비중"
 	},
-	"TableOfContents": {
-		"title": "목차"
+	"PostNavigation": {
+		"backToList": "목록으로",
+		"prev": "이전글",
+		"next": "다음글"
 	},
-	"Footer": {
-		"title": "seongyeol",
-		"copyright": "© {year} 모든 권리 보유.",
-		"navigation": "네비게이션",
-		"home": "홈",
-		"works": "작업물",
-		"blog": "블로그",
-		"connect": "연결하기",
-		"email": "이메일"
-	},
-	"HomePage": {
-		"posts": "게시글",
-		"series": "시리즈",
-		"curriculum": "만들면서 배우는 컴퓨터공학",
-		"curriculumDescription": "컴퓨터공학을 배우며 느꼈던 경이로움을 나누고자 만든 시리즈입니다. 작은 것들이 모여 컴퓨터가 만들어지는 과정을 함께 따라가봐요!",
-		"react": "2025 리액트 기여자 되기",
-		"viewSeries": "보러가기"
-	},
-	"Curriculum": {
-		"dateFormat": "{date, date, long}",
-		"plannedDateFormat": "{date, date, long}",
-
+	"CS": {
 		"part1Title": "파트 1: 0과 1로 컴퓨터 조립하기",
 		"hw1Title": "컴퓨터의 손가락이 두 개인 이유",
 		"hw1Description": "컴퓨터는 왜 0과 1을 쓸까요? 이 두 숫자가 어떻게 소리, 이미지, 그리고 우리가 상상하는 모든 것을 담아낼 수 있는 첫걸음이 되는지 알아봅시다.",
@@ -92,50 +75,32 @@
 		"os6Title": "이 글이 여러분들에게 도착하기까지",
 		"os6Description": "네트워크",
 
-		"appendixTitle": "부록",
-		"appendix1Title": "마인크래프트에서 컴퓨터 만들기",
-
-		"comingSoon": "준비중",
-		"viewPost": "보러가기"
+		"andGate": "AND 게이트",
+		"nandUniversality": "NAND의 범용성",
+		"nandToNot": "NAND 게이트로 NOT 게이트 만들기",
+		"truthTable": "진리표",
+		"turingMachineDemo": "튜링 머신 실습",
+		"binaryAddition": "이진수 덧셈 11(2) + 11(2) = 110(2)",
+		"decimalToBinary": "십진수-이진수 변환기",
+		"decimalToBinaryDesc": "십진수를 입력하면 이진수와 그 계산 과정을 보여줍니다.",
+		"enterDecimal": "십진수를 입력하세요"
 	},
 	"NotFound": {
 		"backHome": "홈으로 돌아가기"
 	},
 	"EmailSubscribe": {
-		"title": "새로운 컨텐츠 알림 받기 💌",
-		"description": "컴퓨터가 어느정도 만들어질 때마다 이메일을 드릴게요.",
-		"subscriberCount": "현재 {count, number}명 구독중이에요.",
-		"subscriberCountHeader": "명이 함께하고 있어요!",
 		"emailPlaceholder": "이메일 주소",
-		"successMessage": "구독이 완료되었습니다!",
-		"subscribeButton": "구독하기",
-		"subscribingButton": "구독중...",
-		"confettiLabel": "폭죽 개수"
+		"subscribeButton": "구독하기"
 	},
 	"Comment": {
-		"title": "여러분들 의견이 궁금해요",
-		"description": "이 시리즈를 읽으면서 떠오른 궁금한 점이나 나누고 싶은 의견이 있다면 언제든지 아래 댓글로 남겨주세요. 예를 들면...",
-		"example1": "컴퓨터 공학 분야에서 '이건 왜 이렇게 될까?' 등 평소에 궁금하셨던 것",
-		"example2": "컴퓨터 공학을 공부하면서 인상 깊었던 개념",
-		"example3": "다들 중요하다고는 하는데 솔직히 아직 이게 왜 필요한지, 어떻게 쓰이는지 잘 모르겠다 싶은 개념",
-		"encouragement": "여러분의 질문, 경험, 솔직한 어려움을 나눠주시면 다른 독자분들에게도 도움이 될 것이라 믿습니다. 함께 배우고 성장하는 공간이 될 수 있도록 저도 계속 고민할게요 :)",
-		"githubLoginNotice": "* 스팸 방지를 위해 깃허브 로그인 후 작성할 수 있어요",
-		"loginRequired": "댓글을 남기려면 <loginLink>로그인</loginLink>이 필요합니다.",
-		"login": "로그인",
 		"placeholder": "읽어주셔서 감사합니다 :)",
+		"noComments": "첫 댓글을 남겨보세요!",
 		"submit": "댓글 작성",
 		"submitting": "작성 중...",
-		"noComments": "첫 댓글을 남겨보세요!",
-		"loading": "로그인 중...",
-		"deleteComment": "댓글 삭제",
-		"deleteConfirm": "정말 이 댓글을 삭제하시겠습니까?",
-		"deleting": "삭제 중...",
-		"delete": "삭제",
-		"cancel": "취소",
-		"deleteError": "댓글 삭제 중 오류가 발생했습니다.",
-		"submitError": "댓글 작성 중 오류가 발생했습니다.",
+		"loginRequired": "댓글을 남기려면 <loginLink>로그인</loginLink>이 필요합니다.",
 		"dateFormat": "YYYY/MM/DD HH:mm:ss",
-		"required": "필수 입력 필드입니다."
+		"developer": "#{number}번째 개발자님",
+		"loading": "로그인 중..."
 	},
 	"ZeroAndOne": {
 		"PixelateImage": {
@@ -151,11 +116,7 @@
 			"takeUmbrella": "우산 챙기기"
 		}
 	},
-	"PostNavigation": {
-		"backToList": "목록으로",
-		"prev": "이전글",
-		"next": "다음글"
-	},
+
 	"Sequential": {
 		"ClockSyncVisualizer": {
 			"reset": "초기화",
@@ -171,6 +132,7 @@
 			"canRemember": "기억이 가능할 때"
 		}
 	},
+
 	"TuringMachine": {
 		"title": "튜링 머신",
 		"ControlUnit": {
@@ -185,17 +147,5 @@
 			"title": "테이프",
 			"head": "▲ 헤드"
 		}
-	},
-	"MainPage": {
-		"title": "개발자이자 크리에이터인 이성열입니다.",
-		"developerBio": "25년 봄 <snuLink>서울대학교</snuLink>에서 컴퓨터공학, 환경재료과학을 졸업했습니다. 24년 여름 <kakaoLink>카카오</kakaoLink>에 프론트엔드 개발자로 입사했습니다. 24년 봄 새로운 컴퓨터공학부 홈페이지인 <cseLink>cse.snu.ac.kr</cseLink>의 프론트엔드를 개발해 배포했습니다. 23년 여름 <baekjoonLink>백준</baekjoonLink> 다이아 직전까지 갔으나 이제는 거의 까먹었습니다. 21년 봄 스타트업 <skyonLink>스카이온</skyonLink> 에서 2년간 자유롭게 iOS/FE 경험을 쌓았으나 회사가 사라졌습니다. 20년 가을 <githubLink>github</githubLink> 계정을 만들었습니다.",
-		"csIntro": "컴퓨터 공학을 공부하며 느낀 경이로움을 전달합니다.",
-		"subscriberCount": "명과 함께합니다.",
-		"andGate": "AND 게이트",
-		"nandUniversality": "NAND의 보편성",
-		"nandToNot": "NAND로 NOT 만들기",
-		"reactSetupTitle": "리액트 소스코드 직접 수정해서 써보기",
-		"csZeroOneTitle": "컴퓨터의 손가락이 두 개인 이유",
-		"instagramIntro": "개발 인스타그램 계정입니다."
 	}
 }

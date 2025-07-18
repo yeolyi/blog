@@ -173,7 +173,7 @@ function ThemeSettings() {
 
 function SettingsContent({ className }: React.ComponentProps<'div'>) {
 	return (
-		<div className={cn('space-y-4 max-w-sm w-full mx-auto', className)}>
+		<div className={cn('space-y-4 w-full mx-auto', className)}>
 			<LanguageSettings />
 			<ThemeSettings />
 			<LoginButton />
@@ -182,7 +182,7 @@ function SettingsContent({ className }: React.ComponentProps<'div'>) {
 }
 
 function HeaderActions() {
-	const isDesktop = useMediaQuery('(min-width: 768px)');
+	const isDesktop = useMediaQuery('(min-width: 640px)');
 	const [open, setOpen] = useState(false);
 	const t = useTranslations('Header');
 
@@ -200,7 +200,7 @@ function HeaderActions() {
 
 				<Dialog open={open} onOpenChange={setOpen}>
 					<DialogTrigger asChild>{trigger}</DialogTrigger>
-					<DialogContent className='sm:max-w-[425px]'>
+					<DialogContent>
 						<DialogHeader>
 							<DialogTitle>{t('settings')}</DialogTitle>
 						</DialogHeader>
