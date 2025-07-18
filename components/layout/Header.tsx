@@ -222,7 +222,7 @@ function HeaderActions() {
 					<DrawerHeader className='text-left'>
 						<DrawerTitle>{t('settings')}</DrawerTitle>
 					</DrawerHeader>
-					<SettingsContent className='px-4' />
+					<SettingsContent className='px-4 mb-7' />
 				</DrawerContent>
 			</Drawer>
 		</div>
