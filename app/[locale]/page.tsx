@@ -10,12 +10,12 @@ import type { StaticImageData } from 'next/image';
 import Image from 'next/image';
 import type { Locale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import { getInstagramFollowers } from '@/actions/instagram';
-import { getSubscriberCount } from '@/actions/resend';
+import { Suspense } from 'react';
 import CraftTypography from '@/app/[locale]/components/CraftSlot';
 import CSTypography from '@/app/[locale]/components/CSTypography';
 import InstagramDescription from '@/app/[locale]/components/InstagramDescription';
 import InstagramFollowerCount from '@/app/[locale]/components/InstagramFollowerCount';
+import SubscriberCount from '@/app/[locale]/components/SubscriberCount';
 import AppearAnimation from '@/components/AppearAnimation';
 import { Button } from '@/components/ui/button';
 import {
@@ -77,9 +77,6 @@ export default async function Home({
 	setRequestLocale(locale);
 
 	const tMain = await getTranslations('MainPage');
-
-	const subscriberCount = await getSubscriberCount();
-	const count = subscriberCount.success ? subscriberCount.value : undefined;
 
 	const postIds = await getMdxIds(locale);
 	const postArr: { href: string; title: string; date: string }[] = (
@@ -150,12 +147,12 @@ export default async function Home({
 				<div className='flex flex-col gap-7'>
 					<p className='w-full max-w-2xl'>
 						{tMain('csIntro')}{' '}
-						{count !== undefined && (
-							<>
-								<span className='font-extrabold'>{count.toLocaleString()}</span>
-								{tMain('subscriberCount')}
-							</>
-						)}
+						<Suspense fallback={<span>-</span>}>
+							<span className='font-extrabold'>
+								<SubscriberCount />
+							</span>
+						</Suspense>
+						{tMain('subscriberCount')}
 					</p>
 				</div>
 

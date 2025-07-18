@@ -1,6 +1,8 @@
 import { getTranslations } from 'next-intl/server';
+import { Suspense } from 'react';
 import { getSubscriberCount } from '@/actions/resend';
 import CSTypography from '@/app/[locale]/components/CSTypography';
+import SubscriberCount from '@/app/[locale]/components/SubscriberCount';
 import EmailSubscribe from '@/app/[locale]/cs/components/EmailSubscribe';
 import AppearAnimation from '@/components/AppearAnimation';
 import Flow from '@/components/cs/flow';
@@ -27,8 +29,6 @@ import AddingTuringMachine from '@/mdx/cs/turing-machine/components/AddingTuring
 export default async function CS() {
 	const tMain = await getTranslations('MainPage');
 	const tCS = await getTranslations('CS');
-	const subscriberCount = await getSubscriberCount();
-	const count = subscriberCount.success ? subscriberCount.value : undefined;
 
 	return (
 		<AppearAnimation asChild>
@@ -37,7 +37,11 @@ export default async function CS() {
 
 				<p>{tCS('intro')}</p>
 				<p>
-					<span className='font-extrabold'>{count?.toLocaleString() ?? '-'}</span>
+					<span className='font-extrabold'>
+						<Suspense fallback='-'>
+							<SubscriberCount />
+						</Suspense>
+					</span>
 					{tMain('subscriberCount')}
 				</p>
 
