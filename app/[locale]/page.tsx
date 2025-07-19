@@ -105,19 +105,15 @@ export default async function Home({
 						width={1024}
 						height={1024}
 					/>
-					<div className='flex flex-col gap-7'>
-						<div className='flex flex-col gap-2'>
-							<p className='whitespace-pre-wrap'>
-								{tMain.rich('bio', {
-									name: (chunks) => <span className='font-extrabold'>{chunks}</span>,
-									role: (chunks) => (
-										<span className='text-muted-foreground'>{chunks}</span>
-									),
-									br: () => <br />,
-								})}
-							</p>
-						</div>
-					</div>
+					<p className='whitespace-pre-wrap'>
+						{tMain.rich('bio', {
+							name: (chunks) => <span className='font-extrabold'>{chunks}</span>,
+							role: (chunks) => (
+								<span className='text-muted-foreground'>{chunks}</span>
+							),
+							br: () => <br />,
+						})}
+					</p>
 				</div>
 
 				<Separator />
