@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import AppearAnimation from '@/components/AppearAnimation';
 import Comments from '@/components/comment';
 import PostNavigation from '@/components/layout/PostNavigation';
+import { Separator } from '@/components/ui/separator';
 import { order } from '@/mdx/react';
 import { getMdxIds } from '@/utils/path';
 
@@ -43,8 +44,9 @@ export default async function PostPage({
 
 		return (
 			<AppearAnimation asChild>
-				<div className='px-4 mdx'>
+				<div className='mdx'>
 					<h1>{title}</h1>
+					<Separator />
 					<Component />
 					<PostNavigation
 						id={id}

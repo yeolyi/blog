@@ -4,6 +4,7 @@ import AppearAnimation from '@/components/AppearAnimation';
 import Comments from '@/components/comment';
 import PostNavigation from '@/components/layout/PostNavigation';
 import StayInTouch from '@/components/layout/StayInTouch';
+import { Separator } from '@/components/ui/separator';
 import { routing } from '@/i18n/routing';
 import { csOrder } from '@/mdx/cs';
 import { getMdxIds } from '@/utils/path';
@@ -45,8 +46,9 @@ export default async function PostPage({
 
 		return (
 			<AppearAnimation asChild>
-				<div className='px-4 mdx'>
+				<div className='mdx'>
 					<h1>{title}</h1>
+					<Separator />
 					<Component />
 					<PostNavigation id={id} subDir='cs' order={csOrder} listHref='/' />
 					<Comments postId={id} />

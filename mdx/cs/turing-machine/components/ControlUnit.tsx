@@ -13,6 +13,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table';
+import { Textarea } from '@/components/ui/textarea';
 import type {
 	Rules,
 	State,
@@ -80,8 +81,8 @@ export const ControlUnit = ({
 			</div>
 			{isEditing ? (
 				<div className='flex flex-col gap-2'>
-					<textarea
-						className='w-full h-48 p-2 font-mono text-sm bg-stone-900 border border-stone-700 rounded-none focus:outline-none focus:ring-1 focus:ring-green-500'
+					<Textarea
+						className='w-full h-48 p-2 font-mono'
 						value={editedCsv}
 						onChange={(e) => setEditedCsv(e.target.value)}
 					/>
@@ -104,22 +105,14 @@ export const ControlUnit = ({
 						}
 					}}
 				>
-					<Table>
+					<Table className='font-mono'>
 						<TableHeader>
 							<TableRow>
-								<TableHead className='font-mono bg-stone-900'>
-									{t('currentState')}
-								</TableHead>
-								<TableHead className='font-mono bg-stone-900'>
-									{t('readSymbol')}
-								</TableHead>
-								<TableHead className='font-mono bg-stone-900'>
-									{t('nextState')}
-								</TableHead>
-								<TableHead className='font-mono bg-stone-900'>
-									{t('writeSymbol')}
-								</TableHead>
-								<TableHead className='font-mono bg-stone-900'>{t('move')}</TableHead>
+								<TableHead>{t('currentState')}</TableHead>
+								<TableHead>{t('readSymbol')}</TableHead>
+								<TableHead>{t('nextState')}</TableHead>
+								<TableHead>{t('writeSymbol')}</TableHead>
+								<TableHead>{t('move')}</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>

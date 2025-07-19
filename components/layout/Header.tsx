@@ -4,13 +4,11 @@ import {
 	Github,
 	Instagram,
 	Loader2,
-	LogIn,
 	LogOut,
 	Monitor,
 	Moon,
 	Settings,
 	Sun,
-	SunMoon,
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import type { Locale } from 'next-intl';
@@ -29,14 +27,11 @@ import {
 } from '@/components/ui/dialog';
 import {
 	Drawer,
-	DrawerClose,
 	DrawerContent,
-	DrawerFooter,
 	DrawerHeader,
 	DrawerTitle,
 	DrawerTrigger,
 } from '@/components/ui/drawer';
-import { Separator } from '@/components/ui/separator';
 import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { cn } from '@/lib/utils';
 import { useSessionStore } from '@/store/session';

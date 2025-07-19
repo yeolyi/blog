@@ -22,13 +22,17 @@ export default function AppearAnimation({
 		if (el.current) {
 			gsap.fromTo(
 				el.current,
-				{ opacity: 0.01 },
-				{ opacity: 1, duration: 0.75, ease: 'power2.out' },
-			);
-			gsap.fromTo(
-				el.current,
-				{ transform: 'translateY(5px)' },
-				{ transform: 'translateY(0px)', duration: 0.75 },
+				{
+					opacity: 0.01,
+					transform: 'translateY(5px)',
+				},
+				{
+					opacity: 1,
+					transform: 'translateY(0px)',
+					duration: 0.75,
+					ease: 'power2.out',
+					delay: 0.1,
+				},
 			);
 		}
 	}, []);

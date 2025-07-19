@@ -256,7 +256,7 @@
 
 /* TODO: details 처리 이게 최선? */
 .mdx {
-	@apply flex flex-col gap-7 max-w-2xl mx-auto mt-7 will-change-transform;
+	@apply flex flex-col gap-7 max-w-2xl mx-auto mt-7 will-change-transform px-4;
 
 	& > details {
 		@apply space-y-7 ml-4;
@@ -283,10 +283,6 @@
 
 	& > h2 {
 		@apply mt-21;
-	}
-
-	& > h1 + h2 {
-		@apply mt-0;
 	}
 
 	& > h3,

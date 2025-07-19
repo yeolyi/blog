@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import AppearAnimation from '@/components/AppearAnimation';
 import Comments from '@/components/comment';
+import { Separator } from '@/components/ui/separator';
 import { routing } from '@/i18n/routing';
 import { getMdxIds } from '@/utils/path';
 
@@ -31,8 +32,9 @@ export default async function PostPage({
 
 		return (
 			<AppearAnimation asChild>
-				<div className='mdx px-4'>
+				<div className='mdx'>
 					<h1>{title}</h1>
+					<Separator />
 					<Component />
 					<Comments postId={id} className='mt-21' />
 				</div>
