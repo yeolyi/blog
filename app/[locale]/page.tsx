@@ -124,7 +124,7 @@ export default async function Home({
 							asChild
 							variant='ghost'
 							key={href}
-							className='max-w-full overflow-hidden'
+							className='max-w-full overflow-hidden px-0'
 						>
 							<Link href={href} key={href} className='block'>
 								<h3 className='truncate'>{title}</h3>
@@ -213,11 +213,7 @@ export default async function Home({
 				</Carousel>
 
 				<p>
-					{tMain.rich('instagramIntro', {
-						externalLink: (chunks) => (
-							<LinkButton href='https://minguhongmfg.com/about'>{chunks}</LinkButton>
-						),
-					})}{' '}
+					{tMain('instagramIntro')}{' '}
 					<>
 						<span className='font-extrabold'>
 							<InstagramFollowerCount />
@@ -279,9 +275,20 @@ export default async function Home({
 				<div className='max-w-2xl '>
 					<p>
 						{tMain('reactIntro')}{' '}
-						<LinkButton href='https://jser.dev/series/react-source-code-walkthrough'>
-							jser.dev
-						</LinkButton>
+						<Button
+							variant='secondary'
+							className='h-6 max-w-full overflow-hidden'
+							asChild
+						>
+							<Link
+								href='https://jser.dev/series/react-source-code-walkthrough'
+								className='truncate'
+								target='_blank'
+								rel='noreferrer noopener'
+							>
+								jser.dev
+							</Link>
+						</Button>
 						{tMain('reactHelper')}
 					</p>
 				</div>
@@ -307,28 +314,3 @@ export default async function Home({
 		</AppearAnimation>
 	);
 }
-
-const LinkButton = ({
-	href,
-	children,
-}: {
-	href?: string;
-	children: React.ReactNode;
-}) => {
-	return (
-		<Button
-			variant='secondary'
-			className='h-6 max-w-full overflow-hidden'
-			asChild={!!href}
-			disabled={!href}
-		>
-			{href ? (
-				<Link href={href} className='truncate'>
-					{children}
-				</Link>
-			) : (
-				<span className='truncate'>{children}</span>
-			)}
-		</Button>
-	);
-};
