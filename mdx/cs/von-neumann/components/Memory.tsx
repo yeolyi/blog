@@ -2,6 +2,7 @@
 
 import { Eye, Pencil } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import {
 	Card,
@@ -11,6 +12,12 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -25,31 +32,34 @@ import {
 import { useMemory } from './hooks/useMemory';
 
 export function Memory() {
-	const { memory, readValue, lastReadAddress, handleWrite, handleRead } =
+	const { memory, handleWrite, handleRead, readValue, lastReadAddress } =
 		useMemory();
 
 	const [operation, setOperation] = useState<'read' | 'write'>('read');
+	const [selectedAddress, setSelectedAddress] = useState(0);
 
 	const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		const form = e.currentTarget;
-		const formData = new FormData(form);
-		const address = Number.parseInt(formData.get('address') as string, 10);
 
 		if (operation === 'read') {
-			handleRead(address);
+			handleRead(selectedAddress);
 		} else {
-			const data = Number.parseInt(formData.get('data') as string, 10);
-			const result = handleWrite(address, data);
-			if (result.success) {
-				form.reset();
-			} else {
-				alert(result.message);
+			const formData = new FormData(form);
+			const data = formData.get('data') as string;
+
+			if (!data) {
+				toast.error('데이터를 입력하세요.');
+				return;
+			}
+
+			const result = handleWrite(selectedAddress, Number.parseInt(data, 10));
+
+			if (!result.success) {
+				toast.error(result.message);
 			}
 		}
 	};
-
-	console.log(memory);
 
 	return (
 		<div className='my-8 not-prose'>
@@ -70,7 +80,11 @@ export function Memory() {
 								</TableHeader>
 								<TableBody>
 									{memory.map((value, index) => (
-										<TableRow key={index}>
+										<TableRow
+											key={index}
+											data-active={index === selectedAddress}
+											className='data-[active=true]:bg-primary/20'
+										>
 											<TableCell>{index}</TableCell>
 											<TableCell>{value}</TableCell>
 										</TableRow>
@@ -78,56 +92,67 @@ export function Memory() {
 								</TableBody>
 							</Table>
 
-							<RadioGroup
-								value={operation}
-								onValueChange={(value: 'read' | 'write') => setOperation(value)}
-								className='grid-flow-col'
-							>
-								<div className='flex items-center space-x-2'>
-									<RadioGroupItem value='read' id='read' />
-									<Label htmlFor='read'>읽기</Label>
+							<div className='flex flex-row items-end gap-2 flex-wrap'>
+								<div className='flex flex-col gap-1.5'>
+									<Label>동작</Label>
+									<DropdownMenu>
+										<DropdownMenuTrigger asChild>
+											<Button variant='outline' className='w-[100px]'>
+												{operation === 'read' ? '읽기' : '쓰기'}
+											</Button>
+										</DropdownMenuTrigger>
+										<DropdownMenuContent>
+											<DropdownMenuItem onSelect={() => setOperation('read')}>
+												읽기
+											</DropdownMenuItem>
+											<DropdownMenuItem onSelect={() => setOperation('write')}>
+												쓰기
+											</DropdownMenuItem>
+										</DropdownMenuContent>
+									</DropdownMenu>
 								</div>
-								<div className='flex items-center space-x-2'>
-									<RadioGroupItem value='write' id='write' />
-									<Label htmlFor='write'>쓰기</Label>
+								<div className='flex flex-col gap-1.5'>
+									<Label>주소</Label>
+									<DropdownMenu>
+										<DropdownMenuTrigger asChild>
+											<Button variant='outline' className='w-[120px]'>
+												{selectedAddress}번 주소
+											</Button>
+										</DropdownMenuTrigger>
+										<DropdownMenuContent>
+											{memory.map((_, index) => (
+												<DropdownMenuItem
+													key={index}
+													onSelect={() => setSelectedAddress(index)}
+												>
+													{index}
+												</DropdownMenuItem>
+											))}
+										</DropdownMenuContent>
+									</DropdownMenu>
 								</div>
-							</RadioGroup>
 
-							<div className='flex flex-col gap-3'>
-								<Label>주소</Label>
-								<RadioGroup
-									defaultValue='0'
-									name='address'
-									className='grid-flow-col max-w-sm'
-								>
-									{memory.map((_, index) => (
-										<div key={index} className='flex items-center space-x-2'>
-											<RadioGroupItem value={index.toString()} id={index.toString()} />
-											<Label htmlFor={index.toString()}>{index}</Label>
-										</div>
-									))}
-								</RadioGroup>
+								{operation === 'write' && (
+									<div className='flex flex-col gap-1.5'>
+										<Label htmlFor='data'>데이터</Label>
+										<Input
+											name='data'
+											type='number'
+											min='0'
+											max='255'
+											className='w-24'
+											placeholder='0~255'
+											required
+										/>
+									</div>
+								)}
+								<Button type='submit' className='self-end'>
+									{operation === 'read' ? <Eye /> : <Pencil />}
+									실행
+								</Button>
 							</div>
-							{operation === 'write' && (
-								<div className='flex flex-col gap-3'>
-									<Label htmlFor='data'>데이터</Label>
-									<Input
-										name='data'
-										type='number'
-										min='0'
-										max='255'
-										className='max-w-sm'
-										placeholder='0~255'
-										required
-									/>
-								</div>
-							)}
 						</CardContent>
-						<CardFooter className='space-x-3'>
-							<Button type='submit'>
-								{operation === 'read' ? <Eye /> : <Pencil />}
-								{operation === 'read' ? '읽기' : '쓰기'}
-							</Button>
+						<CardFooter>
 							{operation === 'read' && (
 								<p>
 									{lastReadAddress ?? ' - '}번 주소의 값은 {readValue ?? ' - '}

@@ -22,7 +22,17 @@ export default function InstagramDescription() {
 
 	return (
 		<div className='min-h-[384px] w-full h-full flex items-center justify-center px-16 relative select-none aspect-video'>
-			<Text>{descriptions[index]}</Text>
+			{descriptions.map((description, idx) => (
+				<Text
+					key={idx}
+					className={cn(
+						index === idx ? 'opacity-100' : 'opacity-0',
+						'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-balance w-full',
+					)}
+				>
+					{description}
+				</Text>
+			))}
 		</div>
 	);
 }

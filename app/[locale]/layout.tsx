@@ -42,7 +42,7 @@ export async function generateMetadata({
 	const { locale } = await params;
 
 	return {
-		title: locale === 'ko' ? '이성열' : 'seongyeol Yi',
+		title: locale === 'ko' ? '이성열' : 'Seongyeol Yi',
 	};
 }
 

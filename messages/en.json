@@ -1,14 +1,13 @@
 {
 	"Header": {
-		"title": "seongyeol",
+		"title": "Seongyeol Yi",
 		"language": "Language",
 		"theme": "Theme",
 		"auth": "Account",
 		"settings": "Settings"
 	},
 	"MainPage": {
-		"title": "I'm Seongyeol, a developer and creator.",
-		"developerBio": "In Spring 2025, I studied Computer Science and Environmental Materials Science at <snuLink>Seoul National University</snuLink>. In Summer 2024, I joined <kakaoLink>Kakao</kakaoLink> as a frontend developer. In Spring 2024, I developed and deployed the frontend for the new Computer Science and Engineering department website <cseLink>cse.snu.ac.kr</cseLink>. In Summer 2023, I reached just before Diamond tier on <baekjoonLink>Baekjoon</baekjoonLink> but now it seems daunting. In Spring 2021, I spent 2 years freely gaining iOS/FE experience at startup <skyonLink>Skyon</skyonLink>, but the company disappeared. In Fall 2020, I created my <githubLink>GitHub</githubLink> account.",
+		"bio": "<name>Seongyeol Yi</name>  <role>Frontend Developer, Content creator</role><br></br>I'm interested in creating things that provide value to many people. I work as a Frontend Developer at Kakao. I majored in Materials Science and Engineering and Computer Science and Engineering at Seoul National University.",
 		"csIntro": "I share the wonder I felt learning computer science in school.",
 		"subscriberCount": " people are joining us!",
 		"instagramIntro": "Developer Instagram account.",

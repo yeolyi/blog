@@ -29,7 +29,7 @@ export default function AppearAnimation({
 				{
 					opacity: 1,
 					transform: 'translateY(0px)',
-					duration: 0.75,
+					duration: 0.6,
 					ease: 'power2.out',
 					delay: 0.1,
 				},

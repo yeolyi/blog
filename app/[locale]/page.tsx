@@ -1,10 +1,14 @@
 import dayjs from 'dayjs';
 import {
+	Briefcase,
 	ChevronDown,
 	ChevronRight,
 	Construction,
 	ExternalLink,
 	Info,
+	Link2,
+	LinkIcon,
+	University,
 } from 'lucide-react';
 import type { StaticImageData } from 'next/image';
 import Image from 'next/image';
@@ -25,11 +29,6 @@ import {
 	CarouselNext,
 	CarouselPrevious,
 } from '@/components/ui/carousel';
-import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger,
-} from '@/components/ui/collapsible';
 import {
 	Popover,
 	PopoverContent,
@@ -94,7 +93,7 @@ export default async function Home({
 
 	return (
 		<AppearAnimation asChild>
-			<div className='px-4 flex flex-col gap-7 max-w-6xl mx-auto'>
+			<div className='px-4 flex flex-col gap-7 max-w-6xl mx-auto mt-7'>
 				<div className='flex flex-col gap-7 md:flex-row'>
 					<Image
 						src={me}
@@ -106,19 +105,19 @@ export default async function Home({
 						width={1024}
 						height={1024}
 					/>
-					<div className='flex-col gap-7 hidden md:flex md:w-1/2'>
-						<p>{tMain('title')}</p>
-						<About />
+					<div className='flex flex-col gap-7'>
+						<div className='flex flex-col gap-2'>
+							<p className='whitespace-pre-wrap'>
+								{tMain.rich('bio', {
+									name: (chunks) => <span className='font-extrabold'>{chunks}</span>,
+									role: (chunks) => (
+										<span className='text-muted-foreground'>{chunks}</span>
+									),
+									br: () => <br />,
+								})}
+							</p>
+						</div>
 					</div>
-					<Collapsible className='md:hidden'>
-						<CollapsibleTrigger className='flex items-center justify-between group'>
-							<p>{tMain('title')}</p>
-							<ChevronDown className='w-4 h-4 ml-1 group-data-[state=open]:rotate-180' />
-						</CollapsibleTrigger>
-						<CollapsibleContent className='flex flex-col gap-7 mt-7'>
-							<About />
-						</CollapsibleContent>
-					</Collapsible>
 				</div>
 
 				<Separator />
@@ -312,33 +311,6 @@ export default async function Home({
 		</AppearAnimation>
 	);
 }
-
-const About = async () => {
-	const tMain = await getTranslations('MainPage');
-
-	return (
-		<p>
-			{tMain.rich('developerBio', {
-				snuLink: (chunks) => (
-					<LinkButton href='https://snu.ac.kr'>{chunks}</LinkButton>
-				),
-				kakaoLink: (chunks) => (
-					<LinkButton href='https://kakaocorp.com'>{chunks}</LinkButton>
-				),
-				cseLink: (chunks) => (
-					<LinkButton href='https://cse.snu.ac.kr'>{chunks}</LinkButton>
-				),
-				baekjoonLink: (chunks) => (
-					<LinkButton href='https://solved.ac/profile/yeolyii'>{chunks}</LinkButton>
-				),
-				skyonLink: (chunks) => <LinkButton>{chunks}</LinkButton>,
-				githubLink: (chunks) => (
-					<LinkButton href='https://instagram.com/yeol.dev'>{chunks}</LinkButton>
-				),
-			})}
-		</p>
-	);
-};
 
 const LinkButton = ({
 	href,

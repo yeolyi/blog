@@ -50,6 +50,9 @@
 		/* 모달 등을 띄울 때 gutter에는 오버레이가 안붙어서 붕 떠있다. */
 		/* 보니까 shadcn인지 radix인지 알아서 margin-right를 더해주니 이걸로 처리하자 */
 		/* scrollbar-gutter: stable; */
+
+		/* https://www.reddit.com/r/Safari/comments/17sa9w9/safari_you_are_killing_me_with_the_700_font/ */
+		font-synthesis: none !important;
 	}
 
 	body {
