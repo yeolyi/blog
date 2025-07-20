@@ -228,12 +228,10 @@ export default function Header() {
 	const t = useTranslations('Header');
 
 	return (
-		<header className='sticky top-0 left-0 right-0 flex items-center justify-between px-4 py-2 z-50'>
-			<Button variant='ghost' asChild>
-				<Link href='/' className='font-extrabold'>
-					{t('title')}
-				</Link>
-			</Button>
+		<header className='sticky top-0 left-0 right-0 flex items-center justify-between px-6 py-2 z-50'>
+			<Link href='/' className='font-extrabold'>
+				{t('title')}
+			</Link>
 
 			<HeaderActions />
 		</header>

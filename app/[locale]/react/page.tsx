@@ -102,9 +102,14 @@ const GhostButton = ({
 	children: React.ReactNode;
 }) => {
 	return (
-		<Button variant='ghost' asChild={!!href} disabled={!href} className='gap-1'>
+		<Button
+			variant='ghost'
+			asChild={!!href}
+			disabled={!href}
+			className='gap-1 max-w-full'
+		>
 			{href ? (
-				<Link href={href} className='truncate max-w-full'>
+				<Link href={href} className='truncate'>
 					{children}
 				</Link>
 			) : (

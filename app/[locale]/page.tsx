@@ -93,7 +93,7 @@ export default async function Home({
 
 	return (
 		<AppearAnimation asChild>
-			<div className='px-4 flex flex-col gap-7 max-w-6xl mx-auto mt-7'>
+			<div className='px-6 flex flex-col gap-7 max-w-6xl mx-auto mt-7'>
 				<div className='flex flex-col gap-7 md:flex-row'>
 					<Image
 						src={me}
@@ -118,13 +118,13 @@ export default async function Home({
 
 				<Separator />
 
-				<div className='flex flex-wrap'>
+				<div className='flex flex-wrap -ml-4'>
 					{postArr.map(({ href, title, date }) => (
 						<Button
 							asChild
 							variant='ghost'
 							key={href}
-							className='max-w-full overflow-hidden px-0'
+							className='max-w-full overflow-hidden'
 						>
 							<Link href={href} key={href} className='block'>
 								<h3 className='truncate'>{title}</h3>
