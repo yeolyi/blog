@@ -148,5 +148,11 @@
 			"title": "Tape",
 			"head": "▲ Head"
 		}
+	},
+	"AmdahlLawExample": {
+		"description": "When the performance of <proportion></proportion> of the whole is improved by a factor of <speedup></speedup>, the overall performance increases by a factor of <overallSpeedup></overallSpeedup>. However, even if the performance improvement is infinite, the overall performance increase cannot exceed <maxSpeedup></maxSpeedup> times.",
+		"proportionLabel": "Proportion of the part to be improved ({value}%)",
+		"speedupLabel": "Performance improvement factor of the part ({value}x)",
+		"infinity": "infinity"
 	}
 }

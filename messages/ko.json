@@ -148,5 +148,12 @@
 			"title": "테이프",
 			"head": "▲ 헤드"
 		}
+	},
+
+	"AmdahlLawExample": {
+		"description": "전체의 <proportion></proportion> 부분의 성능이 <speedup></speedup>배로 향상되었을 때, 전체 성능은 <overallSpeedup></overallSpeedup>배 증가합니다. 하지만 성능 향상폭이 무한히 높아져도 전체 성능의 증가폭은 <maxSpeedup></maxSpeedup>배를 넘지 못합니다.",
+		"proportionLabel": "개선할 부분의 비율 ({value}%)",
+		"speedupLabel": "해당 부분의 성능 향상 배율 ({value}배)",
+		"infinity": "무한대"
 	}
 }

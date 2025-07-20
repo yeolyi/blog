@@ -1,0 +1,127 @@
+export const title = 'Avoiding Futile Optimizations';
+export const date = '2025-07-20';
+
+import screenshot from './assets/screenshot.png';
+import Flow from '@/components/cs/flow';
+import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
+import SubscriberCount from '@/app/[locale]/components/SubscriberCount';
+import { Suspense } from 'react';
+import AmdahlLawExample from './components/AmdahlLawExample';
+
+I'm sharing my thoughts from optimizing a blog page. I'll touch on Amdahl's Law, which I learned in computer architecture class.
+
+## First Attempt
+
+The loading UI was taking too long compared to the content on the [Computer Science lectures](/cs) page, so I decided to optimize it.
+
+The lecture page looks like this. Can you guess which part seems to be causing the slow loading?
+
+<Image src={screenshot} alt="Computer Science lecture page" />
+
+I thought the **logic gate simulator** in the center-bottom was the culprit. It was the most complex component and had the most code in its implementation. Try it out below:
+
+<Flow id='/cs' initialJSON={not} height={250} hideNodeButtons />
+
+Since everything else was just simple text or components with minimal JS, I started optimizing the simulator.
+
+First, let me show you a simplified version of the original implementation. It was no different from any other component:
+
+```tsx
+// flow.tsx
+'use client';
+
+// ...tons of imports
+
+export function Flow(props) {
+  ...
+}
+```
+
+First, I created a separate file and applied dynamic import and suspense to prevent this component's loading from affecting the entire page load:
+
+```tsx
+// [!code highlight]
+// dynamic-flow.tsx
+'use client';
+
+// [!code highlight]
+const Flow = dynamic(() => import('./flow'));
+
+export function DynamicFlow(props) {
+  return (
+    // [!code highlight]
+    <Suspense>
+      <Flow {...props} />
+    </Suspense>
+  );
+}
+```
+
+But this would cause [CLS](https://web.dev/articles/cls) after loading, so I added a fallback with the same height as the original component:
+
+```tsx
+// dynamic-flow.tsx
+'use client';
+
+const Flow = dynamic(() => import('./flow'));
+
+export function DynamicFlow(props) {
+  return (
+    // [!code highlight]
+    <Suspense fallback={<Fallback height={props.height}/>}>
+      <Flow {...props} />
+    </Suspense>
+  );
+}
+```
+
+## The Real Culprit
+
+Phew! I created a separate fallback component and did a lot of work. But sadly, there was no improvement in page load time.
+
+Only then did I feel something was off, so I completely removed the simulator component and reloaded the page. But the page loaded just as slowly. **This means that even if I summoned the coding gods to make the simulator component load time 0 seconds, the page entry time would still be equally slow.**
+
+While wondering what could possibly be slow on such a simple page, I saw a terrifying log in next.js:
+
+```txt
+GET /cs 200 in 1400ms
+ │ GET https://api.resend.com/audiences/b8cb47fc-8bfe.. 200 in 1358ms (cache skip)
+ │ │ Cache skipped reason: (auto no cache)
+```
+
+I use <Link href="https://resend.com">resend</Link> to get the newsletter subscriber count, and the API request to it took over 1 second. In other words, this text was the cause:
+
+<blockquote><Suspense fallback={<span>-</span>}><SubscriberCount /></Suspense> subscribers and counting.</blockquote>
+
+If this were an SPA, such network requests would normally happen in hooks like `useEffect` after rendering is complete, so there wouldn't be a problem. But unfortunately, I was using server components:
+
+```tsx
+export default async function Page() {
+	const data = await getSubscriberCount();
+	...
+}
+```
+
+Therefore, the browser had no choice but to show a loading fallback until `getSubscriberCount` was fulfilled on the server and rendering was complete.
+
+Once I knew the cause, the solution was easy. Just like with the simulator component, I extracted only the subscriber count part into a separate component and wrapped it with Suspense.
+
+## Amdahl's Law
+
+Amdahl's Law is mentioned when learning about multiprocessors in computer architecture. Here's the definition from [Wikipedia](https://en.wikipedia.org/wiki/Amdahl%27s_law):
+
+> Amdahl's law is a formula which gives the theoretical speedup in latency of the execution of a task at fixed workload that can be expected of a system whose resources are improved.
+
+Below, you can see what Amdahl's Law tells us with actual example values. You can see that if the proportion of the part to be improved is small, no matter how much effort you put in, the overall performance increase won't be significant:
+
+<AmdahlLawExample />
+
+If we just change 'computer system' to 'rendering process' in the Wikipedia definition, doesn't it fit today's situation? Just like how improving the simulator component, which had little weight in the overall work, didn't improve overall performance much.
+
+## Conclusion
+
+I've summarized a few lessons learned from this optimization process:
+
+- Find the cause before optimizing.
+- Avoid increasing code complexity without benefit. Don't just apply optimization methods found on the internet.
+- Don't just look at the rendering result, but examine the process that leads to that result.
