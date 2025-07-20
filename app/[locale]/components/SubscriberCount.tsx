@@ -1,7 +1,9 @@
-import { getSubscriberCount } from '@/actions/resend';
+'use client';
 
-export default async function SubscriberCount() {
-	const data = await getSubscriberCount();
+import { useSubscribers } from '@/swr/subscriber';
+
+export default function SubscriberCount() {
+	const { data } = useSubscribers();
 	if (!data?.success || !data.value) return '-';
 	return data.value.toLocaleString();
 }
