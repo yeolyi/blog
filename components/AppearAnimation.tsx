@@ -1,5 +1,6 @@
 'use client';
 
+import { spring } from 'motion';
 import { useAnimate } from 'motion/react-mini';
 import { cloneElement, isValidElement, useEffect } from 'react';
 import { cn } from '@/lib/utils';
@@ -25,7 +26,7 @@ export default function AppearAnimation({
 				opacity: 1,
 				transform: 'translateY(0px)',
 			},
-			{ duration: 0.75, ease: 'backOut', delay: 0.1 },
+			{ duration: 1.25, type: spring },
 		);
 	}, [animate, scope]);
 
