@@ -1,4 +1,3 @@
-import { delay } from 'es-toolkit';
 import { getSubscriberCount } from '@/actions/resend';
 
 export default async function SubscriberCount() {

@@ -16,7 +16,7 @@ export default function MemeViewer() {
 		return <p className='text-white text-center'>관리자 권한이 필요해요.</p>;
 
 	return (
-		<div className='px-4 w-full flex flex-col gap-7'>
+		<div className='px-6 w-full flex flex-col gap-7'>
 			<div className='flex flex-wrap gap-2 max-w-2xl'>
 				{tags.map((tag) => (
 					<TagOption

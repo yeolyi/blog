@@ -1,5 +1,6 @@
 'use client';
 
+import { shuffle } from 'es-toolkit';
 import { useLocale } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { Link } from '@/i18n/navigation';
@@ -8,7 +9,7 @@ import { cn } from '@/lib/utils';
 export default function InstagramDescription() {
 	const locale = useLocale();
 	// fallback to 'ko' if locale not found
-	const descriptions = descriptionsMap[locale] ?? descriptionsMap.ko;
+	const descriptions = shuffle(descriptionsMap[locale] ?? descriptionsMap.ko);
 
 	const [index, setIndex] = useState(0);
 
@@ -46,7 +47,6 @@ const Text = ({
 }) => {
 	return (
 		<p
-			suppressHydrationWarning
 			className={cn(
 				'text-[min(6vw,70px)] leading-[1.375] font-black text-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-balance w-full',
 				className,
@@ -60,7 +60,9 @@ const Text = ({
 			>
 				@yeol.dev
 			</Link>
-			<span className='pointer-events-none'>{children}</span>
+			<span className='pointer-events-none' suppressHydrationWarning>
+				{children}
+			</span>
 		</p>
 	);
 };

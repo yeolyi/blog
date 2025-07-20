@@ -1,6 +1,5 @@
 import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
-import { getSubscriberCount } from '@/actions/resend';
 import CSTypography from '@/app/[locale]/components/CSTypography';
 import SubscriberCount from '@/app/[locale]/components/SubscriberCount';
 import EmailSubscribe from '@/app/[locale]/cs/components/EmailSubscribe';
@@ -32,7 +31,7 @@ export default async function CS() {
 
 	return (
 		<AppearAnimation asChild>
-			<div className='px-4 mx-auto flex flex-col gap-7 max-w-6xl'>
+			<div className='px-6 mx-auto flex flex-col gap-7 max-w-6xl'>
 				<CSTypography />
 
 				<p>{tCS('intro')}</p>
@@ -142,7 +141,7 @@ const GhostButton = ({
 			variant='ghost'
 			asChild={!!href}
 			disabled={!href}
-			className='gap-1 max-w-full'
+			className='max-w-full'
 		>
 			{href ? (
 				<Link href={href} className='truncate'>

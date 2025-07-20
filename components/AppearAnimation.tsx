@@ -1,7 +1,7 @@
 'use client';
 
-import gsap from 'gsap';
-import { cloneElement, isValidElement, useEffect, useRef } from 'react';
+import { useAnimate } from 'motion/react-mini';
+import { cloneElement, isValidElement, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
 interface MdxProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -16,31 +16,24 @@ export default function AppearAnimation({
 	asChild = false,
 	...rest
 }: MdxProps) {
-	const el = useRef<HTMLDivElement | null>(null);
+	const [scope, animate] = useAnimate();
 
 	useEffect(() => {
-		if (el.current) {
-			gsap.fromTo(
-				el.current,
-				{
-					opacity: 0.01,
-					transform: 'translateY(5px)',
-				},
-				{
-					opacity: 1,
-					transform: 'translateY(0px)',
-					duration: 0.6,
-					ease: 'power2.out',
-					delay: 0.1,
-				},
-			);
-		}
-	}, []);
+		animate(
+			scope.current,
+			{
+				opacity: 1,
+				transform: 'translateY(0px)',
+			},
+			{ duration: 0.75, ease: 'backOut', delay: 0.1 },
+		);
+	}, [animate, scope]);
 
 	if (asChild && isValidElement(children)) {
 		return cloneElement(children, {
 			// @ts-expect-error 어쩌지
-			ref: el,
+			ref: scope,
+			// biome-ignore lint/suspicious/noExplicitAny: 어쩔까
 			className: cn((children as any).props.className, className),
 			style: {
 				opacity: 0.01,
@@ -53,7 +46,7 @@ export default function AppearAnimation({
 
 	return (
 		<div
-			ref={el}
+			ref={scope}
 			style={{
 				opacity: 0.01,
 				transform: 'translateY(5px)',

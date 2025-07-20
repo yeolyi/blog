@@ -1,15 +1,5 @@
 import dayjs from 'dayjs';
-import {
-	Briefcase,
-	ChevronDown,
-	ChevronRight,
-	Construction,
-	ExternalLink,
-	Info,
-	Link2,
-	LinkIcon,
-	University,
-} from 'lucide-react';
+import { ChevronRight, Construction, ExternalLink, Info } from 'lucide-react';
 import type { StaticImageData } from 'next/image';
 import Image from 'next/image';
 import type { Locale } from 'next-intl';
@@ -214,12 +204,10 @@ export default async function Home({
 
 				<p>
 					{tMain('instagramIntro')}{' '}
-					<>
-						<span className='font-extrabold'>
-							<InstagramFollowerCount />
-						</span>
-						{tMain('subscriberCount')}
-					</>{' '}
+					<span className='font-extrabold'>
+						<InstagramFollowerCount />
+					</span>
+					{tMain('subscriberCount')}{' '}
 					<Popover>
 						<PopoverTrigger className='align-middle -translate-y-0.5'>
 							<Info className='w-4 h-4' />
