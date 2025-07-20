@@ -85,13 +85,13 @@ While wondering what could possibly be slow on such a simple page, I saw a terri
 
 ```txt
 GET /cs 200 in 1400ms
- │ GET https://api.resend.com/audiences/b8cb47fc-8bfe.. 200 in 1358ms (cache skip)
+ │ GET https://api.resend.com/audiences/b8cb47fc.. 200 in 1358ms (cache skip)
  │ │ Cache skipped reason: (auto no cache)
 ```
 
 I use <Link href="https://resend.com">resend</Link> to get the newsletter subscriber count, and the API request to it took over 1 second. In other words, this text was the cause:
 
-<blockquote><Suspense fallback={<span>-</span>}><SubscriberCount /></Suspense> subscribers and counting.</blockquote>
+<blockquote><Suspense fallback={<span>-</span>}><SubscriberCount /></Suspense> people are joining us!</blockquote>
 
 If this were an SPA, such network requests would normally happen in hooks like `useEffect` after rendering is complete, so there wouldn't be a problem. But unfortunately, I was using server components:
 
