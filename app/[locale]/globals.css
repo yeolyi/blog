@@ -311,7 +311,7 @@
 
 	& > blockquote,
 	& > details > blockquote {
-		@apply border-l border-primary pl-4;
+		@apply border-l-2 border-primary pl-4;
 	}
 
 	& pre,
@@ -330,6 +330,11 @@
 
 	& > p > a {
 		@apply underline;
+	}
+
+	/* https://shiki.style/packages/transformers#transformernotationhighlight */
+	.highlighted {
+		@apply bg-primary/5 px-6 -mx-6 w-[calc(100%+3rem)] inline-block;
 	}
 }
 

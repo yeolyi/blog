@@ -32,11 +32,6 @@ const nextConfig = {
 	experimental: {
 		serverActions: { bodySizeLimit: '2mb' },
 	},
-	logging: {
-		fetches: {
-			fullUrl: true,
-		},
-	},
 };
 
 const withMDX = createMDX({

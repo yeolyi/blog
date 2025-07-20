@@ -14,7 +14,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
 	const { id, locale } = await params;
-	const { title, description } = await import(`@/mdx/${id}/${locale}.mdx`);
+	const { title, description } = await import(`@/mdx/post/${id}/${locale}.mdx`);
 	return { title, description };
 }
 
@@ -27,7 +27,7 @@ export default async function PostPage({
 
 	try {
 		const { default: Component, title } = await import(
-			`@/mdx/${id}/${locale}.mdx`
+			`@/mdx/post/${id}/${locale}.mdx`
 		);
 
 		return (

@@ -1,0 +1,128 @@
+export const title = '보람없는 최적화 피하기';
+export const date = '2025-07-20';
+
+import screenshot from './assets/screenshot.png';
+import Flow from '@/components/cs/flow';
+import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
+import SubscriberCount from '@/app/[locale]/components/SubscriberCount';
+import { Suspense } from 'react';
+import AmdahlLawExample from './components/AmdahlLawExample';
+
+블로그 페이지를 최적화하다 느낀점을 공유합니다. 컴퓨터 구조 강의에서 배운 암달의 법칙을 짚고 넘어갑니다.
+
+## 1차 시도
+
+[컴퓨터 공학 강의](/cs) 페이지 내용에 비해 로딩 UI가 지나치게 오래 보여 최적화를 하기로 했습니다. 
+
+강의 페이지는 아래처럼 생겼습니다. 어떤 부분이 로딩을 일으키는 것처럼 보이시나요?
+
+<Image src={screenshot} alt="컴퓨터 공학 강의 페이지" />
+
+저는 중앙 하단에 있는 **논리 게이트 시뮬레이터**가 원인이라고 생각했습니다. 가장 복잡하기도 하고, 구현에 사용한 코드도 가장 많은 컴포넌트였거든요. 아래에서 직접 사용해보세요. 
+
+<Flow id='/cs' initialJSON={not} height={250} hideNodeButtons />
+
+저 부분을 제외하고는 단순 텍스트이거나 조금의 JS가 포함된 컴포넌트들뿐이었기에 시뮬레이터에 대한 최적화를 시작했습니다. 
+
+우선 기존 구현을 단순화해 보여드릴게요. 여느 컴포넌트와 다름없었습니다:
+
+```tsx
+// flow.tsx
+'use client';
+
+// ...무지하게 많은 import들
+
+export function Flow(props) {
+  ...
+}
+```
+
+우선 이 컴포넌트의 로딩이 전체 페이지 로딩에 영향을 주지 않도록 별도 파일을 만들어 dynamic import과 suspense를 적용했습니다:
+
+```tsx
+// [!code highlight]
+// dynamic-flow.tsx
+'use client';
+
+// [!code highlight]
+const Flow = dynamic(() => import('./flow'));
+
+export function DynamicFlow(props) {
+  return (
+    // [!code highlight]
+    <Suspense>
+      <Flow {...props} />
+    </Suspense>
+  );
+}
+```
+
+하지만 이대로면 로드된 이후에 [CLS](https://web.dev/articles/cls?hl=ko)가 발생할테니 원본 컴포넌트와 동일한 높이의 fallback을 추가했습니다:
+
+```tsx
+// dynamic-flow.tsx
+'use client';
+
+const Flow = dynamic(() => import('./flow'));
+
+export function DynamicFlow(props) {
+  return (
+    // [!code highlight]
+    <Suspense fallback={<Fallback height={props.height}/>}>
+      <Flow {...props} />
+    </Suspense>
+  );
+}
+```
+
+## 진짜 원인
+
+후! 따로 fallback 컴포넌트도 만들고 많은 작업을 했습니다. 하지만 슬프게도 페이지 로드 시간에 개선은 없었습니다.
+
+그제서야 이상함을 느낀 저는 시뮬레이터 컴포넌트를 아얘 지우고 페이지를 다시 로드해봤습니다. 하지만 페이지는 똑같이 느리게 로드되었습니다. **이는 코딩의 신을 불러 시뮬레이터 컴포넌트 로드 시간을 0초로 만든다해도 페이지 진입 시간은 똑같이 느릴 것임을 의미합니다.**
+
+이후 저 단순한 페이지에 느릴게 뭐가 있다고... 고민하면 와중 next.js에서 무시무시한 로그를 보게 됩니다:
+
+```txt
+GET /cs 200 in 1400ms
+ │ GET https://api.resend.com/audiences/b8cb47fc-8bfe.. 200 in 1358ms (cache skip)
+ │ │ Cache skipped reason: (auto no cache)
+```
+
+뉴스레터 구독자수를 알아내기 위해 <Link href="https://resend.com">resend</Link>를 사용하는데, 여기로 보낸 api 요청이 1초가 넘게 걸렸습니다. 즉 아래 텍스트가 원인이었던 것이죠:
+
+<blockquote><Suspense fallback={<span>-</span>}><SubscriberCount /></Suspense>명과 함께합니다.</blockquote>
+
+SPA였다면 이런 네트워크 요청은 보통 렌더링이 끝나고 `useEffect`등의 훅에서 진행하니 문제가 없었겠지만 안타깝게도 저는 서버 컴포넌트를 사용중이었습니다:
+
+```tsx
+export default async function Page() {
+	const data = await getSubscriberCount();
+	...
+}
+```
+
+때문에 서버에서 `getSubscriberCount`가 fulfill되어 렌더링이 끝나기 전까지 브라우저에서는 로딩 fallback을 보여줄 수밖에 없었던 것이지요.
+
+원인을 알고 나서 해결은 쉬웠습니다. 시뮬레이터 컴포넌트에서 한 것과 마찬가지로 구독자수 부분만 별도 컴포넌트로 꺼내 Suspense로 감싸주었습니다.
+
+## 암달의 법칙
+
+컴퓨터 구조에서 멀티프로세서를 배울 때 암달의 법칙이 언급됩니다. 아래는 [위키피디아](https://ko.wikipedia.org/wiki/%EC%95%94%EB%8B%AC%EC%9D%98_%EB%B2%95%EC%B9%99)의 정의입니다:
+
+> 암달의 법칙(Amdahl's law)은 컴퓨터 시스템의 일부를 개선할 때 전체적으로 얼마만큼의 최대 성능 향상이 있는지 계산하는 데 사용된다.
+
+아래에서 실제 예제 값들과 함께 암달의 법칙이 말하는 바를 확인해보세요. 개선할 부분의 비율이 적으면 아무리 노력해도 전체 성능 증가폭이 크지 않음을 알 수 있습니다:
+
+<AmdahlLawExample />
+
+위키피디아 정의에서 '컴퓨터 시스템'을 '렌더링 프로세스'로만 바꾸면 오늘 상황에 맞지 않나요? 전체 작업에서 별 비중이 없는 시뮬레이터 컴포넌트를 개선해도 전체 성능이 별로 개선되지 않았던 것처럼요. 
+
+
+## 결론
+
+이번 최적화 과정에서 몇가지 느낀점을 정리해보았습니다.
+
+- 최적화 이전에 원인을 찾자. 
+- 보람없이 코드의 복잡성만 높이는걸 피하자. 인터넷에서 찾은 최적화 방법을 그냥 적용하지 말기.
+- 렌더링 결과만 보지 말고 그 결과가 나오기까지의 과정을 살펴보자.

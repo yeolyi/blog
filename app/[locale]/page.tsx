@@ -67,12 +67,12 @@ export default async function Home({
 
 	const tMain = await getTranslations('MainPage');
 
-	const postIds = await getMdxIds(locale);
+	const postIds = await getMdxIds(locale, 'post');
 	const postArr: { href: string; title: string; date: string }[] = (
 		await Promise.all(
 			postIds.map(async (id) => {
 				const { default: _, ...metadata } = await import(
-					`@/mdx/${id}/${locale}.mdx`
+					`@/mdx/post/${id}/${locale}.mdx`
 				);
 				return { href: `/post/${id}`, ...metadata };
 			}),
