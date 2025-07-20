@@ -311,7 +311,7 @@
 
 	& > blockquote,
 	& > details > blockquote {
-		@apply border-l-2 border-primary pl-4;
+		@apply border-l-2 border-primary pl-4 space-y-7;
 	}
 
 	& pre,

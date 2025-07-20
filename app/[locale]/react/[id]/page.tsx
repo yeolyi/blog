@@ -53,7 +53,7 @@ export default async function PostPage({
 						subDir='react'
 						className='mb-12'
 						order={order}
-						listHref='/'
+						listHref='/react'
 					/>
 					<Comments
 						// 기존에 post에 올린거 호환 목적
