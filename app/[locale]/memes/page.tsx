@@ -13,7 +13,7 @@ export default function MemeViewer() {
 	const { tags, selectedTag, memes, onSelectTag, onShuffle } = useMemeViewer();
 
 	if (profile?.role !== 'admin')
-		return <p className='text-white text-center'>관리자 권한이 필요해요.</p>;
+		return <p className='text-center'>관리자 권한이 필요해요.</p>;
 
 	return (
 		<div className='px-6 w-full flex flex-col gap-7'>

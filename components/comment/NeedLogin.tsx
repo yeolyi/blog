@@ -7,7 +7,7 @@ export default function NeedLogin() {
 	const isLoading = useSessionStore((state) => state.isLoading);
 
 	return (
-		<p className='p-4 text-gray-300'>
+		<p className='p-4 border border-border'>
 			{isLoading
 				? t('loading')
 				: t.rich('loginRequired', {
