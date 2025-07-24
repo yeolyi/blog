@@ -97,7 +97,7 @@ export default async function CS() {
 					<GhostButton href='/cs/adder'>{tCS('hw4Title')}</GhostButton>
 					<GhostButton href='/cs/sequential'>{tCS('hw5Title')}</GhostButton>
 					<GhostButton href='/cs/turing-machine'>{tCS('hw6Title')}</GhostButton>
-					<GhostButton>{tCS('hw7Title')}</GhostButton>
+					<GhostButton href='/cs/von-neumann'>{tCS('hw7Title')}</GhostButton>
 					<GhostButton>{tCS('hw8Title')}</GhostButton>
 					<GhostButton>{tCS('hw9Title')}</GhostButton>
 				</p>

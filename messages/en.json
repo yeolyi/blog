@@ -39,8 +39,7 @@
 		"hw5Description": "The circuits we've built so far can't remember calculation results at all. Let's see how we can cleverly connect two NOR gates to store information.",
 		"hw6Title": "If All It Does Is Math, It's Just a Calculator",
 		"hw6Description": "Now that we've made circuits for addition and subtraction, have we built a 'computer'? Let's explore what the essence of a computer is, and how one machine can realize infinite possibilities.",
-		"hw7Title": "Von Neumann, Again?",
-		"hw7Description": "The idea of storing programs in the same space as data is a simple but powerful idea. Let's explore how this one idea created the basic skeleton of modern computers: CPU, memory, and bus.",
+		"hw7Title": "Ask Von Neumann if you want to build a computer.",
 		"hw8Title": "The Billion-Times-a-Second Routine of a CPU",
 		"hw8Description": "Instruction Cycle (Fetch-Decode-Execute)",
 		"hw9Title": "Mom, It's Not a Mess — It's Called Cache!",
@@ -154,5 +153,95 @@
 		"proportionLabel": "Proportion of the part to be improved ({value}%)",
 		"speedupLabel": "Performance improvement factor of the part ({value}x)",
 		"infinity": "infinity"
+	},
+	"VonNeumann": {
+		"Memory": {
+			"title": "Memory Simulator",
+			"description": "Read and write data using addresses.",
+			"operation": "Operation",
+			"read": "Read",
+			"write": "Write",
+			"address": "Address",
+			"addressUnit": "Address {address}",
+			"data": "Data",
+			"dataPlaceholder": "0-255",
+			"submit": "Execute",
+			"readResult": "The value at address {address} is {value}."
+		},
+		"InstructionSetTable": {
+			"structure": "Instruction Structure",
+			"example": "Example",
+			"descriptionMove": "Copies the value from register Rs to register Rd.",
+			"descriptionAdd": "Adds the values of register Rd and register Rs, and stores the result in register Rd.",
+			"descriptionSub": "Subtracts the value of register Rs from register Rd, and stores the result in register Rd.",
+			"descriptionAddi": "Adds an immediate value (0-3) to register Rd and stores the result in register Rd.",
+			"descriptionSubi": "Subtracts an immediate value (0-3) from register Rd and stores the result in register Rd.",
+			"descriptionLdi": "Loads an immediate value (0-3) into register Rd.",
+			"descriptionLoad": "Loads a value from a memory address (0-15) into register R0.",
+			"descriptionStore": "Stores the value from register R0 into a memory address (0-15).",
+			"descriptionJump": "Unconditionally jumps to the specified address (0-15).",
+			"descriptionJz": "Jumps to the specified address (0-15) if the Z flag is 1."
+		},
+		"InstructionDecoder": {
+			"title": "Control Unit Simulator",
+			"description": "See how each instruction is converted into control signals.",
+			"register": "Register",
+			"memory": "Memory",
+			"alu": "ALU",
+			"notUsed": "Not used",
+			"signalRegisterMove": "Read value from Rs and write to Rd.",
+			"signalRegisterAddSub": "Read values from Rd and Rs, send to ALU, and write the result back to Rd.",
+			"signalRegisterAddiSubi": "Read value from Rd and immediate value from instruction, send to ALU, and write result to Rd.",
+			"signalRegisterLdi": "Read immediate value from instruction and write to Rd.",
+			"signalRegisterLoad": "Write value read from memory to R0.",
+			"signalRegisterStore": "Read value from R0.",
+			"signalRegisterJump": "Change PC (Program Counter) to the address value from the instruction.",
+			"signalRegisterJz": "If Z flag is 1, change PC to the address value from the instruction.",
+			"signalMemoryLoad": "Use the address from the instruction to read data from that memory location.",
+			"signalMemoryStore": "Use the address from the instruction and the value from R0 to write data to that memory location.",
+			"signalAluAdd": "Perform addition, and if the result is 0, set the Z flag to 1.",
+			"signalAluSub": "Perform subtraction, and if the result is 0, set the Z flag to 1."
+		},
+		"ALU": {
+			"title": "ALU Simulator",
+			"registerA": "Register A",
+			"registerB": "Register B",
+			"operation": "Operation",
+			"result": "Result",
+			"flags": "Status Flags",
+			"zero": "Zero (Z)",
+			"carry": "Carry (C)",
+			"negative": "Negative (N)",
+			"overflow": "Overflow (V)"
+		},
+		"Monitor": {
+			"title": "Monitor Simulator",
+			"description": "Control the screen by modifying memory values.",
+			"screen": "Screen ({height}x{width})",
+			"vram": "Video Memory (VRAM)",
+			"guide": "* Modify the 0s and 1s in the text area."
+		},
+		"Simulator": {
+			"title": "Von Neumann Simulator",
+			"instructions": "Program",
+			"loadProgram": "Load Program",
+			"step": "Step Forward",
+			"reset": "Reset",
+			"cpuState": "CPU State",
+			"pc": "PC (Program Counter)",
+			"register": "Register",
+			"assembly": "Instruction",
+			"memory": "Memory (Code)",
+			"address": "Address",
+			"valueBinary": "Value (Binary)",
+			"valueDecimal": "Value (Decimal)",
+			"placeholder": "Enter your program here...",
+			"instructionSetInfo": "ISA Cheatsheet",
+			"defaultCode": "// Calculate Fibonacci sequence and store in mem[15]\n\n// --- Initial Setup ---\nLDI R1, 1    // R1 = 1, F(n-2)\nLDI R2, 1    // R2 = 1, F(n-1)\nLDI R3, 10   // R3 = 10, loop count\n\n// --- Loop Start (Line 5) ---\nMOVE R0, R1\nADD R0, R2\nMOVE R1, R2\nMOVE R2, R0\nSUBI R3, 1   // Decrement counter\nJZ 15        // If counter is 0, exit loop\n\n// --- End of Program ---\nJUMP 8       // Jump to loop start\nSTORE 15     // Store result"
+		}
+	},
+	"LocaleSwitcher": {
+		"label": "Change language",
+		"locale": "{locale, select, ko {한국어} en {English} other {Unknown}}"
 	}
 }

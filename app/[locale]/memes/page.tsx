@@ -17,7 +17,7 @@ export default function MemeViewer() {
 
 	return (
 		<div className='px-6 w-full flex flex-col gap-7'>
-			<div className='flex flex-wrap gap-2 max-w-2xl'>
+			<div className='flex flex-wrap gap-2 max-w-3xl'>
 				{tags.map((tag) => (
 					<TagOption
 						key={tag.id}

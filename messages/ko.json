@@ -38,7 +38,6 @@
 		"hw6Title": "계산만 할 줄 알면 계산기지 그게 컴퓨터니?",
 		"hw6Description": "덧셈, 뺄셈을 하는 회로를 만들었으니 '컴퓨터'를 만든걸까요? 컴퓨터의 본질이 무엇인지, 그리고 하나의 기계로 어떻게 무한한 가능성을 구현할 수 있는지 함께 알아봅시다.",
 		"hw7Title": "컴퓨터 조립법은 폰 노이만에게 물어보기",
-		"hw7Description": "'프로그램을 데이터와 같은 공간에 저장한다'는 단순하지만 강력한 아이디어. 이 발상 하나가 어떻게 CPU, 메모리, 버스라는 현대 컴퓨터의 기본 골격을 만들었는지 알아봅시다.",
 		"hw8Title": "CPU가 일초에 10억 번 하는 루틴",
 		"hw8Description": "명령어 사이클 (Fetch-Decode-Execute)",
 		"hw9Title": "아니 엄마 이건 방정리를 안한게 아니라 캐시라니까?",
@@ -155,5 +154,96 @@
 		"proportionLabel": "개선할 부분의 비율 ({value}%)",
 		"speedupLabel": "해당 부분의 성능 향상 배율 ({value}배)",
 		"infinity": "무한대"
+	},
+
+	"VonNeumann": {
+		"Memory": {
+			"title": "메모리 시뮬레이터",
+			"description": "주소를 통해 데이터를 읽고 써보세요.",
+			"operation": "작업",
+			"read": "읽기",
+			"write": "쓰기",
+			"address": "주소",
+			"addressUnit": "{address}번지",
+			"data": "데이터",
+			"dataPlaceholder": "0-255",
+			"submit": "실행",
+			"readResult": "{address}번지의 값은 {value}입니다."
+		},
+		"InstructionSetTable": {
+			"structure": "명령어 구조",
+			"example": "예제",
+			"descriptionMove": "Rs 레지스터의 값을 Rd 레지스터로 복사합니다.",
+			"descriptionAdd": "레지스터 Rd와 레지스터 Rs를 더하고 결과를 레지스터 Rd에 저장합니다.",
+			"descriptionSub": "레지스터 Rd에서 레지스터 Rs를 빼고 결과를 레지스터 Rd에 저장합니다.",
+			"descriptionAddi": "레지스터 Rd와 즉시값(0~3)을 더해 레지스터 Rd에 저장합니다.",
+			"descriptionSubi": "레지스터 Rd에서 즉시값(0~3)을 빼고 레지스터 Rd에 저장합니다.",
+			"descriptionLdi": "레지스터 Rd에 즉시값(0~3)을 로드합니다.",
+			"descriptionLoad": "메모리 주소(0~15)에서 R0 레지스터로 값을 가져옵니다.",
+			"descriptionStore": "R0 레지스터의 값을 메모리 주소(0~15)에 저장합니다.",
+			"descriptionJump": "지정된 주소(0~15)로 무조건 점프합니다.",
+			"descriptionJz": "Z 플래그가 1이면 지정된 주소(0~15)로 점프합니다."
+		},
+		"InstructionDecoder": {
+			"title": "제어장치 시뮬레이터",
+			"description": "각 명령어가 어떻게 제어 신호로 변환되는지 확인해보세요.",
+			"register": "레지스터",
+			"memory": "메모리",
+			"alu": "ALU",
+			"notUsed": "사용 안함",
+			"signalRegisterMove": "Rs의 값을 읽어 Rd에 씁니다.",
+			"signalRegisterAddSub": "Rd와 Rs의 값을 읽어 ALU로 보내고, 결과를 다시 Rd에 씁니다.",
+			"signalRegisterAddiSubi": "Rd의 값과 명령어의 상수값을 읽어 ALU로 보내고, 결과를 Rd에 씁니다.",
+			"signalRegisterLdi": "명령어의 상수값을 읽어 Rd에 씁니다.",
+			"signalRegisterLoad": "메모리에서 읽어온 값을 R0에 씁니다.",
+			"signalRegisterStore": "R0의 값을 읽습니다.",
+			"signalRegisterJump": "PC(프로그램 카운터)를 명령어의 주소값으로 변경합니다.",
+			"signalRegisterJz": "Z 플래그가 1이면 PC를 명령어의 주소값으로 변경합니다.",
+			"signalMemoryLoad": "명령어의 주소값을 이용해 해당 메모리 위치의 데이터를 읽습니다.",
+			"signalMemoryStore": "명령어의 주소값과 R0의 값을 이용해 해당 메모리 위치에 데이터를 씁니다.",
+			"signalAluAdd": "덧셈 연산을 수행하고, 결과가 0이면 Z 플래그를 1로 설정합니다.",
+			"signalAluSub": "뺄셈 연산을 수행하고, 결과가 0이면 Z 플래그를 1로 설정합니다."
+		},
+		"ALU": {
+			"title": "ALU 시뮬레이터",
+			"registerA": "레지스터 A",
+			"registerB": "레지스터 B",
+			"operation": "연산",
+			"result": "결과",
+			"flags": "상태 플래그",
+			"zero": "Zero (Z)",
+			"carry": "Carry (C)",
+			"negative": "Negative (N)",
+			"overflow": "Overflow (V)"
+		},
+		"Monitor": {
+			"title": "모니터 시뮬레이터",
+			"description": "메모리의 값을 수정해 화면을 제어해 보세요.",
+			"screen": "화면 ({height}x{width})",
+			"vram": "비디오 메모리 (VRAM)",
+			"guide": "* 텍스트 영역의 0과 1을 수정해보세요."
+		},
+		"Simulator": {
+			"title": "폰 노이만 시뮬레이터",
+			"instructions": "프로그램",
+			"loadProgram": "프로그램 로드",
+			"step": "다음 단계",
+			"reset": "초기화",
+			"cpuState": "CPU 상태",
+			"pc": "PC (프로그램 카운터)",
+			"register": "레지스터",
+			"assembly": "명령어",
+			"memory": "메모리 (실행 코드)",
+			"address": "주소",
+			"valueBinary": "값 (이진수)",
+			"valueDecimal": "값 (십진수)",
+			"placeholder": "이곳에 프로그램을 입력하세요...",
+			"instructionSetInfo": "명령어 세트 정보",
+			"defaultCode": "// 피보나치 수를 계산하여 mem[15]에 저장\n\n// --- 초기 설정 ---\nLDI R1, 1    // R1 = 1, F(n-2)\nLDI R2, 1    // R2 = 1, F(n-1)\nLDI R3, 10   // R3 = 10, 반복 횟수\n\n// --- 루프 시작 (Line 5) ---\nMOVE R0, R1\nADD R0, R2\nMOVE R1, R2\nMOVE R2, R0\nSUBI R3, 1   // 카운터 감소\nJZ 15        // 카운터가 0이면 루프 종료\n\n// --- 프로그램 종료 ---\nJUMP 8       // 루프 시작으로 점프\nSTORE 15     // 결과 저장"
+		}
+	},
+	"LocaleSwitcher": {
+		"label": "언어 변경",
+		"locale": "{locale, select, ko {한국어} en {English} other {Unknown}}"
 	}
 }

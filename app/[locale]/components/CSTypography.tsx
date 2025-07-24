@@ -1,3 +1,5 @@
+'use client';
+
 export default function CSTypography() {
 	return (
 		<div className='aspect-video max-h-[384px] text-[min(7.5vw,63px)] leading-none font-black text-stone-200 dark:text-stone-800 overflow-hidden break-all text-justify w-full'>

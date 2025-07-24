@@ -1,0 +1,128 @@
+---
+title: React.memo와 arePropsEqual 깊게 파고들기
+description: React.memo의 두 번째 인자인 arePropsEqual을 사용하여 불필요한 리렌더링을 막는 방법을 알아봅니다.
+---
+
+import ArePropsEqualExample from './components/ArePropsEqualExample';
+
+# `React.memo`와 `arePropsEqual`
+
+`React.memo`는 컴포넌트의 props가 변경되지 않았다면, 리렌더링을 건너뛰어 성능을 최적화하는 아주 유용한 도구입니다. 기본적으로 `memo`는 props를 얕은 비교(shallow comparison)합니다.
+
+하지만 때로는 더 정교한 비교가 필요할 수 있습니다. 예를 들어, 특정 prop이 변경될 때만 리렌더링하고 싶을 수 있죠. 바로 이럴 때 `memo`의 두 번째 인자인 `arePropsEqual` 함수를 사용할 수 있습니다.
+
+## `arePropsEqual` 동작 예제
+
+아래 예제를 통해 `arePropsEqual`의 힘을 직접 확인해보세요.
+
+`UserAvatar` 자식 컴포넌트는 `username`과 `status` 두 개의 prop을 받습니다. 하지만 우리는 `arePropsEqual` 함수를 통해 **오직 `username` prop이 변경될 때만 리렌더링되도록** 설정했습니다.
+
+- **유저명 변경 (자식 리렌더링 O)** 버튼: `username` 상태를 변경합니다. `arePropsEqual`은 `false`를 반환하고, 자식 컴포넌트는 리렌더링됩니다.
+- **상태 변경 (자식 리렌더링 X)** 버튼: `status` 상태만 변경합니다. `username`은 동일하므로 `arePropsEqual`은 `true`를 반환하고, 자식 컴포넌트의 리렌더링을 성공적으로 막습니다.
+- **부모만 리렌더링 (자식 리렌더링 X)** 버튼: 부모의 관련 없는 상태를 변경합니다. props가 변경되지 않았으므로 `arePropsEqual`이 `true`를 반환하고 리렌더링을 막습니다.
+
+개발자 도구의 콘솔을 열고 각 버튼을 클릭하며 로그를 확인해보세요!
+
+<ArePropsEqualExample />
+
+## shallowEqual
+
+```tsx
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ * @flow
+ */
+
+import is from './objectIs';
+import hasOwnProperty from './hasOwnProperty';
+
+/**
+ * Performs equality by iterating through keys on an object and returning false
+ * when any key has values which are not strictly equal between the arguments.
+ * Returns true when the values of all keys are strictly equal.
+ */
+function shallowEqual(objA: mixed, objB: mixed): boolean {
+  if (is(objA, objB)) {
+    return true;
+  }
+
+  if (
+    typeof objA !== 'object' ||
+    objA === null ||
+    typeof objB !== 'object' ||
+    objB === null
+  ) {
+    return false;
+  }
+
+  const keysA = Object.keys(objA);
+  const keysB = Object.keys(objB);
+
+  if (keysA.length !== keysB.length) {
+    return false;
+  }
+
+  // Test for A's keys different from B.
+  for (let i = 0; i < keysA.length; i++) {
+    const currentKey = keysA[i];
+    if (
+      !hasOwnProperty.call(objB, currentKey) ||
+      !is(objA[currentKey], objB[currentKey])
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+export default shallowEqual;
+
+```
+
+```tsx
+/**
+ * inlined Object.is polyfill to avoid requiring consumers ship their own
+ * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/is
+ */
+function is(x: any, y: any) {
+  return (
+    // Object.is()와 동일한 비교 로직입니다.
+    // x와 y가 모두 0일 때, 1 / x 와 1 / y를 비교하는 이유는 +0과 -0을 구분하기 위함입니다.
+    // JS에서 +0 === -0은 true이지만, 1/+0 (Infinity) !== 1/-0 (-Infinity) 이므로,
+    // 이 트릭을 통해 두 0이 다른 값임을 정확히 판별할 수 있습니다.
+    (x === y && (x !== 0 || 1 / x === 1 / y)) || (x !== x && y !== y) // eslint-disable-line no-self-compare
+  );
+}
+
+const objectIs: (x: any, y: any) => boolean =
+  typeof Object.is === 'function' ? Object.is : is;
+
+export default objectIs;
+```
+
+https://github.com/facebook/react/pull/21134
+
+```tsx
+/*
+ * 이 파일이 별도로 존재하는 이유:
+ * 1. 중복 제거: 리액트 코드베이스 전체에서 `Object.prototype.hasOwnProperty`를 반복적으로 정의하는 것을 방지합니다.
+ * 2. 번들링 최적화: 모듈로 분리하여 코드 압축(minification) 효율을 높이고 최종 번들 크기를 줄입니다.
+ * 3. 안정성 확보: 다른 객체가 `hasOwnProperty`를 덮어쓰더라도, 항상 원본 메서드를 안전하게 참조하여 사용하기 위함입니다.
+ * (참고: https://github.com/facebook/react/pull/21134)
+ */
+const hasOwnProperty = Object.prototype.hasOwnProperty;
+
+export default hasOwnProperty;
+```
+
+## zustand
+
+https://github.com/pmndrs/zustand/blob/main/src/vanilla/shallow.ts
+
+iterable도 별도로 처리하는듯하다. 
+

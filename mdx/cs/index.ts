@@ -5,4 +5,5 @@ export const csOrder = [
 	'adder',
 	'sequential',
 	'turing-machine',
+	'von-neumann',
 ];

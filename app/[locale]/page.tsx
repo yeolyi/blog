@@ -130,7 +130,7 @@ export default async function Home({
 				<CSTypography />
 
 				<div className='flex flex-col gap-7'>
-					<p className='w-full max-w-2xl'>
+					<p className='w-full max-w-3xl'>
 						{tMain('csIntro')}{' '}
 						<Suspense fallback={<span>-</span>}>
 							<span className='font-extrabold'>
@@ -260,7 +260,7 @@ export default async function Home({
 					</p>
 				</div>
 
-				<div className='max-w-2xl '>
+				<div className='max-w-3xl'>
 					<p>
 						{tMain('reactIntro')}{' '}
 						<Button
@@ -291,7 +291,7 @@ export default async function Home({
 				<Separator />
 
 				<CraftTypography />
-				<div className='max-w-2xl'>
+				<div className='max-w-3xl'>
 					<p>{tMain('craftIntro')}</p>
 				</div>
 				<Button className='w-fit self-end' disabled>

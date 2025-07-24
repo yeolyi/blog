@@ -3,7 +3,7 @@ description:
 globs: 
 alwaysApply: true
 ---
-- Use Bun as the package manager.
+- Use pnpm as the package manager.
 - Use Next.js 15 as the framework.
 - Use Tailwind CSS for all styling.
 - When implementing Server Actions, always handle errors and return a response in the following format: { success: true, value: T } | { success: false, message: string }

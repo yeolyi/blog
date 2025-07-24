@@ -1,9 +1,10 @@
 'use client';
 
 import { Eye, Pencil } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
+import { Button } from '../../../../components/ui/button';
 import {
 	Card,
 	CardContent,
@@ -11,15 +12,15 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from '@/components/ui/card';
+} from '../../../../components/ui/card';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+} from '../../../../components/ui/dropdown-menu';
+import { Input } from '../../../../components/ui/input';
+import { Label } from '../../../../components/ui/label';
 import {
 	Table,
 	TableBody,
@@ -27,10 +28,11 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from '@/components/ui/table';
+} from '../../../../components/ui/table';
 import { useMemory } from './hooks/useMemory';
 
 export function Memory() {
+	const t = useTranslations('VonNeumann.Memory');
 	const { memory, handleWrite, handleRead, readValue, lastReadAddress } =
 		useMemory();
 
@@ -61,105 +63,105 @@ export function Memory() {
 	};
 
 	return (
-		<div className='flex flex-col gap-4'>
-			<form onSubmit={onSubmit}>
-				<Card>
-					<CardHeader>
-						<CardTitle>메모리 시뮬레이터</CardTitle>
-						<CardDescription>주소를 사용해 데이터를 읽고 써보세요.</CardDescription>
-					</CardHeader>
-					<CardContent className='flex flex-col gap-6'>
-						<Table className='border'>
-							<TableHeader>
-								<TableRow>
-									<TableHead>주소</TableHead>
-									<TableHead>데이터</TableHead>
+		<form onSubmit={onSubmit}>
+			<Card>
+				<CardHeader>
+					<CardTitle>{t('title')}</CardTitle>
+					<CardDescription>{t('description')}</CardDescription>
+				</CardHeader>
+				<CardContent className='flex flex-col gap-6'>
+					<Table className='border'>
+						<TableHeader>
+							<TableRow>
+								<TableHead>{t('address')}</TableHead>
+								<TableHead>{t('data')}</TableHead>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
+							{memory.map((value, index) => (
+								<TableRow
+									key={index}
+									data-active={index === selectedAddress}
+									className='data-[active=true]:bg-primary/20'
+								>
+									<TableCell>{index}</TableCell>
+									<TableCell>{value}</TableCell>
 								</TableRow>
-							</TableHeader>
-							<TableBody>
-								{memory.map((value, index) => (
-									<TableRow
-										key={index}
-										data-active={index === selectedAddress}
-										className='data-[active=true]:bg-primary/20'
-									>
-										<TableCell>{index}</TableCell>
-										<TableCell>{value}</TableCell>
-									</TableRow>
-								))}
-							</TableBody>
-						</Table>
+							))}
+						</TableBody>
+					</Table>
 
-						<div className='flex flex-row items-end gap-2 flex-wrap'>
-							<div className='flex flex-col gap-1.5'>
-								<Label>동작</Label>
-								<DropdownMenu>
-									<DropdownMenuTrigger asChild>
-										<Button variant='outline' className='w-[100px]'>
-											{operation === 'read' ? '읽기' : '쓰기'}
-										</Button>
-									</DropdownMenuTrigger>
-									<DropdownMenuContent>
-										<DropdownMenuItem onSelect={() => setOperation('read')}>
-											읽기
-										</DropdownMenuItem>
-										<DropdownMenuItem onSelect={() => setOperation('write')}>
-											쓰기
-										</DropdownMenuItem>
-									</DropdownMenuContent>
-								</DropdownMenu>
-							</div>
-							<div className='flex flex-col gap-1.5'>
-								<Label>주소</Label>
-								<DropdownMenu>
-									<DropdownMenuTrigger asChild>
-										<Button variant='outline' className='w-[120px]'>
-											{selectedAddress}번 주소
-										</Button>
-									</DropdownMenuTrigger>
-									<DropdownMenuContent>
-										{memory.map((_, index) => (
-											<DropdownMenuItem
-												key={index}
-												onSelect={() => setSelectedAddress(index)}
-											>
-												{index}
-											</DropdownMenuItem>
-										))}
-									</DropdownMenuContent>
-								</DropdownMenu>
-							</div>
-
-							{operation === 'write' && (
-								<div className='flex flex-col gap-1.5'>
-									<Label htmlFor='data'>데이터</Label>
-									<Input
-										name='data'
-										type='number'
-										min='0'
-										max='255'
-										className='w-24'
-										placeholder='0~255'
-										required
-									/>
-								</div>
-							)}
-							<Button type='submit' className='self-end'>
-								{operation === 'read' ? <Eye /> : <Pencil />}
-								실행
-							</Button>
+					<div className='flex flex-row items-end gap-2 flex-wrap'>
+						<div className='flex flex-col gap-1.5'>
+							<Label>{t('operation')}</Label>
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button variant='outline' className='w-[100px]'>
+										{operation === 'read' ? t('read') : t('write')}
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent>
+									<DropdownMenuItem onSelect={() => setOperation('read')}>
+										{t('read')}
+									</DropdownMenuItem>
+									<DropdownMenuItem onSelect={() => setOperation('write')}>
+										{t('write')}
+									</DropdownMenuItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
 						</div>
-					</CardContent>
-					<CardFooter>
-						{operation === 'read' && (
-							<p>
-								{lastReadAddress ?? ' - '}번 주소의 값은 {readValue ?? ' - '}
-								입니다.
-							</p>
+						<div className='flex flex-col gap-1.5'>
+							<Label>{t('address')}</Label>
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<Button variant='outline' className='w-[120px]'>
+										{t('addressUnit', { address: selectedAddress })}
+									</Button>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent>
+									{memory.map((_, index) => (
+										<DropdownMenuItem
+											key={index}
+											onSelect={() => setSelectedAddress(index)}
+										>
+											{index}
+										</DropdownMenuItem>
+									))}
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</div>
+
+						{operation === 'write' && (
+							<div className='flex flex-col gap-1.5'>
+								<Label htmlFor='data'>{t('data')}</Label>
+								<Input
+									name='data'
+									type='number'
+									min='0'
+									max='255'
+									className='w-24'
+									placeholder={t('dataPlaceholder')}
+									required
+								/>
+							</div>
 						)}
-					</CardFooter>
-				</Card>
-			</form>
-		</div>
+						<Button type='submit' className='self-end'>
+							{operation === 'read' ? <Eye /> : <Pencil />}
+							{t('submit')}
+						</Button>
+					</div>
+				</CardContent>
+				<CardFooter>
+					{operation === 'read' && (
+						<p>
+							{t('readResult', {
+								address: lastReadAddress ?? '-',
+								value: readValue ?? '-',
+							})}
+						</p>
+					)}
+				</CardFooter>
+			</Card>
+		</form>
 	);
 }

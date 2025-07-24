@@ -15,7 +15,7 @@ import {
 	Trash,
 } from 'lucide-react';
 import { useCallback, useState } from 'react';
-import { minZoomOptions } from '@/components/cs/flow';
+import { minZoomOptions } from '@/components/cs/flow/FlowImpl';
 import { Button } from '@/components/ui/button';
 import type { TouchDeviceState } from '../hooks/useMobileState';
 

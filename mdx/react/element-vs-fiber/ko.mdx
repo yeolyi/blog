@@ -1,0 +1,122 @@
+---
+title: React Element vs. Fiber Node 깊게 파고들기
+description: React의 핵심 구성 요소인 Element와 Fiber의 차이점을 알아보고, React가 어떻게 UI를 그리고 업데이트하는지 내부 동작을 탐험합니다.
+---
+
+# React Element vs. Fiber Node: React의 심장 파헤치기
+
+React를 사용하면 우리는 컴포넌트를 만들고 JSX를 사용하여 UI를 선언적으로 작성합니다. 하지만 React가 이 선언적인 코드를 받아 실제로 브라우저에 UI를 그리고, 상태가 변경될 때 효율적으로 업데이트하는 과정에는 두 가지 핵심적인 데이터 구조가 있습니다: 바로 **React Element**와 **Fiber Node**입니다.
+
+이 둘은 비슷해 보이지만, 완전히 다른 목적과 생명주기를 가집니다. 이 둘의 차이를 이해하는 것은 React의 렌더링 메커니즘과 최적화 원리를 깊게 이해하는 첫걸음입니다.
+
+## 1. React Element: UI의 청사진 (The Blueprint)
+
+React Element는 React 앱을 구성하는 가장 작은 단위입니다. **"무엇을"** 화면에 그리고 싶은지에 대한 **설명**이 담긴 가벼운 일반 JavaScript 객체(Plain Old JavaScript Object)입니다.
+
+우리가 JSX를 작성하면, Babel과 같은 컴파일러는 이를 `React.createElement()` 함수 호출로 변환합니다. 그리고 이 함수가 바로 React Element를 반환합니다.
+
+```jsx
+// 우리가 작성하는 JSX
+const element = <h1 className="greeting">Hello, world</h1>;
+
+// 실제 변환 결과 (단순화된 형태)
+const element = React.createElement(
+  'h1',
+  { className: 'greeting' },
+  'Hello, world'
+);
+
+// React.createElement가 반환하는 객체 (React Element)
+{
+  $$typeof: Symbol.for('react.element'), // 이 프로퍼티의 역할은 아래에서 설명합니다.
+  type: 'h1',
+  props: {
+    className: 'greeting',
+    children: 'Hello, world'
+  },
+  key: null,
+  ref: null,
+  // ...
+}
+```
+
+### Element의 주요 특징
+
+- **불변성 (Immutable)**: React Element는 한번 생성되면 절대 변경되지 않습니다. 상태나 props가 변경되면, 이전 Element를 수정하는 것이 아니라 **완전히 새로운 Element 객체**가 생성됩니다.
+- **가볍고 상태가 없음**: Element는 상태(state)를 가지지 않으며, 실제 DOM 노드나 컴포넌트 인스턴스에 대한 참조도 없습니다. 그저 UI 구조와 속성에 대한 설명일 뿐입니다.
+- **매 렌더마다 생성**: 컴포넌트의 `render` 함수가 호출될 때마다 새로운 Element 트리가 생성됩니다.
+
+### `$$typeof: Symbol.for('react.element')`의 역할은?
+
+Element 객체에 `$$typeof`라는 특별한 프로퍼티가 있는 것을 보셨을 겁니다. 이것은 **XSS(Cross-Site Scripting) 공격을 방지하기 위한 보안 장치**입니다.
+
+서버에서 JSON 형태의 데이터를 받아와 UI를 렌더링해야 하는 상황을 가정해봅시다. 만약 악의적인 사용자가 Element의 구조를 흉내 낸 JSON 객체를 서버에 저장해두었다면, React는 아무 의심 없이 이 객체를 렌더링하려 할 수 있습니다. 이때 `$$typeof`가 없다면 예상치 못한 스크립트가 실행될 위험이 있습니다.
+
+React는 렌더링 전에 모든 Element가 `$$typeof` 프로퍼티를 가지고 있는지, 그리고 그 값이 `Symbol.for('react.element')`인지 확인합니다. `Symbol`은 JSON으로 직렬화될 수 없기 때문에, 외부에서 주입된 악의적인 JSON 객체는 이 검사를 통과할 수 없습니다.
+
+## 2. Fiber Node: 작업 단위와 상태 저장소 (The Unit of Work)
+
+React Element가 "무엇을" 그릴지에 대한 **청사진**이었다면, **Fiber Node**는 "어떻게" 그릴지를 관리하는 **작업 단위(Unit of Work)**입니다. Fiber는 React의 재조정(Reconciliation) 알고리즘의 핵심 데이터 구조입니다.
+
+Element는 매번 새로 생성되지만, Fiber Node는 가능한 한 **재사용**됩니다. Fiber Node는 컴포넌트가 화면에 마운트된 후에도 계속 유지되며, 컴포넌트의 상태, props, 그리고 실제 DOM 노드와의 연결고리를 관리합니다.
+
+```js
+// Fiber Node의 구조 (매우 단순화됨)
+{
+  // --- 식별 정보 ---
+  tag: 5, // HostComponent (div, h1 등). FunctionComponent는 0, ClassComponent는 1
+  key: null,
+  type: 'h1', // Element의 type과 동일
+
+  // --- 상태와 Props ---
+  memoizedProps: { className: 'greeting', ... }, // 이전 렌더링에서 사용된 props
+  memoizedState: null, // useState, useReducer로 만들어진 상태 값의 연결 리스트
+  
+  // --- DOM 연결 ---
+  stateNode: <DOMNode for h1>, // 실제 DOM 노드에 대한 참조
+
+  // --- 트리 순회를 위한 포인터 ---
+  return: Fiber,  // 부모 Fiber
+  child: Fiber,   // 첫 번째 자식 Fiber
+  sibling: Fiber, // 다음 형제 Fiber
+
+  // --- 작업 관리를 위한 정보 ---
+  flags: 1, // 이 Fiber에 어떤 작업(effect)이 필요한지 (e.g., 배치, 업데이트, 삭제)
+  alternate: Fiber, // 'current' 트리와 'workInProgress' 트리를 연결하는 포인터
+}
+```
+
+### `workInProgress`와 `tag`
+
+React는 렌더링 작업을 더 부드럽게 만들고 중단/재개할 수 있도록 **더블 버퍼링(Double Buffering)** 기법을 사용합니다.
+
+- **`current` 트리**: 현재 화면에 보이는 UI에 해당하는 Fiber 트리입니다.
+- **`workInProgress` 트리**: 메모리상에서 새로 빌드되고 있는 Fiber 트리입니다. React는 Element 트리를 기반으로 이 `workInProgress` 트리를 구성합니다.
+
+React는 `workInProgress` 트리를 만들면서 각 Fiber Node에 어떤 종류의 컴포넌트인지 표시하기 위해 `tag` 프로퍼티를 사용합니다. 예를 들어,
+- `0`: `FunctionComponent`
+- `1`: `ClassComponent`
+- `5`: `HostComponent` (DOM 요소, e.g., `<div>`)
+- `7`: `Fragment`
+
+이 `tag`는 재조정 과정에서 해당 Fiber를 어떻게 처리해야 할지 결정하는 중요한 기준이 됩니다. 모든 작업이 `workInProgress` 트리에서 완료되면, React는 이 트리를 `current` 트리로 바꾸어 화면에 한 번에 커밋(commit)합니다.
+
+## Element vs. Fiber: 핵심 차이점 요약
+
+| 구분 | React Element | Fiber Node |
+| :--- | :--- | :--- |
+| **목적** | UI의 구조와 설정을 담은 **청사진** | 재조정 작업을 위한 **작업 단위** |
+| **생명 주기** | 매 렌더링마다 **새로 생성** | 컴포넌트가 존재하는 동안 **유지 및 재사용** |
+| **가변성** | **불변 (Immutable)** | **가변 (Mutable)** |
+| **상태** | 상태가 없음 (Stateless) | 컴포넌트의 상태와 생명주기를 관리 (Stateful) |
+| **주요 속성**| `$$typeof`, `type`, `props` | `tag`, `stateNode`, `memoizedState`, `return`, `child`, `sibling` |
+
+## 결론: 청사진에서 실제 건물까지
+
+React의 렌더링 과정을 건축에 비유하자면 다음과 같습니다.
+
+1.  **React Element**: 건축가(개발자)가 "여기에 문을 달고, 저기에 창문을 내주세요"라고 말하는 **설계도**입니다.
+2.  **Fiber Node**: 현장 감독관이 이 설계도를 보고, "문 설치 작업", "창문 설치 작업"과 같이 실제 수행할 **작업 목록**을 만들고, 각 작업의 진행 상황과 자재(상태)를 관리하는 것과 같습니다.
+3.  **DOM Node**: 작업 목록에 따라 실제로 지어진 **건물**입니다.
+
+개발자는 그저 Element라는 간단하고 선언적인 설계도만 그리면, React는 내부적으로 복잡한 Fiber 아키텍처를 통해 이 설계도를 실제 UI로 효율적으로 구현하고 관리해주는 것입니다. 이 두 개념의 차이를 이해하면, `key`의 중요성, 렌더링 최적화, React의 내부 동작 방식에 대해 더 깊은 통찰을 얻을 수 있습니다. 

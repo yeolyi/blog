@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import {
 	Card,
@@ -32,6 +33,8 @@ const GHOST_PATTERN = [
 ].join('');
 
 export function MonitorSimulator() {
+	const t = useTranslations('VonNeumann.Monitor');
+
 	const [text, setText] = useState(
 		GHOST_PATTERN.match(new RegExp(`.{1,${WIDTH}}`, 'g'))?.join('\n') ?? '',
 	);
@@ -47,15 +50,13 @@ export function MonitorSimulator() {
 	return (
 		<Card>
 			<CardHeader>
-				<CardTitle>모니터 시뮬레이터</CardTitle>
-				<CardDescription>
-					메모리의 값을 수정해 화면을 제어해 보세요.
-				</CardDescription>
+				<CardTitle>{t('title')}</CardTitle>
+				<CardDescription>{t('description')}</CardDescription>
 			</CardHeader>
 			<CardContent className='grid grid-cols-1 md:grid-cols-2 gap-6'>
 				<div>
 					<h3 className='font-semibold text-center mb-2'>
-						화면 ({HEIGHT}x{WIDTH})
+						{t('screen', { height: HEIGHT, width: WIDTH })}
 					</h3>
 					<div
 						className='grid border bg-black/10'
@@ -75,13 +76,14 @@ export function MonitorSimulator() {
 					</div>
 				</div>
 				<div>
-					<h3 className='font-semibold mb-2'>비디오 메모리 (VRAM)</h3>
+					<h3 className='font-semibold mb-2'>{t('vram')}</h3>
 					<Textarea
 						value={text}
 						onChange={(e) => setText(e.target.value)}
 						rows={HEIGHT}
 						className='font-mono tracking-widest leading-5'
 					/>
+					<p className='text-xs text-muted-foreground mt-2'>{t('guide')}</p>
 				</div>
 			</CardContent>
 		</Card>
