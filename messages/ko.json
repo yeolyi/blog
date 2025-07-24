@@ -239,7 +239,7 @@
 			"valueDecimal": "값 (십진수)",
 			"placeholder": "이곳에 프로그램을 입력하세요...",
 			"instructionSetInfo": "명령어 세트 정보",
-			"defaultCode": "// 피보나치 수를 계산하여 mem[15]에 저장\n\n// --- 초기 설정 ---\nLDI R1, 1    // R1 = 1, F(n-2)\nLDI R2, 1    // R2 = 1, F(n-1)\nLDI R3, 10   // R3 = 10, 반복 횟수\n\n// --- 루프 시작 (Line 5) ---\nMOVE R0, R1\nADD R0, R2\nMOVE R1, R2\nMOVE R2, R0\nSUBI R3, 1   // 카운터 감소\nJZ 15        // 카운터가 0이면 루프 종료\n\n// --- 프로그램 종료 ---\nJUMP 8       // 루프 시작으로 점프\nSTORE 15     // 결과 저장"
+			"defaultCode": "// 피보나치 수를 계산하여 mem[15]에 저장\nLDI R1, 1\nLDI R2, 1\nMOVE R0, R1\nADD R0, R2\nMOVE R1, R2\nMOVE R2, R0\nSTORE 15\nJUMP 2"
 		}
 	},
 	"LocaleSwitcher": {

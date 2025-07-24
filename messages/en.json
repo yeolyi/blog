@@ -237,7 +237,7 @@
 			"valueDecimal": "Value (Decimal)",
 			"placeholder": "Enter your program here...",
 			"instructionSetInfo": "ISA Cheatsheet",
-			"defaultCode": "// Calculate Fibonacci sequence and store in mem[15]\n\n// --- Initial Setup ---\nLDI R1, 1    // R1 = 1, F(n-2)\nLDI R2, 1    // R2 = 1, F(n-1)\nLDI R3, 10   // R3 = 10, loop count\n\n// --- Loop Start (Line 5) ---\nMOVE R0, R1\nADD R0, R2\nMOVE R1, R2\nMOVE R2, R0\nSUBI R3, 1   // Decrement counter\nJZ 15        // If counter is 0, exit loop\n\n// --- End of Program ---\nJUMP 8       // Jump to loop start\nSTORE 15     // Store result"
+			"defaultCode": "// Calculate Fibonacci sequence and store in mem[15]\nLDI R1, 1\nLDI R2, 1\nMOVE R0, R1\nADD R0, R2\nMOVE R1, R2\nMOVE R2, R0\nSTORE 15\nJUMP 2"
 		}
 	},
 	"LocaleSwitcher": {
