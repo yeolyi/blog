@@ -150,45 +150,43 @@ export function InstructionSetTable() {
 				))}
 			</div>
 
-			<div>
-				<Card>
-					<CardHeader>
-						<CardTitle className='flex items-center justify-between'>
-							<span>{selected.name}</span>
-						</CardTitle>
-						{/* @ts-expect-error 동적 문자열 타입 추론 문제 */}
-						<CardDescription>{t(selected.description)}</CardDescription>
-					</CardHeader>
-					<CardContent className='space-y-4'>
-						<div>
-							<h4 className='mb-2'>{t('structure')}</h4>
-							<div className='flex w-full h-10 border border-border'>
-								{selected.structure.map((part, idx) => (
-									<div
-										key={idx}
-										className={`flex flex-col items-center justify-center text-center text-xs p-1
+			<Card>
+				<CardHeader>
+					<CardTitle className='flex items-center justify-between'>
+						<span>{selected.name}</span>
+					</CardTitle>
+					{/* @ts-expect-error 동적 문자열 타입 추론 문제 */}
+					<CardDescription>{t(selected.description)}</CardDescription>
+				</CardHeader>
+				<CardContent className='space-y-4'>
+					<div>
+						<h4 className='mb-2'>{t('structure')}</h4>
+						<div className='flex w-full h-10 border border-border'>
+							{selected.structure.map((part, idx) => (
+								<div
+									key={idx}
+									className={`flex flex-col items-center justify-center text-center text-xs p-1
                         ${part.bits === 4 ? 'w-1/2' : 'w-1/4'}
                         ${idx > 0 ? 'border-l border-border' : ''}`}
-									>
-										<span>{part.label}</span>
-										<span className='text-muted-foreground'>({part.bits} bits)</span>
-									</div>
-								))}
-							</div>
+								>
+									<span>{part.label}</span>
+									<span className='text-muted-foreground'>({part.bits} bits)</span>
+								</div>
+							))}
 						</div>
-						<div>
-							<h4 className='mb-2'>{t('example')}</h4>
-							<pre className='p-3 bg-muted leading-relaxed'>
-								<code>
-									{selected.example}
-									<br />
-									{selected.binaryExample}
-								</code>
-							</pre>
-						</div>
-					</CardContent>
-				</Card>
-			</div>
+					</div>
+					<div>
+						<h4 className='mb-2'>{t('example')}</h4>
+						<pre className='p-3 bg-muted leading-relaxed'>
+							<code>
+								{selected.example}
+								<br />
+								{selected.binaryExample}
+							</code>
+						</pre>
+					</div>
+				</CardContent>
+			</Card>
 		</div>
 	);
 }

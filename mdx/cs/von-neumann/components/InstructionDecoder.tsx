@@ -1,6 +1,6 @@
 'use client';
 
-import { Info, Zap } from 'lucide-react';
+import { Info } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { Button } from '../../../../components/ui/button';
@@ -158,79 +158,72 @@ export function InstructionDecoder() {
 	const tSim = useTranslations('VonNeumann.Simulator');
 
 	return (
-		<div className='my-8 not-prose'>
-			<ResponsiveDialog>
-				<Card>
-					<CardHeader>
-						<CardTitle className='flex items-center gap-2'>
-							<Zap className='w-5 h-5' />
-							{t('title')}
-						</CardTitle>
-						<CardDescription>{t('description')}</CardDescription>
-						<CardAction>
-							<ResponsiveDialogTrigger asChild>
-								<Button variant='ghost' size='icon' className='-mr-2'>
-									<Info className='h-4 w-4' />
-									<span className='sr-only'>{tSim('instructionSetInfo')}</span>
-								</Button>
-							</ResponsiveDialogTrigger>
-						</CardAction>
-					</CardHeader>
-					<CardContent className='flex flex-col gap-6'>
-						<div className='flex flex-wrap gap-2'>
-							{INSTRUCTIONS.map((inst) => (
-								<Button
-									key={inst}
-									variant={selected === inst ? 'default' : 'outline'}
-									size='sm'
-									onClick={() => setSelected(inst)}
-								>
-									{inst}
-								</Button>
-							))}
-						</div>
+		<ResponsiveDialog>
+			<Card>
+				<CardHeader>
+					<CardTitle className='flex items-center gap-2'>{t('title')}</CardTitle>
+					<CardDescription>{t('description')}</CardDescription>
+					<CardAction>
+						<ResponsiveDialogTrigger asChild>
+							<Button variant='ghost' size='icon' className='-mr-2'>
+								<Info className='h-4 w-4' />
+								<span className='sr-only'>{tSim('instructionSetInfo')}</span>
+							</Button>
+						</ResponsiveDialogTrigger>
+					</CardAction>
+				</CardHeader>
+				<CardContent className='flex flex-col gap-6'>
+					<div className='flex flex-wrap gap-2'>
+						{INSTRUCTIONS.map((inst) => (
+							<Button
+								key={inst}
+								variant={selected === inst ? 'default' : 'outline'}
+								size='sm'
+								onClick={() => setSelected(inst)}
+							>
+								{inst}
+							</Button>
+						))}
+					</div>
 
-						<div className='p-4 border rounded-md'>
-							<h3 className='mb-3 font-semibold text-lg'>{selectedInfo.name}</h3>
-							<p className='text-sm text-muted-foreground mb-4'>
-								{tSet(selectedInfo.descriptionKey)}
-							</p>
+					<div className='p-4 border rounded-md'>
+						<h3 className='mb-3 font-semibold text-lg'>{selectedInfo.name}</h3>
+						<p className='text-sm text-muted-foreground mb-4'>
+							{tSet(selectedInfo.descriptionKey)}
+						</p>
 
-							<div className='space-y-3 text-sm'>
-								<div className='flex items-start'>
-									<span className='w-24 shrink-0'>{t('register')}</span>
-									<span className='text-muted-foreground'>
-										{/* @ts-expect-error 동적 문자열 타입 추론 문제 */}
-										{t(selectedInfo.signals.register)}
-									</span>
-								</div>
-								<div className='flex items-start'>
-									<span className='w-24 shrink-0'>{t('memory')}</span>
-									<span className='text-muted-foreground'>
-										{/* @ts-expect-error 동적 문자열 타입 추론 문제 */}
-										{t(selectedInfo.signals.memory)}
-									</span>
-								</div>
-								<div className='flex items-start'>
-									<span className='w-24 shrink-0'>{t('alu')}</span>
-									<span className='text-muted-foreground'>
-										{/* @ts-expect-error 동적 문자열 타입 추론 문제 */}
-										{t(selectedInfo.signals.alu)}
-									</span>
-								</div>
+						<div className='space-y-3 text-sm'>
+							<div className='flex items-start'>
+								<span className='w-24 shrink-0'>{t('register')}</span>
+								<span className='text-muted-foreground'>
+									{/* @ts-expect-error 동적 문자열 타입 추론 문제 */}
+									{t(selectedInfo.signals.register)}
+								</span>
+							</div>
+							<div className='flex items-start'>
+								<span className='w-24 shrink-0'>{t('memory')}</span>
+								<span className='text-muted-foreground'>
+									{/* @ts-expect-error 동적 문자열 타입 추론 문제 */}
+									{t(selectedInfo.signals.memory)}
+								</span>
+							</div>
+							<div className='flex items-start'>
+								<span className='w-24 shrink-0'>{t('alu')}</span>
+								<span className='text-muted-foreground'>
+									{/* @ts-expect-error 동적 문자열 타입 추론 문제 */}
+									{t(selectedInfo.signals.alu)}
+								</span>
 							</div>
 						</div>
-					</CardContent>
-				</Card>
-				<ResponsiveDialogContent>
-					<ResponsiveDialogHeader>
-						<ResponsiveDialogTitle>
-							{tSim('instructionSetInfo')}
-						</ResponsiveDialogTitle>
-					</ResponsiveDialogHeader>
-					<InstructionSetTable />
-				</ResponsiveDialogContent>
-			</ResponsiveDialog>
-		</div>
+					</div>
+				</CardContent>
+			</Card>
+			<ResponsiveDialogContent>
+				<ResponsiveDialogHeader>
+					<ResponsiveDialogTitle>{tSim('instructionSetInfo')}</ResponsiveDialogTitle>
+				</ResponsiveDialogHeader>
+				<InstructionSetTable />
+			</ResponsiveDialogContent>
+		</ResponsiveDialog>
 	);
 }
