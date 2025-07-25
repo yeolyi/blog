@@ -15,6 +15,7 @@ import {
 	Card,
 	CardAction,
 	CardContent,
+	CardDescription,
 	CardHeader,
 	CardTitle,
 } from '../../../../components/ui/card';
@@ -94,9 +95,10 @@ export function VonNeumannSimulator() {
 			<Card>
 				<CardHeader>
 					<CardTitle>{t('title')}</CardTitle>
+					<CardDescription>{t('description')}</CardDescription>
 					<CardAction>
 						<ResponsiveDialogTrigger asChild>
-							<Button variant='ghost' size='icon' className='-mr-2'>
+							<Button variant='ghost' size='icon'>
 								<Info className='h-4 w-4' />
 								<span className='sr-only'>{t('instructionSetInfo')}</span>
 							</Button>

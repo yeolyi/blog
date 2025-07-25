@@ -74,8 +74,6 @@
 		"os6Description": "네트워크",
 
 		"andGate": "AND 게이트",
-		"nandUniversality": "NAND의 범용성",
-		"nandToNot": "NAND 게이트로 NOT 게이트 만들기",
 		"truthTable": "진리표",
 		"turingMachineDemo": "튜링 머신 실습",
 		"binaryAddition": "이진수 덧셈 11(2) + 11(2) = 110(2)",
@@ -83,7 +81,10 @@
 		"decimalToBinaryDesc": "십진수를 입력하면 이진수와 그 계산 과정을 보여줍니다.",
 		"enterDecimal": "십진수를 입력하세요",
 		"intro": "0과 1에서 시작해 함께 컴퓨터를 만들어봅시다. 컴퓨터 공학을 공부하며 느낀 경이로움을 전달합니다.",
-		"demoDescription": "인터렉티브한 데모들과 함께 컴퓨터 과학의 주요 개념들을 돌아보세요."
+		"demoDescription": "인터렉티브한 데모들과 함께 컴퓨터 과학의 주요 개념들을 돌아보세요.",
+
+		"rippleCarryAdder": "리플 캐리 가산기",
+		"rippleCarryAdderDescription": "여러 개의 가산기를 연결하여 이진수를 더하는 방법"
 	},
 	"NotFound": {
 		"backHome": "홈으로 돌아가기"
@@ -239,7 +240,8 @@
 			"valueDecimal": "값 (십진수)",
 			"placeholder": "이곳에 프로그램을 입력하세요...",
 			"instructionSetInfo": "명령어 세트 정보",
-			"defaultCode": "// 피보나치 수를 계산하여 mem[15]에 저장\nLDI R1, 1\nLDI R2, 1\nMOVE R0, R1\nADD R0, R2\nMOVE R1, R2\nMOVE R2, R0\nSTORE 15\nJUMP 2"
+			"defaultCode": "// 피보나치 수를 계산하여 mem[15]에 저장\nLDI R1, 1\nLDI R2, 1\nMOVE R0, R1\nADD R0, R2\nMOVE R1, R2\nMOVE R2, R0\nSTORE 15\nJUMP 2",
+			"description": "프로그램을 실행하고 CPU와 메모리 상태의 변화를 관찰해보세요."
 		}
 	},
 	"LocaleSwitcher": {

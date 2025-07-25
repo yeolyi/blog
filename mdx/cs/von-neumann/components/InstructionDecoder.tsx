@@ -2,7 +2,6 @@
 
 import { Info } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 import { Button } from '../../../../components/ui/button';
 import {
 	Card,
@@ -19,6 +18,12 @@ import {
 	ResponsiveDialogTitle,
 	ResponsiveDialogTrigger,
 } from '../../../../components/ui/responsive-dialog';
+import {
+	Tabs,
+	TabsContent,
+	TabsList,
+	TabsTrigger,
+} from '../../../../components/ui/tabs';
 import { InstructionSetTable } from './InstructionSetTable';
 
 const INSTRUCTIONS = [
@@ -150,9 +155,6 @@ const CONTROL_SIGNAL_DETAILS: Record<InstructionName, ControlSignalInfo> = {
 };
 
 export function InstructionDecoder() {
-	const [selected, setSelected] = useState<InstructionName>('MOVE');
-	const selectedInfo = CONTROL_SIGNAL_DETAILS[selected];
-
 	const t = useTranslations('VonNeumann.InstructionDecoder');
 	const tSet = useTranslations('VonNeumann.InstructionSetTable');
 	const tSim = useTranslations('VonNeumann.Simulator');
@@ -172,50 +174,53 @@ export function InstructionDecoder() {
 						</ResponsiveDialogTrigger>
 					</CardAction>
 				</CardHeader>
-				<CardContent className='flex flex-col gap-6'>
-					<div className='flex flex-wrap gap-2'>
-						{INSTRUCTIONS.map((inst) => (
-							<Button
-								key={inst}
-								variant={selected === inst ? 'default' : 'outline'}
-								size='sm'
-								onClick={() => setSelected(inst)}
-							>
-								{inst}
-							</Button>
-						))}
-					</div>
+				<CardContent>
+					<Tabs defaultValue='MOVE' className='w-full'>
+						<TabsList>
+							{INSTRUCTIONS.map((inst) => (
+								<TabsTrigger key={inst} value={inst}>
+									{inst}
+								</TabsTrigger>
+							))}
+						</TabsList>
+						{INSTRUCTIONS.map((inst) => {
+							const selectedInfo = CONTROL_SIGNAL_DETAILS[inst];
+							return (
+								<TabsContent key={inst} value={inst} className='mt-4'>
+									<div className='p-4 border'>
+										<h3 className='mb-3 font-semibold text-lg'>{selectedInfo.name}</h3>
+										<p className='text-sm text-muted-foreground mb-4'>
+											{tSet(selectedInfo.descriptionKey)}
+										</p>
 
-					<div className='p-4 border rounded-md'>
-						<h3 className='mb-3 font-semibold text-lg'>{selectedInfo.name}</h3>
-						<p className='text-sm text-muted-foreground mb-4'>
-							{tSet(selectedInfo.descriptionKey)}
-						</p>
-
-						<div className='space-y-3 text-sm'>
-							<div className='flex items-start'>
-								<span className='w-24 shrink-0'>{t('register')}</span>
-								<span className='text-muted-foreground'>
-									{/* @ts-expect-error 동적 문자열 타입 추론 문제 */}
-									{t(selectedInfo.signals.register)}
-								</span>
-							</div>
-							<div className='flex items-start'>
-								<span className='w-24 shrink-0'>{t('memory')}</span>
-								<span className='text-muted-foreground'>
-									{/* @ts-expect-error 동적 문자열 타입 추론 문제 */}
-									{t(selectedInfo.signals.memory)}
-								</span>
-							</div>
-							<div className='flex items-start'>
-								<span className='w-24 shrink-0'>{t('alu')}</span>
-								<span className='text-muted-foreground'>
-									{/* @ts-expect-error 동적 문자열 타입 추론 문제 */}
-									{t(selectedInfo.signals.alu)}
-								</span>
-							</div>
-						</div>
-					</div>
+										<div className='space-y-3 text-sm'>
+											<div className='flex items-start'>
+												<span className='w-24 shrink-0'>{t('register')}</span>
+												<span className='text-muted-foreground'>
+													{/* @ts-expect-error 동적 문자열 타입 추론 문제 */}
+													{t(selectedInfo.signals.register)}
+												</span>
+											</div>
+											<div className='flex items-start'>
+												<span className='w-24 shrink-0'>{t('memory')}</span>
+												<span className='text-muted-foreground'>
+													{/* @ts-expect-error 동적 문자열 타입 추론 문제 */}
+													{t(selectedInfo.signals.memory)}
+												</span>
+											</div>
+											<div className='flex items-start'>
+												<span className='w-24 shrink-0'>{t('alu')}</span>
+												<span className='text-muted-foreground'>
+													{/* @ts-expect-error 동적 문자열 타입 추론 문제 */}
+													{t(selectedInfo.signals.alu)}
+												</span>
+											</div>
+										</div>
+									</div>
+								</TabsContent>
+							);
+						})}
+					</Tabs>
 				</CardContent>
 			</Card>
 			<ResponsiveDialogContent>

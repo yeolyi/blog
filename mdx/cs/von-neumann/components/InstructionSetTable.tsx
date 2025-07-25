@@ -1,8 +1,6 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
-import { Button } from '../../../../components/ui/button';
 import {
 	Card,
 	CardContent,
@@ -10,6 +8,12 @@ import {
 	CardHeader,
 	CardTitle,
 } from '../../../../components/ui/card';
+import {
+	Tabs,
+	TabsContent,
+	TabsList,
+	TabsTrigger,
+} from '../../../../components/ui/tabs';
 
 const INSTRUCTION_DETAILS: Record<
 	string,
@@ -130,63 +134,61 @@ const INSTRUCTION_DETAILS: Record<
 };
 
 export function InstructionSetTable() {
-	const [selected, setSelected] = useState(
-		Object.values(INSTRUCTION_DETAILS)[0],
-	);
 	const t = useTranslations('VonNeumann.InstructionSetTable');
+	const instructionNames = Object.keys(INSTRUCTION_DETAILS);
 
 	return (
-		<div className='my-6 not-prose flex flex-col gap-4'>
-			<div className='flex flex-wrap gap-2'>
-				{Object.values(INSTRUCTION_DETAILS).map((inst) => (
-					<Button
-						key={inst.name}
-						variant={selected.name === inst.name ? 'default' : 'outline'}
-						size='sm'
-						onClick={() => setSelected(inst)}
-					>
-						{inst.name.split(' ')[0]}
-					</Button>
-				))}
-			</div>
-
-			<Card>
-				<CardHeader>
-					<CardTitle className='flex items-center justify-between'>
-						<span>{selected.name}</span>
-					</CardTitle>
-					{/* @ts-expect-error 동적 문자열 타입 추론 문제 */}
-					<CardDescription>{t(selected.description)}</CardDescription>
-				</CardHeader>
-				<CardContent className='space-y-4'>
-					<div>
-						<h4 className='mb-2'>{t('structure')}</h4>
-						<div className='flex w-full h-10 border border-border'>
-							{selected.structure.map((part, idx) => (
-								<div
-									key={idx}
-									className={`flex flex-col items-center justify-center text-center text-xs p-1
+		<div>
+			<Tabs defaultValue={instructionNames[0]} className='w-full'>
+				<TabsList>
+					{instructionNames.map((name) => (
+						<TabsTrigger key={name} value={name}>
+							{name}
+						</TabsTrigger>
+					))}
+				</TabsList>
+				{Object.entries(INSTRUCTION_DETAILS).map(([name, details]) => (
+					<TabsContent key={name} value={name} className='mt-4'>
+						<Card>
+							<CardHeader>
+								<CardTitle className='flex items-center justify-between'>
+									<span>{details.name}</span>
+								</CardTitle>
+								{/* @ts-expect-error 동적 문자열 타입 추론 문제 */}
+								<CardDescription>{t(details.description)}</CardDescription>
+							</CardHeader>
+							<CardContent className='space-y-4'>
+								<div>
+									<h4 className='mb-2'>{t('structure')}</h4>
+									<div className='flex w-full h-10 border border-border'>
+										{details.structure.map((part, idx) => (
+											<div
+												key={idx}
+												className={`flex flex-col items-center justify-center text-center text-xs p-1
                         ${part.bits === 4 ? 'w-1/2' : 'w-1/4'}
                         ${idx > 0 ? 'border-l border-border' : ''}`}
-								>
-									<span>{part.label}</span>
-									<span className='text-muted-foreground'>({part.bits} bits)</span>
+											>
+												<span>{part.label}</span>
+												<span className='text-muted-foreground'>({part.bits} bits)</span>
+											</div>
+										))}
+									</div>
 								</div>
-							))}
-						</div>
-					</div>
-					<div>
-						<h4 className='mb-2'>{t('example')}</h4>
-						<pre className='p-3 bg-muted leading-relaxed'>
-							<code>
-								{selected.example}
-								<br />
-								{selected.binaryExample}
-							</code>
-						</pre>
-					</div>
-				</CardContent>
-			</Card>
+								<div>
+									<h4 className='mb-2'>{t('example')}</h4>
+									<pre className='p-3 bg-muted leading-relaxed'>
+										<code>
+											{details.example}
+											<br />
+											{details.binaryExample}
+										</code>
+									</pre>
+								</div>
+							</CardContent>
+						</Card>
+					</TabsContent>
+				))}
+			</Tabs>
 		</div>
 	);
 }

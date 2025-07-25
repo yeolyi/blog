@@ -76,8 +76,6 @@
 		"os6Description": "Network",
 
 		"andGate": "AND Gate",
-		"nandUniversality": "NAND Universality",
-		"nandToNot": "Creating NOT Gate from NAND Gate",
 		"truthTable": "Truth Table",
 		"turingMachineDemo": "Turing Machine Demo",
 		"binaryAddition": "Binary Addition 11(2) + 11(2) = 110(2)",
@@ -85,7 +83,9 @@
 		"decimalToBinaryDesc": "Enter a decimal number to see its binary representation and calculation process.",
 		"enterDecimal": "Enter a decimal number",
 		"intro": "Let's build a computer together, starting from 0s and 1s. I share the wonder I felt learning computer science.",
-		"demoDescription": "Explore key concepts in computer science with interactive demos."
+		"demoDescription": "Explore key concepts in computer science with interactive demos.",
+		"rippleCarryAdder": "Ripple Carry Adder",
+		"rippleCarryAdderDescription": "A method of adding binary numbers by connecting multiple adders"
 	},
 	"NotFound": {
 		"backHome": "Back to Home"
@@ -237,7 +237,8 @@
 			"valueDecimal": "Value (Decimal)",
 			"placeholder": "Enter your program here...",
 			"instructionSetInfo": "ISA Cheatsheet",
-			"defaultCode": "// Calculate Fibonacci sequence and store in mem[15]\nLDI R1, 1\nLDI R2, 1\nMOVE R0, R1\nADD R0, R2\nMOVE R1, R2\nMOVE R2, R0\nSTORE 15\nJUMP 2"
+			"defaultCode": "// Calculate Fibonacci sequence and store in mem[15]\nLDI R1, 1\nLDI R2, 1\nMOVE R0, R1\nADD R0, R2\nMOVE R1, R2\nMOVE R2, R0\nSTORE 15\nJUMP 2",
+			"description": "Run the program and observe the changes in CPU and memory states."
 		}
 	},
 	"LocaleSwitcher": {

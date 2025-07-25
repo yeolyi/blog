@@ -5,8 +5,6 @@ import SubscriberCount from '@/app/[locale]/components/SubscriberCount';
 import EmailSubscribe from '@/app/[locale]/cs/components/EmailSubscribe';
 import AppearAnimation from '@/components/AppearAnimation';
 import Flow from '@/components/cs/flow';
-import TruthTable from '@/components/cs/TruthTable';
-import { Button } from '@/components/ui/button';
 import {
 	Card,
 	CardDescription,
@@ -21,9 +19,8 @@ import {
 	CarouselPrevious,
 } from '@/components/ui/carousel';
 import { Link } from '@/i18n/navigation';
-import DecimalToBinary from '@/mdx/cs/adder/components/DecimalToBinary';
-import not from '@/mdx/cs/nand-is-all-you-need/assets/not.json';
-import AddingTuringMachine from '@/mdx/cs/turing-machine/components/AddingTuringMachine';
+import ripple from '@/mdx/cs/adder/assets/ripple.json';
+import { VonNeumannSimulator } from '@/mdx/cs/von-neumann/components/VonNeumannSimulator';
 
 export default async function CS() {
 	const tMain = await getTranslations('MainPage');
@@ -50,36 +47,17 @@ export default async function CS() {
 
 				<Carousel opts={{ loop: true, align: 'start' }}>
 					<CarouselContent className='-pl-4'>
-						<CarouselItem className='pl-4 max-w-sm'>
-							<TruthTable
-								description={tCS('andGate')}
-								labels={[
-									{ label: 'A', type: 'input' },
-									{ label: 'B', type: 'input' },
-									{ label: 'A AND B', type: 'output' },
-								]}
-								data={[
-									[false, false, false],
-									[false, true, false],
-									[true, false, false],
-									[true, true, true],
-								]}
-							/>
-						</CarouselItem>
-						<CarouselItem className='max-w-sm pl-4'>
+						<CarouselItem className='max-w-md pl-4'>
 							<Card>
 								<CardHeader>
-									<CardTitle>{tCS('nandUniversality')}</CardTitle>
-									<CardDescription>{tCS('nandToNot')}</CardDescription>
+									<CardTitle>{tCS('rippleCarryAdder')}</CardTitle>
+									<CardDescription>{tCS('rippleCarryAdderDescription')}</CardDescription>
 								</CardHeader>
-								<Flow id='/cs' initialJSON={not} height={250} hideNodeButtons />
+								<Flow id='/cs' initialJSON={ripple} hideNodeButtons height={600} />
 							</Card>
 						</CarouselItem>
-						<CarouselItem className='pl-4 max-w-md'>
-							<AddingTuringMachine />
-						</CarouselItem>
-						<CarouselItem className='max-w-sm pl-4'>
-							<DecimalToBinary />
+						<CarouselItem className='max-w-md pl-4 '>
+							<VonNeumannSimulator />
 						</CarouselItem>
 					</CarouselContent>
 					<CarouselNext />
@@ -88,68 +66,41 @@ export default async function CS() {
 
 				<p className='font-extrabold'>「{tCS('part1Title')}」</p>
 
-				<p>
-					<GhostButton href='/cs/zero-and-one'>{tCS('hw1Title')}</GhostButton>
-					<GhostButton href='/cs/and-or-not'>{tCS('hw2Title')}</GhostButton>
-					<GhostButton href='/cs/nand-is-all-you-need'>
-						{tCS('hw3Title')}
-					</GhostButton>
-					<GhostButton href='/cs/adder'>{tCS('hw4Title')}</GhostButton>
-					<GhostButton href='/cs/sequential'>{tCS('hw5Title')}</GhostButton>
-					<GhostButton href='/cs/turing-machine'>{tCS('hw6Title')}</GhostButton>
-					<GhostButton href='/cs/von-neumann'>{tCS('hw7Title')}</GhostButton>
-					<GhostButton>{tCS('hw8Title')}</GhostButton>
-					<GhostButton>{tCS('hw9Title')}</GhostButton>
-				</p>
+				<div className='flex flex-col gap-2 [&>p]:text-muted-foreground [&>a]:hover:underline'>
+					<Link href='/cs/zero-and-one'>{tCS('hw1Title')}</Link>
+					<Link href='/cs/and-or-not'>{tCS('hw2Title')}</Link>
+					<Link href='/cs/nand-is-all-you-need'>{tCS('hw3Title')}</Link>
+					<Link href='/cs/adder'>{tCS('hw4Title')}</Link>
+					<Link href='/cs/sequential'>{tCS('hw5Title')}</Link>
+					<Link href='/cs/turing-machine'>{tCS('hw6Title')}</Link>
+					<Link href='/cs/von-neumann'>{tCS('hw7Title')}</Link>
+					<p>{tCS('hw8Title')}</p>
+					<p>{tCS('hw9Title')}</p>
+				</div>
 
 				<p className='font-extrabold'>「{tCS('part2Title')}」</p>
 
-				<p>
-					<GhostButton>{tCS('ds1Title')}</GhostButton>
-					<GhostButton>{tCS('ds2Title')}</GhostButton>
-					<GhostButton>{tCS('ds3Title')}</GhostButton>
-					<GhostButton>{tCS('ds4Title')}</GhostButton>
-					<GhostButton>{tCS('ds5Title')}</GhostButton>
-					<GhostButton>{tCS('ds6Title')}</GhostButton>
-					<GhostButton>{tCS('ds7Title')}</GhostButton>
-				</p>
+				<div className='flex flex-col gap-2 [&>p]:text-muted-foreground'>
+					<p>{tCS('ds1Title')}</p>
+					<p>{tCS('ds2Title')}</p>
+					<p>{tCS('ds3Title')}</p>
+					<p>{tCS('ds4Title')}</p>
+					<p>{tCS('ds5Title')}</p>
+					<p>{tCS('ds6Title')}</p>
+					<p>{tCS('ds7Title')}</p>
+				</div>
 
 				<p className='font-extrabold'>「{tCS('part3Title')}」</p>
 
-				<p>
-					<GhostButton>{tCS('os1Title')}</GhostButton>
-					<GhostButton>{tCS('os2Title')}</GhostButton>
-					<GhostButton>{tCS('os3Title')}</GhostButton>
-					<GhostButton>{tCS('os4Title')}</GhostButton>
-					<GhostButton>{tCS('os5Title')}</GhostButton>
-					<GhostButton>{tCS('os6Title')}</GhostButton>
-				</p>
+				<div className='flex flex-col gap-2 [&>p]:text-muted-foreground'>
+					<p>{tCS('os1Title')}</p>
+					<p>{tCS('os2Title')}</p>
+					<p>{tCS('os3Title')}</p>
+					<p>{tCS('os4Title')}</p>
+					<p>{tCS('os5Title')}</p>
+					<p>{tCS('os6Title')}</p>
+				</div>
 			</div>
 		</AppearAnimation>
 	);
 }
-
-const GhostButton = ({
-	href,
-	children,
-}: {
-	href?: string;
-	children: React.ReactNode;
-}) => {
-	return (
-		<Button
-			variant='ghost'
-			asChild={!!href}
-			disabled={!href}
-			className='max-w-full'
-		>
-			{href ? (
-				<Link href={href} className='truncate'>
-					{children}
-				</Link>
-			) : (
-				<span className='truncate'>{children}</span>
-			)}
-		</Button>
-	);
-};
