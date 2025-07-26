@@ -5,12 +5,7 @@ import SubscriberCount from '@/app/[locale]/components/SubscriberCount';
 import EmailSubscribe from '@/app/[locale]/cs/components/EmailSubscribe';
 import AppearAnimation from '@/components/AppearAnimation';
 import Flow from '@/components/cs/flow';
-import {
-	Card,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import {
 	Carousel,
 	CarouselContent,
@@ -18,9 +13,11 @@ import {
 	CarouselNext,
 	CarouselPrevious,
 } from '@/components/ui/carousel';
+import { Separator } from '@/components/ui/separator';
 import { Link } from '@/i18n/navigation';
 import ripple from '@/mdx/cs/adder/assets/ripple.json';
 import { VonNeumannSimulator } from '@/mdx/cs/von-neumann/components/VonNeumannSimulator';
+import PixelateImage from '@/mdx/cs/zero-and-one/components/PixelateImage';
 
 export default async function CS() {
 	const tMain = await getTranslations('MainPage');
@@ -43,26 +40,29 @@ export default async function CS() {
 
 				<EmailSubscribe />
 
+				<Separator />
+
 				<p>{tCS('demoDescription')}</p>
 
 				<Carousel opts={{ loop: true, align: 'start' }}>
 					<CarouselContent className='-pl-4'>
+						<CarouselItem className='max-w-md pl-4 '>
+							<PixelateImage />
+						</CarouselItem>
 						<CarouselItem className='max-w-md pl-4'>
-							<Card>
-								<CardHeader>
-									<CardTitle>{tCS('rippleCarryAdder')}</CardTitle>
-									<CardDescription>{tCS('rippleCarryAdderDescription')}</CardDescription>
-								</CardHeader>
-								<Flow id='/cs' initialJSON={ripple} hideNodeButtons height={600} />
+							<Card className='p-0'>
+								<Flow id='/cs' initialJSON={ripple} hideNodeButtons height={400} />
 							</Card>
 						</CarouselItem>
 						<CarouselItem className='max-w-md pl-4 '>
-							<VonNeumannSimulator />
+							<VonNeumannSimulator hideHeader />
 						</CarouselItem>
 					</CarouselContent>
 					<CarouselNext />
 					<CarouselPrevious />
 				</Carousel>
+
+				<Separator />
 
 				<p className='font-extrabold'>「{tCS('part1Title')}」</p>
 
