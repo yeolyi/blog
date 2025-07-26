@@ -21,7 +21,6 @@ import { routing } from '@/i18n/routing';
 
 // css가 script 태그로 들어가는게 mdx 안에서 import해서 그런건가싶어서 여기로 이동
 import 'medium-zoom/dist/style.css';
-import { SandPackCSS } from '@/app/[locale]/components/SandpackCss';
 import { Toaster } from '@/components/ui/sonner';
 
 const monoplexKR = localFont({
@@ -68,7 +67,6 @@ export default async function RootLayout({
 			suppressHydrationWarning
 		>
 			<head>
-				<SandPackCSS />
 				{/* https://github.com/pacocoursey/next-themes/issues/78#issuecomment-2927060208 */}
 				<meta name='theme-color' content='var(--background)' />
 			</head>
