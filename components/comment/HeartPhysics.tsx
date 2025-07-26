@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import { tempUserId } from '@/store/tempUser';
 import { HEIGHT, useHeartPhysics } from './hooks/useHeartPhysics';
 
-export default function GaltonBoard({
+export default function HeartPhysics({
 	sessionId,
 	postId,
 }: {
