@@ -4,9 +4,8 @@ import { shuffle } from 'es-toolkit';
 import { useLocale } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { Link } from '@/i18n/navigation';
-import { cn } from '@/lib/utils';
 
-export default function InstagramDescription() {
+const InstagramDescription = () => {
 	const locale = useLocale();
 	// fallback to 'ko' if locale not found
 	const descriptions = shuffle(descriptionsMap[locale] ?? descriptionsMap.ko);
@@ -22,48 +21,21 @@ export default function InstagramDescription() {
 	}, [descriptions.length]);
 
 	return (
-		<div className='min-h-[384px] w-full h-full flex items-center justify-center px-16 relative select-none aspect-video'>
-			{descriptions.map((description, idx) => (
-				<Text
-					key={idx}
-					className={cn(
-						index === idx ? 'opacity-100' : 'opacity-0',
-						'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-balance w-full',
-					)}
+		<div className='w-full flex items-center justify-center px-16 relative select-none aspect-video h-full'>
+			<p className='text-[min(6vw,70px)] leading-[1.375] font-black'>
+				<Link
+					href='https://instagram.com/yeol.dev'
+					className='underline cursor-pointer'
+					target='_blank'
+					rel='noopener noreferrer'
 				>
-					{description}
-				</Text>
-			))}
+					@yeol.dev
+				</Link>
+				<span className='pointer-events-none' suppressHydrationWarning>
+					{descriptions[index]}
+				</span>
+			</p>
 		</div>
-	);
-}
-
-const Text = ({
-	className,
-	children,
-}: {
-	className?: string;
-	children: React.ReactNode;
-}) => {
-	return (
-		<p
-			className={cn(
-				'text-[min(6vw,70px)] leading-[1.375] font-black text-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-balance w-full',
-				className,
-			)}
-		>
-			<Link
-				href='https://instagram.com/yeol.dev'
-				className='underline cursor-pointer'
-				target='_blank'
-				rel='noopener noreferrer'
-			>
-				@yeol.dev
-			</Link>
-			<span className='pointer-events-none' suppressHydrationWarning>
-				{children}
-			</span>
-		</p>
 	);
 };
 
@@ -129,3 +101,5 @@ export const descriptionsMap: Record<string, string[]> = {
 		" doesn't share secrets for monetizing development in one month.",
 	],
 };
+
+export default InstagramDescription;
