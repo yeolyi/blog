@@ -83,15 +83,19 @@ export default async function Home({
 	return (
 		<div className='px-6 flex flex-col gap-7 max-w-6xl mx-auto mt-7'>
 			<div className='flex flex-col gap-7 md:flex-row'>
-				<Image
-					src={me}
-					alt=''
-					placeholder='blur'
-					className='object-cover aspect-square md:w-1/2'
-					loading='eager'
-					quality={75}
-				/>
-				<p className='whitespace-pre-wrap'>
+				{/* wrapper가 꼭 필요한건가?? */}
+				<div className='relative aspect-square md:w-1/2'>
+					<Image
+						src={me}
+						alt=''
+						fill
+						placeholder='blur'
+						className='object-cover'
+						loading='eager'
+						quality={75}
+					/>
+				</div>
+				<p className='whitespace-pre-wrap md:w-1/2'>
 					{tMain.rich('bio', {
 						name: (chunks) => <span className='font-extrabold'>{chunks}</span>,
 						role: (chunks) => <span className='text-muted-foreground'>{chunks}</span>,
