@@ -33,6 +33,7 @@ const ZoomableImage = ({ className, ...props }: Props) => {
 					zoom.detach();
 				};
 			}}
+			placeholder='blur'
 		/>
 	);
 };
