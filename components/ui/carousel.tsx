@@ -54,6 +54,14 @@ function Carousel({
 		{
 			...opts,
 			axis: orientation === 'horizontal' ? 'x' : 'y',
+			watchDrag: (_emblaApi, event) => {
+				// 캐러셀 안에 slider가 있을 때 처리
+				// 이벤트 시작점의 부모중에 data-slot이 slider인 요소가 있는지 확인
+				const slider = (event.target as HTMLElement)?.closest(
+					'[data-slot="slider"]',
+				);
+				return !slider;
+			},
 		},
 		plugins,
 	);

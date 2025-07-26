@@ -55,7 +55,7 @@ export default async function CS() {
 								<Flow id='/cs' initialJSON={ripple} hideNodeButtons height={400} />
 							</Card>
 						</CarouselItem>
-						<CarouselItem className='max-w-sm pl-4 '>
+						<CarouselItem className='max-w-sm pl-4 my-auto'>
 							<TruthTable
 								labels={[
 									{ label: 'A', type: 'input' },
