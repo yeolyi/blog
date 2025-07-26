@@ -87,11 +87,9 @@ export default async function Home({
 					src={me}
 					alt=''
 					placeholder='blur'
-					className='object-cover w-full h-full aspect-square md:w-1/2'
+					className='object-cover aspect-square md:w-1/2'
 					loading='eager'
-					quality={100}
-					width={1024}
-					height={1024}
+					quality={75}
 				/>
 				<p className='whitespace-pre-wrap'>
 					{tMain.rich('bio', {
