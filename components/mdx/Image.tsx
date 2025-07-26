@@ -9,7 +9,7 @@ type Props = React.ComponentProps<typeof NextImage> & {
 export default function Image({ className, caption, ...props }: Props) {
 	if (caption) {
 		return (
-			<div className='flex flex-col gap-2 not-prose'>
+			<div className='flex flex-col gap-2'>
 				<ZoomableImage {...props} className={className} />
 				<p className='text-sm text-gray-500 mx-auto'>{caption}</p>
 			</div>

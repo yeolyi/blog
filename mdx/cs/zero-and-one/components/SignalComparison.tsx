@@ -83,7 +83,7 @@ export default function SignalComparison(): React.ReactElement {
 	}, [applyRandomNoise]);
 
 	return (
-		<Card className='not-prose'>
+		<Card>
 			<CardHeader>
 				<CardTitle>아날로그 vs 디지털 신호</CardTitle>
 				<CardDescription>

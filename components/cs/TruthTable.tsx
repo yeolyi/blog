@@ -87,7 +87,7 @@ export default function TruthTable({
 				{description && <CardDescription>{description}</CardDescription>}
 			</CardHeader>
 			<CardContent>
-				<Table className='not-prose w-fit mx-auto'>
+				<Table className='w-fit mx-auto'>
 					<TableHeader>
 						<TableRow>
 							{labels.map((labelObj, index) => (

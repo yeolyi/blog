@@ -113,6 +113,9 @@ importers:
       medium-zoom:
         specifier: ^1.1.0
         version: 1.1.0
+      minidenticons:
+        specifier: ^4.2.1
+        version: 4.2.1
       motion:
         specifier: ^12.23.9
         version: 12.23.9(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -183,6 +186,9 @@ importers:
       '@types/canvas-confetti':
         specifier: ^1.9.0
         version: 1.9.0
+      '@types/matter-js':
+        specifier: ^0.19.8
+        version: 0.19.8
       '@types/mdx':
         specifier: ^2.0.13
         version: 2.0.13
@@ -1362,6 +1368,9 @@ packages:
   '@types/katex@0.16.7':
     resolution: {integrity: sha512-HMwFiRujE5PjrgwHQ25+bsLJgowjGjm5Z8FVSf0N6PwgJrwxH0QxzHYDcKsTfV3wva0vzrpqMTJS2jXPr5BMEQ==}
 
+  '@types/matter-js@0.19.8':
+    resolution: {integrity: sha512-W2ZWG58Lijv/4v768NgpeyFqqiOyslmAU7qqM1Lhz4XBoUgGtZtPz4CjcOKYtqHIak14dvPldslQhltqLTWwsw==}
+
   '@types/mdast@4.0.4':
     resolution: {integrity: sha512-kGaNbPh1k7AFzgpud/gMdvIm5xuECykRR+JnWKQno9TAXVa6WIVCGTPvYGekIDL4uwCZQSYbUxNBSb1aUo79oA==}
 
@@ -2255,6 +2264,10 @@ packages:
   mimic-function@5.0.1:
     resolution: {integrity: sha512-VP79XUPxV2CigYP3jWwAUFSku2aKqBH7uTAapFWCBqutsbmDo96KY5o8uh6U+/YSIn5OxJnXp73beVkpqMIGhA==}
     engines: {node: '>=18'}
+
+  minidenticons@4.2.1:
+    resolution: {integrity: sha512-oWfFivA0lOx/V/bO/YIJbthB26lV8JXYvhnv9zM2hNd3fzsHTXQ6c6bWZPcvhD3nnOB+lQk/D9lF43BXixrN8g==}
+    engines: {node: '>=15.14.0'}
 
   minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
@@ -4056,6 +4069,8 @@ snapshots:
 
   '@types/katex@0.16.7': {}
 
+  '@types/matter-js@0.19.8': {}
+
   '@types/mdast@4.0.4':
     dependencies:
       '@types/unist': 3.0.3
@@ -5227,6 +5242,8 @@ snapshots:
   mimic-fn@4.0.0: {}
 
   mimic-function@5.0.1: {}
+
+  minidenticons@4.2.1: {}
 
   minimist@1.2.8: {}
 

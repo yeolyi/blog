@@ -17,6 +17,7 @@ import { useTheme } from 'next-themes';
 import type * as React from 'react';
 import { useState } from 'react';
 import { useMediaQuery } from '@/components/hooks/useMediaQuery';
+import IdentityIcon from '@/components/Identicon';
 import { Button } from '@/components/ui/button';
 import {
 	Dialog,
@@ -35,6 +36,7 @@ import {
 import { Link, usePathname, useRouter } from '@/i18n/navigation';
 import { cn } from '@/lib/utils';
 import { useSessionStore } from '@/store/session';
+import { tempUserId } from '@/store/tempUser';
 
 function GithubButton() {
 	return (
@@ -64,6 +66,11 @@ function LoginButton() {
 		<div className='space-y-2'>
 			<div className='text-sm font-medium'>{t('auth')}</div>
 			<div className='flex gap-2'>
+				<IdentityIcon
+					username={session?.user.id ?? tempUserId}
+					// TODO: 높이 자연스럽게 맞추기...
+					className='h-9 bg-primary'
+				/>
 				<Button
 					onClick={session ? logout : login}
 					type='button'

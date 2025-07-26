@@ -1,13 +1,11 @@
 import useSWR, { mutate } from 'swr';
 import { createCommentInDB } from '@/db/comment/create';
 import { deleteCommentFromDB } from '@/db/comment/delete';
-import { getCommentsFromDB, getEmojiCounts } from '@/db/comment/read';
-import { useSessionStore } from '@/store/session';
-import { commentsKey, emojiKey } from './key';
+import { getCommentsFromDB, getThumbUpUserIds } from '@/db/comment/read';
+import { commentsKey, emojiKey as thumbUpKeys } from './key';
 
-export function useEmojiComment(id: string) {
-	const session = useSessionStore((state) => state.session);
-	return useSWR([emojiKey(id), session], () => getEmojiCounts(id, session));
+export function useThumbUpUserIds(postId: string) {
+	return useSWR(thumbUpKeys(postId), () => getThumbUpUserIds(postId));
 }
 
 export const useComments = (id: string) => {

@@ -57,7 +57,7 @@ export default function SyncRenderingExample() {
 	const filteredItems = allItems.filter((item) => item.includes(filter));
 
 	return (
-		<div className='not-prose rounded-xl border bg-card text-card-foreground shadow'>
+		<div className='rounded-xl border bg-card text-card-foreground shadow'>
 			<div className='flex flex-col space-y-1.5 p-6'>
 				<h3 className='font-semibold leading-none tracking-tight'>
 					동기적인 무거운 렌더링 작업

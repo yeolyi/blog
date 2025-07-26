@@ -1,6 +1,4 @@
-import type { Session } from '@supabase/supabase-js';
 import supabase from '@/db';
-import { useTempUserStore } from '@/store/tempUser';
 
 export async function getCommentsFromDB(postId: string) {
 	const { data: comments } = await supabase
@@ -10,18 +8,10 @@ export async function getCommentsFromDB(postId: string) {
 	return comments;
 }
 
-export const getEmojiCounts = async (
-	postId: string,
-	session: Session | null | undefined,
-) => {
-	const userId = session?.user?.id ?? useTempUserStore.getState().getId();
-
+export const getThumbUpUserIds = async (postId: string) => {
 	const { data } = await supabase
-		.rpc('get_emoji_counts', {
-			p_post_id: postId,
-			p_user_id: userId,
-		})
+		.rpc('get_thumbsup_user_ids', { p_post_id: postId })
 		.throwOnError();
-
+	console.log(data);
 	return data;
 };

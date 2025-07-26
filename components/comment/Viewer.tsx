@@ -56,7 +56,7 @@ const CommentItem = ({
 				</span>
 			</p>
 
-			<p className='text-neutral-500 dark:text-neutral-300'>{comment.content}</p>
+			<p>{comment.content}</p>
 
 			{isAuthor && <DeleteButton postId={postId} commentId={comment.id} />}
 		</div>
