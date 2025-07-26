@@ -5,6 +5,7 @@ import SubscriberCount from '@/app/[locale]/components/SubscriberCount';
 import EmailSubscribe from '@/app/[locale]/cs/components/EmailSubscribe';
 import AppearAnimation from '@/components/AppearAnimation';
 import Flow from '@/components/cs/flow';
+import TruthTable from '@/components/cs/TruthTable';
 import { Card } from '@/components/ui/card';
 import {
 	Carousel,
@@ -16,7 +17,7 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Link } from '@/i18n/navigation';
 import ripple from '@/mdx/cs/adder/assets/ripple.json';
-import { VonNeumannSimulator } from '@/mdx/cs/von-neumann/components/VonNeumannSimulator';
+import { InstructionSetTable } from '@/mdx/cs/von-neumann/components/InstructionSetTable';
 import PixelateImage from '@/mdx/cs/zero-and-one/components/PixelateImage';
 
 export default async function CS() {
@@ -54,8 +55,24 @@ export default async function CS() {
 								<Flow id='/cs' initialJSON={ripple} hideNodeButtons height={400} />
 							</Card>
 						</CarouselItem>
-						<CarouselItem className='max-w-md pl-4 '>
-							<VonNeumannSimulator hideHeader />
+						<CarouselItem className='max-w-sm pl-4 '>
+							<TruthTable
+								labels={[
+									{ label: 'A', type: 'input' },
+									{ label: 'B', type: 'input' },
+									{ label: 'Sum', type: 'output' },
+									{ label: 'Carry', type: 'output' },
+								]}
+								data={[
+									[false, false, false, false],
+									[false, true, true, false],
+									[true, false, true, false],
+									[true, true, false, true],
+								]}
+							/>
+						</CarouselItem>
+						<CarouselItem className='max-w-sm pl-4 '>
+							<InstructionSetTable />
 						</CarouselItem>
 					</CarouselContent>
 					<CarouselNext />

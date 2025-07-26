@@ -72,7 +72,7 @@ function MemoryViewer({ memory, pc, decode, toBinary }: MemoryViewerProps) {
 	);
 }
 
-export function VonNeumannSimulator({ hideHeader }: { hideHeader?: boolean }) {
+export function VonNeumannSimulator() {
 	const {
 		code,
 		setCode,
@@ -93,20 +93,18 @@ export function VonNeumannSimulator({ hideHeader }: { hideHeader?: boolean }) {
 	return (
 		<ResponsiveDialog>
 			<Card>
-				{!hideHeader && (
-					<CardHeader>
-						<CardTitle>{t('title')}</CardTitle>
-						<CardDescription>{t('description')}</CardDescription>
-						<CardAction>
-							<ResponsiveDialogTrigger asChild>
-								<Button variant='ghost' size='icon'>
-									<Info className='h-4 w-4' />
-									<span className='sr-only'>{t('instructionSetInfo')}</span>
-								</Button>
-							</ResponsiveDialogTrigger>
-						</CardAction>
-					</CardHeader>
-				)}
+				<CardHeader>
+					<CardTitle>{t('title')}</CardTitle>
+					<CardDescription>{t('description')}</CardDescription>
+					<CardAction>
+						<ResponsiveDialogTrigger asChild>
+							<Button variant='ghost' size='icon'>
+								<Info className='h-4 w-4' />
+								<span className='sr-only'>{t('instructionSetInfo')}</span>
+							</Button>
+						</ResponsiveDialogTrigger>
+					</CardAction>
+				</CardHeader>
 
 				<CardContent className='flex flex-col gap-6'>
 					{/* Code and Controls */}
@@ -120,7 +118,7 @@ export function VonNeumannSimulator({ hideHeader }: { hideHeader?: boolean }) {
 									onChange={(e) => setCode(e.target.value)}
 									disabled={isRunning}
 									rows={16}
-									className='mt-1 whitespace-nowrap h-[300px]'
+									className='mt-1 whitespace-nowrap'
 									placeholder={t('placeholder')}
 								/>
 							</div>
