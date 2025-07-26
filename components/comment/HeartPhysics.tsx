@@ -16,7 +16,7 @@ export default function GaltonBoard({
 	sessionId?: string;
 	postId: string;
 }) {
-	const { containerRef, dropBall } = useHeartPhysics();
+	const { containerRef, dropBall, removeBall } = useHeartPhysics();
 	const [data, setData] = useState<string[]>([]);
 
 	const userId = sessionId ?? tempUserId;
@@ -24,21 +24,27 @@ export default function GaltonBoard({
 
 	useEffect(() => {
 		let done = false;
+		const ballIds: number[] = [];
 
 		const fetchData = async () => {
-			if (done) return;
 			const data = await getThumbUpUserIds(postId);
+			if (done) return;
 			setData(data);
 			data.forEach((userId) => {
-				dropBall(userId);
+				const ballId = dropBall(userId);
+				if (ballId) ballIds.push(ballId);
 			});
 		};
+
 		fetchData();
 
 		return () => {
 			done = true;
+			ballIds.forEach((ballId) => {
+				removeBall(ballId);
+			});
 		};
-	}, [postId, dropBall]);
+	}, [postId, dropBall, removeBall]);
 
 	return (
 		<div className='relative'>

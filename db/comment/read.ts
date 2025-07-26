@@ -12,6 +12,5 @@ export const getThumbUpUserIds = async (postId: string) => {
 	const { data } = await supabase
 		.rpc('get_thumbsup_user_ids', { p_post_id: postId })
 		.throwOnError();
-	console.log(data);
 	return data;
 };

@@ -18,11 +18,9 @@ export const createLabelAtoms: NodeCreator<LabelAtoms> = (initialValues) => {
 
 	const outEffect = atomEffect((get, set) => {
 		const in1 = get(inAtom);
-		console.log('in1', in1);
 		if (in1 === null) return;
 
 		const in1Value = get(in1);
-		console.log('in1Value', in1Value);
 
 		const id = setTimeout(() => {
 			set.recurse(outAtom, in1Value);

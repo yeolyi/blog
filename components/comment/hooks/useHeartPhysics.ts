@@ -23,10 +23,14 @@ export function useHeartPhysics() {
 			heartPhysicsRef.current = new HeartPhysics(ref);
 			return () => {
 				heartPhysicsRef.current?.destroy();
+				heartPhysicsRef.current = null;
 			};
 		}, []),
 		dropBall: useCallback((userId: string) => {
-			heartPhysicsRef.current?.dropBall(userId);
+			return heartPhysicsRef.current?.dropBall(userId);
+		}, []),
+		removeBall: useCallback((ballId: number) => {
+			heartPhysicsRef.current?.removeBall(ballId);
 		}, []),
 	};
 }
@@ -211,7 +215,7 @@ class HeartPhysics {
 	}
 
 	// 구슬 떨어뜨리기 함수
-	async dropBall(userId: string) {
+	dropBall(userId: string) {
 		const ball = Bodies.circle(
 			40, // 좌측
 			40, // 상단
@@ -231,5 +235,20 @@ class HeartPhysics {
 
 		// 물리 세계에 구슬 추가
 		Composite.add(this.engine.world, ball);
+
+		return ball.id;
+	}
+
+	removeBall(ballId: number) {
+		Composite.allBodies(this.engine.world).forEach((body) => {
+			if (body.id === ballId) {
+				Composite.remove(this.engine.world, body);
+				const element = this.ballIdToElement.get(ballId);
+				if (element) {
+					element.remove();
+					this.ballIdToElement.delete(ballId);
+				}
+			}
+		});
 	}
 }
